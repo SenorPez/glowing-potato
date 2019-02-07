@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-6/schema",
-  "title": "Trident API Error Schema",
-  "description": "Schema for the errors from Trident API",
+  "title": "Trident API Root Schema",
+  "description": "Schema for the root of Trident API",
   "definitions": {
     "standardLink": {
       "type": "object",

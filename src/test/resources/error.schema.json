@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-6/schema",
-  "title": "Trident API Root Schema",
-  "description": "Schema for the root page of Trident API",
+  "title": "Trident API Error Schema",
+  "description": "Schema for errors in Trident API",
   "type": "object",
   "properties": {
     "code": {
