@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-6/schema",
+  "title": "Trident API Error Schema",
+  "description": "Schema for the errors from Trident API",
+  "definitions": {
+    "standardLink": {
+      "type": "object",
+      "properties" : {
+        "href": {
+          "type": "string",
+          "pattern": "^http[s]?://[a-z.]+(:[0-9]+)*((/[a-z0-9-]+)+|/)$"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "href"
+      ]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "_links": {
+      "type": "object",
+      "properties": {
+        "self": {
+          "$ref": "#/definitions/standardLink"
+        },
+        "index": {
+          "$ref": "#/definitions/standardLink"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "self",
+        "index"
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "_links"
+  ]
+}

@@ -1,0 +1,13 @@
+= Trident API Reference
+
+== Trident API Resources
+
+=== Index
+
+Provides the entry point to the Trident API.
+
+Request Header
+include::{snippets}/index/request-headers.adoc[]
+
+Links
+include::{snippets}/index/links.adoc[]

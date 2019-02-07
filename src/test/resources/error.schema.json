@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-6/schema",
+  "title": "Trident API Root Schema",
+  "description": "Schema for the root page of Trident API",
+  "type": "object",
+  "properties": {
+    "code": {
+      "type": "integer"
+    },
+    "message": {
+      "type": "string"
+    },
+    "detail": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "code",
+    "message",
+    "detail"
+  ]
+}
