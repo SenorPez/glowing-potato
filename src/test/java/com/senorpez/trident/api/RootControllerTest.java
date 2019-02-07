@@ -47,7 +47,7 @@ public class RootControllerTest {
                     linkWithRel("self").description("This resource")));
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         OBJECT_SCHEMA = CLASS_LOADER.getResourceAsStream("root.schema.json");
         ERROR_SCHEMA = CLASS_LOADER.getResourceAsStream("error.schema.json");
 
@@ -74,7 +74,8 @@ public class RootControllerTest {
                                 headerWithName("Accept")
                                         .description("Accept header")
                                         .attributes(key("acceptvalue").value(TRIDENT_API_VALUE))),
-                        commonLinks));
+                        commonLinks.and(
+                                linkWithRel("trident-api:systems").description("Solar systems"))));
     }
 
     @Test

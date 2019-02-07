@@ -65,14 +65,14 @@ public class SolarSystemControllerTest {
     public final JUnitRestDocumentation restDocumentation = new JUnitRestDocumentation();
 
     @Before
-    public void setUp() throws Exception {
-        SOLAR_SYSTEM_SCHEMA = CLASS_LOADER.getResourceAsStream("solarsystem.schema.json");
-        SOLAR_SYSTEM_COLLECTION_SCHEMA = CLASS_LOADER.getResourceAsStream("solarsystems.schema.json");
+    public void setUp() {
+        SOLAR_SYSTEM_SCHEMA = CLASS_LOADER.getResourceAsStream("system.schema.json");
+        SOLAR_SYSTEM_COLLECTION_SCHEMA = CLASS_LOADER.getResourceAsStream("systems.schema.json");
         ERROR_SCHEMA = CLASS_LOADER.getResourceAsStream("error.schema.json");
         MockitoAnnotations.initMocks(this);
 
         this.mockMvc = MockMvcBuilders
-                .standaloneSetup(new SolarSystemController())
+                .standaloneSetup(new SolarSystemController(apiService))
                 .setMessageConverters(HALMessageConverter.getConverter(Collections.singletonList(ALL)))
                 .setControllerAdvice(new APIExceptionHandler())
                 .apply(documentationConfiguration(this.restDocumentation))
@@ -87,14 +87,14 @@ public class SolarSystemControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(TRIDENT_API))
                 .andExpect(content().string(matchesJsonSchema(SOLAR_SYSTEM_COLLECTION_SCHEMA)))
-                .andExpect(jsonPath("$._embedded.trident-api.system", hasItem(
+                .andExpect(jsonPath("$._embedded.trident-api:system", hasItem(
                         allOf(
                                 hasEntry("id", (Object) FIRST_SYSTEM.getId()),
                                 hasEntry("name", (Object) FIRST_SYSTEM.getName()),
                                 hasEntry(equalTo("_links"),
                                         hasEntry(equalTo("self"),
                                                 hasEntry("href", String.format("http://localhost:8080/systems/%d", FIRST_SYSTEM.getId()))))))))
-                .andExpect(jsonPath("$._embedded.trident-api.system", hasItem(
+                .andExpect(jsonPath("$._embedded.trident-api:system", hasItem(
                         allOf(
                                 hasEntry("id", (Object) SECOND_SYSTEM.getId()),
                                 hasEntry("name", (Object) SECOND_SYSTEM.getName()),
@@ -106,7 +106,7 @@ public class SolarSystemControllerTest {
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
                                 hasEntry("href", (Object) "http://localhost:8080/docs/{rel}"),
-                                hasEntry("href", (Object) "trident-api"),
+                                hasEntry("name", (Object) "trident-api"),
                                 hasEntry("templated", (Object) true)))))
                 .andDo(document("tracks",
                         preprocessRequest(prettyPrint()),
@@ -120,7 +120,7 @@ public class SolarSystemControllerTest {
                                 fieldWithPath("_embedded.trident-api:system[].id").description("ID number"),
                                 fieldWithPath("_embedded.trident-api:system[].name").description("Name"),
                                 subsectionWithPath("_links").ignored(),
-                                subsectionWithPath("_embedded.trident-api:track[]._links").ignored()),
+                                subsectionWithPath("_embedded.trident-api:system[]._links").ignored()),
                         commonLinks));
 
         verify(apiService, times(1)).findAll(any());
@@ -141,14 +141,14 @@ public class SolarSystemControllerTest {
                                 hasEntry("name", (Object) FIRST_SYSTEM.getName()),
                                 hasEntry(equalTo("_links"),
                                         hasEntry(equalTo("self"),
-                                                hasEntry("href", String.format("http://localhost:8080/tracks/%d", FIRST_SYSTEM.getId()))))))))
+                                                hasEntry("href", String.format("http://localhost:8080/systems/%d", FIRST_SYSTEM.getId()))))))))
                 .andExpect(jsonPath("$._embedded.trident-api:system", hasItem(
                         allOf(
                                 hasEntry("id", (Object) SECOND_SYSTEM.getId()),
                                 hasEntry("name", (Object) SECOND_SYSTEM.getName()),
                                 hasEntry(equalTo("_links"),
                                         hasEntry(equalTo("self"),
-                                                hasEntry("href", String.format("http://localhost:8080/tracks/%d", SECOND_SYSTEM.getId()))))))))
+                                                hasEntry("href", String.format("http://localhost:8080/systems/%d", SECOND_SYSTEM.getId()))))))))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", "http://localhost:8080/systems")))
                 .andExpect(jsonPath("$._links.curies", everyItem(
@@ -171,7 +171,7 @@ public class SolarSystemControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident-api.v0+json")));
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident.v0+json")));
 
         verifyZeroInteractions(apiService);
     }
@@ -192,7 +192,7 @@ public class SolarSystemControllerTest {
     }
 
     @Test
-    public void GetSingleSolarSystem_ValidTrackId_ValidAcceptHeader() throws Exception {
+    public void GetSingleSolarSystem_ValidSystemId_ValidAcceptHeader() throws Exception {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM);
 
         mockMvc.perform(get(String.format("/systems/%d", FIRST_SYSTEM.getId())).accept(TRIDENT_API))
@@ -228,7 +228,7 @@ public class SolarSystemControllerTest {
     }
 
     @Test
-    public void GetSingleSolarSystem_ValidTrackId_FallbackAcceptHeader() throws Exception {
+    public void GetSingleSolarSystem_ValidSystemId_FallbackAcceptHeader() throws Exception {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM);
 
         mockMvc.perform(get(String.format("/systems/%d", FIRST_SYSTEM.getId())).accept(FALLBACK))
@@ -264,7 +264,7 @@ public class SolarSystemControllerTest {
     }
 
     @Test
-    public void GetSingleSolarSystem_ValidTrackId_InvalidAcceptHeader() throws Exception {
+    public void GetSingleSolarSystem_ValidSystemId_InvalidAcceptHeader() throws Exception {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM);
 
         mockMvc.perform(get(String.format("/systems/%d", FIRST_SYSTEM.getId())).accept(INVALID_MEDIA_TYPE))
@@ -273,13 +273,13 @@ public class SolarSystemControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident-api.v0+json")));
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident.v0+json")));
 
         verifyZeroInteractions(apiService);
     }
 
     @Test
-    public void GetSingleSolarSystem_ValidTrackId_InvalidMethod() throws Exception {
+    public void GetSingleSolarSystem_ValidSystemId_InvalidMethod() throws Exception {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM);
 
         mockMvc.perform(put(String.format("/systems/%d", FIRST_SYSTEM.getId())).accept(TRIDENT_API))
@@ -294,7 +294,7 @@ public class SolarSystemControllerTest {
     }
 
     @Test
-    public void GetSingleSolarSystem_InvalidTrackId_ValidAcceptHeader() throws Exception {
+    public void GetSingleSolarSystem_InvalidSystemId_ValidAcceptHeader() throws Exception {
         when(apiService.findOne(any(), any(), any())).thenThrow(new SolarSystemNotFoundException(8675309));
 
         mockMvc.perform(get("/systems/8675309").accept(TRIDENT_API))
@@ -303,14 +303,14 @@ public class SolarSystemControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is(String.format("Track with ID of %d not found", 8675309))));
+                .andExpect(jsonPath("$.detail", is(String.format("Solar system with ID of %d not found", 8675309))));
 
         verify(apiService, times(1)).findOne(any(), any(), any());
         verifyNoMoreInteractions(apiService);
     }
 
     @Test
-    public void GetSingleSolarSystem_InvalidTrackId_FallbackAcceptHeader() throws Exception {
+    public void GetSingleSolarSystem_InvalidSystemId_FallbackAcceptHeader() throws Exception {
         when(apiService.findOne(any(), any(), any())).thenThrow(new SolarSystemNotFoundException(8675309));
 
         mockMvc.perform(get("/systems/8675309").accept(FALLBACK))
@@ -319,14 +319,14 @@ public class SolarSystemControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is(String.format("Track with ID of %d not found", 8675309))));
+                .andExpect(jsonPath("$.detail", is(String.format("Solar system with ID of %d not found", 8675309))));
 
         verify(apiService, times(1)).findOne(any(), any(), any());
         verifyNoMoreInteractions(apiService);
     }
 
     @Test
-    public void GetSingleSolarSystem_InvalidTrackId_InvalidAcceptHeader() throws Exception {
+    public void GetSingleSolarSystem_InvalidSystemId_InvalidAcceptHeader() throws Exception {
         when(apiService.findOne(any(), any(), any())).thenThrow(new SolarSystemNotFoundException(8675309));
 
         mockMvc.perform(get("/systems/8675309").accept(INVALID_MEDIA_TYPE))
@@ -335,13 +335,13 @@ public class SolarSystemControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident-api.v0+json")));
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident.v0+json")));
 
         verifyZeroInteractions(apiService);
     }
 
     @Test
-    public void GetSingleSolarSystem_InvalidTrackId_InvalidMethod() throws Exception {
+    public void GetSingleSolarSystem_InvalidSystemId_InvalidMethod() throws Exception {
         when(apiService.findOne(any(), any(), any())).thenThrow(new SolarSystemNotFoundException(8675309));
 
         mockMvc.perform(put("/systems/8675309").accept(TRIDENT_API))

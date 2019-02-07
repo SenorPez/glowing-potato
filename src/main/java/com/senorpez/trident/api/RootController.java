@@ -16,12 +16,13 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
         method = RequestMethod.GET
 )
 @RestController
-public class RootController {
+class RootController {
     @RequestMapping(produces = {TRIDENT_API_VALUE, FALLBACK_VALUE})
     ResponseEntity<ResourceSupport> root() {
         final ResourceSupport root = new ResourceSupport();
         root.add(linkTo(methodOn(RootController.class).root()).withSelfRel());
         root.add(linkTo(methodOn(RootController.class).root()).withRel("index"));
+        root.add(linkTo(methodOn(SolarSystemController.class).solarSystems()).withRel("systems"));
         return ResponseEntity.ok(root);
     }
 }

@@ -1,7 +1,6 @@
 package com.senorpez.trident.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;

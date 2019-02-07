@@ -1,6 +1,5 @@
 package com.senorpez.trident.api;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.BeanFactory;
@@ -23,14 +22,29 @@ import java.util.Set;
 import static org.springframework.http.MediaType.ALL;
 
 @SpringBootApplication
-public class Application {
+class Application {
     private static final String HAL_OBJECT_MAPPER_BEAN_NAME = "_halObjectMapper";
+
+    static final Set<SolarSystem> SOLAR_SYSTEMS = Collections.unmodifiableSet(getData(SolarSystem.class, "systems"));
 
     @Autowired
     private BeanFactory beanFactory;
 
     public static void main(final String[] args) {
         SpringApplication.run(Application.class, args);
+    }
+
+    private static <T> Set<T> getData(final Class objectClass, final String field) {
+        final ObjectMapper mapper = new ObjectMapper();
+        final ClassLoader classLoader = Application.class.getClassLoader();
+        final InputStream inputStream = classLoader.getResourceAsStream("trident.json");
+        try {
+            final ObjectNode jsonData = mapper.readValue(inputStream, ObjectNode.class);
+            return mapper.readValue(jsonData.get(field).toString(), mapper.getTypeFactory().constructCollectionType(Set.class, objectClass));
+        } catch (final IOException e) {
+            e.printStackTrace();
+        }
+        return new HashSet<>();
     }
 
     @Bean
