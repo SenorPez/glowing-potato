@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-6/schema",
-  "title": "Trident API Solar System Schema",
-  "description": "Schema for a solar system in Trident API",
+  "title": "Trident API Star Schema",
+  "description": "Schema for a star in Trident API",
   "definitions": {
     "standardLink": {
       "type": "object",
@@ -61,9 +61,6 @@
         },
         "trident-api:stars": {
           "$ref": "#/definitions/standardLink"
-        },
-        "trident-api:systems": {
-          "$ref": "#/definitions/standardLink"
         }
       },
       "additionalProperties": false,
@@ -71,8 +68,7 @@
         "self",
         "index",
         "curies",
-        "trident-api:stars",
-        "trident-api:systems"
+        "trident-api:stars"
       ]
     }
   },

@@ -108,7 +108,7 @@ public class SolarSystemControllerTest {
                                 hasEntry("href", (Object) "http://localhost:8080/docs/{rel}"),
                                 hasEntry("name", (Object) "trident-api"),
                                 hasEntry("templated", (Object) true)))))
-                .andDo(document("tracks",
+                .andDo(document("systems",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
@@ -244,20 +244,7 @@ public class SolarSystemControllerTest {
                                 hasEntry("href", (Object) "http://localhost:8080/docs/{rel}"),
                                 hasEntry("name", (Object) "trident-api"),
                                 hasEntry("templated", (Object) true)))))
-                .andExpect(jsonPath("$._links.trident-api:systems", hasEntry("href", "http://localhost:8080/systems")))
-                .andDo(document("system",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                                headerWithName("Accept")
-                                        .description("Accept header")
-                                        .attributes(key("acceptvalue").value(TRIDENT_API_VALUE))),
-                        responseFields(
-                                fieldWithPath("id").description("ID number"),
-                                fieldWithPath("name").description("System name"),
-                                subsectionWithPath("_links").ignored()),
-                        commonLinks.and(
-                                linkWithRel("trident-api:systems").description("List of system resources"))));
+                .andExpect(jsonPath("$._links.trident-api:systems", hasEntry("href", "http://localhost:8080/systems")));
 
         verify(apiService, times(1)).findOne(any(), any(), any());
         verifyNoMoreInteractions(apiService);

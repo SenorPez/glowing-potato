@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-6/schema",
-  "title": "Trident API Solar System Schema",
-  "description": "Schema for a solar system in Trident API",
+  "title": "Trident API Star Collection Schema",
+  "description": "Schema for collections of stars in Trident API",
   "definitions": {
     "standardLink": {
       "type": "object",
@@ -41,11 +41,45 @@
   },
   "type": "object",
   "properties": {
-    "id": {
-      "type": "integer"
-    },
-    "name": {
-      "type": "string"
+    "_embedded": {
+      "type": "object",
+      "properties": {
+        "trident-api:star": {
+          "type": "array",
+          "items": {
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "name": {
+                "type": "string"
+              },
+              "_links": {
+                "type": "object",
+                "properties": {
+                  "self": {
+                    "$ref": "#/definitions/standardLink"
+                  }
+                },
+                "additionalProperties": false,
+                "required": [
+                  "self"
+                ]
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "name",
+              "_links"
+            ]
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "trident-api:system"
+      ]
     },
     "_links": {
       "type": "object",
@@ -59,10 +93,7 @@
         "curies": {
           "$ref": "#/definitions/curies"
         },
-        "trident-api:stars": {
-          "$ref": "#/definitions/standardLink"
-        },
-        "trident-api:systems": {
+        "trident-api:system": {
           "$ref": "#/definitions/standardLink"
         }
       },
@@ -71,15 +102,13 @@
         "self",
         "index",
         "curies",
-        "trident-api:stars",
-        "trident-api:systems"
+        "trident-api:system"
       ]
     }
   },
   "additionalProperties": false,
   "required": [
-    "id",
-    "name",
+    "_embedded",
     "_links"
   ]
 }
