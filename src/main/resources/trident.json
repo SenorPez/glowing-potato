@@ -1,8 +1,20 @@
 {
   "systems": [
     {
-      "id": 1,
-      "name": "Eta Veneris"
+      "id": 1817514095,
+      "name": "Eta Veneris",
+      "stars": [
+        {
+          "id": 1905216634,
+          "name": "1 Eta Veneris",
+          "solarMass": 0.75
+        },
+        {
+          "id": -1385166447,
+          "name": "2 Eta Veneris",
+          "solarMass": 0.75
+        }
+      ]
     }
   ]
 }

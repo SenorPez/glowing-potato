@@ -10,5 +10,6 @@ class SolarSystemResource extends Resource<SolarSystemModel> {
     SolarSystemResource(final SolarSystemModel content, final Link... links) {
         super(content, links);
         this.add(linkTo(methodOn(SolarSystemController.class).solarSystems()).withRel("systems"));
+        this.add(linkTo(methodOn(StarController.class).stars(content.getId())).withRel("stars"));
     }
 }

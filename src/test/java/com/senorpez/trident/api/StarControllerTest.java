@@ -47,25 +47,25 @@ public class StarControllerTest {
     private static InputStream ERROR_SCHEMA;
 
     private static final Star FIRST_STAR = new StarBuilder()
-            .setId(123456789)
+            .setId(11)
             .setName("1 Eta Veneris")
             .setSolarMass((float) 0.75)
             .build();
 
     private static final Star SECOND_STAR = new StarBuilder()
-            .setId(987654321)
+            .setId(12)
             .setName("2 Eta Veneris")
             .setSolarMass((float) 0.75)
             .build();
 
     private static final Star THIRD_STAR = new StarBuilder()
-            .setId(1234554321)
+            .setId(21)
             .setName("Sol")
             .setSolarMass((float) 1.0)
             .build();
 
     private static final SolarSystem FIRST_SYSTEM = new SolarSystemBuilder()
-            .setId(54321)
+            .setId(1)
             .setName("Eta Veneris")
             .setStars(new HashSet<>(Arrays.asList(
                     FIRST_STAR,
@@ -73,7 +73,7 @@ public class StarControllerTest {
             .build();
 
     private static final SolarSystem SECOND_SYSTEM = new SolarSystemBuilder()
-            .setId(12345)
+            .setId(2)
             .setName("Sol")
             .setStars(new HashSet<>(Collections.singletonList(
                     THIRD_STAR)))
@@ -132,13 +132,15 @@ public class StarControllerTest {
                                                         FIRST_SYSTEM.getId(),
                                                         SECOND_STAR.getId()))))))))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
-                .andExpect(jsonPath("$._links.self", hasEntry("href", "http://localhost:8080/systems")))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format(
+                        "http://localhost:8080/systems/%d/stars", FIRST_SYSTEM.getId()))))
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
                                 hasEntry("href", (Object) "http://localhost:8080/docs/{rel}"),
                                 hasEntry("name", (Object) "trident-api"),
                                 hasEntry("templated", (Object) true)))))
-                .andExpect(jsonPath("$._links.system", hasEntry("href", String.format("http://localhost:8080/systems/%d", FIRST_SYSTEM.getId()))))
+                .andExpect(jsonPath("$._links.trident-api:system", hasEntry("href", String.format(
+                        "http://localhost:8080/systems/%d", FIRST_SYSTEM.getId()))))
                 .andDo(document("stars",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -185,12 +187,15 @@ public class StarControllerTest {
                                                         FIRST_SYSTEM.getId(),
                                                         SECOND_STAR.getId()))))))))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
-                .andExpect(jsonPath("$._links.self", hasEntry("href", "http://localhost:8080/systems")))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format(
+                        "http://localhost:8080/systems/%d/stars", FIRST_SYSTEM.getId()))))
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
                                 hasEntry("href", (Object) "http://localhost:8080/docs/{rel}"),
                                 hasEntry("name", (Object) "trident-api"),
-                                hasEntry("templated", (Object) true)))));
+                                hasEntry("templated", (Object) true)))))
+                .andExpect(jsonPath("$._links.trident-api:system", hasEntry("href", String.format(
+                        "http://localhost:8080/systems/%d", FIRST_SYSTEM.getId()))));
 
         verify(apiService, times(1)).findOne(any(), any(), any());
         verifyNoMoreInteractions(apiService);
@@ -206,7 +211,7 @@ public class StarControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd senorpez.trident.v0+json")));
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident.v0+json")));
 
         verifyZeroInteractions(apiService);
     }
@@ -268,7 +273,7 @@ public class StarControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd senorpez.trident.v0+json")));
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident.v0+json")));
 
         verifyZeroInteractions(apiService);
     }
@@ -298,7 +303,7 @@ public class StarControllerTest {
                 .andExpect(content().string(matchesJsonSchema(STAR_SCHEMA)))
                 .andExpect(jsonPath("$.id", is(FIRST_STAR.getId())))
                 .andExpect(jsonPath("$.name", is(FIRST_STAR.getName())))
-                .andExpect(jsonPath("$.solarMass", is(FIRST_STAR.getSolarMass())))
+                .andExpect(jsonPath("$.solarMass", closeTo((double) FIRST_STAR.getSolarMass(), 0.001)))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", String.format(
                         "http://localhost:8080/systems/%d/stars/%d",
@@ -321,9 +326,10 @@ public class StarControllerTest {
                         responseFields(
                                 fieldWithPath("id").description("ID number"),
                                 fieldWithPath("name").description("Name"),
-                                fieldWithPath("solarMass").description("Solar mass")),
+                                fieldWithPath("solarMass").description("Solar mass"),
+                                subsectionWithPath("_links").ignored()),
                         commonLinks.and(
-                                linkWithRel("pcars:systems").description("List of system resources"))));
+                                linkWithRel("trident-api:stars").description("List of star resources"))));
 
         verify(apiService, times(2)).findOne(any(), any(), any());
         verifyNoMoreInteractions(apiService);
@@ -339,7 +345,7 @@ public class StarControllerTest {
                 .andExpect(content().string(matchesJsonSchema(STAR_SCHEMA)))
                 .andExpect(jsonPath("$.id", is(FIRST_STAR.getId())))
                 .andExpect(jsonPath("$.name", is(FIRST_STAR.getName())))
-                .andExpect(jsonPath("$.solarMass", is(FIRST_STAR.getSolarMass())))
+                .andExpect(jsonPath("$.solarMass", closeTo((double) FIRST_STAR.getSolarMass(), 0.001)))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", String.format(
                         "http://localhost:8080/systems/%d/stars/%d",
@@ -367,7 +373,7 @@ public class StarControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd senorpez.trident.v0+json")));
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident.v0+json")));
 
         verifyZeroInteractions(apiService);
     }
@@ -395,8 +401,8 @@ public class StarControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
-                .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
-                .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
+                .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
+                .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is(String.format("Star with ID of %d not found", 8675309))));
 
         verify(apiService, times(2)).findOne(any(), any(), any());
@@ -411,8 +417,8 @@ public class StarControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
-                .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
-                .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
+                .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
+                .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is(String.format("Star with ID of %d not found", 8675309))));
 
         verify(apiService, times(2)).findOne(any(), any(), any());
@@ -429,7 +435,7 @@ public class StarControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd senorpez.trident.v0+json")));
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident.v0+json")));
 
         verifyZeroInteractions(apiService);
     }
@@ -457,8 +463,8 @@ public class StarControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
-                .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
-                .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
+                .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
+                .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is(String.format("Solar system with ID of %d not found", 8675309))));
 
         verify(apiService, times(1)).findOne(any(), any(), any());
@@ -473,8 +479,8 @@ public class StarControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
-                .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
-                .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
+                .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
+                .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is(String.format("Solar system with ID of %d not found", 8675309))));
 
         verify(apiService, times(1)).findOne(any(), any(), any());
@@ -491,7 +497,7 @@ public class StarControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd senorpez.trident.v0+json")));
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident.v0+json")));
 
         verifyZeroInteractions(apiService);
     }
@@ -513,15 +519,15 @@ public class StarControllerTest {
 
     @Test
     public void GetSingleStar_ValidSystemId_MismatchStarId_ValidAcceptHeader() throws Exception {
-        when(apiService.findOne(any(), any(), any())).thenReturn(SECOND_SYSTEM, FIRST_STAR);
+        when(apiService.findOne(any(), any(), any())).thenReturn(SECOND_SYSTEM).thenThrow(new StarNotFoundException(FIRST_STAR.getId()));
 
         mockMvc.perform(get(String.format("/systems/%d/stars/%d", SECOND_SYSTEM.getId(), FIRST_STAR.getId())).accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
-                .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
-                .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is(String.format("Solar system %d does not contain star %d", SECOND_SYSTEM.getId(), FIRST_STAR.getId()))));
+                .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
+                .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is(String.format("Star with ID of %d not found", FIRST_STAR.getId()))));
 
         verify(apiService, times(2)).findOne(any(), any(), any());
         verifyNoMoreInteractions(apiService);
@@ -529,15 +535,15 @@ public class StarControllerTest {
 
     @Test
     public void GetSingleStar_ValidSystemId_MismatchStarId_FallbackAcceptHeader() throws Exception {
-        when(apiService.findOne(any(), any(), any())).thenReturn(SECOND_SYSTEM, FIRST_STAR);
+        when(apiService.findOne(any(), any(), any())).thenReturn(SECOND_SYSTEM).thenThrow(new StarNotFoundException(FIRST_STAR.getId()));
 
         mockMvc.perform(get(String.format("/systems/%d/stars/%d", SECOND_SYSTEM.getId(), FIRST_STAR.getId())).accept(FALLBACK))
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
-                .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
-                .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is(String.format("Solar system %d does not contain star %d", SECOND_SYSTEM.getId(), FIRST_STAR.getId()))));
+                .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
+                .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is(String.format("Star with ID of %d not found", FIRST_STAR.getId()))));
 
         verify(apiService, times(2)).findOne(any(), any(), any());
         verifyNoMoreInteractions(apiService);
@@ -553,7 +559,7 @@ public class StarControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd senorpez.trident.v0+json")));
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident.v0+json")));
 
         verifyZeroInteractions(apiService);
     }

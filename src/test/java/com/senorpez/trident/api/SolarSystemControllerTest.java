@@ -221,7 +221,8 @@ public class SolarSystemControllerTest {
                                 fieldWithPath("name").description("System name"),
                                 subsectionWithPath("_links").ignored()),
                         commonLinks.and(
-                                linkWithRel("trident-api:systems").description("List of system resources"))));
+                                linkWithRel("trident-api:systems").description("List of system resources"),
+                                linkWithRel("trident-api:stars").description("List of star resources"))));
 
         verify(apiService, times(1)).findOne(any(), any(), any());
         verifyNoMoreInteractions(apiService);

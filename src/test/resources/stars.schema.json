@@ -78,7 +78,7 @@
       },
       "additionalProperties": false,
       "required": [
-        "trident-api:system"
+        "trident-api:star"
       ]
     },
     "_links": {
