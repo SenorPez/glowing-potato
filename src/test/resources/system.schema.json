@@ -59,10 +59,10 @@
         "curies": {
           "$ref": "#/definitions/curies"
         },
-        "trident-api:stars": {
+        "trident-api:systems": {
           "$ref": "#/definitions/standardLink"
         },
-        "trident-api:systems": {
+        "trident-api:stars": {
           "$ref": "#/definitions/standardLink"
         }
       },
@@ -71,8 +71,8 @@
         "self",
         "index",
         "curies",
-        "trident-api:stars",
-        "trident-api:systems"
+        "trident-api:systems",
+        "trident-api:stars"
       ]
     }
   },

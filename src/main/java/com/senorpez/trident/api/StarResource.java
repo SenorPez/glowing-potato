@@ -10,5 +10,6 @@ class StarResource extends Resource<StarModel> {
     StarResource(final StarModel content, final int solarSystemId, final Link... links) {
         super(content, links);
         this.add(linkTo(methodOn(StarController.class).stars(solarSystemId)).withRel("stars"));
+        this.add(linkTo(methodOn(PlanetController.class).planets(solarSystemId, content.getId())).withRel("planets"));
     }
 }

@@ -12,7 +12,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 
 import static com.jayway.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchema;
 import static com.senorpez.trident.api.DocumentationCommon.commonLinks;
@@ -63,17 +65,25 @@ public class PlanetControllerTest {
             .setId(11)
             .setName("1 Eta Veneris")
             .setSolarMass((float) 0.75)
+            .setPlanets(new HashSet<>(Arrays.asList(
+                    FIRST_PLANET,
+                    SECOND_PLANET)))
             .build();
 
     private static final Star SECOND_STAR = new StarBuilder()
             .setId(21)
             .setName("Sol")
             .setSolarMass((float) 1)
+            .setPlanets(new HashSet<>(Collections.singletonList(
+                    THIRD_PLANET)))
             .build();
 
     private static final SolarSystem FIRST_SYSTEM = new SolarSystemBuilder()
             .setId(1)
             .setName("Eta Veneris")
+            .setStars(new HashSet<>(Arrays.asList(
+                    FIRST_STAR,
+                    SECOND_STAR)))
             .build();
 
     @InjectMocks
@@ -95,6 +105,7 @@ public class PlanetControllerTest {
         this.mockMvc = MockMvcBuilders
                 .standaloneSetup(new PlanetController(apiService))
                 .setMessageConverters(HALMessageConverter.getConverter(Collections.singletonList(ALL)))
+                .setControllerAdvice(new APIExceptionHandler())
                 .apply(documentationConfiguration(this.restDocumentation))
                 .build();
     }
@@ -437,8 +448,8 @@ public class PlanetControllerTest {
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
                                 hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-trident-{rel}"),
-                                hasEntry("href", (Object) "trident-api"),
-                                hasEntry("tempalted", (Object) true)))))
+                                hasEntry("name", (Object) "trident-api"),
+                                hasEntry("templated", (Object) true)))))
                 .andExpect(jsonPath("$._links.trident-api:planets", hasEntry("href", String.format(
                         "http://localhost:8080/systems/%d/stars/%d/planets", FIRST_SYSTEM.getId(), FIRST_STAR.getId()))))
                 .andDo(document("planet",
@@ -478,8 +489,8 @@ public class PlanetControllerTest {
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
                                 hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-trident-{rel}"),
-                                hasEntry("href", (Object) "trident-api"),
-                                hasEntry("tempalted", (Object) true)))))
+                                hasEntry("name", (Object) "trident-api"),
+                                hasEntry("templated", (Object) true)))))
                 .andExpect(jsonPath("$._links.trident-api:planets", hasEntry("href", String.format(
                         "http://localhost:8080/systems/%d/stars/%d/planets", FIRST_SYSTEM.getId(), FIRST_STAR.getId()))));
 

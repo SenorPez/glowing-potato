@@ -180,3 +180,35 @@ include::{snippets}/star/response-fields.adoc[]
 .Links
 
 include::{snippets}/star/links.adoc[]
+
+=== Planets
+
+Provides a list of planet resources.
+
+.Request Header
+
+include::{snippets}/planets/request-headers.adoc[]
+
+.Fields
+
+include::{snippets}/planets/response-fields.adoc[]
+
+.Links
+
+include::{snippets}/planets/links.adoc[]
+
+=== Planet
+
+Provides a planet resource.
+
+.Request Header
+
+include::{snippets}/planet/request-headers.adoc[]
+
+.Fields
+
+include::{snippets}/planet/response-fields.adoc[]
+
+.Links
+
+include::{snippets}/planet/links.adoc[]

@@ -15,7 +15,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 class APIExceptionHandler {
     @ExceptionHandler({
             SolarSystemNotFoundException.class,
-            StarNotFoundException.class
+            StarNotFoundException.class,
+            PlanetNotFoundException.class
     })
     ResponseEntity<ErrorResponse> handleAPIObjectNotFound(final Exception e) {
         return ResponseEntity

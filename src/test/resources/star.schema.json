@@ -64,6 +64,9 @@
         },
         "trident-api:stars": {
           "$ref": "#/definitions/standardLink"
+        },
+        "trident-api:planets": {
+          "$ref": "#/definitions/standardLink"
         }
       },
       "additionalProperties": false,
@@ -71,7 +74,8 @@
         "self",
         "index",
         "curies",
-        "trident-api:stars"
+        "trident-api:stars",
+        "trident-api:planets"
       ]
     }
   },

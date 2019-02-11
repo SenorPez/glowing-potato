@@ -7,7 +7,25 @@
         {
           "id": 1905216634,
           "name": "1 Eta Veneris",
-          "solarMass": 0.75
+          "solarMass": 0.75,
+          "planets": [
+            {
+              "id": -1485460920,
+              "name": "1 Eta Veneris 1"
+            },
+            {
+              "id": -1722015868,
+              "name": "1 Eta Veneris 2"
+            },
+            {
+              "id": -455609026,
+              "name": "1 Eta Veneris 3"
+            },
+            {
+              "id": 272811578,
+              "name": "1 Eta Veneris 4"
+            }
+          ]
         },
         {
           "id": -1385166447,

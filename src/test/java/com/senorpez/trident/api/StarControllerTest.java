@@ -333,7 +333,8 @@ public class StarControllerTest {
                                 fieldWithPath("solarMass").description("Star solar mass."),
                                 subsectionWithPath("_links").ignored()),
                         commonLinks.and(
-                                linkWithRel("trident-api:stars").description("List of star resources."))));
+                                linkWithRel("trident-api:stars").description("List of star resources."),
+                                linkWithRel("trident-api:planets").description("List of planet resources."))));
 
         verify(apiService, times(2)).findOne(any(), any(), any());
         verifyNoMoreInteractions(apiService);
