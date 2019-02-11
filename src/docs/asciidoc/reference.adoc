@@ -1,0 +1,182 @@
+:apiname: Trident API
+
+= {apiname} Reference
+SenorPez;
+:doctype: book
+:icons: font
+:source-highlighter: highlight.js
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+[[overview]]
+== Overview
+
+[[overview-versions]]
+=== Versions
+
+There is only a single version of the {apiname}.
+
+.{apiname} Versions
+|===
+| API Versions | Accept Header
+
+| v0
+| `application/vnd.senorpez.trident.v0+json; charset=UTF-8`
+|===
+
+[[overview-http-methods]]
+=== HTTP Methods
+The following HTTP methods are compatible with the {apiname}.
+
+.Supported HTTP Methods
+|===
+| Method | Usage
+
+| `GET`
+| Used to retrieve a resource.
+|===
+
+[[overview-http-status-codes]]
+=== HTTP Status Codes
+
+The following HTTP status codes are returned by requests to the {apiname}. Any other status codes
+returned may indicate general connection or server failure and are not returned by the API itself.
+
+.HTTP Status Codes
+|===
+| Status Code | Usage
+
+| `200 OK`
+| The request succeeded. The requested resource is sent in the response.
+
+| `402 Payment Required`
+| This code is reserved for when I need extra money.
+
+| `404 Not Found`
+| The requested resource could not be found. An error message is sent in the response.
+
+| `405 Method Not Allowed`
+| The requested method is not allowed. See <<overview-http-methods, HTTP Methods>> for a list of supported
+methods. An error message is sent in the response.
+
+| `406 Not Acceptable`
+| The Accept header of the request is not supported. Individual endpoints describe supported formats. An error message
+is sent in the response.
+|===
+
+[[overview-errors]]
+=== Errors
+
+If the {apiname} returns an error, the response contains a JSON object describing the error. The object has the
+following structure.
+
+.Error Fields
+
+include::{snippets}/error-example/response-fields.adoc[]
+
+Regardless of the `Accept` header of the request, error responses always have a `Content-Type` header of
+`application/json;charset=UTF-8`.
+
+==== Example
+
+A request that attempts to retrieve a solar system that does not exist produces a `404 Not Found` error with the following message:
+
+include::{snippets}/error-example/response-body.adoc[]
+
+[[overview-hypermedia]]
+=== Hypermedia
+
+The {apiname} conforms to http://stateless.co/hal_specification.html[Hypertext Application Language (HAL)] standard.
+
+* Resources are represented by key-value pairs.
+* Collections of resources are contained in an `_embedded` field. Fields of embedded resources may be transformed or
+omitted.
+* Links to other resources are contained in a `_links` field.
+** Users should not create URIs but use the `_links` fields and values to navigate the API.
+** Some resources may be represented by multiple `_links` values depending on the position in the API hierarchy. With
+the exception of the `_links` field, these resources are identical regardless of the link used to reach them.
+
+The following fields are present in the `_links` value of every resource.
+
+.Common Links
+
+include::{snippets}/links/links.adoc[]
+
+[[resources-trident]]
+== Trident Resources
+
+[[resources-trident-index]]
+=== Index
+
+Provides the entry point to the {apiname}.
+
+.Request Header
+
+include::{snippets}/index/request-headers.adoc[]
+
+.Links
+
+include::{snippets}/index/links.adoc[]
+
+[[resources-trident-systems]]
+=== Solar Systems
+
+Provides a list of solar system resources.
+
+.Request Header
+
+include::{snippets}/systems/request-headers.adoc[]
+
+.Fields
+
+include::{snippets}/systems/response-fields.adoc[]
+
+[[resources-trident-system]]
+=== Solar System
+
+Provides a solar system resource.
+
+.Request Header
+
+include::{snippets}/system/request-headers.adoc[]
+
+.Fields
+
+include::{snippets}/system/response-fields.adoc[]
+
+.Links
+
+include::{snippets}/system/links.adoc[]
+
+=== Stars
+
+Provides a list of star resources.
+
+.Request Header
+
+include::{snippets}/stars/request-headers.adoc[]
+
+.Fields
+
+include::{snippets}/stars/response-fields.adoc[]
+
+.Links
+
+include::{snippets}/stars/links.adoc[]
+
+=== Star
+
+Provides a star resource.
+
+.Request Header
+
+include::{snippets}/star/request-headers.adoc[]
+
+.Fields
+
+include::{snippets}/star/response-fields.adoc[]
+
+.Links
+
+include::{snippets}/star/links.adoc[]

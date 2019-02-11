@@ -144,14 +144,18 @@ public class StarControllerTest {
                 .andDo(document("stars",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName("Accept")
+                                        .description("Accept header.")
+                                        .attributes(key("acceptvalue").value(TRIDENT_API_VALUE))),
                         responseFields(
-                                fieldWithPath("_embedded.trident-api:star").description("Star resources"),
-                                fieldWithPath("_embedded.trident-api:star[].id").description("ID number"),
-                                fieldWithPath("_embedded.trident-api:star[].name").description("Name"),
+                                fieldWithPath("_embedded.trident-api:star").description("Star resource."),
+                                fieldWithPath("_embedded.trident-api:star[].id").description("Star ID number."),
+                                fieldWithPath("_embedded.trident-api:star[].name").description("Star name."),
                                 subsectionWithPath("_links").ignored(),
                                 subsectionWithPath("_embedded.trident-api:star[]._links").ignored()),
                         commonLinks.and(
-                                linkWithRel("trident-api:system").description("Solar system resource"))));
+                                linkWithRel("trident-api:system").description("Solar system resource."))));
 
         verify(apiService, times(1)).findOne(any(), any(), any());
         verifyNoMoreInteractions(apiService);
@@ -321,15 +325,15 @@ public class StarControllerTest {
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
                                 headerWithName("Accept")
-                                        .description("Accept header")
+                                        .description("Accept header.")
                                         .attributes(key("acceptvalue").value(TRIDENT_API_VALUE))),
                         responseFields(
-                                fieldWithPath("id").description("ID number"),
-                                fieldWithPath("name").description("Name"),
-                                fieldWithPath("solarMass").description("Solar mass"),
+                                fieldWithPath("id").description("Star ID number."),
+                                fieldWithPath("name").description("Star name."),
+                                fieldWithPath("solarMass").description("Star solar mass."),
                                 subsectionWithPath("_links").ignored()),
                         commonLinks.and(
-                                linkWithRel("trident-api:stars").description("List of star resources"))));
+                                linkWithRel("trident-api:stars").description("List of star resources."))));
 
         verify(apiService, times(2)).findOne(any(), any(), any());
         verifyNoMoreInteractions(apiService);

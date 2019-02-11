@@ -113,12 +113,12 @@ public class SolarSystemControllerTest {
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
                                 headerWithName("Accept")
-                                .description("Accept header")
+                                .description("Accept header.")
                                 .attributes(key("acceptvalue").value(TRIDENT_API_VALUE))),
                         responseFields(
-                                fieldWithPath("_embedded.trident-api:system").description("Solar system resources"),
-                                fieldWithPath("_embedded.trident-api:system[].id").description("ID number"),
-                                fieldWithPath("_embedded.trident-api:system[].name").description("Name"),
+                                fieldWithPath("_embedded.trident-api:system").description("Solar system resource."),
+                                fieldWithPath("_embedded.trident-api:system[].id").description("Solar system ID number."),
+                                fieldWithPath("_embedded.trident-api:system[].name").description("Solar system name."),
                                 subsectionWithPath("_links").ignored(),
                                 subsectionWithPath("_embedded.trident-api:system[]._links").ignored()),
                         commonLinks));
@@ -214,15 +214,15 @@ public class SolarSystemControllerTest {
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
                                 headerWithName("Accept")
-                                        .description("Accept header")
+                                        .description("Accept header.")
                                         .attributes(key("acceptvalue").value(TRIDENT_API_VALUE))),
                         responseFields(
-                                fieldWithPath("id").description("ID number"),
-                                fieldWithPath("name").description("System name"),
+                                fieldWithPath("id").description("ID number."),
+                                fieldWithPath("name").description("Solar system name."),
                                 subsectionWithPath("_links").ignored()),
                         commonLinks.and(
-                                linkWithRel("trident-api:systems").description("List of system resources"),
-                                linkWithRel("trident-api:stars").description("List of star resources"))));
+                                linkWithRel("trident-api:systems").description("List of solar system resources."),
+                                linkWithRel("trident-api:stars").description("List of star resources."))));
 
         verify(apiService, times(1)).findOne(any(), any(), any());
         verifyNoMoreInteractions(apiService);
@@ -291,7 +291,14 @@ public class SolarSystemControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is(String.format("Solar system with ID of %d not found", 8675309))));
+                .andExpect(jsonPath("$.detail", is(String.format("Solar system with ID of %d not found", 8675309))))
+                .andDo(document("error-example",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        responseFields(
+                                fieldWithPath("code").description("HTTP status code."),
+                                fieldWithPath("message").description("HTTP status code message."),
+                                fieldWithPath("detail").description("Detailed error description (if available)."))));
 
         verify(apiService, times(1)).findOne(any(), any(), any());
         verifyNoMoreInteractions(apiService);

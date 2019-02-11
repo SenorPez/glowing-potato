@@ -16,7 +16,7 @@ import static com.jayway.restassured.module.jsv.JsonSchemaValidator.matchesJsonS
 import static com.senorpez.trident.api.DocumentationCommon.commonLinks;
 import static com.senorpez.trident.api.SupportedMediaTypes.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.hasEntry;
 import static org.springframework.http.MediaType.ALL;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
@@ -44,7 +44,9 @@ public class RootControllerTest {
             preprocessRequest(prettyPrint()),
             preprocessResponse(prettyPrint()),
             relaxedLinks(halLinks(),
-                    linkWithRel("self").description("This resource")));
+                    linkWithRel("self").description("This resource."),
+                    linkWithRel("index").description("API index."),
+                    linkWithRel("curies").description("Compact URI resolver.")));
 
     @Before
     public void setUp() {
@@ -72,10 +74,10 @@ public class RootControllerTest {
                         preprocessResponse(prettyPrint()),
                         requestHeaders(
                                 headerWithName("Accept")
-                                        .description("Accept header")
+                                        .description("Accept header.")
                                         .attributes(key("acceptvalue").value(TRIDENT_API_VALUE))),
                         commonLinks.and(
-                                linkWithRel("trident-api:systems").description("Solar systems"))));
+                                linkWithRel("trident-api:systems").description("List of solar system resources."))));
     }
 
     @Test

@@ -74,6 +74,6 @@ public class Application {
 
     @Bean
     public CurieProvider curieProvider() {
-        return new DefaultCurieProvider("trident-api", new UriTemplate("/docs/{rel}"));
+        return new DefaultCurieProvider("trident-api", new UriTemplate("/docs/reference.html#resources-trident-{rel}"));
     }
 }
