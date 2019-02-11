@@ -136,7 +136,7 @@ public class StarControllerTest {
                         "http://localhost:8080/systems/%d/stars", FIRST_SYSTEM.getId()))))
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
-                                hasEntry("href", (Object) "http://localhost:8080/docs/{rel}"),
+                                hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-trident-{rel}"),
                                 hasEntry("name", (Object) "trident-api"),
                                 hasEntry("templated", (Object) true)))))
                 .andExpect(jsonPath("$._links.trident-api:system", hasEntry("href", String.format(
@@ -195,7 +195,7 @@ public class StarControllerTest {
                         "http://localhost:8080/systems/%d/stars", FIRST_SYSTEM.getId()))))
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
-                                hasEntry("href", (Object) "http://localhost:8080/docs/{rel}"),
+                                hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-trident-{rel}"),
                                 hasEntry("name", (Object) "trident-api"),
                                 hasEntry("templated", (Object) true)))))
                 .andExpect(jsonPath("$._links.trident-api:system", hasEntry("href", String.format(
@@ -315,7 +315,7 @@ public class StarControllerTest {
                         FIRST_STAR.getId()))))
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
-                                hasEntry("href", (Object) "http://localhost:8080/docs/{rel}"),
+                                hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-trident-{rel}"),
                                 hasEntry("name", (Object) "trident-api"),
                                 hasEntry("templated", (Object) true)))))
                 .andExpect(jsonPath("$._links.trident-api:stars", hasEntry("href", String.format(
@@ -357,7 +357,7 @@ public class StarControllerTest {
                         FIRST_STAR.getId()))))
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
-                                hasEntry("href", (Object) "http://localhost:8080/docs/{rel}"),
+                                hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-trident-{rel}"),
                                 hasEntry("name", (Object) "trident-api"),
                                 hasEntry("templated", (Object) true)))))
                 .andExpect(jsonPath("$._links.trident-api:stars", hasEntry("href", String.format(

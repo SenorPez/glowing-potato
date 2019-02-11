@@ -18,7 +18,7 @@ class HALMessageConverter {
         final ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new Jackson2HalModule());
 
-        final DefaultCurieProvider curieProvider = new DefaultCurieProvider("trident-api", new UriTemplate("/docs/{rel}"));
+        final DefaultCurieProvider curieProvider = new DefaultCurieProvider("trident-api", new UriTemplate("/docs/reference.html#resources-trident-{rel}"));
         final ResourcesRelProvider relProvider = new ResourcesRelProvider();
 
         objectMapper.setHandlerInstantiator(new Jackson2HalModule.HalHandlerInstantiator(relProvider, curieProvider, null));

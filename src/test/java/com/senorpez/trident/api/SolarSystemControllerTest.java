@@ -105,7 +105,7 @@ public class SolarSystemControllerTest {
                 .andExpect(jsonPath("$._links.self", hasEntry("href", "http://localhost:8080/systems")))
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
-                                hasEntry("href", (Object) "http://localhost:8080/docs/{rel}"),
+                                hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-trident-{rel}"),
                                 hasEntry("name", (Object) "trident-api"),
                                 hasEntry("templated", (Object) true)))))
                 .andDo(document("systems",
@@ -153,7 +153,7 @@ public class SolarSystemControllerTest {
                 .andExpect(jsonPath("$._links.self", hasEntry("href", "http://localhost:8080/systems")))
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
-                                hasEntry("href", (Object) "http://localhost:8080/docs/{rel}"),
+                                hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-trident-{rel}"),
                                 hasEntry("name", (Object) "trident-api"),
                                 hasEntry("templated", (Object) true)))));
 
@@ -205,7 +205,7 @@ public class SolarSystemControllerTest {
                 .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/systems/%d", FIRST_SYSTEM.getId()))))
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
-                                hasEntry("href", (Object) "http://localhost:8080/docs/{rel}"),
+                                hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-trident-{rel}"),
                                 hasEntry("name", (Object) "trident-api"),
                                 hasEntry("templated", (Object) true)))))
                 .andExpect(jsonPath("$._links.trident-api:systems", hasEntry("href", "http://localhost:8080/systems")))
@@ -242,7 +242,7 @@ public class SolarSystemControllerTest {
                 .andExpect(jsonPath("$._links.self", hasEntry("href", String.format("http://localhost:8080/systems/%d", FIRST_SYSTEM.getId()))))
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
-                                hasEntry("href", (Object) "http://localhost:8080/docs/{rel}"),
+                                hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-trident-{rel}"),
                                 hasEntry("name", (Object) "trident-api"),
                                 hasEntry("templated", (Object) true)))))
                 .andExpect(jsonPath("$._links.trident-api:systems", hasEntry("href", "http://localhost:8080/systems")));
