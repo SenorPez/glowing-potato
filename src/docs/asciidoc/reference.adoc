@@ -149,6 +149,7 @@ include::{snippets}/system/response-fields.adoc[]
 
 include::{snippets}/system/links.adoc[]
 
+[[resources-trident-stars]]
 === Stars
 
 Provides a list of star resources.
@@ -165,6 +166,7 @@ include::{snippets}/stars/response-fields.adoc[]
 
 include::{snippets}/stars/links.adoc[]
 
+[[resources-trident-star]]
 === Star
 
 Provides a star resource.
@@ -181,6 +183,7 @@ include::{snippets}/star/response-fields.adoc[]
 
 include::{snippets}/star/links.adoc[]
 
+[[resources-trident-planets]]
 === Planets
 
 Provides a list of planet resources.
@@ -197,6 +200,7 @@ include::{snippets}/planets/response-fields.adoc[]
 
 include::{snippets}/planets/links.adoc[]
 
+[[resources-trident-planet]]
 === Planet
 
 Provides a planet resource.

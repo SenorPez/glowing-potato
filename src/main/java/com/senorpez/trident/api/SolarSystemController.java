@@ -1,7 +1,7 @@
 package com.senorpez.trident.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.Resources;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,15 +37,15 @@ class SolarSystemController {
     }
 
     @RequestMapping
-    ResponseEntity<EmbeddedSolarSystemResources> solarSystems() {
+    ResponseEntity<Resources<SolarSystemResource>> solarSystems() {
         final Collection<SolarSystem> solarSystems = apiService.findAll(this.solarSystems);
-        final Collection<EmbeddedSolarSystemModel> solarSystemModels = solarSystems.stream()
-                .map(EmbeddedSolarSystemModel::new)
+        final Collection<SolarSystemModel> solarSystemModels = solarSystems.stream()
+                .map(SolarSystemModel::new)
                 .collect(Collectors.toList());
-        final Collection<Resource<EmbeddedSolarSystemModel>> solarSystemResources = solarSystemModels.stream()
-                .map(EmbeddedSolarSystemModel::toResource)
+        final Collection<SolarSystemResource> solarSystemResources = solarSystemModels.stream()
+                .map(SolarSystemModel::toResource)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(new EmbeddedSolarSystemResources(solarSystemResources));
+        return ResponseEntity.ok(SolarSystemResource.makeResources(solarSystemResources));
     }
 
     @RequestMapping("/{solarSystemId}")
