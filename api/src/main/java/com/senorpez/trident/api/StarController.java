@@ -49,7 +49,6 @@ class StarController {
                 .map(star -> star.toResource(solarSystemId))
                 .collect(Collectors.toList());
         return ResponseEntity.ok(new EmbeddedStarResources(starResources, solarSystemId));
-
     }
 
     @RequestMapping("/{starId}")

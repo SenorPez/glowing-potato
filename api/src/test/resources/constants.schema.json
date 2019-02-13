@@ -1,14 +1,14 @@
 {
   "$schema": "http://json-schema.org/draft-6/schema",
-  "title": "Trident API Root Schema",
-  "description": "Schema for the root of Trident API",
+  "title": "Trident API Solar System Collection Schema",
+  "description": "Schema for collections of solar systems in Trident API",
   "definitions": {
     "standardLink": {
       "type": "object",
-      "properties" : {
+      "properties": {
         "href": {
           "type": "string",
-          "pattern": "^http[s]?://[a-z.]+(:[0-9]+)*((/[a-z0-9-]+)+|/)$"
+          "pattern": "^http[s]?://[a-z.]+(:[0-9]+)*((/[A-Za-z0-9-]+)+|/)$"
         }
       },
       "additionalProperties": false,
@@ -41,6 +41,42 @@
   },
   "type": "object",
   "properties": {
+    "_embedded": {
+      "type": "object",
+      "properties": {
+        "trident-api:constant": {
+          "type": "array",
+          "items": {
+            "properties": {
+              "symbol": {
+                "type": "string"
+              },
+              "_links": {
+                "type": "object",
+                "properties": {
+                  "self": {
+                    "$ref": "#/definitions/standardLink"
+                  }
+                },
+                "additionalProperties": false,
+                "required": [
+                  "self"
+                ]
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "symbol",
+              "_links"
+            ]
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "trident-api:constant"
+      ]
+    },
     "_links": {
       "type": "object",
       "properties": {
@@ -52,25 +88,19 @@
         },
         "curies": {
           "$ref": "#/definitions/curies"
-        },
-        "trident-api:systems": {
-          "$ref": "#/definitions/standardLink"
-        },
-        "trident-api:constants": {
-          "$ref": "#/definitions/standardLink"
         }
       },
       "additionalProperties": false,
       "required": [
         "self",
         "index",
-        "curies",
-        "trident-api:systems"
+        "curies"
       ]
     }
   },
   "additionalProperties": false,
   "required": [
+    "_embedded",
     "_links"
   ]
 }

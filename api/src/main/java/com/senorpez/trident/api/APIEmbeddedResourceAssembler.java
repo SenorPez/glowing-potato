@@ -4,9 +4,10 @@ import org.springframework.hateoas.Identifiable;
 import org.springframework.hateoas.ResourceSupport;
 import org.springframework.hateoas.mvc.IdentifiableResourceAssemblerSupport;
 
+import java.io.Serializable;
 import java.util.function.Supplier;
 
-class APIEmbeddedResourceAssembler<M extends Identifiable<Integer>, R extends ResourceSupport> extends IdentifiableResourceAssemblerSupport<M, R> {
+class APIEmbeddedResourceAssembler<M extends Identifiable<? extends Serializable>, R extends ResourceSupport> extends IdentifiableResourceAssemblerSupport<M, R> {
     private final Supplier<R> supplier;
 
     APIEmbeddedResourceAssembler(final Class controllerClass, final Class<R> resourceType, final Supplier<R> supplier) {

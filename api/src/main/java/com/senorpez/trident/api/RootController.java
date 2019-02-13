@@ -22,6 +22,7 @@ class RootController {
         final ResourceSupport root = new ResourceSupport();
         root.add(linkTo(methodOn(RootController.class).root()).withSelfRel());
         root.add(linkTo(methodOn(RootController.class).root()).withRel("index"));
+        root.add(linkTo(methodOn(ConstantController.class).constants()).withRel("constants"));
         root.add(linkTo(methodOn(SolarSystemController.class).solarSystems()).withRel("systems"));
         return ResponseEntity.ok(root);
     }

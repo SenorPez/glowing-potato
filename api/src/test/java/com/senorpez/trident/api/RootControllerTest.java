@@ -68,6 +68,8 @@ public class RootControllerTest {
                 .andExpect(content().contentType(TRIDENT_API))
                 .andExpect(content().string(matchesJsonSchema(OBJECT_SCHEMA)))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", "http://localhost:8080/")))
+                .andExpect(jsonPath("$._links.trident-api:systems", hasEntry("href", "http://localhost:8080/systems")))
+                .andExpect(jsonPath("$._links.trident-api:constants", hasEntry("href", "http://localhost:8080/constants")))
                 .andDo(createLinksSnippets)
                 .andDo(document("index",
                         preprocessRequest(prettyPrint()),
@@ -77,7 +79,8 @@ public class RootControllerTest {
                                         .description("Accept header.")
                                         .attributes(key("acceptvalue").value(TRIDENT_API_VALUE))),
                         commonLinks.and(
-                                linkWithRel("trident-api:systems").description("List of solar system resources."))));
+                                linkWithRel("trident-api:systems").description("List of solar system resources."),
+                                linkWithRel("trident-api:constants").description("List of constant resources."))));
     }
 
     @Test
@@ -86,7 +89,9 @@ public class RootControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(FALLBACK))
                 .andExpect(content().string(matchesJsonSchema(OBJECT_SCHEMA)))
-                .andExpect(jsonPath("$._links.self", hasEntry("href", "http://localhost:8080/")));
+                .andExpect(jsonPath("$._links.self", hasEntry("href", "http://localhost:8080/")))
+                .andExpect(jsonPath("$._links.trident-api:systems", hasEntry("href", "http://localhost:8080/systems")))
+                .andExpect(jsonPath("$._links.trident-api:constants", hasEntry("href", "http://localhost:8080/constants")));
     }
 
     @Test

@@ -1,14 +1,14 @@
 {
   "$schema": "http://json-schema.org/draft-6/schema",
-  "title": "Trident API Root Schema",
-  "description": "Schema for the root of Trident API",
+  "title": "Trident API Constant Schema",
+  "description": "Schema for a constant in Trident API",
   "definitions": {
     "standardLink": {
       "type": "object",
-      "properties" : {
+      "properties": {
         "href": {
           "type": "string",
-          "pattern": "^http[s]?://[a-z.]+(:[0-9]+)*((/[a-z0-9-]+)+|/)$"
+          "pattern": "^http[s]?://[a-z.]+(:[0-9]+)*((/[A-Za-z0-9-]+)+|/)$"
         }
       },
       "additionalProperties": false,
@@ -41,6 +41,18 @@
   },
   "type": "object",
   "properties": {
+    "name": {
+      "type": "string"
+    },
+    "symbol": {
+      "type": "string"
+    },
+    "value": {
+      "type": "number"
+    },
+    "units": {
+      "type": "string"
+    },
     "_links": {
       "type": "object",
       "properties": {
@@ -53,9 +65,6 @@
         "curies": {
           "$ref": "#/definitions/curies"
         },
-        "trident-api:systems": {
-          "$ref": "#/definitions/standardLink"
-        },
         "trident-api:constants": {
           "$ref": "#/definitions/standardLink"
         }
@@ -65,12 +74,16 @@
         "self",
         "index",
         "curies",
-        "trident-api:systems"
+        "trident-api:constants"
       ]
     }
   },
   "additionalProperties": false,
   "required": [
+    "name",
+    "symbol",
+    "value",
+    "units",
     "_links"
   ]
 }
