@@ -97,6 +97,12 @@ public class ConstantControllerTest {
                                 hasEntry(equalTo("_links"),
                                         hasEntry(equalTo("self"),
                                                 hasEntry("href", "http://localhost:8080/constants/Mpln")))))))
+                .andExpect(jsonPath("$._embedded.trident-api:constant", hasItem(
+                        allOf(
+                                hasEntry("symbol", (Object) "Rpln"),
+                                hasEntry(equalTo("_links"),
+                                        hasEntry(equalTo("self"),
+                                                hasEntry("href", "http://localhost:8080/constants/Rpln")))))))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", "http://localhost:8080/constants")))
                 .andExpect(jsonPath("$._links.curies", everyItem(
@@ -147,6 +153,12 @@ public class ConstantControllerTest {
                                 hasEntry(equalTo("_links"),
                                         hasEntry(equalTo("self"),
                                                 hasEntry("href", "http://localhost:8080/constants/Mpln")))))))
+                .andExpect(jsonPath("$._embedded.trident-api:constant", hasItem(
+                        allOf(
+                                hasEntry("symbol", (Object) "Rpln"),
+                                hasEntry(equalTo("_links"),
+                                        hasEntry(equalTo("self"),
+                                                hasEntry("href", "http://localhost:8080/constants/Rpln")))))))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", "http://localhost:8080/constants")))
                 .andExpect(jsonPath("$._links.curies", everyItem(
@@ -439,6 +451,88 @@ public class ConstantControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(Mpln);
 
         mockMvc.perform(put(String.format("/constants/%s", Mpln.getSymbol())).accept(TRIDENT_API))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
+                .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
+
+        verifyZeroInteractions(apiService);
+    }
+
+    @Test
+    public void GetConstant_Rpln_ValidAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(Rpln);
+
+        mockMvc.perform(get(String.format("/constants/%s", Rpln.getSymbol())).accept(TRIDENT_API))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(TRIDENT_API))
+                .andExpect(content().string(matchesJsonSchema(CONSTANT_SCHEMA)))
+                .andExpect(jsonPath("$.name", is("Standard planetary equatorial radius")))
+                .andExpect(jsonPath("$.symbol", is("Rpln")))
+                .andExpect(jsonPath("$.value", closeTo(6378136.6, 0.00001e-11)))
+                .andExpect(jsonPath("$.units", is("m")))
+                .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format(
+                        "http://localhost:8080/constants/%s", Rpln.getSymbol()))))
+                .andExpect(jsonPath("$._links.curies", everyItem(
+                        allOf(
+                                hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-trident-{rel}"),
+                                hasEntry("name", (Object) "trident-api"),
+                                hasEntry("templated", (Object) true)))))
+                .andExpect(jsonPath("$._links.trident-api:constants", hasEntry("href", "http://localhost:8080/constants")));
+
+        verify(apiService, times(1)).findOne(any(), any(), any());
+        verifyNoMoreInteractions(apiService);
+    }
+
+    @Test
+    public void GetConstant_Rpln_FallbackAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(Rpln);
+
+        mockMvc.perform(get(String.format("/constants/%s", Rpln.getSymbol())).accept(FALLBACK))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(FALLBACK))
+                .andExpect(content().string(matchesJsonSchema(CONSTANT_SCHEMA)))
+                .andExpect(jsonPath("$.name", is("Standard planetary equatorial radius")))
+                .andExpect(jsonPath("$.symbol", is("Rpln")))
+                .andExpect(jsonPath("$.value", closeTo(6378136.6, 0.00001e-11)))
+                .andExpect(jsonPath("$.units", is("m")))
+                .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format(
+                        "http://localhost:8080/constants/%s", Rpln.getSymbol()))))
+                .andExpect(jsonPath("$._links.curies", everyItem(
+                        allOf(
+                                hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-trident-{rel}"),
+                                hasEntry("name", (Object) "trident-api"),
+                                hasEntry("templated", (Object) true)))))
+                .andExpect(jsonPath("$._links.trident-api:constants", hasEntry("href", "http://localhost:8080/constants")));
+
+        verify(apiService, times(1)).findOne(any(), any(), any());
+        verifyNoMoreInteractions(apiService);
+    }
+
+    @Test
+    public void GetConstant_Rpln_InvalidAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(Rpln);
+
+        mockMvc.perform(get(String.format("/constants/%s", Rpln.getSymbol())).accept(INVALID_MEDIA_TYPE))
+                .andExpect(status().isNotAcceptable())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
+                .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident.v0+json")));
+
+        verifyZeroInteractions(apiService);
+    }
+
+    @Test
+    public void GetConstant_Rpln_InvalidMethod() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(Rpln);
+
+        mockMvc.perform(put(String.format("/constants/%s", Rpln.getSymbol())).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
