@@ -1,11 +1,8 @@
 package com.senorpez.trident.api;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-
 public enum Constant {
-    G ("Newtonian constant of gravitation", "G", 6.67408e-11, "m^3*kg^-1*s^-2");
+    G ("Newtonian constant of gravitation", "G", 6.67408e-11, "m^3*kg^-1*s^-2"),
+    Msol ("Standard solar mass", "Msol", 1.98847e30, "kg");
 
     private final String name;
     private final String symbol;
@@ -33,9 +30,5 @@ public enum Constant {
 
     public String getUnits() {
         return units;
-    }
-
-    static public List<Constant> getAll() {
-        return new ArrayList<>(EnumSet.allOf(Constant.class));
     }
 }
