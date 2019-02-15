@@ -191,12 +191,13 @@ def transfer():
     _, gm_s1 = get_star("Eta Veneris", "1 Eta Veneris")
     origin = get_planet(flask_request.values['origin'], "green", gm_s1)
     target = get_planet(flask_request.values['target'], "grey", gm_s1)
-
     origin_orbit_radius = origin.radius + 200000
     target_orbit_radius = target.radius + 200000
 
     t0 = epoch_from_string(str(datetime.now()))
     t0_number = int(t0.mjd2000)
+    launch_time_offset = t0_number
+    flight_time_offset = 50
 
     fig = plt.figure(figsize=(4, 4))
     orbit_ax = fig.gca(projection='3d', proj_type='ortho')
@@ -204,51 +205,59 @@ def transfer():
     orbit_ax.set_aspect('equal')
 
     flight_times = np.array(range(50, 251))
-    flight_time_offset = 50
     launch_times = np.array(range(t0_number, t0_number + 501))
-    launch_time_offset = t0_number
     delta_v = np.empty((len(flight_times), len(launch_times)))
 
-    for launch_time in launch_times:
-        for flight_time in flight_times:
-            launch_time = int(launch_time)
-            flight_time = int(flight_time)
+    if ('launch_time' not in flask_request.values) and ('flight_time' not in flask_request.values):
+        for launch_time in launch_times:
+            for flight_time in flight_times:
+                launch_time = int(launch_time)
+                flight_time = int(flight_time)
 
-            t1 = epoch(launch_time)
-            t2 = epoch(launch_time + flight_time)
-            dt = (t2.mjd - t1.mjd)*DAY2SEC
-            r1, v1 = origin.eph(t1)
-            r2, v2 = target.eph(t2)
-            l = lambert_problem(list(r1), list(r2), dt, gm_s1)
+                t1 = epoch(launch_time)
+                t2 = epoch(launch_time + flight_time)
+                dt = (t2.mjd - t1.mjd)*DAY2SEC
+                r1, v1 = origin.eph(t1)
+                r2, v2 = target.eph(t2)
+                l = lambert_problem(list(r1), list(r2), dt, gm_s1)
 
-            delta_vs = list()
+                delta_vs = list()
 
-            for x in range(l.get_Nmax() + 1):
-                vp_vec = np.array(v1)
-                vs_vec = np.array(l.get_v1()[x])
-                vsp_vec = vs_vec - vp_vec
-                vsp = np.linalg.norm(vsp_vec)
-                vo = sqrt(vsp*vsp + 2*origin.mu_self/origin_orbit_radius)
-                inj_delta_v = vo - sqrt(origin.mu_self/origin_orbit_radius)
+                for x in range(l.get_Nmax() + 1):
+                    vp_vec = np.array(v1)
+                    vs_vec = np.array(l.get_v1()[x])
+                    vsp_vec = vs_vec - vp_vec
+                    vsp = np.linalg.norm(vsp_vec)
+                    vo = sqrt(vsp*vsp + 2*origin.mu_self/origin_orbit_radius)
+                    inj_delta_v = vo - sqrt(origin.mu_self/origin_orbit_radius)
 
-                vp_vec = np.array(v2)
-                vs_vec = np.array(l.get_v2()[x])
-                vsp_vec = vs_vec - vp_vec
-                vsp = np.linalg.norm(vsp_vec)
-                vo = sqrt(vsp*vsp + 2*target.mu_self/target_orbit_radius)
-                ins_delta_v = vo - sqrt(target.mu_self/target_orbit_radius)
+                    vp_vec = np.array(v2)
+                    vs_vec = np.array(l.get_v2()[x])
+                    vsp_vec = vs_vec - vp_vec
+                    vsp = np.linalg.norm(vsp_vec)
+                    vo = sqrt(vsp*vsp + 2*target.mu_self/target_orbit_radius)
+                    ins_delta_v = vo - sqrt(target.mu_self/target_orbit_radius)
 
-                delta_vs.append(inj_delta_v + ins_delta_v)
+                    delta_vs.append(inj_delta_v + ins_delta_v)
 
-            delta_v[flight_time-flight_time_offset, launch_time-launch_time_offset] = min(delta_vs)
+                delta_v[flight_time-flight_time_offset, launch_time-launch_time_offset] = min(delta_vs)
 
-    min_delta_v = np.min(delta_v)
-    find_min = (delta_v == min_delta_v).nonzero()
-    min_delta_v_flight_time = find_min[0][0]
-    min_delta_v_launch_time = find_min[1][0]
+        min_delta_v = np.min(delta_v)
+        find_min = (delta_v == min_delta_v).nonzero()
+        min_delta_v_flight_time = find_min[0][0]
+        min_delta_v_launch_time = find_min[1][0]
 
-    launch_time = int(min_delta_v_launch_time) + launch_time_offset
-    flight_time = int(min_delta_v_flight_time) + flight_time_offset
+        launch_time = int(min_delta_v_launch_time) + launch_time_offset
+        flight_time = int(min_delta_v_flight_time) + flight_time_offset
+    else:
+        min_delta_v_flight_time = int(flask_request.values['flight_time']) - flight_time_offset
+        min_delta_v_launch_time = int(flask_request.values['launch_time'])
+
+        flight_time = min_delta_v_flight_time + flight_time_offset
+        launch_time = min_delta_v_launch_time + launch_time_offset
+
+        min_delta_v = flask_request.values['delta_v']
+
     t1 = epoch(int(launch_time))
     t2 = epoch(int(launch_time) + int(flight_time))
     plot_planet(origin, t0=t1, color=origin.color, legend=True, units=AU, ax=orbit_ax)

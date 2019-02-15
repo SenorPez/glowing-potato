@@ -52,6 +52,26 @@ $(document).ready(function() {
       $("#launch_time").text(data.launch_time);
       $("#flight_time").text(data.flight_time);
       $("#delta_v").text(data.min_delta_v);
+
+      porkchopPlot.on('plotly_click', function(data) {
+        var x = data.points[0].x;
+        var y = data.points[0].y;
+        var delta_v = data.points[0].z;
+
+        $.post(
+          "http://senorpez.com:5001/transfer",
+            {origin: defaultOrigin, target: defaultTarget, flight_time: y, launch_time: x, delta_v: delta_v},
+          function(data) {
+            $("#orbit").attr('src', 'http://senorpez.com/orbit.png?' + $.now());
+            $("#orbit-x").attr('src', 'http://senorpez.com/orbit-x.png?' + $.now());
+            $("#orbit-y").attr('src', 'http://senorpez.com/orbit-y.png?' + $.now());
+            $("#orbit-z").attr('src', 'http://senorpez.com/orbit-z.png?' + $.now());
+            $("#launch_time").text(data.launch_time);
+            $("#flight_time").text(data.flight_time);
+            $("#delta_v").text(data.min_delta_v);
+          }
+        );
+      });
     }
   );
 });
