@@ -1,12 +1,14 @@
 from datetime import datetime
 from math import sqrt
-import numpy as np
-from flask import Flask, jsonify
-from flask_cors import CORS
-import requests
 
+from flask import Flask, jsonify, request as flask_request
+from flask_cors import CORS
+import matplotlib.pyplot as plt
+import numpy as np
 from pykep import AU, DAY2SEC, SEC2DAY, epoch, lambert_problem, epoch_from_string
 from pykep.planet import keplerian as planet
+from pykep.orbit_plots import plot_lambert, plot_planet
+import requests
 
 def create_planet(planet_name, planet_color, star_link, gm_star):
     # Get planetary mass, radius, GM, and planet object of 1 Eta Veneris 3
@@ -184,25 +186,22 @@ def orbit():
         c=planet_colors,
         n=planet_names)
 
-@APP.route("/transfer", methods=['GET'])
+@APP.route("/transfer", methods=['POST'])
 def transfer():
-    star_link, gm_s1 = get_star("Eta Veneris", "1 Eta Veneris")
-    origin = create_planet(
-        "1 Eta Veneris 3",
-        "green",
-        star_link,
-        gm_s1)
-    target = create_planet(
-        "1 Eta Veneris 4",
-        "grey",
-        star_link,
-        gm_s1)
+    _, gm_s1 = get_star("Eta Veneris", "1 Eta Veneris")
+    origin = get_planet(flask_request.values['origin'], "green", gm_s1)
+    target = get_planet(flask_request.values['target'], "grey", gm_s1)
 
     origin_orbit_radius = origin.radius + 200000
     target_orbit_radius = target.radius + 200000
 
     t0 = epoch_from_string(str(datetime.now()))
     t0_number = int(t0.mjd2000)
+
+    fig = plt.figure(figsize=(4, 4))
+    orbit_ax = fig.gca(projection='3d', proj_type='ortho')
+    orbit_ax.scatter([0], [0], [0], color='orange')
+    orbit_ax.set_aspect('equal')
 
     flight_times = np.array(range(50, 251))
     flight_time_offset = 50
@@ -243,7 +242,52 @@ def transfer():
 
             delta_v[flight_time-flight_time_offset, launch_time-launch_time_offset] = min(delta_vs)
 
-    return jsonify(success=True, delta_v=delta_v.tolist())
+    min_delta_v = np.min(delta_v)
+    find_min = (delta_v == min_delta_v).nonzero()
+    min_delta_v_flight_time = find_min[0][0]
+    min_delta_v_launch_time = find_min[1][0]
+
+    launch_time = int(min_delta_v_launch_time) + launch_time_offset
+    flight_time = int(min_delta_v_flight_time) + flight_time_offset
+    t1 = epoch(int(launch_time))
+    t2 = epoch(int(launch_time) + int(flight_time))
+    plot_planet(origin, t0=t1, color=origin.color, legend=True, units=AU, ax=orbit_ax)
+    plot_planet(target, t0=t2, color=target.color, legend=True, units=AU, ax=orbit_ax)
+
+    max_value = max(
+        max([abs(x) for x in orbit_ax.get_xlim()]),
+        max([abs(y) for y in orbit_ax.get_ylim()]))
+    max_z_value = max([abs(z) for z in orbit_ax.get_zlim()])
+
+    dt = (t2.mjd - t1.mjd)*DAY2SEC
+    r1, v1 = origin.eph(t1)
+    r2, v2 = target.eph(t2)
+    l = lambert_problem(list(r1), list(r2), dt, gm_s1)
+    plot_lambert(l, color='purple', sol=0, legend=False, units=AU, ax=orbit_ax)
+
+    orbit_ax.set_xlim(-max_value * 1.2, max_value * 1.2)
+    orbit_ax.set_ylim(-max_value * 1.2, max_value * 1.2)
+    orbit_ax.set_zlim(-max_z_value * 1.2, max_z_value * 1.2)
+
+    plt.savefig('orbit')
+
+    orbit_ax.view_init(0, 0)
+    plt.savefig('orbit-x')
+
+    orbit_ax.view_init(0, -90)
+    plt.savefig('orbit-y')
+
+    orbit_ax.view_init(90, 0)
+    plt.savefig('orbit-z')
+
+    plt.close(fig)
+
+    return jsonify(
+        success=True,
+        delta_v=delta_v.tolist(),
+        min_delta_v=min_delta_v,
+        flight_time=int(min_delta_v_flight_time + flight_time_offset),
+        launch_time=int(min_delta_v_launch_time))
 
 if __name__ == "__main__":
     APP.run(host="0.0.0.0", port=5001)

@@ -1,8 +1,12 @@
 var porkchopPlot = document.getElementById('porkchop')
 
+var defaultOrigin = -455609026
+var defaultTarget = 272811578
+
 $(document).ready(function() {
-  $.get(
+  $.post(
     "http://senorpez.com:5001/transfer",
+    {origin: defaultOrigin, target: defaultTarget},
     function(data) {
       var minDeltaV = Math.min(data.delta_v);
       var maxDeltaV = Math.max(data.delta_v);
@@ -40,6 +44,14 @@ $(document).ready(function() {
         ]
       }];
       Plotly.newPlot('porkchop', plotData);
+
+      $("#orbit").attr('src', 'http://senorpez.com/orbit.png?' + $.now());
+      $("#orbit-x").attr('src', 'http://senorpez.com/orbit-x.png?' + $.now());
+      $("#orbit-y").attr('src', 'http://senorpez.com/orbit-y.png?' + $.now());
+      $("#orbit-z").attr('src', 'http://senorpez.com/orbit-z.png?' + $.now());
+      $("#launch_time").text(data.launch_time);
+      $("#flight_time").text(data.flight_time);
+      $("#delta_v").text(data.min_delta_v);
     }
   );
 });
