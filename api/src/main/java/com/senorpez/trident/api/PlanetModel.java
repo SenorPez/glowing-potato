@@ -8,9 +8,28 @@ public class PlanetModel implements Identifiable<Integer> {
     private final int id;
     private final String name;
 
+    private final float mass;
+    private final float radius;
+
+    private final float semimajorAxis;
+    private final float eccentricity;
+    private final float inclination;
+    private final float longitudeOfAscendingNode;
+    private final float argumentOfPeriapsis;
+    private final float trueAnomalyAtEpoch;
+
+
     PlanetModel(final Planet planet) {
         this.id = planet.getId();
         this.name = planet.getName();
+        this.mass = planet.getMass();
+        this.radius = planet.getRadius();
+        this.semimajorAxis = planet.getSemimajorAxis();
+        this.eccentricity = planet.getEccentricity();
+        this.inclination = planet.getInclination();
+        this.longitudeOfAscendingNode = planet.getLongitudeOfAscendingNode();
+        this.argumentOfPeriapsis = planet.getArgumentOfPeriapsis();
+        this.trueAnomalyAtEpoch = planet.getTrueAnomalyAtEpoch();
     }
 
     PlanetResource toResource(final int solarSystemId, final int starId) {
@@ -28,5 +47,37 @@ public class PlanetModel implements Identifiable<Integer> {
 
     public String getName() {
         return name;
+    }
+
+    public float getMass() {
+        return mass;
+    }
+
+    public float getRadius() {
+        return radius;
+    }
+
+    public float getSemimajorAxis() {
+        return semimajorAxis;
+    }
+
+    public float getEccentricity() {
+        return eccentricity;
+    }
+
+    public float getInclination() {
+        return inclination;
+    }
+
+    public float getLongitudeOfAscendingNode() {
+        return longitudeOfAscendingNode;
+    }
+
+    public float getArgumentOfPeriapsis() {
+        return argumentOfPeriapsis;
+    }
+
+    public float getTrueAnomalyAtEpoch() {
+        return trueAnomalyAtEpoch;
     }
 }

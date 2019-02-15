@@ -1,7 +1,7 @@
 package com.senorpez.trident.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Resources;
+import org.springframework.hateoas.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,13 +30,8 @@ class PlanetController {
         this.solarSystems = Application.SOLAR_SYSTEMS;
     }
 
-    PlanetController(final APIService apiService, final Collection<SolarSystem> solarSystems) {
-        this.apiService = apiService;
-        this.solarSystems = solarSystems;
-    }
-
     @RequestMapping
-    ResponseEntity<Resources<PlanetResource>> planets(@PathVariable final int solarSystemId, @PathVariable final int starId) {
+    ResponseEntity<EmbeddedPlanetResources> planets(@PathVariable final int solarSystemId, @PathVariable final int starId) {
         final SolarSystem solarSystem = apiService.findOne(
                 this.solarSystems,
                 findSolarSystem -> findSolarSystem.getId() == solarSystemId,
@@ -46,13 +41,13 @@ class PlanetController {
                 findStar -> findStar.getId() == starId,
                 () -> new StarNotFoundException(starId));
         final Collection<Planet> planets = star.getPlanets();
-        final Collection<PlanetModel> planetModels = planets.stream()
-                .map(PlanetModel::new)
+        final Collection<EmbeddedPlanetModel> planetModels = planets.stream()
+                .map(EmbeddedPlanetModel::new)
                 .collect(Collectors.toList());
-        final Collection<PlanetResource> planetResources = planetModels.stream()
+        final Collection<Resource<EmbeddedPlanetModel>> planetResources = planetModels.stream()
                 .map(planetModel -> planetModel.toResource(solarSystemId, starId))
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(PlanetResource.makeResources(planetResources, solarSystemId, starId));
+        return ResponseEntity.ok(new EmbeddedPlanetResources(planetResources, solarSystemId, starId));
     }
 
     @RequestMapping("/{planetId}")

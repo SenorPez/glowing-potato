@@ -49,16 +49,40 @@ public class PlanetControllerTest {
     private static final Planet FIRST_PLANET = new PlanetBuilder()
             .setId(111)
             .setName("1 Eta Veneris 1")
+            .setMass((float) 0.400395313)
+            .setRadius((float) 0.79729792)
+            .setSemimajorAxis((float) 0.092467461)
+            .setEccentricity((float) 0.12)
+            .setInclination((float) 0.094723905)
+            .setLongitudeOfAscendingNode((float) 2.698937013)
+            .setArgumentOfPeriapsis((float) 0.82315138)
+            .setTrueAnomalyAtEpoch((float) 1.494408501)
             .build();
 
     private static final Planet SECOND_PLANET = new PlanetBuilder()
             .setId(112)
             .setName("1 Eta Veneris 2")
+            .setMass((float) 0.033057826)
+            .setRadius((float) 0.359753736)
+            .setSemimajorAxis((float) 0.314389366)
+            .setEccentricity((float) 0.005)
+            .setInclination((float) 0.01818743)
+            .setLongitudeOfAscendingNode((float) 2.026952089)
+            .setArgumentOfPeriapsis((float) 4.952656241)
+            .setTrueAnomalyAtEpoch((float) 1.517031459)
             .build();
 
     private static final Planet THIRD_PLANET = new PlanetBuilder()
             .setId(211)
             .setName("Earth")
+            .setMass((float) 1)
+            .setRadius((float) 1)
+            .setSemimajorAxis((float) 1)
+            .setEccentricity((float) 0.01671022)
+            .setInclination((float) 0.00005)
+            .setLongitudeOfAscendingNode((float) 0)
+            .setArgumentOfPeriapsis((float) 0)
+            .setTrueAnomalyAtEpoch((float) 0)
             .build();
 
     private static final Star FIRST_STAR = new StarBuilder()
@@ -439,6 +463,14 @@ public class PlanetControllerTest {
                 .andExpect(content().string(matchesJsonSchema(PLANET_SCHEMA)))
                 .andExpect(jsonPath("$.id", is(FIRST_PLANET.getId())))
                 .andExpect(jsonPath("$.name", is(FIRST_PLANET.getName())))
+                .andExpect(jsonPath("$.mass", closeTo(FIRST_PLANET.getMass(), 0.0001)))
+                .andExpect(jsonPath("$.radius", closeTo(FIRST_PLANET.getRadius(), 0.0001)))
+                .andExpect(jsonPath("$.semimajorAxis", closeTo(FIRST_PLANET.getSemimajorAxis(), 0.0001)))
+                .andExpect(jsonPath("$.eccentricity", closeTo(FIRST_PLANET.getEccentricity(), 0.0001)))
+                .andExpect(jsonPath("$.inclination", closeTo(FIRST_PLANET.getInclination(), 0.0001)))
+                .andExpect(jsonPath("$.longitudeOfAscendingNode", closeTo(FIRST_PLANET.getLongitudeOfAscendingNode(), 0.0001)))
+                .andExpect(jsonPath("$.argumentOfPeriapsis", closeTo(FIRST_PLANET.getArgumentOfPeriapsis(), 0.0001)))
+                .andExpect(jsonPath("$.trueAnomalyAtEpoch", closeTo(FIRST_PLANET.getTrueAnomalyAtEpoch(), 0.0001)))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", String.format(
                         "http://localhost:8080/systems/%d/stars/%d/planets/%d",
@@ -462,6 +494,14 @@ public class PlanetControllerTest {
                         responseFields(
                                 fieldWithPath("id").description("Planet ID number."),
                                 fieldWithPath("name").description("Planet name."),
+                                fieldWithPath("mass").description("Planet mass, in standard planetary mass."),
+                                fieldWithPath("radius").description("Planet radius, in standard planetary radius."),
+                                fieldWithPath("semimajorAxis").description("Planet orbit semimajor axis, in astronomical units"),
+                                fieldWithPath("eccentricity").description("Planet orbit eccentricity"),
+                                fieldWithPath("inclination").description("Planet orbit inclination, in radians"),
+                                fieldWithPath("longitudeOfAscendingNode").description("Planet longitude of ascending node, in radians"),
+                                fieldWithPath("argumentOfPeriapsis").description("Planet argument of periapsis, in radians"),
+                                fieldWithPath("trueAnomalyAtEpoch").description("Planet true anomaly at epoch, in radians"),
                                 subsectionWithPath("_links").ignored()),
                         commonLinks.and(
                                 linkWithRel("trident-api:planets").description("List of planet resources."))));
@@ -480,6 +520,14 @@ public class PlanetControllerTest {
                 .andExpect(content().string(matchesJsonSchema(PLANET_SCHEMA)))
                 .andExpect(jsonPath("$.id", is(FIRST_PLANET.getId())))
                 .andExpect(jsonPath("$.name", is(FIRST_PLANET.getName())))
+                .andExpect(jsonPath("$.mass", closeTo(FIRST_PLANET.getMass(), 0.0001)))
+                .andExpect(jsonPath("$.radius", closeTo(FIRST_PLANET.getRadius(), 0.0001)))
+                .andExpect(jsonPath("$.semimajorAxis", closeTo(FIRST_PLANET.getSemimajorAxis(), 0.0001)))
+                .andExpect(jsonPath("$.eccentricity", closeTo(FIRST_PLANET.getEccentricity(), 0.0001)))
+                .andExpect(jsonPath("$.inclination", closeTo(FIRST_PLANET.getInclination(), 0.0001)))
+                .andExpect(jsonPath("$.longitudeOfAscendingNode", closeTo(FIRST_PLANET.getLongitudeOfAscendingNode(), 0.0001)))
+                .andExpect(jsonPath("$.argumentOfPeriapsis", closeTo(FIRST_PLANET.getArgumentOfPeriapsis(), 0.0001)))
+                .andExpect(jsonPath("$.trueAnomalyAtEpoch", closeTo(FIRST_PLANET.getTrueAnomalyAtEpoch(), 0.0001)))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", String.format(
                         "http://localhost:8080/systems/%d/stars/%d/planets/%d",

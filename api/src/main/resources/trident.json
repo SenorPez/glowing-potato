@@ -19,7 +19,15 @@
             },
             {
               "id": -455609026,
-              "name": "1 Eta Veneris 3"
+              "name": "1 Eta Veneris 3",
+              "mass": 0.715680746,
+              "radius": 0.866513931,
+              "semimajorAxis": 0.503022986,
+              "eccentricity": 0.05,
+              "inclination": 0,
+              "longitudeOfAscendingNode": 0,
+              "argumentOfPeriapsis": 3.792068139,
+              "trueAnomalyAtEpoch": 3.86047981
             },
             {
               "id": 272811578,

@@ -47,6 +47,30 @@
     "name": {
       "type": "string"
     },
+    "mass": {
+      "type": "number"
+    },
+    "radius": {
+      "type": "number"
+    },
+    "semimajorAxis": {
+      "type": "number"
+    },
+    "eccentricity": {
+      "type": "number"
+    },
+    "inclination": {
+      "type": "number"
+    },
+    "longitudeOfAscendingNode": {
+      "type": "number"
+    },
+    "argumentOfPeriapsis": {
+      "type": "number"
+    },
+    "trueAnomalyAtEpoch": {
+      "type": "number"
+    },
     "_links": {
       "type": "object",
       "properties": {
@@ -76,6 +100,14 @@
   "required": [
     "id",
     "name",
+    "mass",
+    "radius",
+    "semimajorAxis",
+    "eccentricity",
+    "inclination",
+    "longitudeOfAscendingNode",
+    "argumentOfPeriapsis",
+    "trueAnomalyAtEpoch",
     "_links"
   ]
 }
