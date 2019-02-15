@@ -11,11 +11,27 @@
           "planets": [
             {
               "id": -1485460920,
-              "name": "1 Eta Veneris 1"
+              "name": "1 Eta Veneris 1",
+              "mass": 0.400395313,
+              "radius": 0.79729792,
+              "semimajorAxis": 0.092467461,
+              "eccentricity": 0.12,
+              "inclination": 0.094723905,
+              "longitudeOfAscendingNode": 2.698937013,
+              "argumentOfPeriapsis": 0.82315138,
+              "trueAnomalyAtEpoch": 1.494408501
             },
             {
               "id": -1722015868,
-              "name": "1 Eta Veneris 2"
+              "name": "1 Eta Veneris 2",
+              "mass": 0.033057826,
+              "radius": 0.359753736,
+              "semimajorAxis": 0.314389366,
+              "eccentricity": 0.005,
+              "inclination": 0.01818743,
+              "longitudeOfAscendingNode": 2.026952089,
+              "argumentOfPeriapsis": 4.952656241,
+              "trueAnomalyAtEpoch": 1.517031459
             },
             {
               "id": -455609026,
@@ -31,7 +47,15 @@
             },
             {
               "id": 272811578,
-              "name": "1 Eta Veneris 4"
+              "name": "1 Eta Veneris 4",
+              "mass": 0.084809923,
+              "radius": 0.467508516,
+              "semimajorAxis": 0.804836778,
+              "eccentricity": 0.045,
+              "inclination": 0.037115753,
+              "longitudeOfAscendingNode": 6.171541831,
+              "argumentOfPeriapsis": 3.135553814,
+              "trueAnomalyAtEpoch": 3.384338282
             }
           ]
         },
