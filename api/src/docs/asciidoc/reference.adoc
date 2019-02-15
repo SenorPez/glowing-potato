@@ -119,6 +119,36 @@ include::{snippets}/index/request-headers.adoc[]
 
 include::{snippets}/index/links.adoc[]
 
+[[resources-trident-constants]]
+=== Constants
+
+Provides a list of constant resources.
+
+.Request Header
+
+include::{snippets}/constants/request-headers.adoc[]
+
+.Fields
+
+include::{snippets}/constants/response-fields.adoc[]
+
+[[resources-trident-constant]]
+=== Constant
+
+Provides a constant resource.
+
+.Request Header
+
+include::{snippets}/constant/request-headers.adoc[]
+
+.Fields
+
+include::{snippets}/constant/response-fields.adoc[]
+
+.Links
+
+include::{snippets}/constant/links.adoc[]
+
 [[resources-trident-systems]]
 === Solar Systems
 
