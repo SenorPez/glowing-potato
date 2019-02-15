@@ -36,23 +36,27 @@ radius_planet = req.json()['value']
 APP = Flask(__name__)
 CORS(APP, resources={r"/*": {"origins": "http://senorpez.com"}})
 
-@APP.route("/orbit", methods=['GET'])
-def orbit():
-    # Get solar mass and GM of 1 Eta Veneris
+def get_star(system_name, star_name):
     system_link = find_link_by_name(
         "http://trident.senorpez.com/systems",
         "trident-api:system",
-        "Eta Veneris")
+        system_name)
     star_link = find_link_by_name(
         system_link + "/stars",
         "trident-api:star",
-        "1 Eta Veneris")
+        star_name)
 
     req = requests.get(star_link)
     req.raise_for_status()
 
-    mass_s1 = req.json()['solarMass'] * mass_solar
-    gm_s1 = mass_s1 * grav
+    mass = req.json()['solarMass'] * mass_solar
+    gm = mass * grav
+
+    return (star_link, mass, gm)
+
+@APP.route("/orbit", methods=['GET'])
+def orbit():
+    star_link, mass_s1, gm_s1 = get_star("Eta Veneris", "1 Eta Veneris")
 
     planets = [
         create_planet(
@@ -117,93 +121,29 @@ def orbit():
 
 @APP.route("/transfer", methods=['GET'])
 def transfer():
-    GRAV = 6.67259e-11
-    SOL_MASS = 1.9891e30
-    EARTH_MASS = 5.972e24
-    EARTH_RADIUS = 6371000
-    GM = GRAV * SOL_MASS
+    star_link, mass_s1, gm_s1 = get_star("Eta Veneris", "1 Eta Veneris")
+    origin = create_planet(
+            "1 Eta Veneris 3",
+            "green",
+            star_link,
+            gm_s1)
+    target = create_planet(
+            "1 Eta Veneris 4",
+            "grey",
+            star_link,
+            gm_s1)
 
-    S1_MASS = 0.75 * SOL_MASS
-    S2_MASS = 0.75 * SOL_MASS
-    S1P1_MASS = 0.400395 * EARTH_MASS
-    S1P2_MASS = 0.0330578 * EARTH_MASS
-    S1P3_MASS = 0.715681 * EARTH_MASS
-    S1P4_MASS = 0.0848099 * EARTH_MASS
-
-    S1M = GRAV * S1_MASS
-    S2M = GRAV * S2_MASS
-    S1P1M = GRAV * S1P1_MASS
-    S1P2M = GRAV * S1P2_MASS
-    S1P3M = GRAV * S1P3_MASS
-    S1P4M = GRAV * S1P4_MASS
-
-    S1P1_RADIUS = EARTH_RADIUS * 0.797298
-    S1P2_RADIUS = EARTH_RADIUS * 0.359754
-    S1P3_RADIUS = EARTH_RADIUS * 0.866514
-    S1P4_RADIUS = EARTH_RADIUS * 0.467509
-
-    STAR2 = planet(
-	epoch(0),
-	(70 * AU, 0.5, 0.00627394, 4.82101, 2.95583, 6.01675),
-	S1M,
-	S2M,
-	1000,
-	1000,
-	'2 Eta Veneris')
-
-    STAR1PLANET1 = planet(
-	epoch(0),
-	(0.0924675 * AU, 0.12, 0.0947239, 2.69894, 0.823151, 1.49441),
-	S1M,
-	S1P1M,
-	S1P1_RADIUS,
-	S1P1_RADIUS,
-	'1 Eta Veneris 1')
-
-    STAR1PLANET2 = planet(
-	epoch(0),
-	(0.314389 * AU, 0.005, 0.0181874, 2.02695, 4.95266, 1.51703),
-	S1M,
-	S1P2M,
-	S1P2_RADIUS,
-	S1P2_RADIUS,
-	'1 Eta Veneris 2')
-
-    STAR1PLANET3 = planet(
-	epoch(0),
-	(0.503023 * AU, 0.05, 0, 0, 3.79207, 3.86048),
-	S1M,
-	S1P3M,
-	S1P3_RADIUS,
-	S1P3_RADIUS,
-	'1 Eta Veneris 3')
-
-    STAR1PLANET4 = planet(
-	epoch(0),
-	(0.804837 * AU, 0.045, 0.0371158, 6.17154, 3.13555, 3.38434),
-	S1M,
-	S1P4M,
-	S1P4_RADIUS,
-	S1P4_RADIUS,
-	'1 Eta Veneris 4')
-
-    MINIMUM_TRANSFER = None
-    MINIMUM_DELTA_V = None
-    MINIMUM_TIMINGS = None
-
-    DEPARTURE_ORBIT_RADIUS = S1P3_RADIUS + 200000
-    ARRIVAL_ORBIT_RADIUS = S1P4_RADIUS + 200000
-
-    FLIGHT_TIMES = np.array(range(50, 251))
-    LAUNCH_TIME_OFFSET = None
-    FLIGHT_TIME_OFFSET = 50
+    origin_orbit_radius = origin.radius + 200000
+    target_orbit_radius = target.radius + 200000
 
     t0 = epoch_from_string(str(datetime.now()))
     t0_number = int(t0.mjd2000)
+
+    FLIGHT_TIMES = np.array(range(50, 251))
+    FLIGHT_TIME_OFFSET = 50
     LAUNCH_TIMES = np.array(range(t0_number, t0_number + 501))
     LAUNCH_TIME_OFFSET = t0_number
     DELTA_V = np.empty((len(FLIGHT_TIMES), len(LAUNCH_TIMES)))
-    first_run = 1
 
     for launch_time in LAUNCH_TIMES:
         for flight_time in FLIGHT_TIMES:
@@ -213,9 +153,9 @@ def transfer():
             T1 = epoch(launch_time)
             T2 = epoch(launch_time + flight_time)
             dt = (T2.mjd - T1.mjd)*DAY2SEC
-            r1, v1 = STAR1PLANET3.eph(T1)
-            r2, v2 = STAR1PLANET4.eph(T2)
-            l = lambert_problem(list(r1), list(r2), dt, S1M)
+            r1, v1 = origin.eph(T1)
+            r2, v2 = target.eph(T2)
+            l = lambert_problem(list(r1), list(r2), dt, gm_s1)
 
             delta_vs = list()
 
@@ -224,15 +164,15 @@ def transfer():
                 vs_vec = np.array(l.get_v1()[x])
                 vsp_vec = vs_vec - vp_vec
                 vsp = np.linalg.norm(vsp_vec)
-                vo = sqrt(vsp*vsp + 2*S1P3M/DEPARTURE_ORBIT_RADIUS)
-                inj_delta_v = vo - sqrt(S1P3M/DEPARTURE_ORBIT_RADIUS)
+                vo = sqrt(vsp*vsp + 2*origin.mu_self/origin_orbit_radius)
+                inj_delta_v = vo - sqrt(origin.mu_self/origin_orbit_radius)
 
                 vp_vec = np.array(v2)
                 vs_vec = np.array(l.get_v2()[x])
                 vsp_vec = vs_vec - vp_vec
                 vsp = np.linalg.norm(vsp_vec)
-                vo = sqrt(vsp*vsp + 2*S1P4M/ARRIVAL_ORBIT_RADIUS)
-                ins_delta_v = vo - sqrt(S1P4M/ARRIVAL_ORBIT_RADIUS)
+                vo = sqrt(vsp*vsp + 2*target.mu_self/target_orbit_radius)
+                ins_delta_v = vo - sqrt(target.mu_self/target_orbit_radius)
 
                 delta_vs.append(inj_delta_v + ins_delta_v)
 
