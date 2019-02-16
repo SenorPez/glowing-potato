@@ -2,6 +2,9 @@ package com.senorpez.trident.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.Resources;
+import org.springframework.hateoas.core.EmbeddedWrapper;
+import org.springframework.hateoas.core.EmbeddedWrappers;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.stream.Collectors;
 
 import static com.senorpez.trident.api.SupportedMediaTypes.TRIDENT_API_VALUE;
@@ -31,7 +35,7 @@ class PlanetController {
     }
 
     @RequestMapping
-    ResponseEntity<EmbeddedPlanetResources> planets(@PathVariable final int solarSystemId, @PathVariable final int starId) {
+    ResponseEntity<? extends Resources> planets(@PathVariable final int solarSystemId, @PathVariable final int starId) {
         final SolarSystem solarSystem = apiService.findOne(
                 this.solarSystems,
                 findSolarSystem -> findSolarSystem.getId() == solarSystemId,
@@ -40,14 +44,20 @@ class PlanetController {
                 solarSystem.getStars(),
                 findStar -> findStar.getId() == starId,
                 () -> new StarNotFoundException(starId));
-        final Collection<Planet> planets = star.getPlanets();
-        final Collection<EmbeddedPlanetModel> planetModels = planets.stream()
-                .map(EmbeddedPlanetModel::new)
-                .collect(Collectors.toList());
-        final Collection<Resource<EmbeddedPlanetModel>> planetResources = planetModels.stream()
-                .map(planetModel -> planetModel.toResource(solarSystemId, starId))
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(new EmbeddedPlanetResources(planetResources, solarSystemId, starId));
+        if (star.getPlanets() == null) {
+            EmbeddedWrappers wrappers = new EmbeddedWrappers(false);
+            EmbeddedWrapper wrapper = wrappers.emptyCollectionOf(PlanetModel.class);
+            return ResponseEntity.ok(new EmptyPlanetResources(Collections.singletonList(wrapper), solarSystemId, starId));
+        } else {
+            final Collection<Planet> planets = star.getPlanets();
+            final Collection<EmbeddedPlanetModel> planetModels = planets.stream()
+                    .map(EmbeddedPlanetModel::new)
+                    .collect(Collectors.toList());
+            final Collection<Resource<EmbeddedPlanetModel>> planetResources = planetModels.stream()
+                    .map(planetModel -> planetModel.toResource(solarSystemId, starId))
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(new EmbeddedPlanetResources(planetResources, solarSystemId, starId));
+        }
     }
 
     @RequestMapping("/{planetId}")
