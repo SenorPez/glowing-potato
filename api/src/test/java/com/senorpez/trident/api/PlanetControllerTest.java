@@ -88,7 +88,7 @@ public class PlanetControllerTest {
     private static final Star FIRST_STAR = new StarBuilder()
             .setId(11)
             .setName("1 Eta Veneris")
-            .setSolarMass((float) 0.75)
+            .setMass((float) 0.75)
             .setPlanets(new HashSet<>(Arrays.asList(
                     FIRST_PLANET,
                     SECOND_PLANET)))
@@ -97,7 +97,7 @@ public class PlanetControllerTest {
     private static final Star SECOND_STAR = new StarBuilder()
             .setId(21)
             .setName("Sol")
-            .setSolarMass((float) 1)
+            .setMass((float) 1)
             .setPlanets(new HashSet<>(Collections.singletonList(
                     THIRD_PLANET)))
             .build();
@@ -113,7 +113,7 @@ public class PlanetControllerTest {
     private static final Star EMPTY_STAR = new StarBuilder()
             .setId(31)
             .setName("Empty")
-            .setSolarMass((float) 1)
+            .setMass((float) 1)
             .setPlanets(null)
             .build();
 

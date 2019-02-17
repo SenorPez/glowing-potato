@@ -1,11 +1,10 @@
+import numpy as np
+import requests
 from datetime import datetime
-from pykep import AU, epoch_from_string, SEC2DAY, epoch
-from pykep.planet import keplerian as planet
 from flask import Flask, jsonify
 from flask_cors import CORS
-import requests
-
-import numpy as np
+from pykep import AU, epoch_from_string, SEC2DAY, epoch
+from pykep.planet import keplerian as planet
 
 APP = Flask(__name__)
 CORS(APP, resources={r"/*": {"origins": "http://senorpez.com"}})
@@ -38,7 +37,7 @@ def test():
     req = requests.get(star_link)
     req.raise_for_status()
 
-    mass_s1 = req.json()['solarMass'] * mass_solar
+    mass_s1 = req.json()['mass'] * mass_solar
     gm_s1 = mass_s1 * grav
 
     planets = [

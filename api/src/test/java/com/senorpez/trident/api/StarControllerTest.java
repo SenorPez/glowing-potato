@@ -49,19 +49,19 @@ public class StarControllerTest {
     private static final Star FIRST_STAR = new StarBuilder()
             .setId(11)
             .setName("1 Eta Veneris")
-            .setSolarMass((float) 0.75)
+            .setMass((float) 0.75)
             .build();
 
     private static final Star SECOND_STAR = new StarBuilder()
             .setId(12)
             .setName("2 Eta Veneris")
-            .setSolarMass((float) 0.75)
+            .setMass((float) 0.75)
             .build();
 
     private static final Star THIRD_STAR = new StarBuilder()
             .setId(21)
             .setName("Sol")
-            .setSolarMass((float) 1.0)
+            .setMass((float) 1.0)
             .build();
 
     private static final SolarSystem FIRST_SYSTEM = new SolarSystemBuilder()
@@ -307,7 +307,7 @@ public class StarControllerTest {
                 .andExpect(content().string(matchesJsonSchema(STAR_SCHEMA)))
                 .andExpect(jsonPath("$.id", is(FIRST_STAR.getId())))
                 .andExpect(jsonPath("$.name", is(FIRST_STAR.getName())))
-                .andExpect(jsonPath("$.solarMass", closeTo((double) FIRST_STAR.getSolarMass(), 0.001)))
+                .andExpect(jsonPath("$.mass", closeTo((double) FIRST_STAR.getMass(), 0.001)))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", String.format(
                         "http://localhost:8080/systems/%d/stars/%d",
@@ -330,7 +330,7 @@ public class StarControllerTest {
                         responseFields(
                                 fieldWithPath("id").description("Star ID number."),
                                 fieldWithPath("name").description("Star name."),
-                                fieldWithPath("solarMass").description("Star solar mass."),
+                                fieldWithPath("mass").description("Star mass."),
                                 subsectionWithPath("_links").ignored()),
                         commonLinks.and(
                                 linkWithRel("trident-api:stars").description("List of star resources."),
@@ -350,7 +350,7 @@ public class StarControllerTest {
                 .andExpect(content().string(matchesJsonSchema(STAR_SCHEMA)))
                 .andExpect(jsonPath("$.id", is(FIRST_STAR.getId())))
                 .andExpect(jsonPath("$.name", is(FIRST_STAR.getName())))
-                .andExpect(jsonPath("$.solarMass", closeTo((double) FIRST_STAR.getSolarMass(), 0.001)))
+                .andExpect(jsonPath("$.mass", closeTo((double) FIRST_STAR.getMass(), 0.001)))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", String.format(
                         "http://localhost:8080/systems/%d/stars/%d",

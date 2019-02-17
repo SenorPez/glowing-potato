@@ -47,7 +47,7 @@
     "name": {
       "type": "string"
     },
-    "solarMass": {
+    "mass": {
       "type": "number"
     },
     "_links": {
@@ -83,7 +83,7 @@
   "required": [
     "id",
     "name",
-    "solarMass",
+    "mass",
     "_links"
   ]
 }
