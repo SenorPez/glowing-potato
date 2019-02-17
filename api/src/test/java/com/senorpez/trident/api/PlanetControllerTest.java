@@ -88,7 +88,7 @@ public class PlanetControllerTest {
     private static final Star FIRST_STAR = new StarBuilder()
             .setId(11)
             .setName("1 Eta Veneris")
-            .setSolarMass((float) 0.75)
+            .setMass((float) 0.75)
             .setPlanets(new HashSet<>(Arrays.asList(
                     FIRST_PLANET,
                     SECOND_PLANET)))
@@ -97,7 +97,7 @@ public class PlanetControllerTest {
     private static final Star SECOND_STAR = new StarBuilder()
             .setId(21)
             .setName("Sol")
-            .setSolarMass((float) 1)
+            .setMass((float) 1)
             .setPlanets(new HashSet<>(Collections.singletonList(
                     THIRD_PLANET)))
             .build();
@@ -108,6 +108,13 @@ public class PlanetControllerTest {
             .setStars(new HashSet<>(Arrays.asList(
                     FIRST_STAR,
                     SECOND_STAR)))
+            .build();
+
+    private static final Star EMPTY_STAR = new StarBuilder()
+            .setId(31)
+            .setName("Empty")
+            .setMass((float) 1)
+            .setPlanets(null)
             .build();
 
     @InjectMocks
@@ -443,6 +450,84 @@ public class PlanetControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM).thenThrow(new StarNotFoundException(8675309));
 
         mockMvc.perform(put(String.format("/systems/%d/stars/%d/planets", FIRST_SYSTEM.getId(), SECOND_STAR.getId())).accept(TRIDENT_API))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
+                .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
+
+        verifyZeroInteractions(apiService);
+    }
+
+    @Test
+    public void GetAllPlanets_ValidSystemId_ValidStarId_EmptyPlanets_ValidAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, EMPTY_STAR);
+
+        mockMvc.perform(get(String.format("/systems/%d/stars/%d/planets", FIRST_SYSTEM.getId(), EMPTY_STAR.getId())).accept(TRIDENT_API))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(TRIDENT_API))
+                .andExpect(content().string(matchesJsonSchema(PLANET_COLLECTION_SCHEMA)))
+                .andExpect(jsonPath("$._embedded.trident-api:planet", empty()))
+                .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format(
+                        "http://localhost:8080/systems/%d/stars/%d/planets", FIRST_SYSTEM.getId(), EMPTY_STAR.getId()))))
+                .andExpect(jsonPath("$._links.curies", everyItem(
+                        allOf(
+                                hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-trident-{rel}"),
+                                hasEntry("name", (Object) "trident-api"),
+                                hasEntry("templated", (Object) true)))))
+                .andExpect(jsonPath("$._links.trident-api:star", hasEntry("href", String.format(
+                        "http://localhost:8080/systems/%d/stars/%d", FIRST_SYSTEM.getId(), EMPTY_STAR.getId()))));
+
+        verify(apiService, times(2)).findOne(any(), any(), any());
+        verifyNoMoreInteractions(apiService);
+    }
+
+    @Test
+    public void GetAllPlanets_ValidSystemId_ValidStarId_EmptyPlanets_FallbackAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, EMPTY_STAR);
+
+        mockMvc.perform(get(String.format("/systems/%d/stars/%d/planets", FIRST_SYSTEM.getId(), EMPTY_STAR.getId())).accept(FALLBACK))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(FALLBACK))
+                .andExpect(content().string(matchesJsonSchema(PLANET_COLLECTION_SCHEMA)))
+                .andExpect(jsonPath("$._embedded.trident-api:planet", empty()))
+                .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format(
+                        "http://localhost:8080/systems/%d/stars/%d/planets", FIRST_SYSTEM.getId(), EMPTY_STAR.getId()))))
+                .andExpect(jsonPath("$._links.curies", everyItem(
+                        allOf(
+                                hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-trident-{rel}"),
+                                hasEntry("name", (Object) "trident-api"),
+                                hasEntry("templated", (Object) true)))))
+                .andExpect(jsonPath("$._links.trident-api:star", hasEntry("href", String.format(
+                        "http://localhost:8080/systems/%d/stars/%d", FIRST_SYSTEM.getId(), EMPTY_STAR.getId()))));
+
+        verify(apiService, times(2)).findOne(any(), any(), any());
+        verifyNoMoreInteractions(apiService);
+    }
+
+    @Test
+    public void GetAllPlanets_ValidSystemId_ValidStarId_EmptyPlanets_InvalidAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, EMPTY_STAR);
+
+        mockMvc.perform(get(String.format("/systems/%d/stars/%d/planets", FIRST_SYSTEM.getId(), EMPTY_STAR.getId())).accept(INVALID_MEDIA_TYPE))
+                .andExpect(status().isNotAcceptable())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
+                .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident.v0+json")));
+
+        verifyZeroInteractions(apiService);
+    }
+
+    @Test
+    public void GetAllPlanets_ValidSystemId_ValidStarId_EmptyPlanets_InvalidMethod() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, EMPTY_STAR);
+
+        mockMvc.perform(put(String.format("/systems/%d/stars/%d/planets", FIRST_SYSTEM.getId(), EMPTY_STAR.getId())).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))

@@ -5,14 +5,14 @@ import java.util.Set;
 class StarBuilder {
     private int id = 0;
     private String name = null;
-    private float solarMass = 0;
+    private float mass = 0;
     private Set<Planet> planets = null;
 
     StarBuilder() {
     }
 
     Star build() {
-        return new Star(id, name, solarMass, planets);
+        return new Star(id, name, mass, planets);
     }
 
     StarBuilder setId(int id) {
@@ -25,8 +25,8 @@ class StarBuilder {
         return this;
     }
 
-    StarBuilder setSolarMass(float solarMass) {
-        this.solarMass = solarMass;
+    StarBuilder setMass(float mass) {
+        this.mass = mass;
         return this;
     }
 

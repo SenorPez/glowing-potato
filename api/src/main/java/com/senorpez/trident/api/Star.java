@@ -9,29 +9,29 @@ import java.util.Set;
 public class Star {
     private final int id;
     private final String name;
-    private final float solarMass;
+    private final float mass;
     private final Set<Planet> planets;
 
     @JsonCreator
     Star(
             @JsonProperty("id") final int id,
             @JsonProperty("name") final String name,
-            @JsonProperty("solarMass") final float solarMass,
+            @JsonProperty("mass") final float mass,
             @JsonProperty("planets") final JsonNode planets) {
         this.id = id;
         this.name = name;
-        this.solarMass = solarMass;
+        this.mass = mass;
         this.planets = Application.getData(Planet.class, planets);
     }
 
     Star(
             @JsonProperty("id") final int id,
             @JsonProperty("name") final String name,
-            @JsonProperty("solarMass") final float solarMass,
+            @JsonProperty("mass") final float mass,
             @JsonProperty("planets") final Set<Planet> planets) {
         this.id = id;
         this.name = name;
-        this.solarMass = solarMass;
+        this.mass = mass;
         this.planets = planets;
     }
 
@@ -43,8 +43,8 @@ public class Star {
         return name;
     }
 
-    float getSolarMass() {
-        return solarMass;
+    float getMass() {
+        return mass;
     }
 
     Set<Planet> getPlanets() {

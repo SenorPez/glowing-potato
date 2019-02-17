@@ -7,12 +7,12 @@ import org.springframework.hateoas.core.Relation;
 public class StarModel implements Identifiable<Integer> {
     private final int id;
     private final String name;
-    private final float solarMass;
+    private final float mass;
 
     StarModel(final Star star) {
         this.id = star.getId();
         this.name = star.getName();
-        this.solarMass = star.getSolarMass();
+        this.mass = star.getMass();
     }
 
     StarResource toResource(final int solarSystemId) {
@@ -32,7 +32,7 @@ public class StarModel implements Identifiable<Integer> {
         return name;
     }
 
-    public float getSolarMass() {
-        return solarMass;
+    public float getMass() {
+        return mass;
     }
 }
