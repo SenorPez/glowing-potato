@@ -1,16 +1,15 @@
+from datetime import datetime
+
 import numpy as np
 import requests
-from datetime import datetime
 from flask import Flask, jsonify
 from flask_cors import CORS
 from pykep import AU, epoch_from_string, SEC2DAY, epoch
-from pykep.planet import keplerian as planet
+from pykep.planet import keplerian
 
 APP = Flask(__name__)
 CORS(APP, resources={r"/*": {"origins": "http://senorpez.com"}})
 
-mass_planet = None
-radius_planet = None
 
 @APP.route("/orbit", methods=['GET'])
 def test():
@@ -72,7 +71,7 @@ def test():
     planet_colors = list()
 
     for planet in planets:
-        orbit_period = planet.compute_period(epoch(0)) * SEC2DAY
+        orbit_period = planet.compute_period() * SEC2DAY
         orbit_when = np.linspace(0, orbit_period, 60)
 
         x = np.zeros(60)
@@ -100,7 +99,7 @@ def test():
             p=planet_positions,
             c=planet_colors,
             n=planet_names)
-    #return jsonify(success=True, x=x_val, y=y_val, z=z_val, p=planet_positions)
+
 
 def find_link_by_name(api_link, collection_name, target_name):
     req = requests.get(api_link)
@@ -110,6 +109,7 @@ def find_link_by_name(api_link, collection_name, target_name):
         if entry['name'] == target_name:
             link = entry['_links']['self']['href']
     return link
+
 
 def create_planet(planet_name, planet_color, star_link, gm_star):
     # Get gravitational constant.
@@ -140,7 +140,7 @@ def create_planet(planet_name, planet_color, star_link, gm_star):
     radius = req.json()['radius'] * radius_planet
     gm = mass * grav
 
-    return_planet = planet(
+    return_planet = keplerian(
         epoch(0),
         (
             req.json()['semimajorAxis'] * AU,
@@ -157,6 +157,7 @@ def create_planet(planet_name, planet_color, star_link, gm_star):
     return_planet.color = planet_color
 
     return return_planet
+
 
 if __name__ == "__main__":
     APP.run("0.0.0.0", 5001)
