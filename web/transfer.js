@@ -4,15 +4,15 @@ var defaultOrigin = -455609026
 var defaultTarget = 272811578
 
 $(document).ready(function() {
+  var urlParams = new URLSearchParams(window.location.search);
+
+  var origin = urlParams.has('origin') ? urlParams.get('origin') : defaultOrigin
+  var target = urlParams.has('target') ? urlParams.get('target') : defaultTarget
+
   $.post(
     "http://senorpez.com:5001/transfer",
-    {origin: defaultOrigin, target: defaultTarget},
+    {origin: origin, target: target},
     function(data) {
-      var minDeltaV = Math.min(data.delta_v);
-      var maxDeltaV = Math.max(data.delta_v);
-      var scaleMin = Math.floor(minDeltaV / 5000) * 5000;
-      var scaleMax = Math.ceil(maxDeltaV / 5000) * 5000;
-
       var plotData = [{
         z: data.delta_v,
         type: 'contour',
@@ -43,7 +43,16 @@ $(document).ready(function() {
           [1, '#a50026']
         ]
       }];
-      Plotly.newPlot('porkchop', plotData);
+
+      var layout = {
+        xaxis: {
+          title: 'Launch Day'
+        },
+        yaxis: {
+          title: 'Flight Time'
+        }
+      };
+      Plotly.newPlot('porkchop', plotData, layout);
 
       $("#orbit").attr('src', 'http://senorpez.com/orbit.png?' + $.now());
       $("#orbit-x").attr('src', 'http://senorpez.com/orbit-x.png?' + $.now());
