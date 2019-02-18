@@ -1,17 +1,22 @@
-var porkchopPlot = document.getElementById('porkchop')
+var porkchopPlot = document.getElementById('porkchop');
 
-var defaultOrigin = -455609026
-var defaultTarget = 272811578
+var defaultOrigin = -455609026;
+var defaultTarget = 272811578;
 
 $(document).ready(function() {
   var urlParams = new URLSearchParams(window.location.search);
-
   var origin = urlParams.has('origin') ? urlParams.get('origin') : defaultOrigin
   var target = urlParams.has('target') ? urlParams.get('target') : defaultTarget
 
-  $.post(
+  var posting = $.post(
     "http://senorpez.com:5001/transfer",
-    {origin: origin, target: target},
+    {origin: origin, target: target});
+
+  var spinnerDiv = document.getElementById('orbitCell');
+  var spinner = new Spinner().spin(spinnerDiv);
+  spinnerDiv.classList.add("opaque");
+
+  posting.done(
     function(data) {
       var plotData = [{
         z: data.delta_v,
@@ -54,6 +59,8 @@ $(document).ready(function() {
       };
       Plotly.newPlot('porkchop', plotData, layout);
 
+      spinnerDiv.classList.remove("opaque");
+      spinner.stop();
       $("#orbit").attr('src', 'http://senorpez.com/orbit.png?' + $.now());
       $("#orbit-x").attr('src', 'http://senorpez.com/orbit-x.png?' + $.now());
       $("#orbit-y").attr('src', 'http://senorpez.com/orbit-y.png?' + $.now());
@@ -67,17 +74,24 @@ $(document).ready(function() {
         var y = data.points[0].y;
         var delta_v = data.points[0].z;
 
-        $.post(
+        $("#launch_time").text(x);
+        $("#flight_time").text(y);
+        $("#delta_v").text(delta_v);
+        var spinner = new Spinner().spin(spinnerDiv);
+        spinnerDiv.classList.add("opaque");
+
+        var thing = $.post(
           "http://senorpez.com:5001/transfer",
-            {origin: defaultOrigin, target: defaultTarget, flight_time: y, launch_time: x, delta_v: delta_v},
+          {origin: origin, target: target, flight_time: y, launch_time: x, delta_v: delta_v});
+
+        thing.done(
           function(data) {
+            spinnerDiv.classList.remove("opaque");
+            spinner.stop();
             $("#orbit").attr('src', 'http://senorpez.com/orbit.png?' + $.now());
             $("#orbit-x").attr('src', 'http://senorpez.com/orbit-x.png?' + $.now());
             $("#orbit-y").attr('src', 'http://senorpez.com/orbit-y.png?' + $.now());
             $("#orbit-z").attr('src', 'http://senorpez.com/orbit-z.png?' + $.now());
-            $("#launch_time").text(data.launch_time);
-            $("#flight_time").text(data.flight_time);
-            $("#delta_v").text(data.min_delta_v);
           }
         );
       });
