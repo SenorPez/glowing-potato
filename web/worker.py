@@ -1,5 +1,5 @@
-from datetime import datetime
-from math import sqrt
+from datetime import datetime, timedelta
+from math import ceil, sqrt
 
 from flask import Flask, jsonify, request as flask_request
 from flask_cors import CORS
@@ -9,6 +9,36 @@ from pykep import AU, DAY2SEC, SEC2DAY, epoch, lambert_problem, epoch_from_strin
 from pykep.planet import keplerian as planet
 from pykep.orbit_plots import plot_lambert, plot_planet
 import requests
+
+
+def calc_adjustment():
+    a = -100.0
+    b = 0.0
+    winter = (0, -1, 0) / np.linalg.norm((0, -1, 0))
+    angle_target = np.arccos(np.clip(np.dot((1, 0, 0), winter), -1.0, 1.0))
+
+    _, gm_s1 = get_star("Eta Veneris", "1 Eta Veneris")
+    taven = get_planet(-455609026, "green", gm_s1)
+
+    for _ in range(1000):
+        c = (a + b) / 2
+        r_a, _ = taven.eph(epoch(a))
+        r_b, _ = taven.eph(epoch(b))
+        r_c, _ = taven.eph(epoch(c))
+
+        u_a = r_a / np.linalg.norm(r_a)
+        angle_a = np.arccos(np.clip(np.dot(u_a, winter), -1.0, 1.0))
+        u_b = r_b / np.linalg.norm(r_b)
+        angle_b = np.arccos(np.clip(np.dot(u_b, winter), -1.0, 1.0))
+        u_c = r_c / np.linalg.norm(r_c)
+        angle_c = np.arccos(np.clip(np.dot(u_c, winter), -1.0, 1.0))
+
+        if angle_c - angle_target < 0:
+            a = c
+        else:
+            b = c
+
+    return c
 
 
 def create_planet(planet_name, planet_color, star_link, gm_star):
@@ -125,6 +155,9 @@ MASS_SOLAR = get_constant("Msol")
 # Get standard planetary equatorial radius.
 RADIUS_PLANET = get_constant("Rpln")
 
+# Adjustment as calendar starts at Winter Solstice not Spring Equinox.
+T_ADJ = None
+
 APP = Flask(__name__)
 CORS(APP, resources={r"/*": {"origins": "http://senorpez.com"}})
 
@@ -193,6 +226,128 @@ def orbit():
         p=planet_positions,
         c=planet_colors,
         n=planet_names)
+
+
+@APP.route("/time", methods=['GET'])
+def time():
+    t_now = epoch_from_string(str(datetime.now()))
+    t0 = epoch(t_now.mjd2000 - T_ADJ)
+    d = timedelta(t0.mjd2000)
+
+    # Standard time values
+    hours = d.days * 24 + d.seconds / 3600
+
+    # Standard hours per local day
+    hours_per_local_day = 36.362486
+
+    # Local days
+    local_days = hours / hours_per_local_day
+
+    # Local days per local year
+    local_days_per_local_year = 99.3141
+
+    # Local year, accounting for local calendar:
+    # 2 years of 99 days followed by 1 year of 100 days.
+    local_days_countdown = local_days
+    year = 1
+
+    while True:
+        if year % 3:
+            if (local_days_countdown > 99):
+                year += 1
+                local_days_countdown -= 99
+            else:
+                break
+        else:
+            if (local_days_countdown > 100):
+                year += 1
+                local_days_countdown -= 100
+            else:
+                break
+
+    caste = 0
+    festival_day = False
+
+    while True:
+        if local_days_countdown < 1:
+            festival_day = True
+            break
+        if local_days_countdown < 20:
+            caste = 1
+            local_days_countdown -= 1
+            break
+        if local_days_countdown < 41:
+            caste = 2
+            local_days_coundown -= 20
+            break
+        if year % 3:
+            if local_days_countdown < 61:
+                caste = 3
+                local_days_countdown -= 41
+                break
+
+        else:
+            if local_days_countdown < 51:
+                caste = 3
+                local_days_countdown -= 41
+                break
+            if local_days_countdown < 52:
+                caste = 3
+                festival_day = True
+                local_days_countdown -= 51
+                break
+            if local_days_countdown < 62:
+                caste = 3
+                local_days_countdown -= 52
+                break
+            local_days_countdown -= 1
+
+        if local_days_countdown < 80:
+            local_days_countdown -= 61
+            caste = 4
+            break
+
+        if local_days_countdown < 99:
+            local_days_countdown -= 80
+            caste = 5
+            break
+
+        raise ValueError
+
+    day = ceil(local_days_countdown)
+    local_days_countdown = local_days_countdown % 1
+
+    shift = "{:4.2f}".format(1 + local_days_countdown / 0.25)
+    '''
+    while True:
+        if local_days_countdown < 0.25:
+            shift = "{:4.2f}".format(1 + (local_days_countdown / 0.25))
+            break
+
+        if local_days_countdown < 0.5:
+            shift = "{:4.2f}".format(2 + local_days_countdown - 0.25)
+            break
+
+        if local_days_countdown < 0.75:
+            shift = "{:4.2f}".format(3 + local_days_countdown - 0.5)
+            break
+
+        if local_days_countdown < 1:
+            shift = "{:4.2f}".format(4 + local_days_countdown - 0.75)
+            break
+
+        raise ValueError
+        '''
+
+    return jsonify(
+        success=True,
+        year=year,
+        caste=caste,
+        day=day,
+        shift=shift,
+        days=local_days,
+        t0=str(t0),
+        festival_day=festival_day)
 
 
 @APP.route("/transfer", methods=['POST'])
@@ -309,5 +464,6 @@ def transfer():
 
 
 if __name__ == "__main__":
+    T_ADJ = calc_adjustment()
     APP.run(host="0.0.0.0", port=5001)
 
