@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from math import ceil, sqrt
+from math import ceil, floor, sqrt
 
 from flask import Flask, jsonify, request as flask_request
 from flask_cors import CORS
@@ -317,7 +317,9 @@ def time():
     day = ceil(local_days_countdown)
     local_days_countdown = local_days_countdown % 1
 
-    shift = "{:4.2f}".format(1 + local_days_countdown / 0.25)
+    # Floor the countdown to 2 decimal places.
+    floored = floor((1 + local_days_countdown / 0.25) * 100) / 100
+    shift = "{:4.2f}".format(floored)
     rawshift = (1 + local_days_countdown / 0.25)
 
     return jsonify(
