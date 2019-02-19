@@ -35,14 +35,10 @@ function getTime() {
       var rawSubtitheAngle = (0.25 + 2 * (data.rawshift * 10 - Math.floor(data.rawshift * 10))) * Math.PI;
       var subtitheAngle = (0.25 + 2 * decimals[1] / 10) * Math.PI;
       var nextSubtitheAngle = subtitheAngle + 0.2 * Math.PI;
-/*
-      var fullTitheAngle = (0.25 + 2 * (data.rawshift - Math.floor(data.rawshift))) * Math.PI;
-      var tithe = Math.floor((data.shift - Math.floor(data.shift)) * 10)
-      var titheAngle = (0.25 + 2 * tithe / 10) * Math.PI;
 
-      var titheProgress = (data.rawshift * 10 - Math.floor(data.rawshift * 10))
-      var titheProgressAngle = (0.25 + 2 * titheProgress) * Math.PI;
-      */
+      var rawSpinnerAngle = (0.25 + 2 * (data.rawshift * 100 - Math.floor(data.rawshift * 100))) * Math.PI;
+      var spinnerAngle = (0.25 + 2 * decimals[2] / 10) * Math.PI;
+      var nextSpinnerAngle = spinnerAngle + 0.2 * Math.PI;
 
       var c = document.getElementById("clockface");
       var ctx = c.getContext("2d");
@@ -100,6 +96,24 @@ function getTime() {
       ctx.arc(150, 150, 50, startAngle, subtitheAngle);
       ctx.lineWidth = 12;
       ctx.strokeStyle = "#0000ff";
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(150, 150, 25, startAngle, nextSpinnerAngle);
+      ctx.lineWidth = 8;
+      ctx.strokeStyle = "#d3d3d3";
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(150, 150, 25, startAngle, rawSpinnerAngle);
+      ctx.lineWidth = 10;
+      ctx.strokeStyle = "#a0a0a0";
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.arc(150, 150, 25, startAngle, spinnerAngle);
+      ctx.lineWidth = 12;
+      ctx.strokeStyle = "#000000";
       ctx.stroke();
     }
   )
