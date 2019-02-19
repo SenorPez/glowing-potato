@@ -318,26 +318,7 @@ def time():
     local_days_countdown = local_days_countdown % 1
 
     shift = "{:4.2f}".format(1 + local_days_countdown / 0.25)
-    '''
-    while True:
-        if local_days_countdown < 0.25:
-            shift = "{:4.2f}".format(1 + (local_days_countdown / 0.25))
-            break
-
-        if local_days_countdown < 0.5:
-            shift = "{:4.2f}".format(2 + local_days_countdown - 0.25)
-            break
-
-        if local_days_countdown < 0.75:
-            shift = "{:4.2f}".format(3 + local_days_countdown - 0.5)
-            break
-
-        if local_days_countdown < 1:
-            shift = "{:4.2f}".format(4 + local_days_countdown - 0.75)
-            break
-
-        raise ValueError
-        '''
+    rawshift = (1 + local_days_countdown / 0.25)
 
     return jsonify(
         success=True,
@@ -345,6 +326,7 @@ def time():
         caste=caste,
         day=day,
         shift=shift,
+        rawshift=rawshift,
         days=local_days,
         t0=str(t0),
         festival_day=festival_day)
