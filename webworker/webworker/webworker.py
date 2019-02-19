@@ -137,7 +137,7 @@ def get_star(system_name, star_name):
     req = requests.get(star_link)
     req.raise_for_status()
 
-    mass = req.json()['solarMass'] * MASS_SOLAR
+    mass = req.json()['mass'] * MASS_SOLAR
     gm = mass * GRAV
 
     return star_link, gm
