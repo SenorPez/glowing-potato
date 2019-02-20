@@ -1,7 +1,19 @@
+function drawClockArc(ctx, radius, lineWidth, color, endAngle) {
+  var startAngle = 0.25 * Math.PI;
+  var center_x = 150;
+  var center_y = 150;
+
+  ctx.beginPath();
+  ctx.arc(center_x, center_y, radius, startAngle, endAngle);
+  ctx.lineWidth = lineWidth;
+  ctx.strokeStyle = color;
+  ctx.stroke();
+}
+
 function getTime() {
   var time_adj = -34.28646951536321; // TODO: API Call
   var time_now = new Date(new Date() - time_adj * 86400000);
-  var time_epoch = new Date('January 1, 2000 00:00:00 GMT+00:00');
+  var time_epoch = new Date("January 1, 2000 00:00:00 GMT+00:00");
   var time_delta = time_now - time_epoch;
 
   // Standard hours
@@ -39,7 +51,7 @@ function getTime() {
     }
   }
 
-  var caste = 0
+  var caste = 0;
   var festival_day = false;
 
   if (local_days_countdown < 1) {
@@ -66,10 +78,10 @@ function getTime() {
   } else if (year % 3 === 0) {
     local_days_countdown -= 1;
   } else if (local_days_countdown < 80) {
-    caste = 4
+    caste = 4;
     local_days_countdown -= 61;
   } else if (local_days_countdown < 99) {
-    caste = 5
+    caste = 5;
     local_days_countdown -= 80;
   } else {
     caste = null;
@@ -84,18 +96,19 @@ function getTime() {
   var dispYear = year + " FY";
   var dispCaste = "";
 
-  if (festival_day && caste == 0) {
+  if (festival_day && caste === 0) {
     dispCaste = "Festival";
   } else if (festival_day) {
     dispCaste = "Midfestival";
   } else {
-    dispCaste = caste + " Caste"
+    dispCaste = caste + " Caste";
   }
 
   var dispDay = day + " Day";
   var dispShift = shift + " Shift";
 
-  document.getElementById("year").innerHTML = dispYear + " " + dispCaste + " " + dispDay + " " + dispShift;
+  document.getElementById("year").innerHTML =
+    dispYear + " " + dispCaste + " " + dispDay + " " + dispShift;
   document.getElementById("t0").innerHTML = new Date();
   document.getElementById("remainder").innerHTML = local_days;
 
@@ -103,7 +116,7 @@ function getTime() {
   var ctx = c.getContext("2d");
   ctx.clearRect(0, 0, 300, 300);
 
-  var decimals = (rawshift+"").split(".")[1].split("");
+  var decimals = (rawshift.toString()).split(".")[1].split("");
 
   var rawShiftAngle = (0.25 + 0.5 * (rawshift - 1)) * Math.PI;
   var shiftAngle = (0.25 + 0.5 * (Math.floor(shift) - 1)) * Math.PI;
@@ -121,7 +134,8 @@ function getTime() {
   drawClockArc(ctx, 75, 10, "#6a9f00", rawTitheAngle);
   drawClockArc(ctx, 75, 12, "#00ff00", titheAngle);
 
-  var rawSubtitheAngle = (0.25 + 2 * (rawshift * 10 - Math.floor(rawshift * 10))) * Math.PI;
+  var rawSubtitheAngle =
+    (0.25 + 2 * (rawshift * 10 - Math.floor(rawshift * 10))) * Math.PI;
   var subtitheAngle = (0.25 + 2 * decimals[1] / 10) * Math.PI;
   var nextSubtitheAngle = subtitheAngle + 0.2 * Math.PI;
 
@@ -129,7 +143,8 @@ function getTime() {
   drawClockArc(ctx, 50, 10, "#006666", rawSubtitheAngle);
   drawClockArc(ctx, 50, 12, "#0000ff", subtitheAngle);
 
-  var rawSpinnerAngle = (0.25 + 2 * (rawshift * 100 - Math.floor(rawshift * 100))) * Math.PI;
+  var rawSpinnerAngle =
+    (0.25 + 2 * (rawshift * 100 - Math.floor(rawshift * 100))) * Math.PI;
   var spinnerAngle = (0.25 + 2 * decimals[2] / 10) * Math.PI;
   var nextSpinnerAngle = spinnerAngle + 0.2 * Math.PI;
 
@@ -138,16 +153,4 @@ function getTime() {
   drawClockArc(ctx, 25, 12, "#000000", spinnerAngle);
 
   var t = setTimeout(getTime, 500);
-}
-
-function drawClockArc(ctx, radius, lineWidth, color, endAngle) {
-  var startAngle = 0.25 * Math.PI;
-  var center_x = 150;
-  var center_y = 150;
-
-  ctx.beginPath();
-  ctx.arc(center_x, center_y, radius, startAngle, endAngle);
-  ctx.lineWidth = lineWidth;
-  ctx.strokeStyle = color;
-  ctx.stroke();
 }
