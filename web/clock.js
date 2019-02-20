@@ -216,6 +216,6 @@ function getTime() {
   ctx.strokeStyle = "#000000";
   ctx.stroke();
 
-  var t = setTimeout(getTime, 1000);
+  var t = setTimeout(getTime, 500);
 }
 
