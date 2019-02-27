@@ -50,6 +50,40 @@ class PlanetaryCalendar {
     }
 
     int getCaste(double days) {
-        return -1;
+        int year = getLocalYear(days) - 1;
+        days -= year * 99 + Math.floorDiv(year, 3) - Math.floorDiv(year, 51);
+        if (days < 1) {
+            return 0;
+        } else if (days < 20) {
+            return 1;
+        } else if (days < 40) {
+            return 2;
+        } else if (!isFestivalYear(year)) {
+            if (days < 60) {
+                return 3;
+            } else if (days < 80) {
+                return 4;
+            } else if (days < 99) {
+                return 5;
+            } else {
+                // TODO: Throw error instead of a sentinel.
+                return -1;
+            }
+        } else {
+            if (days < 61) {
+                return 3;
+            } else if (days < 81) {
+                return 4;
+            } else if (days < 100) {
+                return 5;
+            } else {
+                // TODO: Throw error instead of a sentinel.
+                return -1;
+            }
+        }
+    }
+
+    private boolean isFestivalYear(final int year) {
+        return year % 3 == 0 && year % 51 != 0;
     }
 }
