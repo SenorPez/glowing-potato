@@ -17,6 +17,10 @@ class PlanetaryCalendar {
         return -1;
     }
 
+    double getLocalDays() {
+        return getLocalDays(getLocalMilliseconds(clock.millis()));
+    }
+
     double getLocalMilliseconds() {
         return getLocalMilliseconds(clock.millis());
     }
