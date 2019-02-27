@@ -83,6 +83,6 @@ public class PlanetaryCalendarTest {
     @Test
     public void testGetLocalDays_Current() {
         when(mockClock.millis()).thenReturn((long) standardMilliseconds);
-        assertThat(planetaryCalendar.getLocalDays(), closeTo(days, 1e-9));
+        assertThat(planetaryCalendar.getLocalDays(), closeTo(days, 1e-8));
     }
 }
