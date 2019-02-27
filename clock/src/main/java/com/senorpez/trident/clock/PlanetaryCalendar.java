@@ -169,6 +169,6 @@ class PlanetaryCalendar {
     }
 
     int getShift(double days) {
-        return -1;
+        return (int) Math.floor(days % 1 / 0.25) + 1;
     }
 }
