@@ -48,4 +48,8 @@ class PlanetaryCalendar {
     private int getDaysInYear(final int year) {
         return year % 3 == 0 && year % 51 != 0 ? 100 : 99;
     }
+
+    int getCaste(double days) {
+        return -1;
+    }
 }

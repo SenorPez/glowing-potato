@@ -12,13 +12,13 @@ import java.time.Clock;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.closeTo;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 
 @RunWith(Parameterized.class)
-public class PlanetaryCalendarTest {
+public class PlanetaryCalendarYearTest {
     private int localYear;
     private int days;
     private double planetaryMilliseconds;
@@ -50,7 +50,7 @@ public class PlanetaryCalendarTest {
         });
     }
 
-    public PlanetaryCalendarTest(int localYear, int days, double planetaryMilliseconds, double standardMilliseconds) {
+    public PlanetaryCalendarYearTest(int localYear, int days, double planetaryMilliseconds, double standardMilliseconds) {
         this.localYear = localYear;
         this.days = days;
         this.planetaryMilliseconds = planetaryMilliseconds;
