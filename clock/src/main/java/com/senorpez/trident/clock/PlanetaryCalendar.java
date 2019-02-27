@@ -183,6 +183,8 @@ class PlanetaryCalendar {
     }
 
     double getTithe() {
-        return -1;
+        double localMilliseconds = getLocalMilliseconds(clock.millis());
+        double localDays = getLocalDays(localMilliseconds);
+        return getTithe(localDays);
     }
 }
