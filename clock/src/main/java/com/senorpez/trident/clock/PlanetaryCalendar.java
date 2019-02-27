@@ -173,6 +173,6 @@ class PlanetaryCalendar {
     }
 
     double getTithe(double days) {
-        return -1;
+        return (days % 1 / 0.25) % 1;
     }
 }
