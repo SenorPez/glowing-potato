@@ -175,4 +175,8 @@ class PlanetaryCalendar {
     double getTithe(double days) {
         return (days % 1 / 0.25) % 1;
     }
+
+    int getShift() {
+        return -1;
+    }
 }
