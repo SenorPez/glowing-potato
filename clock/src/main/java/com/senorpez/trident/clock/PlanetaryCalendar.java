@@ -13,40 +13,10 @@ class PlanetaryCalendar {
         this.clock = clock;
     }
 
-    double getLocalDays() {
-        return getLocalDays(getLocalMilliseconds(clock.millis()));
-    }
-
-    double getLocalDays(final double milliseconds) {
-        final double hours = milliseconds / 3600000;
-        return hours / STD_HOURS_PER_DAY;
-    }
-
-    double getLocalMilliseconds() {
-        return getLocalMilliseconds(clock.millis());
-    }
-
-    double getLocalMilliseconds(final double standardMilliseconds) {
-        return standardMilliseconds + EPOCH_OFFSET * 86400000;
-    }
-
-    int getLocalYear() {
+    int getCaste() {
         double localMilliseconds = getLocalMilliseconds(clock.millis());
         double localDays = getLocalDays(localMilliseconds);
-        return getLocalYear(localDays);
-    }
-
-    int getLocalYear(double localDays) {
-        int year = 1;
-        while (localDays >= getDaysInYear(year)) {
-            localDays -= getDaysInYear(year);
-            year += 1;
-        }
-        return year;
-    }
-
-    private int getDaysInYear(final int year) {
-        return year % 3 == 0 && year % 51 != 0 ? 100 : 99;
+        return getCaste(localDays);
     }
 
     int getCaste(double days) {
@@ -83,23 +53,10 @@ class PlanetaryCalendar {
         }
     }
 
-    private boolean isFestivalYear(final int year) {
-        return year % 3 == 0 && year % 51 != 0;
-    }
-
-    boolean isFestivalDay(double days) {
-        int year = getLocalYear(days);
-        double currentDays = removeYearDays(year, days);
-        if (currentDays < 1) {
-            return true;
-        } else {
-            return isFestivalYear(year) && currentDays >= 50 && currentDays < 51;
-        }
-    }
-
-    private double removeYearDays(int year, double days) {
-        year -= 1;
-        return days - (year * 99 + Math.floorDiv(year, 3) - Math.floorDiv(year, 51));
+    int getCasteDay() {
+        double localMilliseconds = getLocalMilliseconds(clock.millis());
+        double localDays = getLocalDays(localMilliseconds);
+        return getCasteDay(localDays);
     }
 
     int getCasteDay(double days) {
@@ -150,10 +107,36 @@ class PlanetaryCalendar {
         }
     }
 
-    int getCaste() {
+    double getLocalDays() {
+        return getLocalDays(getLocalMilliseconds(clock.millis()));
+    }
+
+    double getLocalDays(final double milliseconds) {
+        final double hours = milliseconds / 3600000;
+        return hours / STD_HOURS_PER_DAY;
+    }
+
+    double getLocalMilliseconds() {
+        return getLocalMilliseconds(clock.millis());
+    }
+
+    double getLocalMilliseconds(final double standardMilliseconds) {
+        return standardMilliseconds + EPOCH_OFFSET * 86400000;
+    }
+
+    int getLocalYear() {
         double localMilliseconds = getLocalMilliseconds(clock.millis());
         double localDays = getLocalDays(localMilliseconds);
-        return getCaste(localDays);
+        return getLocalYear(localDays);
+    }
+
+    int getLocalYear(double localDays) {
+        int year = 1;
+        while (localDays >= getDaysInYear(year)) {
+            localDays -= getDaysInYear(year);
+            year += 1;
+        }
+        return year;
     }
 
     boolean isFestivalDay() {
@@ -162,9 +145,26 @@ class PlanetaryCalendar {
         return isFestivalDay(localDays);
     }
 
-    int getCasteDay() {
-        double localMilliseconds = getLocalMilliseconds(clock.millis());
-        double localDays = getLocalDays(localMilliseconds);
-        return getCasteDay(localDays);
+    boolean isFestivalDay(double days) {
+        int year = getLocalYear(days);
+        double currentDays = removeYearDays(year, days);
+        if (currentDays < 1) {
+            return true;
+        } else {
+            return isFestivalYear(year) && currentDays >= 50 && currentDays < 51;
+        }
+    }
+
+    private int getDaysInYear(final int year) {
+        return year % 3 == 0 && year % 51 != 0 ? 100 : 99;
+    }
+
+    private boolean isFestivalYear(final int year) {
+        return year % 3 == 0 && year % 51 != 0;
+    }
+
+    private double removeYearDays(int year, double days) {
+        year -= 1;
+        return days - (year * 99 + Math.floorDiv(year, 3) - Math.floorDiv(year, 51));
     }
 }

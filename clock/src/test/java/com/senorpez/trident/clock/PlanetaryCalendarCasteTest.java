@@ -80,8 +80,9 @@ public class PlanetaryCalendarCasteTest {
     }
 
     @Test
-    public void testIsFestivalDay() {
-        assertThat(planetaryCalendar.isFestivalDay(days), is(festivalDay));
+    public void testGetCaste_Current() {
+        when(mockClock.millis()).thenReturn((long) Math.ceil(standardMilliseconds));
+        assertThat(planetaryCalendar.getCaste(), is(caste));
     }
 
     @Test
@@ -90,20 +91,19 @@ public class PlanetaryCalendarCasteTest {
     }
 
     @Test
-    public void testGetCaste_Current() {
+    public void testGetCasteDay_Current() {
         when(mockClock.millis()).thenReturn((long) Math.ceil(standardMilliseconds));
-        assertThat(planetaryCalendar.getCaste(), is(caste));
+        assertThat(planetaryCalendar.getCasteDay(), is(casteDay));
+    }
+
+    @Test
+    public void testIsFestivalDay() {
+        assertThat(planetaryCalendar.isFestivalDay(days), is(festivalDay));
     }
 
     @Test
     public void testIsFestivalDay_Current() {
         when(mockClock.millis()).thenReturn((long) Math.ceil(standardMilliseconds));
         assertThat(planetaryCalendar.isFestivalDay(), is(festivalDay));
-    }
-
-    @Test
-    public void testGetCasteDay_Current() {
-        when(mockClock.millis()).thenReturn((long) Math.ceil(standardMilliseconds));
-        assertThat(planetaryCalendar.getCasteDay(), is(casteDay));
     }
 }
