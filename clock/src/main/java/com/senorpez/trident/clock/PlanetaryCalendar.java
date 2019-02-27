@@ -4,7 +4,7 @@ class PlanetaryCalendar {
     // TODO: API integration with cache fallback.
     private static final double STD_HOURS_PER_DAY = 36.3624863;
 
-    int getYear(int localDays) {
+    int getYear(double localDays) {
         int year = 1;
         while (localDays >= getDaysInYear(year)) {
             localDays -= getDaysInYear(year);
