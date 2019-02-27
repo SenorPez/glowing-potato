@@ -47,7 +47,7 @@ public class PlanetaryCalendarTest {
 
     @Test
     public void testGetYear() {
-        assertThat(planetaryCalendar.getYear(days), is(localYear));
+        assertThat(planetaryCalendar.getLocalYear(days), is(localYear));
     }
 
     @Test
