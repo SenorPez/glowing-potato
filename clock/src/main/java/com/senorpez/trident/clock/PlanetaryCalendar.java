@@ -167,4 +167,8 @@ class PlanetaryCalendar {
         year -= 1;
         return days - (year * 99 + Math.floorDiv(year, 3) - Math.floorDiv(year, 51));
     }
+
+    int getShift(double days) {
+        return -1;
+    }
 }
