@@ -181,4 +181,8 @@ class PlanetaryCalendar {
         double localDays = getLocalDays(localMilliseconds);
         return getShift(localDays);
     }
+
+    double getTithe() {
+        return -1;
+    }
 }

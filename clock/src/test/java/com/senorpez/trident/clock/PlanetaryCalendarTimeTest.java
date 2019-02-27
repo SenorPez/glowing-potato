@@ -71,4 +71,10 @@ public class PlanetaryCalendarTimeTest {
         when(mockClock.millis()).thenReturn((long) Math.ceil(standardMilliseconds));
         assertThat(planetaryCalendar.getShift(), is(shift));
     }
+
+    @Test
+    public void testGetTithe_Current() {
+        when(mockClock.millis()).thenReturn((long) Math.ceil(standardMilliseconds));
+        assertThat(planetaryCalendar.getTithe(), is(shift));
+    }
 }
