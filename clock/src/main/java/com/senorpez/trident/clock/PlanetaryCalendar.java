@@ -87,7 +87,18 @@ class PlanetaryCalendar {
         return year % 3 == 0 && year % 51 != 0;
     }
 
-    Boolean isFestivalDay(double days) {
-        return null;
+    boolean isFestivalDay(double days) {
+        int year = getLocalYear(days);
+        double currentDays = removeYearDays(year, days);
+        if (currentDays < 1) {
+            return true;
+        } else {
+            return isFestivalYear(year) && currentDays >= 50 && currentDays < 51;
+        }
+    }
+
+    private double removeYearDays(int year, double days) {
+        year -= 1;
+        return days - (year * 99 + Math.floorDiv(year, 3) - Math.floorDiv(year, 51));
     }
 }
