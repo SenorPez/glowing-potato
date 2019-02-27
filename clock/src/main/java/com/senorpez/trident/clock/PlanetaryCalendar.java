@@ -13,18 +13,27 @@ class PlanetaryCalendar {
         this.clock = clock;
     }
 
-    int getLocalYear() {
-        double localMilliseconds = getLocalMilliseconds(clock.millis());
-        double localDays = getLocalDays(localMilliseconds);
-        return getLocalYear(localDays);
-    }
-
     double getLocalDays() {
         return getLocalDays(getLocalMilliseconds(clock.millis()));
     }
 
+    double getLocalDays(final double milliseconds) {
+        final double hours = milliseconds / 3600000;
+        return hours / STD_HOURS_PER_DAY;
+    }
+
     double getLocalMilliseconds() {
         return getLocalMilliseconds(clock.millis());
+    }
+
+    double getLocalMilliseconds(final double standardMilliseconds) {
+        return standardMilliseconds + EPOCH_OFFSET * 86400000;
+    }
+
+    int getLocalYear() {
+        double localMilliseconds = getLocalMilliseconds(clock.millis());
+        double localDays = getLocalDays(localMilliseconds);
+        return getLocalYear(localDays);
     }
 
     int getLocalYear(double localDays) {
@@ -36,16 +45,7 @@ class PlanetaryCalendar {
         return year;
     }
 
-    double getLocalDays(final double milliseconds) {
-        final double hours = milliseconds / 3600000;
-        return hours / STD_HOURS_PER_DAY;
-    }
-
     private int getDaysInYear(final int year) {
         return year % 3 == 0 && year % 51 != 0 ? 100 : 99;
-    }
-
-    double getLocalMilliseconds(final double standardMilliseconds) {
-        return standardMilliseconds + EPOCH_OFFSET * 86400000;
     }
 }
