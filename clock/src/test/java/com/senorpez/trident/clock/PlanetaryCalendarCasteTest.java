@@ -100,4 +100,10 @@ public class PlanetaryCalendarCasteTest {
         when(mockClock.millis()).thenReturn((long) Math.ceil(standardMilliseconds));
         assertThat(planetaryCalendar.isFestivalDay(), is(festivalDay));
     }
+
+    @Test
+    public void testGetCasteDay_Current() {
+        when(mockClock.millis()).thenReturn((long) Math.ceil(standardMilliseconds));
+        assertThat(planetaryCalendar.getCasteDay(), is(casteDay));
+    }
 }

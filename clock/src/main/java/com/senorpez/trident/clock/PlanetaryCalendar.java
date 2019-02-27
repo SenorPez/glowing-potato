@@ -161,4 +161,8 @@ class PlanetaryCalendar {
         double localDays = getLocalDays(localMilliseconds);
         return isFestivalDay(localDays);
     }
+
+    int getCasteDay() {
+        return -1;
+    }
 }
