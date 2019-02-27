@@ -1,9 +1,25 @@
 package com.senorpez.trident.clock;
 
+import java.time.Clock;
+
 class PlanetaryCalendar {
     // TODO: API integration with cache fallback.
     private static final double STD_HOURS_PER_DAY = 36.3624863;
     private static final double EPOCH_OFFSET = -34.28646952;
+
+    private final Clock clock;
+
+    PlanetaryCalendar(Clock clock) {
+        this.clock = clock;
+    }
+
+    int getLocalYear() {
+        return -1;
+    }
+
+    double getLocalMilliseconds() {
+        return getLocalMilliseconds(clock.millis());
+    }
 
     int getLocalYear(double localDays) {
         int year = 1;

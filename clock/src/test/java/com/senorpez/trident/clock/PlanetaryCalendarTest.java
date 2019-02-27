@@ -4,13 +4,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.Clock;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -27,14 +25,14 @@ public class PlanetaryCalendarTest {
     private double standardMilliseconds;
     private String standardTimecode;
 
-    private PlanetaryCalendar planetaryCalendar;
+    @InjectMocks
+    PlanetaryCalendar planetaryCalendar;
 
     @Mock
     Clock mockClock;
 
     @Before
     public void setUp() {
-        planetaryCalendar = new PlanetaryCalendar();
         MockitoAnnotations.initMocks(this);
     }
 
@@ -77,9 +75,8 @@ public class PlanetaryCalendarTest {
     }
 
     @Test
-    public void testGetLocalYear_Current() {
-        Clock fixedClock = Clock.fixed(Instant.parse(standardTimecode), ZoneId.ofOffset("GMT", ZoneOffset.UTC));
-        when(mockClock.millis()).thenReturn(fixedClock.millis());
-        assertThat(planetaryCalendar.getLocalYear(), is(localYear));
+    public void testGetLocalMilliseconds_Current() {
+        when(mockClock.millis()).thenReturn((long) standardMilliseconds);
+        assertThat(planetaryCalendar.getLocalMilliseconds(), closeTo(planetaryMilliseconds, 1));
     }
 }
