@@ -156,7 +156,9 @@ class PlanetaryCalendar {
         return getCaste(localDays);
     }
 
-    Boolean isFestivalDay() {
-        return null;
+    boolean isFestivalDay() {
+        double localMilliseconds = getLocalMilliseconds(clock.millis());
+        double localDays = getLocalDays(localMilliseconds);
+        return isFestivalDay(localDays);
     }
 }
