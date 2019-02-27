@@ -4,9 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
-import java.text.DateFormat;
 import java.time.*;
-import java.util.Date;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
@@ -16,16 +14,24 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Date date = new Date();
         TextView standardTime = this.findViewById(R.id.standardTime);
-        standardTime.setText(DateFormat.getDateTimeInstance().format(date));
+        standardTime.setText(String.format("%s", Clock.systemUTC().instant()));
 
         Clock clock = Clock.offset(
                 Clock.systemUTC(),
-                Duration.ofMillis(Clock.fixed(Instant.parse("2000-01-01T00:00:00Z"), ZoneId.ofOffset("GMT", ZoneOffset.UTC)).millis() * -1)
-        );
+                Duration.ofMillis(
+                        Clock.fixed(Instant.parse("2000-01-01T00:00:00Z"), ZoneId.ofOffset("GMT", ZoneOffset.UTC)).millis() * -1));
+
         PlanetaryCalendar tavenCalendar = new PlanetaryCalendar(clock);
         TextView tavenTime = this.findViewById(R.id.tavenTime);
-        tavenTime.setText(String.format(Locale.US, "%d FY", tavenCalendar.getLocalYear()));
+
+        tavenTime.setText(String.format(
+                Locale.US,
+                "%d FY %d Caste %d Day %d.%d Shift",
+                tavenCalendar.getLocalYear(),
+                tavenCalendar.getCaste(),
+                tavenCalendar.getCasteDay(),
+                tavenCalendar.getShift(),
+                (int) Math.floor(tavenCalendar.getTithe() * 100)));
     }
 }
