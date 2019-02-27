@@ -75,6 +75,6 @@ public class PlanetaryCalendarTimeTest {
     @Test
     public void testGetTithe_Current() {
         when(mockClock.millis()).thenReturn((long) Math.ceil(standardMilliseconds));
-        assertThat(planetaryCalendar.getTithe(), is(shift));
+        assertThat(planetaryCalendar.getTithe(), closeTo(tithe, 1e-7));
     }
 }
