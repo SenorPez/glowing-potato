@@ -111,8 +111,8 @@ class PlanetaryCalendar {
         return getLocalDays(getLocalMilliseconds(clock.millis()));
     }
 
-    double getLocalDays(final double milliseconds) {
-        final double hours = milliseconds / 3600000;
+    double getLocalDays(final double localMilliseconds) {
+        final double hours = localMilliseconds / 3600000;
         return hours / STD_HOURS_PER_DAY;
     }
 
@@ -121,7 +121,7 @@ class PlanetaryCalendar {
     }
 
     double getLocalMilliseconds(final double standardMilliseconds) {
-        return standardMilliseconds + EPOCH_OFFSET * 86400000;
+        return standardMilliseconds - EPOCH_OFFSET * 86400000;
     }
 
     int getLocalYear() {
