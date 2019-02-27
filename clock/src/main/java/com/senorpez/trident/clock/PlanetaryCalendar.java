@@ -149,4 +149,8 @@ class PlanetaryCalendar {
             }
         }
     }
+
+    int getCaste() {
+        return -1;
+    }
 }
