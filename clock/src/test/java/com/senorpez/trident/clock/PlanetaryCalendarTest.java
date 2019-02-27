@@ -85,4 +85,10 @@ public class PlanetaryCalendarTest {
         when(mockClock.millis()).thenReturn((long) standardMilliseconds);
         assertThat(planetaryCalendar.getLocalDays(), closeTo(days, 1e-8));
     }
+
+    @Test
+    public void testGetLocalYear_Current() {
+        when(mockClock.millis()).thenReturn((long) standardMilliseconds);
+        assertThat(planetaryCalendar.getLocalYear(), is(localYear));
+    }
 }
