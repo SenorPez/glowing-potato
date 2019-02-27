@@ -103,6 +103,50 @@ class PlanetaryCalendar {
     }
 
     int getCasteDay(double days) {
-        return -1;
+        if (isFestivalDay(days)) {
+            return 0;
+        }
+
+        int year = getLocalYear(days);
+        double currentYearDays = removeYearDays(year, days);
+        int caste = getCaste(days);
+
+        if (caste == 1) {
+            return (int) Math.floor(currentYearDays);
+        } else if (caste == 2) {
+            currentYearDays -= 19;
+            return (int) Math.floor(currentYearDays);
+        } else if (isFestivalYear(year)) {
+            if (caste == 3 && currentYearDays < 51) {
+                currentYearDays -= 39;
+                return (int) Math.floor(currentYearDays);
+            } else if (caste == 3) {
+                currentYearDays -= 40;
+                return (int) Math.floor(currentYearDays);
+            } else if (caste == 4) {
+                currentYearDays -= 60;
+                return (int) Math.floor(currentYearDays);
+            } else if (caste == 5) {
+                currentYearDays -= 80;
+                return (int) Math.floor(currentYearDays);
+            } else {
+                // TODO: Throw error instead of a sentinel.
+                return -1;
+            }
+        } else {
+            if (caste == 3) {
+                currentYearDays -= 39;
+                return (int) Math.floor(currentYearDays);
+            } else if (caste == 4) {
+                currentYearDays -= 59;
+                return (int) Math.floor(currentYearDays);
+            } else if (caste == 5) {
+                currentYearDays -= 79;
+                return (int) Math.floor(currentYearDays);
+            } else {
+                // TODO: Throw error instead of a sentinel.
+                return -1;
+            }
+        }
     }
 }
