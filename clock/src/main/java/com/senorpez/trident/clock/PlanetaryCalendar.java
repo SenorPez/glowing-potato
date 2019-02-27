@@ -1,6 +1,9 @@
 package com.senorpez.trident.clock;
 
 class PlanetaryCalendar {
+    // TODO: API integration with cache fallback.
+    private static final double STD_HOURS_PER_DAY = 36.3624863;
+
     int getYear(int localDays) {
         int year = 1;
         while (localDays >= getDaysInYear(year)) {
@@ -11,7 +14,8 @@ class PlanetaryCalendar {
     }
 
     double getLocalDays(final double milliseconds) {
-        return -1;
+        final double hours = milliseconds / 3600000;
+        return hours / STD_HOURS_PER_DAY;
     }
 
     private int getDaysInYear(final int year) {
