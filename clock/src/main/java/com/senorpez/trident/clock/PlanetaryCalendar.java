@@ -86,4 +86,8 @@ class PlanetaryCalendar {
     private boolean isFestivalYear(final int year) {
         return year % 3 == 0 && year % 51 != 0;
     }
+
+    Boolean isFestivalDay(double days) {
+        return null;
+    }
 }

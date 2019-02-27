@@ -47,4 +47,9 @@ public class PlanetaryCalendarCasteTest {
     public void testGetCaste() {
         assertThat(planetaryCalendar.getCaste(days), is(caste));
     }
+
+    @Test
+    public void testIsFestivalDay() {
+        assertThat(planetaryCalendar.isFestivalDay(days), is(festivalDay));
+    }
 }
