@@ -171,4 +171,8 @@ class PlanetaryCalendar {
     int getShift(double days) {
         return (int) Math.floor(days % 1 / 0.25) + 1;
     }
+
+    double getTithe(double days) {
+        return -1;
+    }
 }
