@@ -155,4 +155,8 @@ class PlanetaryCalendar {
         double localDays = getLocalDays(localMilliseconds);
         return getCaste(localDays);
     }
+
+    Boolean isFestivalDay() {
+        return null;
+    }
 }
