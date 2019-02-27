@@ -10,6 +10,7 @@ import java.util.Collection;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.closeTo;
 
 @RunWith(Parameterized.class)
 public class PlanetaryCalendarTest {
@@ -51,6 +52,6 @@ public class PlanetaryCalendarTest {
 
     @Test
     public void testGetLocalDays() {
-        assertThat(planetaryCalendar.getLocalDays(milliseconds), is(days));
+        assertThat(planetaryCalendar.getLocalDays(milliseconds), closeTo(days, 1e-9));
     }
 }
