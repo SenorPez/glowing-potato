@@ -62,14 +62,14 @@ public class PlanetaryCalendarTimeTest {
     }
 
     @Test
-    public void testGetTithe() {
-        assertThat(planetaryCalendar.getTithe(days), closeTo(tithe, 1e-9));
-    }
-
-    @Test
     public void testGetShift_Current() {
         when(mockClock.millis()).thenReturn((long) Math.ceil(standardMilliseconds));
         assertThat(planetaryCalendar.getShift(), is(shift));
+    }
+
+    @Test
+    public void testGetTithe() {
+        assertThat(planetaryCalendar.getTithe(days), closeTo(tithe, 1e-9));
     }
 
     @Test

@@ -139,6 +139,26 @@ class PlanetaryCalendar {
         return year;
     }
 
+    int getShift() {
+        double localMilliseconds = getLocalMilliseconds(clock.millis());
+        double localDays = getLocalDays(localMilliseconds);
+        return getShift(localDays);
+    }
+
+    int getShift(double days) {
+        return (int) Math.floor(days % 1 / 0.25) + 1;
+    }
+
+    double getTithe() {
+        double localMilliseconds = getLocalMilliseconds(clock.millis());
+        double localDays = getLocalDays(localMilliseconds);
+        return getTithe(localDays);
+    }
+
+    double getTithe(double days) {
+        return (days % 1 / 0.25) % 1;
+    }
+
     boolean isFestivalDay() {
         double localMilliseconds = getLocalMilliseconds(clock.millis());
         double localDays = getLocalDays(localMilliseconds);
@@ -166,25 +186,5 @@ class PlanetaryCalendar {
     private double removeYearDays(int year, double days) {
         year -= 1;
         return days - (year * 99 + Math.floorDiv(year, 3) - Math.floorDiv(year, 51));
-    }
-
-    int getShift(double days) {
-        return (int) Math.floor(days % 1 / 0.25) + 1;
-    }
-
-    double getTithe(double days) {
-        return (days % 1 / 0.25) % 1;
-    }
-
-    int getShift() {
-        double localMilliseconds = getLocalMilliseconds(clock.millis());
-        double localDays = getLocalDays(localMilliseconds);
-        return getShift(localDays);
-    }
-
-    double getTithe() {
-        double localMilliseconds = getLocalMilliseconds(clock.millis());
-        double localDays = getLocalDays(localMilliseconds);
-        return getTithe(localDays);
     }
 }
