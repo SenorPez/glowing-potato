@@ -24,6 +24,6 @@ class PlanetaryCalendar {
     }
 
     double getLocalMilliseconds(final double standardMilliseconds) {
-        return -1;
+        return standardMilliseconds + EPOCH_OFFSET * 86400000;
     }
 }
