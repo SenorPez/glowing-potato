@@ -14,7 +14,9 @@ class PlanetaryCalendar {
     }
 
     int getLocalYear() {
-        return -1;
+        double localMilliseconds = getLocalMilliseconds(clock.millis());
+        double localDays = getLocalDays(localMilliseconds);
+        return getLocalYear(localDays);
     }
 
     double getLocalDays() {
