@@ -76,19 +76,19 @@ public class PlanetaryCalendarTest {
 
     @Test
     public void testGetLocalMilliseconds_Current() {
-        when(mockClock.millis()).thenReturn((long) standardMilliseconds);
+        when(mockClock.millis()).thenReturn((long) Math.ceil(standardMilliseconds));
         assertThat(planetaryCalendar.getLocalMilliseconds(), closeTo(planetaryMilliseconds, 1));
     }
 
     @Test
     public void testGetLocalDays_Current() {
-        when(mockClock.millis()).thenReturn((long) standardMilliseconds);
+        when(mockClock.millis()).thenReturn((long) Math.ceil(standardMilliseconds));
         assertThat(planetaryCalendar.getLocalDays(), closeTo(days, 1e-8));
     }
 
     @Test
     public void testGetLocalYear_Current() {
-        when(mockClock.millis()).thenReturn((long) standardMilliseconds);
+        when(mockClock.millis()).thenReturn((long) Math.ceil(standardMilliseconds));
         assertThat(planetaryCalendar.getLocalYear(), is(localYear));
     }
 }
