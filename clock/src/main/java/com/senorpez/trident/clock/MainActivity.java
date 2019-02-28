@@ -6,7 +6,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.*;
+import java.util.Date;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
@@ -28,7 +31,16 @@ public class MainActivity extends AppCompatActivity {
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            standardTime.setText(String.format("%s", Clock.systemUTC().instant()));
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+            SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy G MMM d HH:mm:ss", Locale.US);
+
+            try {
+                Date date = inputFormat.parse(String.format("%s", Clock.systemUTC().instant()));
+                standardTime.setText(outputFormat.format(date));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
             tavenTime.setText(String.format(
                     Locale.US,
                     "%d FY %d Caste %d Day %d.%02d Shift",
