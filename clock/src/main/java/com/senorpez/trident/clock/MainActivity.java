@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        System.out.println("onCreate");
 
         standardTime = this.findViewById(R.id.standardTime);
         tavenTime = this.findViewById(R.id.tavenTime);
@@ -57,7 +58,17 @@ public class MainActivity extends AppCompatActivity {
         progressTithe = this.findViewById(R.id.prgTithe);
         progressSubtithe = this.findViewById(R.id.prgSubtithe);
         progressTicker = this.findViewById(R.id.prgTicker);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
         handler.post(runnable);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        handler.removeCallbacks(runnable);
     }
 }
