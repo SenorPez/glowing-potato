@@ -1,6 +1,7 @@
 package com.senorpez.trident.clock;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -46,5 +47,27 @@ public class MainActivity extends AppCompatActivity {
 
         ProgressBar progressTicker = this.findViewById(R.id.prgTicker);
         progressTicker.setProgress((int) (Math.floor(tavenCalendar.getTithe() * 1000)) % 10);
+
+        Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                standardTime.setText(String.format("%s", Clock.systemUTC().instant()));
+                tavenTime.setText(String.format(
+                        Locale.US,
+                        "%d FY %d Caste %d Day %d.%d Shift",
+                        tavenCalendar.getLocalYear(),
+                        tavenCalendar.getCaste(),
+                        tavenCalendar.getCasteDay(),
+                        tavenCalendar.getShift(),
+                        (int) Math.floor(tavenCalendar.getTithe() * 100)));
+                handler.postDelayed(this, 500);
+                progressShift.setProgress(tavenCalendar.getShift() - 1);
+                progressTithe.setProgress((int) Math.floor(tavenCalendar.getTithe() * 10));
+                progressSubtithe.setProgress((int) (Math.floor(tavenCalendar.getTithe() * 100)) % 10);
+                progressTicker.setProgress((int) (Math.floor(tavenCalendar.getTithe() * 1000)) % 10);
+            }
+        };
+        handler.post(runnable);
     }
 }
