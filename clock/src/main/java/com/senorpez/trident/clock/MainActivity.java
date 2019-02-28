@@ -2,6 +2,7 @@ package com.senorpez.trident.clock;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.time.*;
@@ -33,5 +34,17 @@ public class MainActivity extends AppCompatActivity {
                 tavenCalendar.getCasteDay(),
                 tavenCalendar.getShift(),
                 (int) Math.floor(tavenCalendar.getTithe() * 100)));
+
+        ProgressBar progressShift = this.findViewById(R.id.prgShift);
+        progressShift.setProgress(tavenCalendar.getShift() - 1);
+
+        ProgressBar progressTithe = this.findViewById(R.id.prgTithe);
+        progressTithe.setProgress((int) Math.floor(tavenCalendar.getTithe() * 10));
+
+        ProgressBar progressSubtithe = this.findViewById(R.id.prgSubtithe);
+        progressSubtithe.setProgress((int) (Math.floor(tavenCalendar.getTithe() * 100)) % 10);
+
+        ProgressBar progressTicker = this.findViewById(R.id.prgTicker);
+        progressTicker.setProgress((int) (Math.floor(tavenCalendar.getTithe() * 1000)) % 10);
     }
 }
