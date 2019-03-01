@@ -2,7 +2,6 @@ package com.senorpez.trident.clock;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -10,8 +9,7 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class PlanetaryCalendarViewModelTest {
-    @InjectMocks
-    PlanetaryCalendarViewModel planetaryCalendarViewModel;
+    private PlanetaryCalendarViewModel planetaryCalendarViewModel = new PlanetaryCalendarViewModel();
 
     @Mock
     PlanetaryCalendar planetaryCalendar;
@@ -23,6 +21,7 @@ public class PlanetaryCalendarViewModelTest {
 
     @Test
     public void testGetPlanetaryCalendar() {
+        planetaryCalendarViewModel.init(planetaryCalendar);
         assertThat(planetaryCalendarViewModel.getPlanetaryCalendar(), sameInstance(planetaryCalendar));
     }
 }
