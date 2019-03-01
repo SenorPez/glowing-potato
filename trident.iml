@@ -27,5 +27,13 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="trident.trident-0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" exported="" name="trident.trident-0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" exported="" name="trident.trident-0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" exported="" name="trident.trident-0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" exported="" name="trident.trident-0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" exported="" name="trident.trident-0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" exported="" name="trident.trident-0.1-SNAPSHOT" level="project" />
+    <orderEntry type="library" exported="" name="trident.trident-0.1-SNAPSHOT" level="project" />
   </component>
 </module>
