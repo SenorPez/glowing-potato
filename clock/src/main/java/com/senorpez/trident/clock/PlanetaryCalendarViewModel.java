@@ -2,10 +2,10 @@ package com.senorpez.trident.clock;
 
 import android.arch.lifecycle.ViewModel;
 
-public class PlanetaryCalendarViewModel extends ViewModel {
+class PlanetaryCalendarViewModel extends ViewModel {
     private PlanetaryCalendar planetaryCalendar;
 
-    public PlanetaryCalendarViewModel(PlanetaryCalendar planetaryCalendar) {
+    void init(PlanetaryCalendar planetaryCalendar) {
         this.planetaryCalendar = planetaryCalendar;
     }
 
