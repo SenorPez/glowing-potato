@@ -12,32 +12,25 @@ import requests
 
 
 def calc_adjustment():
-    a = -100.0
-    b = 0.0
-    winter = (0, -1, 0) / np.linalg.norm((0, -1, 0))
-    angle_target = np.arccos(np.clip(np.dot((1, 0, 0), winter), -1.0, 1.0))
-
     _, gm_s1 = get_star("Eta Veneris", "1 Eta Veneris")
     taven = get_planet(-455609026, "green", gm_s1)
+    winter = np.arctan2(-1, 0)
+
+    a = -75.0
+    b = 0.0
 
     for _ in range(1000):
-        c = (a + b) / 2
-        r_a, _ = taven.eph(epoch(a))
-        r_b, _ = taven.eph(epoch(b))
+        c = (a + b) / 2;
         r_c, _ = taven.eph(epoch(c))
 
-        u_a = r_a / np.linalg.norm(r_a)
-        angle_a = np.arccos(np.clip(np.dot(u_a, winter), -1.0, 1.0))
-        u_b = r_b / np.linalg.norm(r_b)
-        angle_b = np.arccos(np.clip(np.dot(u_b, winter), -1.0, 1.0))
-        u_c = r_c / np.linalg.norm(r_c)
-        angle_c = np.arccos(np.clip(np.dot(u_c, winter), -1.0, 1.0))
+        angle = np.arctan2(r_c[1], r_c[0])
 
-        if angle_c - angle_target < 0:
+        if angle - winter < 0:
             a = c
         else:
             b = c
 
+    print(c)
     return c
 
 
