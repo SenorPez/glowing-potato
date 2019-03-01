@@ -1,5 +1,5 @@
-from datetime import datetime, timedelta
-from math import ceil, floor, sqrt
+from datetime import datetime
+from math import sqrt
 
 from flask import Flask, jsonify, request as flask_request
 from flask_cors import CORS
@@ -20,7 +20,7 @@ def calc_adjustment():
     b = 0.0
 
     for _ in range(1000):
-        c = (a + b) / 2;
+        c = (a + b) / 2
         r_c, _ = taven.eph(epoch(c))
 
         angle = np.arctan2(r_c[1], r_c[0])
@@ -275,7 +275,9 @@ def transfer():
 
                     delta_vs.append(inj_delta_v + ins_delta_v)
 
-                delta_v[flight_time - flight_time_offset, launch_time - launch_time_offset] = min(delta_vs)
+                delta_v[
+                    flight_time - flight_time_offset,
+                    launch_time - launch_time_offset] = min(delta_vs)
 
         min_delta_v = np.min(delta_v)
         find_min = (delta_v == min_delta_v).nonzero()
@@ -337,4 +339,3 @@ def transfer():
 if __name__ == "__main__":
     T_ADJ = calc_adjustment()
     APP.run(host="0.0.0.0", port=5001)
-
