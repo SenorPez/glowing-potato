@@ -6,7 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 public class PlanetaryCalendarViewModelTest {
@@ -23,6 +23,6 @@ public class PlanetaryCalendarViewModelTest {
 
     @Test
     public void testGetPlanetaryCalendar() {
-        assertThat(planetaryCalendarViewModel.getPlanetaryCalendar(), is(planetaryCalendar));
+        assertThat(planetaryCalendarViewModel.getPlanetaryCalendar(), sameInstance(planetaryCalendar));
     }
 }
