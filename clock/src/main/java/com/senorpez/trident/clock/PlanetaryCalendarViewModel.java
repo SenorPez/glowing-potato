@@ -10,6 +10,6 @@ class PlanetaryCalendarViewModel extends ViewModel {
     }
 
     int getShift() {
-        return -1;
+        return planetaryCalendar.getShift();
     }
 }
