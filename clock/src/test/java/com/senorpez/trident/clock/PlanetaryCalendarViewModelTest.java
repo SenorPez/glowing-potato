@@ -64,4 +64,14 @@ public class PlanetaryCalendarViewModelTest {
         when(planetaryCalendar.getTithe()).thenReturn(0.329);
         assertThat(planetaryCalendarViewModel.getLocalDateTime(), is("35 FY Festival Day 3.32 Shift"));
     }
+
+    @Test
+    public void testGetLocalDateTime_MidfestivalDay() {
+        when(planetaryCalendar.getLocalYear()).thenReturn(35);
+        when(planetaryCalendar.getCaste()).thenReturn(3);
+        when(planetaryCalendar.getCasteDay()).thenReturn(0);
+        when(planetaryCalendar.getShift()).thenReturn(3);
+        when(planetaryCalendar.getTithe()).thenReturn(0.329);
+        assertThat(planetaryCalendarViewModel.getLocalDateTime(), is("35 FY Midfestival Day 3.32 Shift"));
+    }
 }
