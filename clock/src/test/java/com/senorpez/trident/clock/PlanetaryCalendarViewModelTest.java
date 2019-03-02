@@ -6,6 +6,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -74,4 +75,11 @@ public class PlanetaryCalendarViewModelTest {
         when(planetaryCalendar.getTithe()).thenReturn(0.329);
         assertThat(planetaryCalendarViewModel.getLocalDateTime(), is("35 FY Midfestival Day 3.32 Shift"));
     }
+
+    @Test
+    public void testGetStandardDateTime() {
+        assertThat(planetaryCalendarViewModel.getStandardDateTime(), is(notNullValue()));
+        System.out.println(planetaryCalendarViewModel.getStandardDateTime());
+    }
+
 }
