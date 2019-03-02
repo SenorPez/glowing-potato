@@ -26,4 +26,10 @@ public class PlanetaryCalendarViewModelTest {
         when(planetaryCalendar.getShift()).thenReturn(1);
         assertThat(planetaryCalendarViewModel.getShift(), is(1));
     }
+
+    @Test
+    public void testGetTithe() {
+        when(planetaryCalendar.getTithe()).thenReturn(0.329);
+        assertThat(planetaryCalendarViewModel.getTithe(), is(3));
+    }
 }
