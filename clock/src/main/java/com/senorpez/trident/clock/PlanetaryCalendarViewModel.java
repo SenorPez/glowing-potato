@@ -24,4 +24,8 @@ class PlanetaryCalendarViewModel extends ViewModel {
     int getSpinner() {
         return (int) (Math.floor(planetaryCalendar.getTithe() * 1000)) % 10;
     }
+
+    String getLocalTime() {
+        return null;
+    }
 }
