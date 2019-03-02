@@ -28,6 +28,16 @@ class PlanetaryCalendarViewModel extends ViewModel {
     }
 
     String getLocalDateTime() {
+        if (planetaryCalendar.getCasteDay() == 0) {
+            if (planetaryCalendar.getCaste() == 0) {
+                return String.format(
+                        Locale.US,
+                        "%d FY Festival Day %d.%02d Shift",
+                        planetaryCalendar.getLocalYear(),
+                        planetaryCalendar.getShift(),
+                        (int) Math.floor(planetaryCalendar.getTithe() * 100));
+            }
+        }
         return String.format(
                 Locale.US,
                 "%d FY %d Caste %d Day %d.%02d Shift",
