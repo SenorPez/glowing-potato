@@ -38,4 +38,10 @@ public class PlanetaryCalendarViewModelTest {
         when(planetaryCalendar.getTithe()).thenReturn(0.329);
         assertThat(planetaryCalendarViewModel.getSubtithe(), is(2));
     }
+
+    @Test
+    public void testGetSpinner() {
+        when(planetaryCalendar.getTithe()).thenReturn(0.329);
+        assertThat(planetaryCalendarViewModel.getSpinner(), is(9));
+    }
 }

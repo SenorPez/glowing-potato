@@ -20,4 +20,8 @@ class PlanetaryCalendarViewModel extends ViewModel {
     int getSubtithe() {
         return (int) (Math.floor(planetaryCalendar.getTithe() * 100)) % 10;
     }
+
+    int getSpinner() {
+        return -1;
+    }
 }
