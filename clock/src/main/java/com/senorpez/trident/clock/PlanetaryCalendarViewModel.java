@@ -36,6 +36,13 @@ class PlanetaryCalendarViewModel extends ViewModel {
                         planetaryCalendar.getLocalYear(),
                         planetaryCalendar.getShift(),
                         (int) Math.floor(planetaryCalendar.getTithe() * 100));
+            } else if (planetaryCalendar.getCaste() == 3) {
+                return String.format(
+                        Locale.US,
+                        "%d FY Midfestival Day %d.%02d Shift",
+                        planetaryCalendar.getLocalYear(),
+                        planetaryCalendar.getShift(),
+                        (int) Math.floor(planetaryCalendar.getTithe() * 100));
             }
         }
         return String.format(
