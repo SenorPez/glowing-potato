@@ -22,6 +22,6 @@ class PlanetaryCalendarViewModel extends ViewModel {
     }
 
     int getSpinner() {
-        return -1;
+        return (int) (Math.floor(planetaryCalendar.getTithe() * 1000)) % 10;
     }
 }
