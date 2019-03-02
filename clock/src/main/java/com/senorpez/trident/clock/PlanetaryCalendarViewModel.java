@@ -2,6 +2,8 @@ package com.senorpez.trident.clock;
 
 import androidx.lifecycle.ViewModel;
 
+import java.util.Locale;
+
 class PlanetaryCalendarViewModel extends ViewModel {
     private PlanetaryCalendar planetaryCalendar;
 
@@ -25,7 +27,14 @@ class PlanetaryCalendarViewModel extends ViewModel {
         return (int) (Math.floor(planetaryCalendar.getTithe() * 1000)) % 10;
     }
 
-    String getLocalTime() {
-        return null;
+    String getLocalDateTime() {
+        return String.format(
+                Locale.US,
+                "%d FY %d Caste %d Day %d.%02d Shift",
+                planetaryCalendar.getLocalYear(),
+                planetaryCalendar.getCaste(),
+                planetaryCalendar.getCasteDay(),
+                planetaryCalendar.getShift(),
+                (int) Math.floor(planetaryCalendar.getTithe() * 100));
     }
 }
