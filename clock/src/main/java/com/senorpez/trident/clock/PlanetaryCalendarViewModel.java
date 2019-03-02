@@ -9,7 +9,7 @@ class PlanetaryCalendarViewModel extends ViewModel {
         this.planetaryCalendar = planetaryCalendar;
     }
 
-    PlanetaryCalendar getPlanetaryCalendar() {
-        return planetaryCalendar;
+    int getShift() {
+        return -1;
     }
 }
