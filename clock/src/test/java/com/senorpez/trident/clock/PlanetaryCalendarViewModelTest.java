@@ -58,7 +58,10 @@ public class PlanetaryCalendarViewModelTest {
     @Test
     public void testGetSpinner() {
         when(planetaryCalendar.getTithe()).thenReturn(0.329);
-        assertThat(planetaryCalendarViewModel.getSpinner(), is(9));
+        assertThat(planetaryCalendarViewModel.getSpinner(), instanceOf(LiveData.class));
+        assertThat(planetaryCalendarViewModel.getSpinner().getValue(), is(9));
+        verify(planetaryCalendar, times(2)).getTithe();
+        verifyNoMoreInteractions(planetaryCalendar);
     }
 
     @Test
