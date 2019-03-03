@@ -13,8 +13,8 @@ import java.util.Locale;
 class PlanetaryCalendarViewModel extends ViewModel {
     private PlanetaryCalendar planetaryCalendar;
 
-    private MutableLiveData<Integer> shift;
-    private MutableLiveData<Integer> tithe;
+    private final MutableLiveData<Integer> shift = new MutableLiveData<>();
+    private final MutableLiveData<Integer> tithe = new MutableLiveData<>();
     private final MutableLiveData<Integer> subTithe = new MutableLiveData<>();
     private final LiveData<Integer> spinner = new MutableLiveData<>();
     private final LiveData<String> localDateTime = new MutableLiveData<>();
@@ -25,17 +25,11 @@ class PlanetaryCalendarViewModel extends ViewModel {
     }
 
     LiveData<Integer> getShift() {
-        if (shift == null) {
-            shift = new MutableLiveData<>();
-        }
         shift.setValue(planetaryCalendar.getShift());
         return shift;
     }
 
     LiveData<Integer> getTithe() {
-        if (tithe == null) {
-            tithe = new MutableLiveData<>();
-        }
         tithe.setValue((int) Math.floor(planetaryCalendar.getTithe() * 10));
         return tithe;
     }

@@ -33,6 +33,8 @@ public class PlanetaryCalendarViewModelTest {
         when(planetaryCalendar.getShift()).thenReturn(1);
         assertThat(planetaryCalendarViewModel.getShift(), instanceOf(LiveData.class));
         assertThat(planetaryCalendarViewModel.getShift().getValue(), is(1));
+        verify(planetaryCalendar, times(2)).getShift();
+        verifyNoMoreInteractions(planetaryCalendar);
     }
 
     @Test
@@ -40,6 +42,8 @@ public class PlanetaryCalendarViewModelTest {
         when(planetaryCalendar.getTithe()).thenReturn(0.329);
         assertThat(planetaryCalendarViewModel.getTithe(), instanceOf(LiveData.class));
         assertThat(planetaryCalendarViewModel.getTithe().getValue(), is(3));
+        verify(planetaryCalendar, times(2)).getTithe();
+        verifyNoMoreInteractions(planetaryCalendar);
     }
 
     @Test
