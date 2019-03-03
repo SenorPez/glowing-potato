@@ -24,10 +24,6 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
 
-    testOptions {
-        unitTests.returnDefaultValues = true
-    }
-
     defaultConfig {
         applicationId "com.senorpez.trident.clock"
         minSdkVersion 26

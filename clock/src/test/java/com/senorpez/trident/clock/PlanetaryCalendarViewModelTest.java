@@ -38,7 +38,8 @@ public class PlanetaryCalendarViewModelTest {
     @Test
     public void testGetTithe() {
         when(planetaryCalendar.getTithe()).thenReturn(0.329);
-        assertThat(planetaryCalendarViewModel.getTithe(), is(3));
+        assertThat(planetaryCalendarViewModel.getTithe(), instanceOf(LiveData.class));
+        assertThat(planetaryCalendarViewModel.getTithe().getValue(), is(3));
     }
 
     @Test

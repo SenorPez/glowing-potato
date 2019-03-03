@@ -32,8 +32,9 @@ class PlanetaryCalendarViewModel extends ViewModel {
         return shift;
     }
 
-    int getTithe() {
-        return (int) Math.floor(planetaryCalendar.getTithe() * 10);
+    LiveData<Integer> getTithe() {
+        return null;
+//        return (int) Math.floor(planetaryCalendar.getTithe() * 10);
     }
 
     int getSubtithe() {
