@@ -4,6 +4,10 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Clock;
+import java.util.Date;
 import java.util.Locale;
 
 class PlanetaryCalendarViewModel extends ViewModel {
@@ -14,7 +18,7 @@ class PlanetaryCalendarViewModel extends ViewModel {
     private final MutableLiveData<Integer> subTithe = new MutableLiveData<>();
     private final MutableLiveData<Integer> spinner = new MutableLiveData<>();
     private final MutableLiveData<String> localDateTime = new MutableLiveData<>();
-    private final LiveData<String> standardDateTime = new MutableLiveData<>();
+    private final MutableLiveData<String> standardDateTime = new MutableLiveData<>();
 
     void init(PlanetaryCalendar planetaryCalendar) {
         this.planetaryCalendar = planetaryCalendar;
@@ -74,16 +78,16 @@ class PlanetaryCalendarViewModel extends ViewModel {
     }
 
     LiveData<String> getStandardDateTime() {
+        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy G MMM d HH:mm:ss", Locale.US);
+
+        try {
+            Date date = inputFormat.parse(String.format("%s", Clock.systemUTC().instant()));
+            standardDateTime.setValue(outputFormat.format(date));
+            return standardDateTime;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         return null;
-//        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
-//        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy G MMM d HH:mm:ss", Locale.US);
-//
-//        try {
-//            Date date = inputFormat.parse(String.format("%s", Clock.systemUTC().instant()));
-//            return outputFormat.format(date);
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//        }
-//        return null;
     }
 }
