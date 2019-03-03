@@ -1,8 +1,11 @@
 package com.senorpez.trident.clock;
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import androidx.lifecycle.LiveData;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -21,6 +24,9 @@ public class PlanetaryCalendarViewModelTest {
         MockitoAnnotations.initMocks(this);
         planetaryCalendarViewModel.init(planetaryCalendar);
     }
+
+    @Rule
+    public TestRule rule = new InstantTaskExecutorRule();
 
     @Test
     public void testGetShift() {
