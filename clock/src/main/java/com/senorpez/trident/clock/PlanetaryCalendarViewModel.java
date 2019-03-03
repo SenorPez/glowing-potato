@@ -1,5 +1,7 @@
 package com.senorpez.trident.clock;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.text.ParseException;
@@ -11,12 +13,19 @@ import java.util.Locale;
 class PlanetaryCalendarViewModel extends ViewModel {
     private PlanetaryCalendar planetaryCalendar;
 
+    private final LiveData<Integer> shift = new MutableLiveData<>();
+    private final LiveData<Integer> tithe = new MutableLiveData<>();
+    private final LiveData<Integer> subTithe = new MutableLiveData<>();
+    private final LiveData<Integer> spinner = new MutableLiveData<>();
+    private final LiveData<String> localDateTime = new MutableLiveData<>();
+    private final LiveData<String> standardDateTime = new MutableLiveData<>();
+
     void init(PlanetaryCalendar planetaryCalendar) {
         this.planetaryCalendar = planetaryCalendar;
     }
 
-    int getShift() {
-        return planetaryCalendar.getShift();
+    LiveData<Integer> getShift() {
+        return null;
     }
 
     int getTithe() {

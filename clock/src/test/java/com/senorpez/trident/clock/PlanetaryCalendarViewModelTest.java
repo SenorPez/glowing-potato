@@ -1,12 +1,12 @@
 package com.senorpez.trident.clock;
 
+import androidx.lifecycle.LiveData;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 
@@ -25,7 +25,8 @@ public class PlanetaryCalendarViewModelTest {
     @Test
     public void testGetShift() {
         when(planetaryCalendar.getShift()).thenReturn(1);
-        assertThat(planetaryCalendarViewModel.getShift(), is(1));
+        assertThat(planetaryCalendarViewModel.getShift(), instanceOf(LiveData.class));
+        assertThat(planetaryCalendarViewModel.getShift().getValue(), is(1));
     }
 
     @Test
