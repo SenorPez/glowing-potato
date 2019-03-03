@@ -41,14 +41,32 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            tavenTime.setText(String.format(
-                    Locale.US,
-                    "%d FY %d Caste %d Day %d.%02d Shift",
-                    tavenCalendar.getLocalYear(),
-                    tavenCalendar.getCaste(),
-                    tavenCalendar.getCasteDay(),
-                    tavenCalendar.getShift(),
-                    (int) Math.floor(tavenCalendar.getTithe() * 100)));
+            if (tavenCalendar.getCasteDay() == 0) {
+                if (tavenCalendar.getCaste() == 0) {
+                    tavenTime.setText(String.format(
+                            Locale.US,
+                            "%d FY Festival Day %d.%02d Shift",
+                            tavenCalendar.getLocalYear(),
+                            tavenCalendar.getShift(),
+                            (int) Math.floor(tavenCalendar.getTithe() * 100)));
+                } else if (tavenCalendar.getCaste() == 3) {
+                    tavenTime.setText(String.format(
+                            Locale.US,
+                            "%d FY Midfestival Day %d.%02d Shift",
+                            tavenCalendar.getLocalYear(),
+                            tavenCalendar.getShift(),
+                            (int) Math.floor(tavenCalendar.getTithe() * 100)));
+                }
+            } else {
+                tavenTime.setText(String.format(
+                        Locale.US,
+                        "%d FY %d Caste %d Day %d.%02d Shift",
+                        tavenCalendar.getLocalYear(),
+                        tavenCalendar.getCaste(),
+                        tavenCalendar.getCasteDay(),
+                        tavenCalendar.getShift(),
+                        (int) Math.floor(tavenCalendar.getTithe() * 100)));
+            }
             progressShift.setProgress(tavenCalendar.getShift() - 1);
             progressTithe.setProgress((int) Math.floor(tavenCalendar.getTithe() * 10));
             progressSubtithe.setProgress((int) (Math.floor(tavenCalendar.getTithe() * 100)) % 10);
