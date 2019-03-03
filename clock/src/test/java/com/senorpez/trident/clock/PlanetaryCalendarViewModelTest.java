@@ -47,7 +47,7 @@ public class PlanetaryCalendarViewModelTest {
         when(planetaryCalendar.getTithe()).thenReturn(0.329);
         assertThat(planetaryCalendarViewModel.getSubtithe(), instanceOf(LiveData.class));
         assertThat(planetaryCalendarViewModel.getSubtithe().getValue(), is(2));
-        verify(planetaryCalendar).getTithe();
+        verify(planetaryCalendar, times(2)).getTithe();
         verifyNoMoreInteractions(planetaryCalendar);
     }
 

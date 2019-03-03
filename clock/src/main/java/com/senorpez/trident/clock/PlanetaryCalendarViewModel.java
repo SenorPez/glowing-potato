@@ -15,7 +15,7 @@ class PlanetaryCalendarViewModel extends ViewModel {
 
     private MutableLiveData<Integer> shift;
     private MutableLiveData<Integer> tithe;
-    private final LiveData<Integer> subTithe = new MutableLiveData<>();
+    private final MutableLiveData<Integer> subTithe = new MutableLiveData<>();
     private final LiveData<Integer> spinner = new MutableLiveData<>();
     private final LiveData<String> localDateTime = new MutableLiveData<>();
     private final LiveData<String> standardDateTime = new MutableLiveData<>();
@@ -41,8 +41,8 @@ class PlanetaryCalendarViewModel extends ViewModel {
     }
 
     LiveData<Integer> getSubtithe() {
-        return null;
-//        return (int) (Math.floor(planetaryCalendar.getTithe() * 100)) % 10;
+        subTithe.setValue((int) (Math.floor(planetaryCalendar.getTithe() * 100)) % 10);
+        return subTithe;
     }
 
     int getSpinner() {
