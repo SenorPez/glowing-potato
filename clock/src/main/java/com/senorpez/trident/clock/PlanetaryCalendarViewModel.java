@@ -44,32 +44,33 @@ class PlanetaryCalendarViewModel extends ViewModel {
         return spinner;
     }
 
-    String getLocalDateTime() {
-        if (planetaryCalendar.getCasteDay() == 0) {
-            if (planetaryCalendar.getCaste() == 0) {
-                return String.format(
-                        Locale.US,
-                        "%d FY Festival Day %d.%02d Shift",
-                        planetaryCalendar.getLocalYear(),
-                        planetaryCalendar.getShift(),
-                        (int) Math.floor(planetaryCalendar.getTithe() * 100));
-            } else if (planetaryCalendar.getCaste() == 3) {
-                return String.format(
-                        Locale.US,
-                        "%d FY Midfestival Day %d.%02d Shift",
-                        planetaryCalendar.getLocalYear(),
-                        planetaryCalendar.getShift(),
-                        (int) Math.floor(planetaryCalendar.getTithe() * 100));
-            }
-        }
-        return String.format(
-                Locale.US,
-                "%d FY %d Caste %d Day %d.%02d Shift",
-                planetaryCalendar.getLocalYear(),
-                planetaryCalendar.getCaste(),
-                planetaryCalendar.getCasteDay(),
-                planetaryCalendar.getShift(),
-                (int) Math.floor(planetaryCalendar.getTithe() * 100));
+    LiveData<String> getLocalDateTime() {
+        return null;
+//        if (planetaryCalendar.getCasteDay() == 0) {
+//            if (planetaryCalendar.getCaste() == 0) {
+//                return String.format(
+//                        Locale.US,
+//                        "%d FY Festival Day %d.%02d Shift",
+//                        planetaryCalendar.getLocalYear(),
+//                        planetaryCalendar.getShift(),
+//                        (int) Math.floor(planetaryCalendar.getTithe() * 100));
+//            } else if (planetaryCalendar.getCaste() == 3) {
+//                return String.format(
+//                        Locale.US,
+//                        "%d FY Midfestival Day %d.%02d Shift",
+//                        planetaryCalendar.getLocalYear(),
+//                        planetaryCalendar.getShift(),
+//                        (int) Math.floor(planetaryCalendar.getTithe() * 100));
+//            }
+//        }
+//        return String.format(
+//                Locale.US,
+//                "%d FY %d Caste %d Day %d.%02d Shift",
+//                planetaryCalendar.getLocalYear(),
+//                planetaryCalendar.getCaste(),
+//                planetaryCalendar.getCasteDay(),
+//                planetaryCalendar.getShift(),
+//                (int) Math.floor(planetaryCalendar.getTithe() * 100));
     }
 
     String getStandardDateTime() {
