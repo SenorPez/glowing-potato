@@ -1,7 +1,6 @@
 package com.senorpez.trident.clock;
 
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import java.text.ParseException;
@@ -13,15 +12,21 @@ import java.util.Locale;
 class PlanetaryCalendarViewModel extends ViewModel {
     private PlanetaryCalendar planetaryCalendar;
 
-    private final MutableLiveData<Integer> shift = new MutableLiveData<>();
-    private final MutableLiveData<Integer> tithe = new MutableLiveData<>();
-    private final MutableLiveData<Integer> subTithe = new MutableLiveData<>();
-    private final MutableLiveData<Integer> spinner = new MutableLiveData<>();
-    private final MutableLiveData<String> localDateTime = new MutableLiveData<>();
-    private final MutableLiveData<String> standardDateTime = new MutableLiveData<>();
+    private ClockLiveData<Integer> shift;
+    private ClockLiveData<Integer> tithe;
+    private ClockLiveData<Integer> subTithe;
+    private ClockLiveData<Integer> spinner;
+    private ClockLiveData<String> localDateTime;
+    private ClockLiveData<String> standardDateTime;
 
     void init(PlanetaryCalendar planetaryCalendar) {
         this.planetaryCalendar = planetaryCalendar;
+        this.shift = new ClockLiveData<>(() -> this.getShift().getValue());
+        this.tithe = new ClockLiveData<>(() -> this.getTithe().getValue());
+        this.subTithe = new ClockLiveData<>(() -> this.getSubtithe().getValue());
+        this.spinner = new ClockLiveData<>(() -> this.getSpinner().getValue());
+        this.localDateTime = new ClockLiveData<>(this::createLocalDateTime);
+        this.standardDateTime = new ClockLiveData<>(() -> this.getStandardDateTime().getValue());
     }
 
     LiveData<Integer> getShift() {

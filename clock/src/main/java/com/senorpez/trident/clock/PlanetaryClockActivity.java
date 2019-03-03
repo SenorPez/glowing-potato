@@ -9,14 +9,12 @@ import androidx.lifecycle.ViewModelProviders;
 import java.time.*;
 
 public class PlanetaryClockActivity extends AppCompatActivity {
-    private PlanetaryCalendarViewModel planetaryCalendarViewModel;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pcalendar);
 
-        planetaryCalendarViewModel = ViewModelProviders.of(this).get(PlanetaryCalendarViewModel.class);
+        PlanetaryCalendarViewModel planetaryCalendarViewModel = ViewModelProviders.of(this).get(PlanetaryCalendarViewModel.class);
         Clock clockJ2000 = Clock.offset(
                 Clock.systemUTC(),
                 Duration.ofMillis(
