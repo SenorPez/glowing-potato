@@ -117,8 +117,9 @@ public class PlanetaryCalendarViewModelTest {
 
     @Test
     public void testGetStandardDateTime() {
-        assertThat(planetaryCalendarViewModel.getStandardDateTime(), is(notNullValue()));
-        System.out.println(planetaryCalendarViewModel.getStandardDateTime());
+        assertThat(planetaryCalendarViewModel.getStandardDateTime(), instanceOf(LiveData.class));
+        assertThat(planetaryCalendarViewModel.getStandardDateTime().getValue(), is(notNullValue()));
+        verifyZeroInteractions(planetaryCalendar);
     }
 
 }
