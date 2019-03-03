@@ -11,7 +11,7 @@ import org.mockito.MockitoAnnotations;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class PlanetaryCalendarViewModelTest {
     private PlanetaryCalendarViewModel planetaryCalendarViewModel = new PlanetaryCalendarViewModel();
@@ -45,7 +45,10 @@ public class PlanetaryCalendarViewModelTest {
     @Test
     public void testGetSubtithe() {
         when(planetaryCalendar.getTithe()).thenReturn(0.329);
-        assertThat(planetaryCalendarViewModel.getSubtithe(), is(2));
+        assertThat(planetaryCalendarViewModel.getSubtithe(), instanceOf(LiveData.class));
+        assertThat(planetaryCalendarViewModel.getSubtithe().getValue(), is(2));
+        verify(planetaryCalendar).getTithe();
+        verifyNoMoreInteractions(planetaryCalendar);
     }
 
     @Test
