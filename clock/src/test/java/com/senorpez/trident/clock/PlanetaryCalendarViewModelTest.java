@@ -73,11 +73,11 @@ public class PlanetaryCalendarViewModelTest {
         when(planetaryCalendar.getTithe()).thenReturn(0.329);
         assertThat(planetaryCalendarViewModel.getLocalDateTime(), instanceOf(LiveData.class));
         assertThat(planetaryCalendarViewModel.getLocalDateTime().getValue(), is("35 FY 2 Caste 15 Day 3.32 Shift"));
-        verify(planetaryCalendar).getLocalYear();
-        verify(planetaryCalendar).getCaste();
-        verify(planetaryCalendar, times(2)).getCasteDay();
-        verify(planetaryCalendar).getShift();
-        verify(planetaryCalendar).getTithe();
+        verify(planetaryCalendar, times(2)).getLocalYear();
+        verify(planetaryCalendar, times(2)).getCaste();
+        verify(planetaryCalendar, times(4)).getCasteDay();
+        verify(planetaryCalendar, times(2)).getShift();
+        verify(planetaryCalendar, times(2)).getTithe();
         verifyNoMoreInteractions(planetaryCalendar);
     }
 
