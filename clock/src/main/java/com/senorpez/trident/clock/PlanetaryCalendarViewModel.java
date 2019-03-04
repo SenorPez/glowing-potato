@@ -3,10 +3,8 @@ package com.senorpez.trident.clock;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Clock;
-import java.util.Date;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 class PlanetaryCalendarViewModel extends ViewModel {
@@ -83,16 +81,8 @@ class PlanetaryCalendarViewModel extends ViewModel {
     }
 
     LiveData<String> getStandardDateTime() {
-        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
-        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy G MMM d HH:mm:ss", Locale.US);
-
-        try {
-            Date date = inputFormat.parse(String.format("%s", Clock.systemUTC().instant()));
-            standardDateTime.setValue(outputFormat.format(date));
-            return standardDateTime;
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy G MMM d HH:mm:ss", Locale.US);
+        standardDateTime.setValue(formatter.format(ZonedDateTime.now()));
+        return standardDateTime;
     }
 }
