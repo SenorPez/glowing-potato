@@ -23,7 +23,7 @@ class PlanetaryCalendarViewModel extends ViewModel {
         this.tithe = new ClockLiveData<>(() -> this.getTithe().getValue());
         this.subTithe = new ClockLiveData<>(() -> this.getSubtithe().getValue());
         this.spinner = new ClockLiveData<>(() -> this.getSpinner().getValue());
-        this.localDateTime = new ClockLiveData<>(this::createLocalDateTime);
+        this.localDateTime = new ClockLiveData<>(() -> this.getLocalDateTime().getValue());
         this.standardDateTime = new ClockLiveData<>(() -> this.getStandardDateTime().getValue());
     }
 
