@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
 import javax.inject.Inject;
-import java.time.*;
 
 public class PlanetaryClockActivity extends AppCompatActivity {
     @Inject
@@ -21,12 +20,6 @@ public class PlanetaryClockActivity extends AppCompatActivity {
         setContentView(R.layout.activity_pcalendar);
         PlanetaryCalendarViewModel planetaryCalendarViewModel =
                 ViewModelProviders.of(this, planetaryCalendarViewModelFactory).get(PlanetaryCalendarViewModel.class);
-
-        Clock clockJ2000 = Clock.offset(
-                Clock.systemUTC(),
-                Duration.ofMillis(
-                        Clock.fixed(Instant.parse("2000-01-01T00:00:00Z"), ZoneId.ofOffset("GMT", ZoneOffset.UTC)).millis() * -1));
-        planetaryCalendarViewModel.init(new PlanetaryCalendar(clockJ2000));
 
         planetaryCalendarViewModel.getShift().observe(this, shift -> {
             ProgressBar progressShift = this.findViewById(R.id.prgShift);

@@ -17,7 +17,7 @@ class PlanetaryCalendarViewModel extends ViewModel {
     private ClockLiveData<String> localDateTime;
     private ClockLiveData<String> standardDateTime;
 
-    void init(PlanetaryCalendar planetaryCalendar) {
+    public PlanetaryCalendarViewModel(PlanetaryCalendar planetaryCalendar) {
         this.planetaryCalendar = planetaryCalendar;
         this.shift = new ClockLiveData<>(() -> this.getShift().getValue());
         this.tithe = new ClockLiveData<>(() -> this.getTithe().getValue());

@@ -7,9 +7,6 @@ import javax.inject.Singleton;
 
 @Module
 public class NetModule {
-    public NetModule() {
-    }
-
     @Provides
     @Singleton
     PlanetaryCalendarViewModelFactory providePlanetaryCalendarViewModelFactory() {

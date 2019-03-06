@@ -14,7 +14,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.*;
 
 public class PlanetaryCalendarViewModelTest {
-    private PlanetaryCalendarViewModel planetaryCalendarViewModel = new PlanetaryCalendarViewModel();
+    private PlanetaryCalendarViewModel planetaryCalendarViewModel;
 
     @Mock
     PlanetaryCalendar planetaryCalendar;
@@ -22,7 +22,8 @@ public class PlanetaryCalendarViewModelTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        planetaryCalendarViewModel.init(planetaryCalendar);
+        PlanetaryCalendarViewModelFactory planetaryCalendarViewModelFactory = new PlanetaryCalendarViewModelFactory(planetaryCalendar);
+        planetaryCalendarViewModel = planetaryCalendarViewModelFactory.create(PlanetaryCalendarViewModel.class);
     }
 
     @Rule
