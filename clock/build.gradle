@@ -5,6 +5,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.3.2'
+//         classpath 'com.android.tools.build:gradle:3.2.1'
     }
 }
 
@@ -18,6 +19,12 @@ repositories {
 }
 
 apply plugin: 'com.android.application'
+
+idea {
+    module {
+        name = 'com.senorpez.trident.clock'
+    }
+}
 
 android {
     compileSdkVersion 28
@@ -42,6 +49,10 @@ android {
     compileOptions {
         targetCompatibility 1.8
         sourceCompatibility 1.8
+    }
+
+    sourceSets {
+        main.java.srcDirs += '\\build\\generated\\not_namespaced_r_class_sources\\debug\\processDebugResources\\r'
     }
 }
 

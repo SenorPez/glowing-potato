@@ -29,6 +29,12 @@ springBoot {
     executable = true
 }
 
+idea {
+    module {
+        name = 'com.senorpez.trident.api'
+    }
+}
+
 dependencies {
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-hateoas', version: '1.5.6.RELEASE'
     testCompile group: 'junit', name: 'junit', version: '4.12'
