@@ -6,15 +6,22 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
+import javax.inject.Inject;
 import java.time.*;
 
 public class PlanetaryClockActivity extends AppCompatActivity {
+    @Inject
+    PlanetaryCalendarViewModelFactory planetaryCalendarViewModelFactory;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        ((MyApp) getApplication()).getAppComponent().inject(this);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pcalendar);
 
-        PlanetaryCalendarViewModel planetaryCalendarViewModel = ViewModelProviders.of(this).get(PlanetaryCalendarViewModel.class);
+        setContentView(R.layout.activity_pcalendar);
+        PlanetaryCalendarViewModel planetaryCalendarViewModel =
+                ViewModelProviders.of(this, planetaryCalendarViewModelFactory).get(PlanetaryCalendarViewModel.class);
+
         Clock clockJ2000 = Clock.offset(
                 Clock.systemUTC(),
                 Duration.ofMillis(
