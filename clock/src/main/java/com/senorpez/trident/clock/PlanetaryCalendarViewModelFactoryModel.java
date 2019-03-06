@@ -6,7 +6,7 @@ import dagger.Provides;
 import javax.inject.Singleton;
 
 @Module
-public class NetModule {
+public class PlanetaryCalendarViewModelFactoryModel {
     @Provides
     @Singleton
     PlanetaryCalendarViewModelFactory providePlanetaryCalendarViewModelFactory() {

@@ -14,7 +14,10 @@ public class PlanetaryClockActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        ((MyApp) getApplication()).getAppComponent().inject(this);
+        DaggerPlanetaryClockComponent.builder()
+                .planetaryCalendarViewModelFactoryModel(new PlanetaryCalendarViewModelFactoryModel())
+                .build()
+                .inject(this);
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_pcalendar);

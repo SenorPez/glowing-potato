@@ -5,7 +5,7 @@ import dagger.Component;
 import javax.inject.Singleton;
 
 @Singleton
-@Component(modules = {AppModule.class, NetModule.class})
-public interface AppComponent {
+@Component(modules = {PlanetaryCalendarViewModelFactoryModel.class})
+public interface PlanetaryClockComponent {
     void inject(PlanetaryClockActivity activity);
 }
