@@ -5,11 +5,13 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import javax.inject.Inject;
 import java.time.*;
 
 public class PlanetaryCalendarViewModelFactory implements ViewModelProvider.Factory {
     private PlanetaryCalendar planetaryCalendar;
 
+    @Inject
     public PlanetaryCalendarViewModelFactory() {
         Clock clockJ2000 = Clock.offset(
                 Clock.systemUTC(),

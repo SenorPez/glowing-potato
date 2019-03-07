@@ -5,6 +5,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
+import dagger.android.AndroidInjection;
 
 import javax.inject.Inject;
 
@@ -14,12 +15,14 @@ public class PlanetaryClockActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        DaggerPlanetaryClockComponent.builder()
-                .planetaryCalendarViewModelFactoryModule(new PlanetaryCalendarViewModelFactoryModule())
-                .build()
-                .inject(this);
+        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
-
+//        DaggerPlanetaryClockComponent.builder()
+//                .planetaryCalendarViewModelFactoryModule(new PlanetaryCalendarViewModelFactoryModule())
+//                .build()
+//                .inject(this);
+//        super.onCreate(savedInstanceState);
+//
         setContentView(R.layout.activity_pcalendar);
         PlanetaryCalendarViewModel planetaryCalendarViewModel =
                 ViewModelProviders.of(this, planetaryCalendarViewModelFactory).get(PlanetaryCalendarViewModel.class);

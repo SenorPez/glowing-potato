@@ -3,12 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/api/com.senorpez.trident.api.iml" filepath="$PROJECT_DIR$/api/com.senorpez.trident.api.iml" />
-      <module fileurl="file://$PROJECT_DIR$/api/com.senorpez.trident.api.iml" filepath="$PROJECT_DIR$/api/com.senorpez.trident.api.iml" />
-      <module fileurl="file://$PROJECT_DIR$/clock/com.senorpez.trident.clock.iml" filepath="$PROJECT_DIR$/clock/com.senorpez.trident.clock.iml" />
       <module fileurl="file://$PROJECT_DIR$/clock/com.senorpez.trident.clock.iml" filepath="$PROJECT_DIR$/clock/com.senorpez.trident.clock.iml" />
       <module fileurl="file://$PROJECT_DIR$/com.senorpez.trident.glowing-potato.iml" filepath="$PROJECT_DIR$/com.senorpez.trident.glowing-potato.iml" />
       <module fileurl="file://$PROJECT_DIR$/web/com.senorpez.trident.web.iml" filepath="$PROJECT_DIR$/web/com.senorpez.trident.web.iml" />
-      <module fileurl="file://$PROJECT_DIR$/trident.iml" filepath="$PROJECT_DIR$/trident.iml" />
       <module fileurl="file://$PROJECT_DIR$/trident.iml" filepath="$PROJECT_DIR$/trident.iml" />
       <module fileurl="file://$PROJECT_DIR$/trident.com.senorpez.trident.glowing-potato.iml" filepath="$PROJECT_DIR$/trident.com.senorpez.trident.glowing-potato.iml" />
     </modules>
