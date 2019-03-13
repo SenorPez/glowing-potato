@@ -16,13 +16,8 @@ public class PlanetaryClockActivityTestBase {
     @Rule
     public ActivityTestRule<PlanetaryClockActivity> activityTestRule = new ActivityTestRule<>(PlanetaryClockActivity.class, true, false);
 
-    public int shiftValue = 1;
-    public int titheValue = 3;
-    public int subtitheValue = 2;
-    public int spinnerValue = 9;
-
-    public String localDateTimeValue = "Local Date Time";
-    public String standardDateTimeValue = "Standard Date Time";
+    String localDateTimeValue = "Local Date Time";
+    String standardDateTimeValue = "Standard Date Time";
 
     @Mock
     PlanetaryCalendarViewModel planetaryCalendarViewModel;
@@ -35,19 +30,19 @@ public class PlanetaryClockActivityTestBase {
         when(planetaryCalendarViewModelFactory.create(any())).thenReturn(planetaryCalendarViewModel);
 
         MutableLiveData<Integer> shift = new MutableLiveData<>();
-        shift.postValue(shiftValue);
+        shift.postValue(1);
         when(planetaryCalendarViewModel.getShift()).thenReturn(shift);
 
         MutableLiveData<Integer> tithe = new MutableLiveData<>();
-        tithe.postValue(titheValue);
+        tithe.postValue(3);
         when(planetaryCalendarViewModel.getTithe()).thenReturn(tithe);
 
         MutableLiveData<Integer> subtithe = new MutableLiveData<>();
-        subtithe.postValue(subtitheValue);
+        subtithe.postValue(2);
         when(planetaryCalendarViewModel.getSubtithe()).thenReturn(subtithe);
 
         MutableLiveData<Integer> spinner = new MutableLiveData<>();
-        spinner.postValue(spinnerValue);
+        spinner.postValue(9);
         when(planetaryCalendarViewModel.getSpinner()).thenReturn(spinner);
 
         MutableLiveData<String> localDateTime = new MutableLiveData<>();
