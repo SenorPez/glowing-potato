@@ -1,15 +1,15 @@
 package com.senorpez.trident.clock;
 
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
 
-import javax.inject.Singleton;
-
 @Module
-public class PlanetaryClockTestActivityModule {
+class PlanetaryClockTestActivityModule {
     private PlanetaryCalendarViewModelFactory planetaryCalendarViewModelFactory;
 
-    public PlanetaryClockTestActivityModule(PlanetaryCalendarViewModelFactory planetaryCalendarViewModelFactory) {
+    PlanetaryClockTestActivityModule(PlanetaryCalendarViewModelFactory planetaryCalendarViewModelFactory) {
         this.planetaryCalendarViewModelFactory = planetaryCalendarViewModelFactory;
     }
 

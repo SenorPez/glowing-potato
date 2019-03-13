@@ -5,5 +5,5 @@ import dagger.android.AndroidInjectionModule;
 import dagger.android.AndroidInjector;
 
 @Component(modules = {AndroidInjectionModule.class, PlanetaryClockApplicationModule.class})
-public interface PlanetaryClockApplicationComponent extends AndroidInjector<PlanetaryClockApplication> {
+interface PlanetaryClockApplicationComponent extends AndroidInjector<PlanetaryClockApplication> {
 }

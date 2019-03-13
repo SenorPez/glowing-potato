@@ -1,11 +1,11 @@
 package com.senorpez.trident.clock;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModel;
-
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
 
 class PlanetaryCalendarViewModel extends ViewModel {
     private PlanetaryCalendar planetaryCalendar;
@@ -17,7 +17,7 @@ class PlanetaryCalendarViewModel extends ViewModel {
     private ClockLiveData<String> localDateTime;
     private ClockLiveData<String> standardDateTime;
 
-    public PlanetaryCalendarViewModel(PlanetaryCalendar planetaryCalendar) {
+    PlanetaryCalendarViewModel(PlanetaryCalendar planetaryCalendar) {
         this.planetaryCalendar = planetaryCalendar;
         this.shift = new ClockLiveData<>(() -> this.getShift().getValue());
         this.tithe = new ClockLiveData<>(() -> this.getTithe().getValue());

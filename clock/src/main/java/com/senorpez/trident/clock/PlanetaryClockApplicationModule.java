@@ -4,7 +4,7 @@ import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 
 @Module
-public abstract class PlanetaryClockApplicationModule {
+abstract class PlanetaryClockApplicationModule {
     @ContributesAndroidInjector
     abstract PlanetaryClockActivity contributeActivityInjector();
 }
