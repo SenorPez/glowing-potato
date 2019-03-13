@@ -1,13 +1,15 @@
 package com.senorpez.trident.clock;
 
 import android.app.Instrumentation;
-import androidx.lifecycle.MutableLiveData;
-import androidx.test.platform.app.InstrumentationRegistry;
-import androidx.test.rule.ActivityTestRule;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import androidx.lifecycle.MutableLiveData;
+import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.rule.ActivityTestRule;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -16,8 +18,8 @@ public class PlanetaryClockActivityTestBase {
     @Rule
     public ActivityTestRule<PlanetaryClockActivity> activityTestRule = new ActivityTestRule<>(PlanetaryClockActivity.class, true, false);
 
-    String localDateTimeValue = "Local Date Time";
-    String standardDateTimeValue = "Standard Date Time";
+    final String localDateTimeValue = "Local Date Time";
+    final String standardDateTimeValue = "Standard Date Time";
 
     @Mock
     PlanetaryCalendarViewModel planetaryCalendarViewModel;

@@ -7,7 +7,7 @@ import dagger.Provides;
 
 @Module
 class PlanetaryClockTestActivityModule {
-    private PlanetaryCalendarViewModelFactory planetaryCalendarViewModelFactory;
+    private final PlanetaryCalendarViewModelFactory planetaryCalendarViewModelFactory;
 
     PlanetaryClockTestActivityModule(PlanetaryCalendarViewModelFactory planetaryCalendarViewModelFactory) {
         this.planetaryCalendarViewModelFactory = planetaryCalendarViewModelFactory;

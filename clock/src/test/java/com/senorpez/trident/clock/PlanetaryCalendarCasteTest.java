@@ -18,11 +18,11 @@ import static org.mockito.Mockito.when;
 
 @RunWith(Parameterized.class)
 public class PlanetaryCalendarCasteTest {
-    private double days;
-    private boolean festivalDay;
-    private int caste;
-    private int casteDay;
-    private double standardMilliseconds;
+    private final double days;
+    private final boolean festivalDay;
+    private final int caste;
+    private final int casteDay;
+    private final double standardMilliseconds;
 
     @InjectMocks
     PlanetaryCalendar planetaryCalendar;

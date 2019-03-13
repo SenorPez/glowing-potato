@@ -1,15 +1,16 @@
 package com.senorpez.trident.clock;
 
 import android.os.Handler;
-import androidx.lifecycle.MutableLiveData;
 
 import java.util.function.Supplier;
 
-public class ClockLiveData<T> extends MutableLiveData<T> {
+import androidx.lifecycle.MutableLiveData;
+
+class ClockLiveData<T> extends MutableLiveData<T> {
     private final Supplier<T> supplier;
 
-    private Handler handler = new Handler();
-    private Runnable runnable = new Runnable() {
+    private final Handler handler = new Handler();
+    private final Runnable runnable = new Runnable() {
         @Override
         public void run() {
             ClockLiveData.this.setValue(supplier.get());

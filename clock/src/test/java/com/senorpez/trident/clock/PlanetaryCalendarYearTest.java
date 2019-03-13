@@ -19,10 +19,10 @@ import static org.mockito.Mockito.when;
 
 @RunWith(Parameterized.class)
 public class PlanetaryCalendarYearTest {
-    private int localYear;
-    private int days;
-    private double planetaryMilliseconds;
-    private double standardMilliseconds;
+    private final int localYear;
+    private final int days;
+    private final double planetaryMilliseconds;
+    private final double standardMilliseconds;
 
     @InjectMocks
     PlanetaryCalendar planetaryCalendar;

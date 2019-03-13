@@ -19,10 +19,10 @@ import static org.mockito.Mockito.when;
 
 @RunWith(Parameterized.class)
 public class PlanetaryCalendarTimeTest {
-    private double days;
-    private int shift;
-    private double tithe;
-    private double standardMilliseconds;
+    private final double days;
+    private final int shift;
+    private final double tithe;
+    private final double standardMilliseconds;
 
     @InjectMocks
     PlanetaryCalendar planetaryCalendar;
