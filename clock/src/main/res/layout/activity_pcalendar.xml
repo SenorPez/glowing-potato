@@ -26,7 +26,7 @@
             app:layout_constraintDimensionRatio="1:1"
             android:indeterminate="false"
             android:rotation="45"
-            android:progressTint="@color/deepPurpleAccent"/>
+            android:progressTint="@color/blueRing"/>
 
     <ProgressBar
             style="?android:attr/progressBarStyleHorizontal"
@@ -47,7 +47,7 @@
             app:layout_constraintDimensionRatio="1:1"
             android:indeterminate="false"
             android:rotation="45"
-            android:progressTint="@color/black"/>
+            android:progressTint="@color/blackRing"/>
 
     <ProgressBar
             style="?android:attr/progressBarStyleHorizontal"
@@ -68,7 +68,7 @@
             app:layout_constraintDimensionRatio="1:1"
             android:indeterminate="false"
             android:rotation="45"
-            android:progressTint="@color/lightGreenAccent"/>
+            android:progressTint="@color/greenRing"/>
 
     <ProgressBar
             style="?android:attr/progressBarStyleHorizontal"
@@ -89,7 +89,7 @@
             app:layout_constraintDimensionRatio="1:1"
             android:indeterminate="false"
             android:rotation="45"
-            android:progressTint="@color/redAccent"/>
+            android:progressTint="@color/redRing"/>
 
     <TextView
             android:layout_width="wrap_content"
