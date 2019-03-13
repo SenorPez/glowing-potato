@@ -18,7 +18,7 @@ public class PlanetaryClockMatchers {
 
             @Override
             public void describeTo(Description description) {
-                description.appendText("with progress: ");
+                description.appendText(String.format("Expected: %d", expectedProgress));
             }
         };
     }

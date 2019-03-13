@@ -1,17 +1,10 @@
 package com.senorpez.trident.clock;
 
-import android.app.Instrumentation;
 import android.content.Intent;
 import androidx.lifecycle.MutableLiveData;
-import androidx.test.platform.app.InstrumentationRegistry;
-import androidx.test.rule.ActivityTestRule;
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,11 +13,10 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static com.senorpez.trident.clock.PlanetaryClockMatchers.withProgress;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(Parameterized.class)
-public class PlanetaryClockActivityTitheTest {
+public class PlanetaryClockActivityTitheTest extends PlanetaryClockActivityTestBase {
     @Parameterized.Parameter
     public int titheValue;
 
@@ -33,58 +25,6 @@ public class PlanetaryClockActivityTitheTest {
 
     @Parameterized.Parameter(value = 2)
     public int spinnerValue;
-
-    private final static int shiftValue = 1;
-    private final static String localDateTimeValue = "Local Date Time";
-    private final static String standardDateTimeValue = "Standard Date Time";
-
-    @Rule
-    public ActivityTestRule<PlanetaryClockActivity> activityTestRule = new ActivityTestRule<>(PlanetaryClockActivity.class, true, false);
-
-    @Mock
-    PlanetaryCalendarViewModel planetaryCalendarViewModel;
-
-    @Mock
-    PlanetaryCalendarViewModelFactory planetaryCalendarViewModelFactory;
-
-    @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-        when(planetaryCalendarViewModelFactory.create(any())).thenReturn(planetaryCalendarViewModel);
-
-        MutableLiveData<Integer> shift = new MutableLiveData<>();
-        shift.postValue(shiftValue);
-
-        MutableLiveData<Integer> tithe = new MutableLiveData<>();
-        tithe.postValue(titheValue);
-
-        MutableLiveData<Integer> subtithe = new MutableLiveData<>();
-        subtithe.postValue(subtitheValue);
-
-        MutableLiveData<Integer> spinner = new MutableLiveData<>();
-        spinner.postValue(spinnerValue);
-
-        MutableLiveData<String> localDateTime = new MutableLiveData<>();
-        localDateTime.postValue(localDateTimeValue);
-
-        MutableLiveData<String> standardDateTime = new MutableLiveData<>();
-        standardDateTime.postValue(standardDateTimeValue);
-
-        when(planetaryCalendarViewModel.getShift()).thenReturn(shift);
-        when(planetaryCalendarViewModel.getTithe()).thenReturn(tithe);
-        when(planetaryCalendarViewModel.getSubtithe()).thenReturn(subtithe);
-        when(planetaryCalendarViewModel.getSpinner()).thenReturn(spinner);
-        when(planetaryCalendarViewModel.getLocalDateTime()).thenReturn(localDateTime);
-        when(planetaryCalendarViewModel.getStandardDateTime()).thenReturn(standardDateTime);
-
-        Instrumentation instrumentation = InstrumentationRegistry.getInstrumentation();
-        PlanetaryClockTestApplication application = (PlanetaryClockTestApplication) instrumentation.getTargetContext().getApplicationContext();
-        DaggerPlanetaryClockTestApplicationComponent
-                .builder()
-                .activityModule(new PlanetaryClockTestActivityModule(planetaryCalendarViewModelFactory))
-                .create(application)
-                .inject(application);
-    }
 
     @Parameterized.Parameters(name = "tithe: {0}, subtithe: {1}, spinner: {2}")
     public static Collection params() {
@@ -104,16 +44,28 @@ public class PlanetaryClockActivityTitheTest {
 
     @Test
     public void testTitheProgress() {
+        MutableLiveData<Integer> tithe = new MutableLiveData<>();
+        tithe.postValue(titheValue);
+        when(planetaryCalendarViewModel.getTithe()).thenReturn(tithe);
+
         activityTestRule.launchActivity(new Intent());
         onView(withId(R.id.prgTithe)).check(matches(withProgress(titheValue)));
     }
     @Test
     public void testSubtitheProgress() {
+        MutableLiveData<Integer> subtithe = new MutableLiveData<>();
+        subtithe.postValue(subtitheValue);
+        when(planetaryCalendarViewModel.getSubtithe()).thenReturn(subtithe);
+
         activityTestRule.launchActivity(new Intent());
         onView(withId(R.id.prgSubtithe)).check(matches(withProgress(subtitheValue)));
     }
     @Test
     public void testSpinnerProgress() {
+        MutableLiveData<Integer> spinner = new MutableLiveData<>();
+        spinner.postValue(spinnerValue);
+        when(planetaryCalendarViewModel.getSpinner()).thenReturn(spinner);
+
         activityTestRule.launchActivity(new Intent());
         onView(withId(R.id.prgTicker)).check(matches(withProgress(spinnerValue)));
     }
