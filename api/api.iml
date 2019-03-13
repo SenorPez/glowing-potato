@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module external.linked.project.id=":api" external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$/.." external.system.id="GRADLE" type="JAVA_MODULE" version="4">
+  <component name="FacetManager">
+    <facet type="android-gradle" name="Android-Gradle">
+      <configuration>
+        <option name="GRADLE_PROJECT_PATH" value=":api" />
+      </configuration>
+    </facet>
+    <facet type="java-gradle" name="Java-Gradle">
+      <configuration>
+        <option name="BUILD_FOLDER_PATH" value="$MODULE_DIR$/build" />
+        <option name="BUILDABLE" value="true" />
+      </configuration>
+    </facet>
+  </component>
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
+    <output url="file://$MODULE_DIR$/build/classes/java/main" />
+    <output-test url="file://$MODULE_DIR$/build/classes/java/test" />
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/main/resources" type="java-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/resources" type="java-test-resource" />
+      <excludeFolder url="file://$MODULE_DIR$/.gradle" />
+      <excludeFolder url="file://$MODULE_DIR$/build" />
+    </content>
+    <orderEntry type="jdk" jdkName="1.8" jdkType="JavaSDK" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="Gradle: spring-boot-starter-hateoas-1.5.6.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: spring-boot-starter-web-1.5.6.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: spring-hateoas-0.23.0.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: spring-plugin-core-1.2.0.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: spring-boot-starter-1.5.6.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: spring-boot-starter-tomcat-1.5.6.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: hibernate-validator-5.3.5.Final" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: jackson-databind-2.8.9" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: spring-webmvc-4.3.10.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: spring-web-4.3.10.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: spring-boot-autoconfigure-1.5.6.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: spring-boot-1.5.6.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: spring-context-4.3.10.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: spring-aop-4.3.10.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: spring-beans-4.3.10.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: spring-expression-4.3.10.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: spring-core-4.3.10.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: spring-boot-starter-logging-1.5.6.RELEASE" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: logback-classic-1.1.11" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: jcl-over-slf4j-1.7.25" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: jul-to-slf4j-1.7.25" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: log4j-over-slf4j-1.7.25" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: slf4j-api-1.7.25" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: tomcat-embed-websocket-8.5.16" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: tomcat-embed-core-8.5.16" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: tomcat-embed-el-8.5.16" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: validation-api-1.1.0.Final" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: jboss-logging-3.3.1.Final" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: classmate-1.3.3" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: jackson-annotations-2.8.0" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: jackson-core-2.8.9" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: logback-core-1.1.11" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: junit-4.12" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: hamcrest-all-1.3" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: json-path-assert-2.4.0" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: json-schema-validator-2.9.0" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: mockito-core-2.23.4" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: spring-restdocs-mockmvc-1.2.1.RELEASE" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: spring-test-4.3.10.RELEASE" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: spring-boot-test-1.5.6.RELEASE" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: spring-restdocs-core-1.2.1.RELEASE" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: hamcrest-library-1.3" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: hamcrest-core-1.3" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: json-path-2.2.0" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: json-schema-validator-2.2.6" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: byte-buddy-1.9.3" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: byte-buddy-agent-1.9.3" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: objenesis-2.6" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: json-schema-core-1.2.5" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: jackson-coreutils-1.8" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: javax.servlet-api-3.1.0" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: json-smart-2.2.1" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: uri-template-0.9" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: msg-simple-1.1" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: btf-1.2" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: jsr305-3.0.0" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: joda-time-2.9.9" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: libphonenumber-6.2" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: mailapi-1.4.3" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: jopt-simple-4.6" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: snakeyaml-1.17" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: accessors-smart-1.1" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: rhino-1.7R4" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: activation-1.1" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: asm-5.0.3" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="Gradle: guava-16.0.1" level="project" />
+  </component>
+</module>

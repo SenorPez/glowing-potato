@@ -4,4 +4,5 @@
     <color name="greenRing">#64dd17</color>
     <color name="blueRing">#6200ea</color>
     <color name="blackRing">#000000</color>
+    <color name="white">#ffffff</color>
 </resources>
