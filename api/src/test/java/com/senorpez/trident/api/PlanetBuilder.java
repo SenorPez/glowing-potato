@@ -1,5 +1,7 @@
 package com.senorpez.trident.api;
 
+import java.util.Set;
+
 class PlanetBuilder {
     private int id;
     private String name;
@@ -13,6 +15,8 @@ class PlanetBuilder {
     private float longitudeOfAscendingNode;
     private float argumentOfPeriapsis;
     private float trueAnomalyAtEpoch;
+
+    private Set<PlanetaryCalendar> calendars;
 
     PlanetBuilder() {
     }
@@ -28,7 +32,8 @@ class PlanetBuilder {
                 inclination,
                 longitudeOfAscendingNode,
                 argumentOfPeriapsis,
-                trueAnomalyAtEpoch);
+                trueAnomalyAtEpoch,
+                calendars);
     }
 
     PlanetBuilder setId(int id) {
@@ -78,6 +83,11 @@ class PlanetBuilder {
 
     PlanetBuilder setTrueAnomalyAtEpoch(float trueAnomalyAtEpoch) {
         this.trueAnomalyAtEpoch = trueAnomalyAtEpoch;
+        return this;
+    }
+
+    public PlanetBuilder setCalendars(Set<PlanetaryCalendar> calendars) {
+        this.calendars = calendars;
         return this;
     }
 }

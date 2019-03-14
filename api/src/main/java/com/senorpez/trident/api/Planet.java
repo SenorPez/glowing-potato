@@ -1,6 +1,10 @@
 package com.senorpez.trident.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.context.ApplicationContextInitializer;
+
+import java.util.Set;
 
 class Planet {
     private final int id;
@@ -16,6 +20,8 @@ class Planet {
     private final float argumentOfPeriapsis;
     private final float trueAnomalyAtEpoch;
 
+    private final Set<PlanetaryCalendar> calendars;
+
     Planet(
             @JsonProperty("id") final int id,
             @JsonProperty("name") final String name,
@@ -26,7 +32,8 @@ class Planet {
             @JsonProperty("inclination") final float inclination,
             @JsonProperty("longitudeOfAscendingNode") final float longitudeOfAscendingNode,
             @JsonProperty("argumentOfPeriapsis") final float argumentOfPeriapsis,
-            @JsonProperty("trueAnomalyAtEpoch") final float trueAnomalyAtEpoch) {
+            @JsonProperty("trueAnomalyAtEpoch") final float trueAnomalyAtEpoch,
+            @JsonProperty("calendars") final JsonNode calendars) {
         this.id = id;
         this.name = name;
 
@@ -39,6 +46,36 @@ class Planet {
         this.longitudeOfAscendingNode = longitudeOfAscendingNode;
         this.argumentOfPeriapsis = argumentOfPeriapsis;
         this.trueAnomalyAtEpoch = trueAnomalyAtEpoch;
+
+        this.calendars = Application.getData(PlanetaryCalendar.class, calendars);
+    }
+
+    Planet(
+            @JsonProperty("id") final int id,
+            @JsonProperty("name") final String name,
+            @JsonProperty("mass") final float mass,
+            @JsonProperty("radius") final float radius,
+            @JsonProperty("semimajorAxis") final float semimajorAxis,
+            @JsonProperty("eccentricity") final float eccentricity,
+            @JsonProperty("inclination") final float inclination,
+            @JsonProperty("longitudeOfAscendingNode") final float longitudeOfAscendingNode,
+            @JsonProperty("argumentOfPeriapsis") final float argumentOfPeriapsis,
+            @JsonProperty("trueAnomalyAtEpoch") final float trueAnomalyAtEpoch,
+            @JsonProperty("calendars") final Set<PlanetaryCalendar> calendars) {
+        this.id = id;
+        this.name = name;
+
+        this.mass = mass;
+        this.radius = radius;
+
+        this.semimajorAxis = semimajorAxis;
+        this.eccentricity = eccentricity;
+        this.inclination = inclination;
+        this.longitudeOfAscendingNode = longitudeOfAscendingNode;
+        this.argumentOfPeriapsis = argumentOfPeriapsis;
+        this.trueAnomalyAtEpoch = trueAnomalyAtEpoch;
+
+        this.calendars = calendars;
     }
 
     int getId() {
@@ -79,5 +116,9 @@ class Planet {
 
     float getTrueAnomalyAtEpoch() {
         return trueAnomalyAtEpoch;
+    }
+
+    public Set<PlanetaryCalendar> getCalendars() {
+        return calendars;
     }
 }
