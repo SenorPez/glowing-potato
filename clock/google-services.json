@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "923038058214",
+    "firebase_url": "https://trident-clock.firebaseio.com",
+    "project_id": "trident-clock",
+    "storage_bucket": "trident-clock.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:923038058214:android:168fc86c13c5f333",
+        "android_client_info": {
+          "package_name": "com.senorpez.trident.clock"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "923038058214-q862qpsgbd5lm32ub1drofli3d83lkch.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.senorpez.trident.clock",
+            "certificate_hash": "42d2973b6427de3b9f133a62b25892df8ba8400e"
+          }
+        },
+        {
+          "client_id": "923038058214-f6j2213erqno0e9kci894317ub3vuuof.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXvOUm2G-01BoKRtDPVOFLfII3DLrd3xg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "923038058214-f6j2213erqno0e9kci894317ub3vuuof.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
