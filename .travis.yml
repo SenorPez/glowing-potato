@@ -50,6 +50,7 @@ matrix:
 
       before_install:
         - chmod +x gradlew
+        - openssl aes-256-cbc -K $encrypted_aeae3d0f88e6_key -iv $encrypted_aeae3d0f88e6_iv -in google-services.json.enc -out google-services.json -d
 
       install:
         ./gradlew --configure-on-demand :clock:clean --console=plain
