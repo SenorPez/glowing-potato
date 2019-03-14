@@ -26,7 +26,7 @@ matrix:
         - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 
       after_success:
-        - if [ -e ./gradlew ]; then ./gradlew --configure-on-demand jacocoTestReport; else gradle jacocoTestReport; fi
+        - if [ -e ./gradlew ]; then ./gradlew --configure-on-demand :api:jacocoTestReport; else gradle :api:jacocoTestReport; fi
         - bash <(curl -s https://codecov.io/bash)
 
     - language: android
@@ -61,7 +61,3 @@ matrix:
       before_cache:
         - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
         - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-
-      after_success:
-        - if [ -e ./gradlew ]; then ./gradlew --configure-on-demand jacocoTestReport; else gradle jacocoTestReport; fi
-        - bash <(curl -s https://codecov.io/bash)
