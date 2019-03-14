@@ -11,7 +11,8 @@ function drawClockArc(ctx, radius, lineWidth, color, endAngle) {
 }
 
 function getTime() {
-  var time_adj = -34.28646951536321; // TODO: API Call
+  //var time_adj = -34.28646951536321; // TODO: API Call
+  var time_adj = -72.27522481178462;
   var time_now = new Date(new Date() - time_adj * 86400000);
   var time_epoch = new Date("January 1, 2000 00:00:00 GMT+00:00");
   var time_delta = time_now - time_epoch;

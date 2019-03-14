@@ -1,43 +1,35 @@
-from datetime import datetime, timedelta
-from math import ceil, floor, sqrt
-
-from flask import Flask, jsonify, request as flask_request
-from flask_cors import CORS
 import matplotlib.pyplot as plt
 import numpy as np
-from pykep import AU, DAY2SEC, SEC2DAY, epoch, lambert_problem, epoch_from_string
-from pykep.planet import keplerian as planet
-from pykep.orbit_plots import plot_lambert, plot_planet
 import requests
+from datetime import datetime
+from flask import Flask, jsonify, request as flask_request
+from flask_cors import CORS
+from math import sqrt
+from pykep import AU, DAY2SEC, SEC2DAY, epoch, lambert_problem, epoch_from_string
+from pykep.orbit_plots import plot_lambert, plot_planet
+from pykep.planet import keplerian as planet
 
 
 def calc_adjustment():
-    a = -100.0
-    b = 0.0
-    winter = (0, -1, 0) / np.linalg.norm((0, -1, 0))
-    angle_target = np.arccos(np.clip(np.dot((1, 0, 0), winter), -1.0, 1.0))
-
     _, gm_s1 = get_star("Eta Veneris", "1 Eta Veneris")
     taven = get_planet(-455609026, "green", gm_s1)
+    winter = np.arctan2(-1, 0)
+
+    a = -75.0
+    b = 0.0
 
     for _ in range(1000):
         c = (a + b) / 2
-        r_a, _ = taven.eph(epoch(a))
-        r_b, _ = taven.eph(epoch(b))
         r_c, _ = taven.eph(epoch(c))
 
-        u_a = r_a / np.linalg.norm(r_a)
-        angle_a = np.arccos(np.clip(np.dot(u_a, winter), -1.0, 1.0))
-        u_b = r_b / np.linalg.norm(r_b)
-        angle_b = np.arccos(np.clip(np.dot(u_b, winter), -1.0, 1.0))
-        u_c = r_c / np.linalg.norm(r_c)
-        angle_c = np.arccos(np.clip(np.dot(u_c, winter), -1.0, 1.0))
+        angle = np.arctan2(r_c[1], r_c[0])
 
-        if angle_c - angle_target < 0:
+        if angle - winter < 0:
             a = c
         else:
             b = c
 
+    print(c)
     return c
 
 
@@ -282,7 +274,9 @@ def transfer():
 
                     delta_vs.append(inj_delta_v + ins_delta_v)
 
-                delta_v[flight_time - flight_time_offset, launch_time - launch_time_offset] = min(delta_vs)
+                delta_v[
+                    flight_time - flight_time_offset,
+                    launch_time - launch_time_offset] = min(delta_vs)
 
         min_delta_v = np.min(delta_v)
         find_min = (delta_v == min_delta_v).nonzero()
@@ -344,4 +338,3 @@ def transfer():
 if __name__ == "__main__":
     T_ADJ = calc_adjustment()
     APP.run(host="0.0.0.0", port=5001)
-
