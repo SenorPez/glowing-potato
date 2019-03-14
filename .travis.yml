@@ -28,3 +28,29 @@ matrix:
       after_success:
         - if [ -e ./gradlew ]; then ./gradlew --configure-on-demand :api:jacocoTestReport; else gradle jacocoTestReport; fi
         - bash <(curl -s https://codecov.io/bash)
+
+    - language: android
+      android:
+        components:
+          - tools
+          - platform-tools
+          - android-28
+
+      cache:
+        directories:
+          - $HOME/.gradle/caches/
+          - $HOME/.gradle/wrapper/
+          - $HOME/.android/build-cache
+
+      before_install:
+        - chmod +x gradlew
+
+      install:
+        ./gradlew --configure-on-demand :clock:assemble --console=plain
+
+      script:
+        ./gradlew --configure-on-demand :clock:build :clock:connectedCheck --console=plain
+
+      before_cache:
+        - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+        - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
