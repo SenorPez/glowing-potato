@@ -1,2 +1,3 @@
 rootProject.name = 'trident'
-include 'api'
+include ':api'
+include ':clock'

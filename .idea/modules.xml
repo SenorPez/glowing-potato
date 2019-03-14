@@ -2,13 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/api/com.senorpez.trident.api.iml" filepath="$PROJECT_DIR$/.idea/modules/api/com.senorpez.trident.api.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/api/com.senorpez.trident.api.main.iml" filepath="$PROJECT_DIR$/.idea/modules/api/com.senorpez.trident.api.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/api/com.senorpez.trident.api.test.iml" filepath="$PROJECT_DIR$/.idea/modules/api/com.senorpez.trident.api.test.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.senorpez.trident.trident.iml" filepath="$PROJECT_DIR$/.idea/modules/com.senorpez.trident.trident.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.senorpez.trident.trident.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.senorpez.trident.trident.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.senorpez.trident.trident.test.iml" filepath="$PROJECT_DIR$/.idea/modules/com.senorpez.trident.trident.test.iml" />
-      <module fileurl="file://$PROJECT_DIR$/web/com.senorpez.trident.web.iml" filepath="$PROJECT_DIR$/web/com.senorpez.trident.web.iml" />
+      <module fileurl="file://$PROJECT_DIR$/api/api.iml" filepath="$PROJECT_DIR$/api/api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/clock/clock.iml" filepath="$PROJECT_DIR$/clock/clock.iml" />
+      <module fileurl="file://$PROJECT_DIR$/trident.iml" filepath="$PROJECT_DIR$/trident.iml" />
+      <module fileurl="file://$PROJECT_DIR$/web/web.iml" filepath="$PROJECT_DIR$/web/web.iml" />
     </modules>
   </component>
 </project>
