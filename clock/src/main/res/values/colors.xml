@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="redRing">#d50000</color>
+    <color name="greenRing">#64dd17</color>
+    <color name="blueRing">#6200ea</color>
+    <color name="blackRing">#000000</color>
+    <color name="white">#ffffff</color>
+</resources>
