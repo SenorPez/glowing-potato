@@ -37,42 +37,27 @@ $(document).ready(function() {
         plotData.push(planetPlot);
       }
 
-      var springEquinoxPlot = {
-        type: 'scatter3d',
-        showlegend: false,
-        mode: 'lines',
-        x: [0, 1],
-        y: [0, 0],
-        z: [0, 0],
-        opacity: 0.5,
-        line: {
-          width: 3,
-          color: 'green'
-        },
-        hoverinfo: 'none'
-      };
-
-      var autumnEquinoxPlot = {
-        type: 'scatter3d',
-        showlegend: false,
-        mode: 'lines',
-        x: [0, -1],
-        y: [0, 0],
-        z: [0, 0],
-        opacity: 0.5,
-        line: {
-          width: 3,
-          color: 'black'
-        },
-        hoverinfo: 'none'
-      };
-
-      var solsticePlot = {
+      var winterSolsticePlot = {
         type: 'scatter3d',
         showlegend: false,
         mode: 'lines',
         x: [0, 0],
-        y: [-1, 1],
+        y: [0, -1],
+        z: [0, 0],
+        opacity: 0.5,
+        line: {
+          width: 3,
+          color: 'blue'
+        },
+        hoverinfo: 'none'
+      };
+
+      var summerSolsticePlot = {
+        type: 'scatter3d',
+        showlegend: false,
+        mode: 'lines',
+        x: [0, 0],
+        y: [0, 1],
         z: [0, 0],
         opacity: 0.5,
         line: {
@@ -82,9 +67,24 @@ $(document).ready(function() {
         hoverinfo: 'none'
       };
 
-      plotData.push(springEquinoxPlot);
-      plotData.push(autumnEquinoxPlot);
-      plotData.push(solsticePlot);
+      var equinoxPlot = {
+        type: 'scatter3d',
+        showlegend: false,
+        mode: 'lines',
+        x: [-1, 1],
+        y: [0, 0],
+        z: [0, 0],
+        opacity: 0.5,
+        line: {
+          width: 3,
+          color: 'black'
+        },
+        hoverinfo: 'none'
+      };
+
+      plotData.push(winterSolsticePlot);
+      plotData.push(summerSolsticePlot);
+      plotData.push(equinoxPlot);
 
       var starPlot = {
         type: 'scatter3d',

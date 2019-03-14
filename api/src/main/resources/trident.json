@@ -7,7 +7,7 @@
         {
           "id": 1905216634,
           "name": "1 Eta Veneris",
-          "solarMass": 0.75,
+          "mass": 0.75,
           "planets": [
             {
               "id": -1485460920,
@@ -62,7 +62,7 @@
         {
           "id": -1385166447,
           "name": "2 Eta Veneris",
-          "solarMass": 0.75
+          "mass": 0.75
         }
       ]
     }
