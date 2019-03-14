@@ -52,10 +52,10 @@ matrix:
         - chmod +x gradlew
 
       install:
-        ./gradlew --configure-on-demand :clock:assemble --console=plain
+        ./gradlew --configure-on-demand :clock:clean --console=plain
 
       script:
-        ./gradlew --configure-on-demand :clock:build :clock:testDebugUnitTest --console=plain
+        ./gradlew --configure-on-demand :clock:testDebugUnitTest --console=plain
 
       before_cache:
         - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
