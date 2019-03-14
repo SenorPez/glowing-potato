@@ -15,6 +15,9 @@ matrix:
       before_install:
         - chmod +x gradlew
 
+      install:
+        ./gradlew api:assemble --console=plain
+
       script:
         ./gradlew api:check --console=plain
 
