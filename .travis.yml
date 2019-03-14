@@ -16,10 +16,10 @@ matrix:
         - chmod +x gradlew
 
       install:
-        ./gradlew api:assemble --console=plain
+        ./gradlew --configure-on-demand :api:assemble --console=plain
 
       script:
-        ./gradlew api:check --console=plain
+        ./gradlew --configure-on-demand :api:check --console=plain
 
       before_cache:
         - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
