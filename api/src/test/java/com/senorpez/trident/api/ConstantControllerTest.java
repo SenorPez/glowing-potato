@@ -41,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class ConstantControllerTest {
     private MockMvc mockMvc;
-    private static final MediaType INVALID_MEDIA_TYPE = new MediaType("application", "invalid+json", UTF_8);
+    private static final MediaType INVALID_MEDIA_TYPE = new MediaType("application", "vnd.senorpez.trident.v0+json", UTF_8);
     private static final ClassLoader CLASS_LOADER = ConstantControllerTest.class.getClassLoader();
     private static InputStream CONSTANT_SCHEMA;
     private static InputStream CONSTANT_COLLECTION_SCHEMA;

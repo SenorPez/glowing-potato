@@ -39,7 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class SolarSystemControllerTest {
     private MockMvc mockMvc;
-    private static final MediaType INVALID_MEDIA_TYPE = new MediaType("application", "invalid+json", UTF_8);
+    private static final MediaType INVALID_MEDIA_TYPE = new MediaType("application", "vnd.senorpez.trident.v0+json", UTF_8);
     private static final ClassLoader CLASS_LOADER = SolarSystemControllerTest.class.getClassLoader();
     private static InputStream SOLAR_SYSTEM_SCHEMA;
     private static InputStream SOLAR_SYSTEM_COLLECTION_SCHEMA;

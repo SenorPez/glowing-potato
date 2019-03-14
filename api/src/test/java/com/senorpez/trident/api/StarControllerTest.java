@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class StarControllerTest {
     private MockMvc mockMvc;
-    private static final MediaType INVALID_MEDIA_TYPE = new MediaType("application", "invalid+json", UTF_8);
+    private static final MediaType INVALID_MEDIA_TYPE = new MediaType("application", "vnd.senorpez.trident.v0+json", UTF_8);
     private static final ClassLoader CLASS_LOADER = StarControllerTest.class.getClassLoader();
     private static InputStream STAR_SCHEMA;
     private static InputStream STAR_COLLECTION_SCHEMA;
