@@ -569,6 +569,8 @@ public class PlanetControllerTest {
                                 hasEntry("templated", (Object) true)))))
                 .andExpect(jsonPath("$._links.trident-api:planets", hasEntry("href", String.format(
                         "http://localhost:8080/systems/%d/stars/%d/planets", FIRST_SYSTEM.getId(), FIRST_STAR.getId()))))
+                .andExpect(jsonPath("$._links.trident-api:calendars", hasEntry("href", String.format(
+                        "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars", FIRST_SYSTEM.getId(), FIRST_STAR.getId(), FIRST_PLANET.getId()))))
                 .andDo(document("planet",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -589,7 +591,8 @@ public class PlanetControllerTest {
                                 fieldWithPath("trueAnomalyAtEpoch").description("Planet true anomaly at epoch, in radians"),
                                 subsectionWithPath("_links").ignored()),
                         commonLinks.and(
-                                linkWithRel("trident-api:planets").description("List of planet resources."))));
+                                linkWithRel("trident-api:planets").description("List of planet resources."),
+                                linkWithRel("trident-api:calendars").description("List of calendar resources."))));
 
         verify(apiService, times(3)).findOne(any(), any(), any());
         verifyNoMoreInteractions(apiService);
@@ -625,7 +628,9 @@ public class PlanetControllerTest {
                                 hasEntry("name", (Object) "trident-api"),
                                 hasEntry("templated", (Object) true)))))
                 .andExpect(jsonPath("$._links.trident-api:planets", hasEntry("href", String.format(
-                        "http://localhost:8080/systems/%d/stars/%d/planets", FIRST_SYSTEM.getId(), FIRST_STAR.getId()))));
+                        "http://localhost:8080/systems/%d/stars/%d/planets", FIRST_SYSTEM.getId(), FIRST_STAR.getId()))))
+                .andExpect(jsonPath("$._links.trident-api:calendars", hasEntry("href", String.format(
+                        "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars", FIRST_SYSTEM.getId(), FIRST_STAR.getId(), FIRST_PLANET.getId()))));
 
         verify(apiService, times(3)).findOne(any(), any(), any());
         verifyNoMoreInteractions(apiService);

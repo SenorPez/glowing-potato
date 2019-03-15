@@ -1,8 +1,8 @@
 package com.senorpez.trident.api;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-import org.springframework.context.ApplicationContextInitializer;
 
 import java.util.Set;
 
@@ -22,6 +22,7 @@ class Planet {
 
     private final Set<PlanetaryCalendar> calendars;
 
+    @JsonCreator
     Planet(
             @JsonProperty("id") final int id,
             @JsonProperty("name") final String name,

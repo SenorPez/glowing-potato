@@ -144,7 +144,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET);
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId())).accept(TRIDENT_API))
@@ -158,7 +158,7 @@ public class PlanetaryCalendarControllerTest {
                                 hasEntry(equalTo("_links"),
                                         hasEntry(equalTo("self"),
                                                 hasEntry("href", String.format(
-                                                        "http://localhost:8080//systems/%d/stars/%d/planets/%d/calendars/%d",
+                                                        "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                                                         FIRST_SYSTEM.getId(),
                                                         FIRST_STAR.getId(),
                                                         FIRST_PLANET.getId(),
@@ -170,14 +170,14 @@ public class PlanetaryCalendarControllerTest {
                                 hasEntry(equalTo("_links"),
                                         hasEntry(equalTo("self"),
                                                 hasEntry("href", String.format(
-                                                        "http://localhost:8080//systems/%d/stars/%d/planets/%d/calendars/%d",
+                                                        "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                                                         FIRST_SYSTEM.getId(),
                                                         FIRST_STAR.getId(),
                                                         FIRST_PLANET.getId(),
                                                         SECOND_CALENDAR.getId()))))))))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", String.format(
-                        "/systems/%d/stars/%d/planets/%d/calendars",
+                        "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars",
                         FIRST_SYSTEM.getId(),
                         FIRST_STAR.getId(),
                         FIRST_PLANET.getId()))))
@@ -186,8 +186,8 @@ public class PlanetaryCalendarControllerTest {
                                 hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-trident-{rel}"),
                                 hasEntry("name", (Object) "trident-api"),
                                 hasEntry("templated", (Object) true)))))
-                .andExpect(jsonPath("$_links.trident-api:planet", hasEntry("href", String.format(
-                        "/systems/%d/stars/%d/planets/%d/calendars",
+                .andExpect(jsonPath("$._links.trident-api:planet", hasEntry("href", String.format(
+                        "http://localhost:8080/systems/%d/stars/%d/planets/%d",
                         FIRST_SYSTEM.getId(),
                         FIRST_STAR.getId(),
                         FIRST_PLANET.getId()))))
@@ -207,7 +207,7 @@ public class PlanetaryCalendarControllerTest {
                         commonLinks.and(
                                 linkWithRel("trident-api:planet").description("Planet resource."))));
 
-        verify(apiService, times(2)).findOne(any(), any(), any());
+        verify(apiService, times(3)).findOne(any(), any(), any());
     }
 
     @Test
@@ -215,7 +215,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET);
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId())).accept(FALLBACK))
@@ -229,7 +229,7 @@ public class PlanetaryCalendarControllerTest {
                                 hasEntry(equalTo("_links"),
                                         hasEntry(equalTo("self"),
                                                 hasEntry("href", String.format(
-                                                        "http://localhost:8080//systems/%d/stars/%d/planets/%d/calendars/%d",
+                                                        "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                                                         FIRST_SYSTEM.getId(),
                                                         FIRST_STAR.getId(),
                                                         FIRST_PLANET.getId(),
@@ -241,14 +241,14 @@ public class PlanetaryCalendarControllerTest {
                                 hasEntry(equalTo("_links"),
                                         hasEntry(equalTo("self"),
                                                 hasEntry("href", String.format(
-                                                        "http://localhost:8080//systems/%d/stars/%d/planets/%d/calendars/%d",
+                                                        "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                                                         FIRST_SYSTEM.getId(),
                                                         FIRST_STAR.getId(),
                                                         FIRST_PLANET.getId(),
                                                         SECOND_CALENDAR.getId()))))))))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", String.format(
-                        "/systems/%d/stars/%d/planets/%d/calendars",
+                        "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars",
                         FIRST_SYSTEM.getId(),
                         FIRST_STAR.getId(),
                         FIRST_PLANET.getId()))))
@@ -257,13 +257,13 @@ public class PlanetaryCalendarControllerTest {
                                 hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-trident-{rel}"),
                                 hasEntry("name", (Object) "trident-api"),
                                 hasEntry("templated", (Object) true)))))
-                .andExpect(jsonPath("$_links.trident-api:planet", hasEntry("href", String.format(
-                        "/systems/%d/stars/%d/planets/%d/calendars",
+                .andExpect(jsonPath("$._links.trident-api:planet", hasEntry("href", String.format(
+                        "http://localhost:8080/systems/%d/stars/%d/planets/%d",
                         FIRST_SYSTEM.getId(),
                         FIRST_STAR.getId(),
                         FIRST_PLANET.getId()))));
 
-        verify(apiService, times(2)).findOne(any(), any(), any());
+        verify(apiService, times(3)).findOne(any(), any(), any());
     }
 
     @Test
@@ -271,7 +271,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET);
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId())).accept(INVALID_MEDIA_TYPE))
@@ -290,7 +290,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET);
 
         mockMvc.perform(put(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId())).accept(TRIDENT_API))
@@ -308,8 +308,8 @@ public class PlanetaryCalendarControllerTest {
     public void GetAllCalendars_ValidSystemId_ValidStarId_InvalidPlanetId_ValidAcceptHeader() throws Exception {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR).thenThrow(new PlanetNotFoundException(8675309));
 
-        mockMvc.perform(put(String.format(
-                "/systems/%d/stars/%d/planets/8675309/calendars",
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/8675309/calendars",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId())).accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
@@ -327,8 +327,8 @@ public class PlanetaryCalendarControllerTest {
     public void GetAllCalendars_ValidSystemId_ValidStarId_InvalidPlanetId_FallbackAcceptHeader() throws Exception {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR).thenThrow(new PlanetNotFoundException(8675309));
 
-        mockMvc.perform(put(String.format(
-                "/systems/%d/stars/%d/planets/8675309/calendars",
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/8675309/calendars",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId())).accept(FALLBACK))
                 .andExpect(status().isNotFound())
@@ -347,7 +347,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR).thenThrow(new PlanetNotFoundException(8675309));
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId())).accept(INVALID_MEDIA_TYPE))
@@ -366,7 +366,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR).thenThrow(new PlanetNotFoundException(8675309));
 
         mockMvc.perform(put(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId())).accept(TRIDENT_API))
@@ -384,8 +384,8 @@ public class PlanetaryCalendarControllerTest {
     public void GetAllCalendars_ValidSystemId_InvalidStarId_XXXPlanetId_ValidAcceptHeader() throws Exception {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM).thenThrow(new StarNotFoundException(8675309));
 
-        mockMvc.perform(put(String.format(
-                "/systems/%d/stars/8675309/planets/%d/calendars",
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/8675309/planets/%d/calendars",
                 FIRST_SYSTEM.getId(),
                 FIRST_CALENDAR.getId())).accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
@@ -403,8 +403,8 @@ public class PlanetaryCalendarControllerTest {
     public void GetAllCalendars_ValidSystemId_InvalidStarId_XXXPlanetId_FallbackAcceptHeader() throws Exception {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM).thenThrow(new StarNotFoundException(8675309));
 
-        mockMvc.perform(put(String.format(
-                "/systems/%d/stars/8675309/planets/%d/calendars",
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/8675309/planets/%d/calendars",
                 FIRST_SYSTEM.getId(),
                 FIRST_CALENDAR.getId())).accept(FALLBACK))
                 .andExpect(status().isNotFound())
@@ -423,7 +423,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM).thenThrow(new StarNotFoundException(8675309));
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId())).accept(INVALID_MEDIA_TYPE))
@@ -442,7 +442,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM).thenThrow(new StarNotFoundException(8675309));
 
         mockMvc.perform(put(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId())).accept(TRIDENT_API))
@@ -460,7 +460,7 @@ public class PlanetaryCalendarControllerTest {
     public void GetAllCalendars_InvalidSystemId_XXXStarId_XXXPlanetId_ValidAcceptHeader() throws Exception {
         when(apiService.findOne(any(), any(), any())).thenThrow(new SolarSystemNotFoundException(8675309));
 
-        mockMvc.perform(put(String.format(
+        mockMvc.perform(get(String.format(
                 "/systems/8675309/stars/%d/planets/%d/calendars",
                 FIRST_SYSTEM.getId(),
                 FIRST_CALENDAR.getId())).accept(TRIDENT_API))
@@ -479,7 +479,7 @@ public class PlanetaryCalendarControllerTest {
     public void GetAllCalendars_InvalidSystemId_XXXStarId_XXXPlanetId_FallbackAcceptHeader() throws Exception {
         when(apiService.findOne(any(), any(), any())).thenThrow(new SolarSystemNotFoundException(8675309));
 
-        mockMvc.perform(put(String.format(
+        mockMvc.perform(get(String.format(
                 "/systems/8675309/stars/%d/planets/%d/calendars",
                 FIRST_SYSTEM.getId(),
                 FIRST_CALENDAR.getId())).accept(FALLBACK))
@@ -499,7 +499,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenThrow(new SolarSystemNotFoundException(8675309));
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId())).accept(INVALID_MEDIA_TYPE))
@@ -518,7 +518,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenThrow(new SolarSystemNotFoundException(8675309));
 
         mockMvc.perform(put(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId())).accept(TRIDENT_API))
@@ -536,8 +536,8 @@ public class PlanetaryCalendarControllerTest {
     public void GetAllCalendars_ValidSystemId_ValidStarId_MismatchPlanetId_ValidAcceptHeader() throws Exception {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR).thenThrow(new PlanetNotFoundException(SECOND_PLANET.getId()));
 
-        mockMvc.perform(put(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars",
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 SECOND_PLANET.getId())).accept(TRIDENT_API))
@@ -546,7 +546,7 @@ public class PlanetaryCalendarControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is(String.format("Planet with ID of %d not found", 8675309))));
+                .andExpect(jsonPath("$.detail", is(String.format("Planet with ID of %d not found", SECOND_PLANET.getId()))));
 
         verify(apiService, times(3)).findOne(any(), any(), any());
         verifyNoMoreInteractions(apiService);
@@ -556,8 +556,8 @@ public class PlanetaryCalendarControllerTest {
     public void GetAllCalendars_ValidSystemId_ValidStarId_MismatchPlanetId_FallbackAcceptHeader() throws Exception {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR).thenThrow(new PlanetNotFoundException(SECOND_PLANET.getId()));
 
-        mockMvc.perform(put(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars",
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 SECOND_PLANET.getId())).accept(FALLBACK))
@@ -566,7 +566,7 @@ public class PlanetaryCalendarControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is(String.format("Planet with ID of %d not found", 8675309))));
+                .andExpect(jsonPath("$.detail", is(String.format("Planet with ID of %d not found", SECOND_PLANET.getId()))));
 
         verify(apiService, times(3)).findOne(any(), any(), any());
         verifyNoMoreInteractions(apiService);
@@ -577,7 +577,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR).thenThrow(new PlanetNotFoundException(SECOND_PLANET.getId()));
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId())).accept(INVALID_MEDIA_TYPE))
@@ -596,7 +596,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR).thenThrow(new PlanetNotFoundException(SECOND_PLANET.getId()));
 
         mockMvc.perform(put(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId())).accept(TRIDENT_API))
@@ -615,8 +615,8 @@ public class PlanetaryCalendarControllerTest {
     public void GetAllCalendars_ValidSystemId_MismatchStarId_XXXPlanetId_ValidAcceptHeader() throws Exception {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM).thenThrow(new StarNotFoundException(SECOND_STAR.getId()));
 
-        mockMvc.perform(put(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars",
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars",
                 FIRST_SYSTEM.getId(),
                 SECOND_STAR.getId(),
                 FIRST_CALENDAR.getId())).accept(TRIDENT_API))
@@ -625,7 +625,7 @@ public class PlanetaryCalendarControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is(String.format("Star with ID of %d not found", 8675309))));
+                .andExpect(jsonPath("$.detail", is(String.format("Star with ID of %d not found", SECOND_STAR.getId()))));
 
         verify(apiService, times(2)).findOne(any(), any(), any());
         verifyNoMoreInteractions(apiService);
@@ -635,8 +635,8 @@ public class PlanetaryCalendarControllerTest {
     public void GetAllCalendars_ValidSystemId_MismatchStarId_XXXPlanetId_FallbackAcceptHeader() throws Exception {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM).thenThrow(new StarNotFoundException(SECOND_STAR.getId()));
 
-        mockMvc.perform(put(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars",
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars",
                 FIRST_SYSTEM.getId(),
                 SECOND_STAR.getId(),
                 FIRST_CALENDAR.getId())).accept(FALLBACK))
@@ -645,7 +645,7 @@ public class PlanetaryCalendarControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is(String.format("Star with ID of %d not found", 8675309))));
+                .andExpect(jsonPath("$.detail", is(String.format("Star with ID of %d not found", SECOND_STAR.getId()))));
 
         verify(apiService, times(2)).findOne(any(), any(), any());
         verifyNoMoreInteractions(apiService);
@@ -656,7 +656,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM).thenThrow(new StarNotFoundException(SECOND_STAR.getId()));
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId())).accept(INVALID_MEDIA_TYPE))
@@ -675,7 +675,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM).thenThrow(new StarNotFoundException(SECOND_STAR.getId()));
 
         mockMvc.perform(put(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId())).accept(TRIDENT_API))
@@ -694,17 +694,17 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, EMPTY_PLANET);
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 EMPTY_PLANET.getId())).accept(TRIDENT_API))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(TRIDENT_API))
                 .andExpect(content().string(matchesJsonSchema(CALENDAR_COLLECTION_SCHEMA)))
-                .andExpect(jsonPath("$._embedded.trident-api:planet", empty()))
+                .andExpect(jsonPath("$._embedded.trident-api:calendar", empty()))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", String.format(
-                        "/systems/%d/stars/%d/planets/%d/calendars",
+                        "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars",
                         FIRST_SYSTEM.getId(),
                         FIRST_STAR.getId(),
                         EMPTY_PLANET.getId()))))
@@ -713,11 +713,11 @@ public class PlanetaryCalendarControllerTest {
                                 hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-trident-{rel}"),
                                 hasEntry("name", (Object) "trident-api"),
                                 hasEntry("templated", (Object) true)))))
-                .andExpect(jsonPath("$_links.trident-api:planet", hasEntry("href", String.format(
-                        "/systems/%d/stars/%d/planets/%d/calendars",
+                .andExpect(jsonPath("$._links.trident-api:planet", hasEntry("href", String.format(
+                        "http://localhost:8080/systems/%d/stars/%d/planets/%d",
                         FIRST_SYSTEM.getId(),
                         FIRST_STAR.getId(),
-                        FIRST_PLANET.getId()))));
+                        EMPTY_PLANET.getId()))));
 
         verify(apiService, times(3)).findOne(any(), any(), any());
     }
@@ -727,17 +727,17 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, EMPTY_PLANET);
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 EMPTY_PLANET.getId())).accept(FALLBACK))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(FALLBACK))
                 .andExpect(content().string(matchesJsonSchema(CALENDAR_COLLECTION_SCHEMA)))
-                .andExpect(jsonPath("$._embedded.trident-api:planet", empty()))
+                .andExpect(jsonPath("$._embedded.trident-api:calendar", empty()))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", String.format(
-                        "/systems/%d/stars/%d/planets/%d/calendars",
+                        "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars",
                         FIRST_SYSTEM.getId(),
                         FIRST_STAR.getId(),
                         EMPTY_PLANET.getId()))))
@@ -746,11 +746,11 @@ public class PlanetaryCalendarControllerTest {
                                 hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-trident-{rel}"),
                                 hasEntry("name", (Object) "trident-api"),
                                 hasEntry("templated", (Object) true)))))
-                .andExpect(jsonPath("$_links.trident-api:planet", hasEntry("href", String.format(
-                        "/systems/%d/stars/%d/planets/%d/calendars",
+                .andExpect(jsonPath("$._links.trident-api:planet", hasEntry("href", String.format(
+                        "http://localhost:8080/systems/%d/stars/%d/planets/%d",
                         FIRST_SYSTEM.getId(),
                         FIRST_STAR.getId(),
-                        FIRST_PLANET.getId()))));
+                        EMPTY_PLANET.getId()))));
 
         verify(apiService, times(3)).findOne(any(), any(), any());
     }
@@ -760,7 +760,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, EMPTY_PLANET);
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId())).accept(INVALID_MEDIA_TYPE))
@@ -779,7 +779,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, EMPTY_PLANET);
 
         mockMvc.perform(put(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId())).accept(TRIDENT_API))
@@ -798,7 +798,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET, FIRST_CALENDAR);
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId(),
@@ -808,8 +808,8 @@ public class PlanetaryCalendarControllerTest {
                 .andExpect(content().string(matchesJsonSchema(CALENDAR_SCHEMA)))
                 .andExpect(jsonPath("$.id", is(FIRST_CALENDAR.getId())))
                 .andExpect(jsonPath("$.name", is(FIRST_CALENDAR.getName())))
-                .andExpect(jsonPath("$.standardHoursPerDay", closeTo(FIRST_CALENDAR.getStandardHoursPerDay(), 0.001)))
-                .andExpect(jsonPath("$.epochOffset", closeTo(FIRST_CALENDAR.getEpochOffset(), 0.001)))
+                .andExpect(jsonPath("$.standardHoursPerDay", closeTo(FIRST_CALENDAR.getStandardHoursPerDay(), 0.0001)))
+                .andExpect(jsonPath("$.epochOffset", closeTo(FIRST_CALENDAR.getEpochOffset(), 0.0001)))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", String.format(
                         "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
@@ -841,7 +841,7 @@ public class PlanetaryCalendarControllerTest {
                                 fieldWithPath("epochOffset").description("Offset between standard epoch (J2000) and local epoch."),
                                 subsectionWithPath("_links").ignored()),
                         commonLinks.and(
-                                linkWithRel("trident-api:planets").description("List of planet resources."))));
+                                linkWithRel("trident-api:calendars").description("List of calendar resources."))));
 
         verify(apiService, times(4)).findOne(any(), any(), any());
         verifyNoMoreInteractions(apiService);
@@ -852,7 +852,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET, FIRST_CALENDAR);
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId(),
@@ -862,8 +862,8 @@ public class PlanetaryCalendarControllerTest {
                 .andExpect(content().string(matchesJsonSchema(CALENDAR_SCHEMA)))
                 .andExpect(jsonPath("$.id", is(FIRST_CALENDAR.getId())))
                 .andExpect(jsonPath("$.name", is(FIRST_CALENDAR.getName())))
-                .andExpect(jsonPath("$.standardHoursPerDay", closeTo(FIRST_CALENDAR.getStandardHoursPerDay(), 0.001)))
-                .andExpect(jsonPath("$.epochOffset", closeTo(FIRST_CALENDAR.getEpochOffset(), 0.001)))
+                .andExpect(jsonPath("$.standardHoursPerDay", closeTo(FIRST_CALENDAR.getStandardHoursPerDay(), 0.0001)))
+                .andExpect(jsonPath("$.epochOffset", closeTo(FIRST_CALENDAR.getEpochOffset(), 0.0001)))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", String.format(
                         "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
@@ -891,7 +891,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET, FIRST_CALENDAR);
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId(),
@@ -911,7 +911,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET, FIRST_CALENDAR);
 
         mockMvc.perform(put(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId(),
@@ -932,7 +932,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET).thenThrow(new PlanetaryCalendarNotFoundException(8675309));
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars/8675309",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/8675309",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId())).accept(TRIDENT_API))
@@ -952,7 +952,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET).thenThrow(new PlanetaryCalendarNotFoundException(8675309));
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars/8675309",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/8675309",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId())).accept(FALLBACK))
@@ -972,7 +972,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET).thenThrow(new PlanetaryCalendarNotFoundException(8675309));
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId(),
@@ -992,7 +992,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET).thenThrow(new PlanetaryCalendarNotFoundException(8675309));
 
         mockMvc.perform(put(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId(),
@@ -1012,7 +1012,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR).thenThrow(new PlanetNotFoundException(8675309));
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/8675309/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/8675309/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_CALENDAR.getId())).accept(TRIDENT_API))
@@ -1032,7 +1032,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR).thenThrow(new PlanetNotFoundException(8675309));
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/8675309/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/8675309/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_CALENDAR.getId())).accept(FALLBACK))
@@ -1052,7 +1052,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR).thenThrow(new PlanetNotFoundException(8675309));
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId(),
@@ -1072,7 +1072,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR).thenThrow(new PlanetNotFoundException(8675309));
 
         mockMvc.perform(put(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId(),
@@ -1092,7 +1092,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM).thenThrow(new StarNotFoundException(8675309));
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/8675309/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/8675309/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_PLANET.getId(),
                 FIRST_CALENDAR.getId())).accept(TRIDENT_API))
@@ -1112,7 +1112,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM).thenThrow(new StarNotFoundException(8675309));
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/8675309/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/8675309/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_PLANET.getId(),
                 FIRST_CALENDAR.getId())).accept(FALLBACK))
@@ -1132,7 +1132,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM).thenThrow(new StarNotFoundException(8675309));
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId(),
@@ -1152,7 +1152,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM).thenThrow(new StarNotFoundException(8675309));
 
         mockMvc.perform(put(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId(),
@@ -1212,7 +1212,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenThrow(new SolarSystemNotFoundException(8675309));
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId(),
@@ -1232,7 +1232,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenThrow(new SolarSystemNotFoundException(8675309));
 
         mockMvc.perform(put(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId(),
@@ -1252,7 +1252,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET).thenThrow(new PlanetaryCalendarNotFoundException(SECOND_CALENDAR.getId()));
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId(),
@@ -1273,7 +1273,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET).thenThrow(new PlanetaryCalendarNotFoundException(SECOND_CALENDAR.getId()));
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId(),
@@ -1294,7 +1294,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET).thenThrow(new PlanetaryCalendarNotFoundException(SECOND_CALENDAR.getId()));
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId(),
@@ -1314,7 +1314,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET).thenThrow(new PlanetaryCalendarNotFoundException(SECOND_CALENDAR.getId()));
 
         mockMvc.perform(put(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId(),
@@ -1334,7 +1334,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR).thenThrow(new PlanetNotFoundException(SECOND_PLANET.getId()));
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 SECOND_PLANET.getId(),
@@ -1355,7 +1355,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR).thenThrow(new PlanetNotFoundException(SECOND_PLANET.getId()));
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 SECOND_PLANET.getId(),
@@ -1376,7 +1376,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR).thenThrow(new PlanetNotFoundException(SECOND_PLANET.getId()));
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId(),
@@ -1396,7 +1396,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR).thenThrow(new PlanetNotFoundException(SECOND_PLANET.getId()));
 
         mockMvc.perform(put(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId(),
@@ -1416,7 +1416,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM).thenThrow(new StarNotFoundException(SECOND_STAR.getId()));
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 SECOND_STAR.getId(),
                 FIRST_PLANET.getId(),
@@ -1437,7 +1437,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM).thenThrow(new StarNotFoundException(SECOND_STAR.getId()));
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 SECOND_STAR.getId(),
                 FIRST_PLANET.getId(),
@@ -1458,7 +1458,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM).thenThrow(new StarNotFoundException(SECOND_STAR.getId()));
 
         mockMvc.perform(get(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId(),
@@ -1478,7 +1478,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM).thenThrow(new StarNotFoundException(SECOND_STAR.getId()));
 
         mockMvc.perform(put(String.format(
-                "/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId(),

@@ -27,11 +27,11 @@ public class PlanetaryCalendar {
         return name;
     }
 
-    public double getStandardHoursPerDay() {
+    public float getStandardHoursPerDay() {
         return standardHoursPerDay;
     }
 
-    public double getEpochOffset() {
+    public float getEpochOffset() {
         return epochOffset;
     }
 }

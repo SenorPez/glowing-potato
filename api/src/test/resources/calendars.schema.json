@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-6/schema",
-  "title": "Trident API Star Schema",
-  "description": "Schema for a star in Trident API",
+  "title": "Trident API Calendar Collection Schema",
+  "description": "Schema for collections of calendars in Trident API",
   "definitions": {
     "standardLink": {
       "type": "object",
@@ -41,35 +41,45 @@
   },
   "type": "object",
   "properties": {
-    "id": {
-      "type": "integer"
-    },
-    "name": {
-      "type": "string"
-    },
-    "mass": {
-      "type": "number"
-    },
-    "radius": {
-      "type": "number"
-    },
-    "semimajorAxis": {
-      "type": "number"
-    },
-    "eccentricity": {
-      "type": "number"
-    },
-    "inclination": {
-      "type": "number"
-    },
-    "longitudeOfAscendingNode": {
-      "type": "number"
-    },
-    "argumentOfPeriapsis": {
-      "type": "number"
-    },
-    "trueAnomalyAtEpoch": {
-      "type": "number"
+    "_embedded": {
+      "type": "object",
+      "properties": {
+        "trident-api:calendar": {
+          "type": "array",
+          "items": {
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "name": {
+                "type": "string"
+              },
+              "_links": {
+                "type": "object",
+                "properties": {
+                  "self": {
+                    "$ref": "#/definitions/standardLink"
+                  }
+                },
+                "additionalProperties": false,
+                "required": [
+                  "self"
+                ]
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "name",
+              "_links"
+            ]
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "trident-api:calendar"
+      ]
     },
     "_links": {
       "type": "object",
@@ -83,10 +93,7 @@
         "curies": {
           "$ref": "#/definitions/curies"
         },
-        "trident-api:planets": {
-          "$ref": "#/definitions/standardLink"
-        },
-        "trident-api:calendars": {
+        "trident-api:planet": {
           "$ref": "#/definitions/standardLink"
         }
       },
@@ -95,23 +102,13 @@
         "self",
         "index",
         "curies",
-        "trident-api:planets",
-        "trident-api:calendars"
+        "trident-api:planet"
       ]
     }
   },
   "additionalProperties": false,
   "required": [
-    "id",
-    "name",
-    "mass",
-    "radius",
-    "semimajorAxis",
-    "eccentricity",
-    "inclination",
-    "longitudeOfAscendingNode",
-    "argumentOfPeriapsis",
-    "trueAnomalyAtEpoch",
+    "_embedded",
     "_links"
   ]
 }

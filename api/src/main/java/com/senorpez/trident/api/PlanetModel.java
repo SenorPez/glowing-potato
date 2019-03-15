@@ -18,7 +18,6 @@ public class PlanetModel implements Identifiable<Integer> {
     private final float argumentOfPeriapsis;
     private final float trueAnomalyAtEpoch;
 
-
     PlanetModel(final Planet planet) {
         this.id = planet.getId();
         this.name = planet.getName();
