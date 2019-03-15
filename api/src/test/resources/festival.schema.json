@@ -1,0 +1,77 @@
+{
+  "$schema": "http://json-schema.org/draft-6/schema",
+  "title": "Trident API Festival Schema",
+  "description": "Schema for if a year is a festival year in Trident API",
+  "definitions": {
+    "standardLink": {
+      "type": "object",
+      "properties": {
+        "href": {
+          "type": "string",
+          "pattern": "^http[s]?://[a-z.]+(:[0-9]+)*((/[a-z0-9-]+)+|/)$"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "href"
+      ]
+    },
+    "curies": {
+      "type": "array",
+      "items": {
+        "properties": {
+          "href": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "templated": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "href",
+          "name",
+          "templated"
+        ]
+      }
+    }
+  },
+  "type": "object",
+  "properties": {
+    "isFestivalYear": {
+      "type": "boolean"
+    },
+    "_links": {
+      "type": "object",
+      "properties": {
+        "self": {
+          "$ref": "#/definitions/standardLink"
+        },
+        "index": {
+          "$ref": "#/definitions/standardLink"
+        },
+        "curies": {
+          "$ref": "#/definitions/curies"
+        },
+        "trident-api:calendar": {
+          "$ref": "#/definitions/standardLink"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "self",
+        "index",
+        "curies",
+        "trident-api:calendar"
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "isFestivalYear",
+    "_links"
+  ]
+}
