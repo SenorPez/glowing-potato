@@ -1,6 +1,6 @@
 package com.senorpez.trident.api;
 
-public class FestivalYear {
+class FestivalYear {
     private final int localYear;
     private final boolean festivalYear;
 
@@ -9,11 +9,11 @@ public class FestivalYear {
         this.festivalYear = (localYear % 3) == 0 && (localYear % 51) != 0;
     }
 
-    public int getLocalYear() {
+    int getLocalYear() {
         return localYear;
     }
 
-    public boolean isFestivalYear() {
+    boolean isFestivalYear() {
         return festivalYear;
     }
 }

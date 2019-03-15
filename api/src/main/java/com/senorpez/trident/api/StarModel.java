@@ -4,7 +4,7 @@ import org.springframework.hateoas.Identifiable;
 import org.springframework.hateoas.core.Relation;
 
 @Relation(value = "star", collectionRelation = "star")
-public class StarModel implements Identifiable<Integer> {
+class StarModel implements Identifiable<Integer> {
     private final int id;
     private final String name;
     private final float mass;

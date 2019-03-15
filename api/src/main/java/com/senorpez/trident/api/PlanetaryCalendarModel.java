@@ -4,13 +4,13 @@ import org.springframework.hateoas.Identifiable;
 import org.springframework.hateoas.core.Relation;
 
 @Relation(value = "calendar", collectionRelation = "calendar")
-public class PlanetaryCalendarModel implements Identifiable<Integer> {
+class PlanetaryCalendarModel implements Identifiable<Integer> {
     private final int id;
     private final String name;
     private final float standardHoursPerDay;
     private final float epochOffset;
 
-    public PlanetaryCalendarModel(final PlanetaryCalendar planetaryCalendar) {
+    PlanetaryCalendarModel(final PlanetaryCalendar planetaryCalendar) {
         this.id = planetaryCalendar.getId();
         this.name = planetaryCalendar.getName();
         this.standardHoursPerDay = planetaryCalendar.getStandardHoursPerDay();

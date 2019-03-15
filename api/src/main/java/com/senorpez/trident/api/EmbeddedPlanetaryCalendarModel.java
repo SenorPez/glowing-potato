@@ -6,17 +6,17 @@ import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.core.Relation;
 
 @Relation(value = "calendar", collectionRelation = "calendar")
-public class EmbeddedPlanetaryCalendarModel implements Identifiable<Integer> {
+class EmbeddedPlanetaryCalendarModel implements Identifiable<Integer> {
     private final int id;
     private final String name;
 
-    public EmbeddedPlanetaryCalendarModel(final PlanetaryCalendar planetaryCalendar) {
+    EmbeddedPlanetaryCalendarModel(final PlanetaryCalendar planetaryCalendar) {
         this.id = planetaryCalendar.getId();
         this.name = planetaryCalendar.getName();
     }
 
     Resource<EmbeddedPlanetaryCalendarModel> toResource(final int solarSystemId, final int starId, final int planetId) {
-        final APIEmbeddedResourceAssembler<EmbeddedPlanetaryCalendarModel, EmbeddedPlanetaryCalendarResource> assembler = new APIEmbeddedResourceAssembler<EmbeddedPlanetaryCalendarModel, EmbeddedPlanetaryCalendarResource>(PlanetaryCalendarController.class, EmbeddedPlanetaryCalendarResource.class, () -> new EmbeddedPlanetaryCalendarResource(this, solarSystemId, starId, planetId));
+        final APIEmbeddedResourceAssembler<EmbeddedPlanetaryCalendarModel, EmbeddedPlanetaryCalendarResource> assembler = new APIEmbeddedResourceAssembler<>(PlanetaryCalendarController.class, EmbeddedPlanetaryCalendarResource.class, () -> new EmbeddedPlanetaryCalendarResource(this, solarSystemId, starId, planetId));
         return assembler.toResource(this, solarSystemId, starId, planetId);
     }
 

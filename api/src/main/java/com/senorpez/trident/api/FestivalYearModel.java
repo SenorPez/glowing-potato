@@ -3,7 +3,7 @@ package com.senorpez.trident.api;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.hateoas.Identifiable;
 
-public class FestivalYearModel implements Identifiable<Integer> {
+class FestivalYearModel implements Identifiable<Integer> {
     private final int localYear;
     private final boolean festivalYear;
 

@@ -24,7 +24,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
         produces = {TRIDENT_API_VALUE, APPLICATION_JSON_UTF8_VALUE}
 )
 @RestController
-public class PlanetaryCalendarController {
+class PlanetaryCalendarController {
     private final APIService apiService;
     private final Collection<SolarSystem> solarSystems;
 

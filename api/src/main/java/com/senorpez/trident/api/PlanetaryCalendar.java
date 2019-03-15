@@ -2,13 +2,13 @@ package com.senorpez.trident.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class PlanetaryCalendar {
+class PlanetaryCalendar {
     private final int id;
     private final String name;
     private final float standardHoursPerDay;
     private final float epochOffset;
 
-    public PlanetaryCalendar(
+    PlanetaryCalendar(
             @JsonProperty("id") final int id,
             @JsonProperty("name") final String name,
             @JsonProperty("standardHoursPerDay") final float standardHoursPerDay,
@@ -19,19 +19,19 @@ public class PlanetaryCalendar {
         this.epochOffset = epochOffset;
     }
 
-    public int getId() {
+    int getId() {
         return id;
     }
 
-    public String getName() {
+    String getName() {
         return name;
     }
 
-    public float getStandardHoursPerDay() {
+    float getStandardHoursPerDay() {
         return standardHoursPerDay;
     }
 
-    public float getEpochOffset() {
+    float getEpochOffset() {
         return epochOffset;
     }
 }

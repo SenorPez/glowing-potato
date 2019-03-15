@@ -4,7 +4,7 @@ import org.springframework.hateoas.Identifiable;
 import org.springframework.hateoas.core.Relation;
 
 @Relation(value = "planet", collectionRelation = "planet")
-public class PlanetModel implements Identifiable<Integer> {
+class PlanetModel implements Identifiable<Integer> {
     private final int id;
     private final String name;
 

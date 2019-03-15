@@ -86,7 +86,7 @@ class PlanetBuilder {
         return this;
     }
 
-    public PlanetBuilder setCalendars(Set<PlanetaryCalendar> calendars) {
+    PlanetBuilder setCalendars(Set<PlanetaryCalendar> calendars) {
         this.calendars = calendars;
         return this;
     }
