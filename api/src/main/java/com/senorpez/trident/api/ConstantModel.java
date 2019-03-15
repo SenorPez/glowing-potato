@@ -19,7 +19,11 @@ class ConstantModel implements Identifiable<String> {
     }
 
     ConstantResource toResource() {
-        final APIResourceAssembler<ConstantModel, ConstantResource> assembler = new APIResourceAssembler<>(ConstantController.class, ConstantResource.class, () -> new ConstantResource(this));
+        final APIResourceAssembler<ConstantModel, ConstantResource> assembler =
+                new APIResourceAssembler<>(
+                        ConstantController.class,
+                        ConstantResource.class,
+                        () -> new ConstantResource(this));
         return assembler.toResource(this);
     }
 

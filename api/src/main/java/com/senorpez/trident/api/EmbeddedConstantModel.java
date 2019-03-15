@@ -15,7 +15,11 @@ class EmbeddedConstantModel implements Identifiable<String> {
     }
 
     Resource<EmbeddedConstantModel> toResource() {
-        final APIEmbeddedResourceAssembler<EmbeddedConstantModel, EmbeddedConstantResource> assembler = new APIEmbeddedResourceAssembler<>(ConstantController.class, EmbeddedConstantResource.class, () -> new EmbeddedConstantResource(this));
+        final APIEmbeddedResourceAssembler<EmbeddedConstantModel, EmbeddedConstantResource> assembler =
+                new APIEmbeddedResourceAssembler<>(
+                        ConstantController.class,
+                        EmbeddedConstantResource.class,
+                        () -> new EmbeddedConstantResource(this));
         return assembler.toResource(this);
     }
 
