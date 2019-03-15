@@ -97,7 +97,7 @@ public class PlanetaryCalendarControllerFestivalYearTest {
         MockitoAnnotations.initMocks(this);
 
         this.mockMvc = MockMvcBuilders
-                .standaloneSetup(new PlanetaryCalendarController(apiService))
+                .standaloneSetup(new FestivalYearController(apiService))
                 .setMessageConverters(HALMessageConverter.getConverter(Collections.singletonList(ALL)))
                 .setControllerAdvice(new APIExceptionHandler())
                 .apply(documentationConfiguration(this.restDocumentation))
@@ -115,7 +115,7 @@ public class PlanetaryCalendarControllerFestivalYearTest {
                 {52, false},
                 {53, false},
                 {54, true},
-                {55, true},
+                {55, false},
         });
     }
 
@@ -152,7 +152,7 @@ public class PlanetaryCalendarControllerFestivalYearTest {
                                 hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-trident-{rel}"),
                                 hasEntry("name", (Object) "trident-api"),
                                 hasEntry("templated", (Object) true)))))
-                .andExpect(jsonPath("$._links.trident-api:calendars", hasEntry("href", String.format(
+                .andExpect(jsonPath("$._links.trident-api:calendar", hasEntry("href", String.format(
                         "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                         FIRST_SYSTEM.getId(),
                         FIRST_STAR.getId(),
@@ -191,7 +191,7 @@ public class PlanetaryCalendarControllerFestivalYearTest {
                                 hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-trident-{rel}"),
                                 hasEntry("name", (Object) "trident-api"),
                                 hasEntry("templated", (Object) true)))))
-                .andExpect(jsonPath("$._links.trident-api:calendars", hasEntry("href", String.format(
+                .andExpect(jsonPath("$._links.trident-api:calendar", hasEntry("href", String.format(
                         "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                         FIRST_SYSTEM.getId(),
                         FIRST_STAR.getId(),
@@ -239,7 +239,7 @@ public class PlanetaryCalendarControllerFestivalYearTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident.v0+json")));
+                .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
 
         verifyZeroInteractions(apiService);
     }

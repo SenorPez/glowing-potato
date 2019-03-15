@@ -8,13 +8,25 @@
       "properties": {
         "href": {
           "type": "string",
-          "pattern": "^http[s]?://[a-z.]+(:[0-9]+)*((/[a-z0-9-]+)+|/)$"
+          "pattern": "^http[s]?://[a-z.]+(:[0-9]+)*((/[a-zA-Z0-9-]+)+|/)$"
         }
       },
       "additionalProperties": false,
       "required": [
         "href"
       ]
+    },
+    "templatedLink": {
+      "type": "object",
+      "properties": {
+        "href": {
+          "type": "string",
+          "pattern": "^http[s]?://[a-z.]+(:[0-9]+)*((/[a-zA-Z0-9-{}]+)+|/)$"
+        },
+        "templated": {
+          "type": "boolean"
+        }
+      }
     },
     "curies": {
       "type": "array",
@@ -67,6 +79,9 @@
         },
         "trident-api:calendars": {
           "$ref": "#/definitions/standardLink"
+        },
+        "trident-api:festivalYear": {
+          "$ref": "#/definitions/templatedLink"
         }
       },
       "additionalProperties": false,
@@ -74,7 +89,8 @@
         "self",
         "index",
         "curies",
-        "trident-api:calendars"
+        "trident-api:calendars",
+        "trident-api:festivalYear"
       ]
     }
   },

@@ -841,7 +841,8 @@ public class PlanetaryCalendarControllerTest {
                                 fieldWithPath("epochOffset").description("Offset between standard epoch (J2000) and local epoch."),
                                 subsectionWithPath("_links").ignored()),
                         commonLinks.and(
-                                linkWithRel("trident-api:calendars").description("List of calendar resources."))));
+                                linkWithRel("trident-api:calendars").description("List of calendar resources."),
+                                linkWithRel("trident-api:festivalYear").description("Given a local year, returns if a festival year."))));
 
         verify(apiService, times(4)).findOne(any(), any(), any());
         verifyNoMoreInteractions(apiService);

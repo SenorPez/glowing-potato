@@ -8,7 +8,7 @@
       "properties": {
         "href": {
           "type": "string",
-          "pattern": "^http[s]?://[a-z.]+(:[0-9]+)*((/[a-z0-9-]+)+|/)$"
+          "pattern": "^http[s]?://[a-z.]+(:[0-9]+)*((/[a-zA-Z0-9-]+)+|/)$"
         }
       },
       "additionalProperties": false,
@@ -41,6 +41,9 @@
   },
   "type": "object",
   "properties": {
+    "localYear": {
+      "type": "integer"
+    },
     "isFestivalYear": {
       "type": "boolean"
     },
@@ -71,6 +74,7 @@
   },
   "additionalProperties": false,
   "required": [
+    "localYear",
     "isFestivalYear",
     "_links"
   ]
