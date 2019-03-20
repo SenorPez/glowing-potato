@@ -66,3 +66,12 @@ class TestPlanet(unittest.TestCase):
         instance = Planet(1, 1, 1)
         expected_result = Planet
         self.assertIsInstance(instance, expected_result)
+
+
+class IntegrationPlanet(unittest.TestCase):
+    """Integration tests against reference implementation of Trident API."""
+    def test_init_planet(self):
+        """Test 1 Eta Veneris 3 init."""
+        instance = Planet(1817514095, 1905216634, -455609026)
+        expected_result = Planet
+        self.assertIsInstance(instance, expected_result)
