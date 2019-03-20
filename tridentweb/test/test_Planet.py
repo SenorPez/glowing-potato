@@ -5,6 +5,7 @@ import json
 import unittest
 from unittest import mock
 
+from requests.exceptions import HTTPError
 from tridentweb.Planet import Planet
 
 def mocked_requests_get(*args, **kwargs):
@@ -66,6 +67,20 @@ class TestPlanet(unittest.TestCase):
         instance = Planet(1, 1, 1)
         expected_result = Planet
         self.assertIsInstance(instance, expected_result)
+
+    @mock.patch('requests.get')
+    def test_init_index_HTTPError(self, mock_get):
+        """TEst Planet init with HTTPError on API index."""
+        mock_get.side_effect = HTTPError("Error", None)
+        with self.assertRaises(HTTPError):
+            _ = Planet(1, 1, 1)
+
+    @mock.patch('requests.get')
+    def test_init_index_KeyError(self, mock_get):
+        """Test Planet init with KeyError on API index."""
+        mock_get.side_effect = KeyError()
+        with self.assertRaises(KeyError):
+            _ = Planet(1, 1, 1)
 
 
 class IntegrationPlanet(unittest.TestCase):
