@@ -6,6 +6,7 @@ import unittest
 from unittest import mock
 from unittest.mock import sentinel
 
+from requests.exceptions import HTTPError
 from tridentweb.Constant import Constant
 
 def mocked_requests_get(*args, **kwargs):
@@ -55,6 +56,25 @@ class TestConstant(unittest.TestCase):
         instance = Constant("MC")
         expected_result = Constant
         self.assertIsInstance(instance, expected_result)
+
+    @mock.patch('requests.get')
+    def test_init_index_HTTPError(self, mock_get):
+        """Test Constant init with HTTPError on API index."""
+        mock_get.side_effect = HTTPError("Error", None)
+        with self.assertRaises(HTTPError):
+            _ = Constant("MC")
+
+    @mock.patch('requests.get')
+    def test_init_constants_HTTPError(self, mock_get):
+        """Test Constant init with HTTPError on API constants."""
+        mock_get.side_effect = [self.api_traversal[0], HTTPError("Error", None)]
+        with self.assertRaises(HTTPError):
+            _ = Constant("MC")
+
+    @mock.patch('requests.get')
+    def test_init_constant_HTTPError(self, mock_get):
+        """Test Constant init with HTTPError on API constant."""
+        mock_get.side_effect = self.api_traversal + [HTTPError("Error", None)]
 
     @mock.patch('requests.get')
     def test_property_name(self, mock_get):
