@@ -4,6 +4,11 @@
 import requests
 
 class Constant:
-    """Represents a constant."""
-    def __init__(self, smybol):
-        pass
+    """Represents a constant.
+    
+    Arguments:
+    constant_symbol - Symbol denoting the constant.
+    server_url - Trident API server URL. Defaults to http://trident.senorpez.com/constants/
+    """
+    def __init__(self, constant_symbol, server_url="http://trident.senorpez.com/constants/"):
+        req = requests.get(server_url + str(constant_symbol))
