@@ -1,6 +1,6 @@
 matrix:
   include:
-    - language: pythong
+    - language: python
 
       python:
         - "3.3"
@@ -13,7 +13,7 @@ matrix:
         - "3.7-dev"
 
       install:
-        - python setup.py install
+        - python tridentweb/tridentweb/setup.py install
         - pip install coverage
 
       script:
