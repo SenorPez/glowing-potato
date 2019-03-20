@@ -3,17 +3,25 @@
 """
 import sys
 import unittest
-from unittest.mock import patch
+from unittest import mock
 
 from tridentweb.Constant import Constant
 
 class TestConstant(unittest.TestCase):
     """Unit tests against the Constant object."""
-    mock_constant = '{"name": "Mock Constant"}'
+    def mocked_requests_get(*args, **kwargs):
+        class MockResponse:
+            """Solution cribbed from
+            https://stackoverflow.com/questions/15753390/how-can-i-mock-requests-and-the-response/28507806#28507806
+            """
+            def raise_for_status(self):
+                return None
 
-    def test_init(self):
-        with patch('tridentweb.Constant.requests.get') as mock_get:
-            mock_get.return_value = self.mock_constant
-            instance = Constant("MC")
-            expected_result = Constant
-            self.assertIsInstance(instance, expected_result)
+        return MockResponse()
+
+
+    @mock.patch('requests.get', side_effect=mocked_requests_get)
+    def test_init(self, mock_get):
+        instance = Constant("MC")
+        expected_result = Constant
+        self.assertIsInstance(instance, expected_result)
