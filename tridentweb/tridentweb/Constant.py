@@ -16,3 +16,4 @@ class Constant:
 
         self.name = req.json()['name']
         self.value = req.json()['value']
+        self.units = req.json()['units']
