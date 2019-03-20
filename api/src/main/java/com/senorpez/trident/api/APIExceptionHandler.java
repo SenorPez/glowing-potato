@@ -8,6 +8,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import static com.senorpez.trident.api.SupportedMediaTypes.TRIDENT_API;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
 
@@ -39,7 +40,7 @@ class APIExceptionHandler {
                 .status(NOT_ACCEPTABLE)
                 .contentType(APPLICATION_JSON_UTF8)
                 .body(new ErrorResponse(NOT_ACCEPTABLE,
-                        "Accept header must be \"vnd.senorpez.trident.v0+json"));
+                        String.format("Accept header must be \"%s\"", TRIDENT_API.toString())));
     }
 
     private class ErrorResponse {

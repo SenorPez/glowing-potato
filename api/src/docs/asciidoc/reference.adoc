@@ -21,8 +21,8 @@ There is only a single version of the {apiname}.
 |===
 | API Versions | Accept Header
 
-| v0
-| `application/vnd.senorpez.trident.v0+json; charset=UTF-8`
+| Version 1.0
+| `application/vnd.senorpez.trident.v1+json; charset=UTF-8`
 |===
 
 [[overview-http-methods]]
