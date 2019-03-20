@@ -13,7 +13,7 @@ class Constant:
     def __init__(self, constant_symbol, server_url="http://trident.senorpez.com/"):
         req = requests.get(server_url)
         req.raise_for_status()
-        constants_url = req.json()['_links']['trident-api:constants']
+        constants_url = req.json()['_links']['trident-api:constants']['href']
 
         req = requests.get(constants_url)
         req.raise_for_status()

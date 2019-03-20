@@ -35,6 +35,7 @@ def mocked_requests_get(*args, **kwargs):
 
     return MockResponse(*args, **kwargs)
 
+
 class TestConstant(unittest.TestCase):
     """Unit tests against the Constant object."""
     api_traversal = [
@@ -65,6 +66,13 @@ class TestConstant(unittest.TestCase):
             _ = Constant("MC")
 
     @mock.patch('requests.get')
+    def test_init_index_KeyError(self, mock_get):
+        """Test Constant init with KeyError on API index."""
+        mock_get.side_effect = KeyError()
+        with self.assertRaises(KeyError):
+            _ = Constant("MC")
+
+    @mock.patch('requests.get')
     def test_init_constants_HTTPError(self, mock_get):
         """Test Constant init with HTTPError on API constants."""
         mock_get.side_effect = [self.api_traversal[0], HTTPError("Error", None)]
@@ -72,9 +80,25 @@ class TestConstant(unittest.TestCase):
             _ = Constant("MC")
 
     @mock.patch('requests.get')
+    def test_init_constants_KeyError(self, mock_get):
+        """Test Constant init with KeyError on API constants."""
+        mock_get.side_effect = [self.api_traversal[0], KeyError()]
+        with self.assertRaises(KeyError):
+            _ = Constant("MC")
+
+    @mock.patch('requests.get')
     def test_init_constant_HTTPError(self, mock_get):
         """Test Constant init with HTTPError on API constant."""
         mock_get.side_effect = self.api_traversal + [HTTPError("Error", None)]
+        with self.assertRaises(HTTPError):
+            _ = Constant("MC")
+
+    @mock.patch('requests.get')
+    def test_init_constant_KeyError(self, mock_get):
+        """Test Constant init with KeyError on API constants."""
+        mock_get.side_effect = self.api_traversal + [KeyError()]
+        with self.assertRaises(KeyError):
+            _ = Constant("MC")
 
     @mock.patch('requests.get')
     def test_property_name(self, mock_get):
@@ -114,4 +138,37 @@ class TestConstant(unittest.TestCase):
 
         instance = Constant("MC")
         expected_result = str(id(sentinel.symbol))
+        self.assertEqual(instance.symbol, expected_result)
+
+
+class IntegrationConstant(unittest.TestCase):
+    """Integration tests against reference implemenation of Trident API."""
+    def test_init_G(self):
+        """Test Constant init."""
+        instance = Constant("G")
+        expected_result = Constant
+        self.assertIsInstance(instance, expected_result)
+
+    def test_name_G(self):
+        """Test G name."""
+        instance = Constant("G")
+        expected_result = "Newtonian constant of gravitation"
+        self.assertEqual(instance.name, expected_result)
+
+    def test_value_G(self):
+        """Test G value."""
+        instance = Constant("G")
+        expected_result = 6.67408e-11
+        self.assertEqual(instance.value, expected_result)
+
+    def test_units_G(self):
+        """Test G units."""
+        instance = Constant("G")
+        expected_result = "m^3*kg^-1*s^-2"
+        self.assertEqual(instance.units, expected_result)
+
+    def test_symbol_G(self):
+        """Test G symbol."""
+        instance = Constant("G")
+        expected_result = "G"
         self.assertEqual(instance.symbol, expected_result)
