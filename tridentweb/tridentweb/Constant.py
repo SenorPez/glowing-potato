@@ -5,7 +5,7 @@ import requests
 
 class Constant:
     """Represents a constant.
-    
+
     Arguments:
     constant_symbol - Symbol denoting the constant.
     server_url - Trident API server URL. Defaults to http://trident.senorpez.com/constants/
@@ -15,3 +15,4 @@ class Constant:
         req.raise_for_status()
 
         self.name = req.json()['name']
+        self.value = req.json()['value']
