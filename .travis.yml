@@ -1,5 +1,27 @@
 matrix:
   include:
+    - language: pythong
+
+      python:
+        - "3.3"
+        - "3.4"
+        - "3.5"
+        - "3.6"
+        - "3.7"
+        - "3.5-dev"
+        - "3.6-dev"
+        - "3.7-dev"
+
+      install:
+        - python setup.py install
+        - pip install coverage
+
+      script:
+        - nosetests -v --with-coverage --cover-package=tridentweb
+
+      after_success:
+        - bash <(curl -s https://codecov.io/bash)
+
     - language: java
       dist: trusty
       sudo: required
