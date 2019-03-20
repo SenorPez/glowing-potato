@@ -12,3 +12,6 @@ class Constant:
     """
     def __init__(self, constant_symbol, server_url="http://trident.senorpez.com/constants/"):
         req = requests.get(server_url + str(constant_symbol))
+        req.raise_for_status()
+
+        self.name = req.json()['name']
