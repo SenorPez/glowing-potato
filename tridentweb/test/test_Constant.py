@@ -1,10 +1,13 @@
 """Tests Constant.py
 
 """
+import json
 import sys
 import unittest
 from unittest import mock
+from unittest.mock import sentinel
 
+from requests.exceptions import HTTPError
 from tridentweb.Constant import Constant
 
 class TestConstant(unittest.TestCase):
@@ -14,14 +17,29 @@ class TestConstant(unittest.TestCase):
             """Solution cribbed from
             https://stackoverflow.com/questions/15753390/how-can-i-mock-requests-and-the-response/28507806#28507806
             """
+            def __init__(self, name=""):
+                self._name = "test"
+                json_string = "{{\"name\": \"{0}\"}}".format(id(sentinel.name))
+                self.json_data = json.loads(json_string)
+
+            def json(self):
+                return self.json_data
+
             def raise_for_status(self):
                 return None
 
-        return MockResponse()
+        yield MockResponse(*args)
 
 
-    @mock.patch('requests.get', side_effect=mocked_requests_get)
+    @mock.patch('requests.get', side_effect=mocked_requests_get())
     def test_init(self, mock_get):
         instance = Constant("MC")
         expected_result = Constant
         self.assertIsInstance(instance, expected_result)
+
+
+    @mock.patch('requests.get', side_effect=mocked_requests_get(sentinel.name))
+    def test_property_name(self, mock_get):
+        instance = Constant("MC")
+        expected_result = str(id(sentinel.name))
+        self.assertEqual(instance.name, expected_result)
