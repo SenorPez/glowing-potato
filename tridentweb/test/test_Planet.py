@@ -17,7 +17,8 @@ def mocked_requests_get(*args, **kwargs):
         """
         def __init__(self, *, json_string=None, idnum=0, name="", mass=0, radius=0,
                      semimajor_axis=0, eccentricity=0, inclination=0,
-                     longitude_of_ascending_node=0, argument_of_periapsis=0):
+                     longitude_of_ascending_node=0, argument_of_periapsis=0,
+                     true_anomaly_at_epoch=0):
             if json_string is None:
                 json_string = ("{{"
                                "\"id\": {0},"
@@ -28,10 +29,11 @@ def mocked_requests_get(*args, **kwargs):
                                "\"eccentricity\": {5},"
                                "\"inclination\": {6},"
                                "\"longitudeOfAscendingNode\": {7},"
-                               "\"argumentOfPeriapsis\": {8}}}"
+                               "\"argumentOfPeriapsis\": {8},"
+                               "\"trueAnomalyAtEpoch\": {9}}}"
                                ).format(idnum, name, mass, radius, semimajor_axis, eccentricity,
                                         inclination, longitude_of_ascending_node,
-                                        argument_of_periapsis)
+                                        argument_of_periapsis, true_anomaly_at_epoch)
             self.json_data = json.loads(json_string)
 
         def json(self):
@@ -270,6 +272,16 @@ class TestPlanet(unittest.TestCase):
         instance = Planet(1, 1, 1)
         expected_result = id(sentinel.argument)
         self.assertEqual(instance.argument_of_periapsis, expected_result)
+
+    @mock.patch('requests.get')
+    def test_property_true_anomaly_at_epoch(self, mock_get):
+        """Test true anomaly at epoch property of Planet."""
+        mock_get.side_effect = self.api_traversal \
+                + [mocked_requests_get(true_anomaly_at_epoch=id(sentinel.true))]
+
+        instance = Planet(1, 1, 1)
+        expected_result = id(sentinel.true)
+        self.assertEqual(instance.true_anomaly_at_epoch, expected_result)
 
 
 class IntegrationPlanet(unittest.TestCase):
