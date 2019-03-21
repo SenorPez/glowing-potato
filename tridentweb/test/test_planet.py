@@ -2,6 +2,7 @@
 
 """
 import json
+from pykep.planet import keplerian
 import unittest
 from unittest import mock
 from unittest.mock import sentinel, MagicMock, PropertyMock
@@ -75,8 +76,9 @@ class TestPlanet(unittest.TestCase):
             "\"_links\": {\"self\":"
             "{\"href\": \"http://trident.senorpez.com/planets/1\"}}}]}}"))]
 
+    @mock.patch('tridentweb.planet.Star')
     @mock.patch('requests.get')
-    def test_init(self, mock_get):
+    def test_init(self, mock_get, _):
         """Test Planet init."""
         mock_get.side_effect = self.api_traversal \
                 + [mocked_requests_get()]
@@ -183,8 +185,9 @@ class TestPlanet(unittest.TestCase):
         with self.assertRaises(KeyError):
             _ = Planet(1, 1, 1)
 
+    @mock.patch('tridentweb.planet.Star')
     @mock.patch('requests.get')
-    def test_property_id(self, mock_get):
+    def test_property_id(self, mock_get, _):
         """Test id property of Planet."""
         mock_get.side_effect = self.api_traversal \
                 + [mocked_requests_get(idnum=1)]
@@ -193,8 +196,9 @@ class TestPlanet(unittest.TestCase):
         expected_result = 1
         self.assertEqual(instance.id, expected_result)
 
+    @mock.patch('tridentweb.planet.Star')
     @mock.patch('requests.get')
-    def test_property_name(self, mock_get):
+    def test_property_name(self, mock_get, _):
         """Test name property of Planet."""
         mock_get.side_effect = self.api_traversal \
                 + [mocked_requests_get(name=id(sentinel.name))]
@@ -203,8 +207,9 @@ class TestPlanet(unittest.TestCase):
         expected_result = str(id(sentinel.name))
         self.assertEqual(instance.name, expected_result)
 
+    @mock.patch('tridentweb.planet.Star')
     @mock.patch('requests.get')
-    def test_property_mass(self, mock_get):
+    def test_property_mass(self, mock_get, _):
         """Test mass property of Planet."""
         mock_get.side_effect = self.api_traversal \
                 + [mocked_requests_get(mass=id(sentinel.mass))]
@@ -213,8 +218,9 @@ class TestPlanet(unittest.TestCase):
         expected_result = id(sentinel.mass)
         self.assertEqual(instance.mass, expected_result)
 
+    @mock.patch('tridentweb.planet.Star')
     @mock.patch('requests.get')
-    def test_property_radius(self, mock_get):
+    def test_property_radius(self, mock_get, _):
         """Test radius property of Planet."""
         mock_get.side_effect = self.api_traversal \
                 + [mocked_requests_get(radius=id(sentinel.radius))]
@@ -223,8 +229,9 @@ class TestPlanet(unittest.TestCase):
         expected_result = id(sentinel.radius)
         self.assertEqual(instance.radius, expected_result)
 
+    @mock.patch('tridentweb.planet.Star')
     @mock.patch('requests.get')
-    def test_property_semimajor_axis(self, mock_get):
+    def test_property_semimajor_axis(self, mock_get, _):
         """Test semimajor axis property of Planet."""
         mock_get.side_effect = self.api_traversal \
                 + [mocked_requests_get(semimajor_axis=id(sentinel.semimajor_axis))]
@@ -233,8 +240,9 @@ class TestPlanet(unittest.TestCase):
         expected_result = id(sentinel.semimajor_axis)
         self.assertEqual(instance.semimajor_axis, expected_result)
 
+    @mock.patch('tridentweb.planet.Star')
     @mock.patch('requests.get')
-    def test_property_eccentricity(self, mock_get):
+    def test_property_eccentricity(self, mock_get, _):
         """Test eccentricity property of Planet."""
         mock_get.side_effect = self.api_traversal \
                 + [mocked_requests_get(eccentricity=id(sentinel.eccentricity))]
@@ -243,8 +251,9 @@ class TestPlanet(unittest.TestCase):
         expected_result = id(sentinel.eccentricity)
         self.assertEqual(instance.eccentricity, expected_result)
 
+    @mock.patch('tridentweb.planet.Star')
     @mock.patch('requests.get')
-    def test_property_inclination(self, mock_get):
+    def test_property_inclination(self, mock_get, _):
         """Test inclination property of Planet."""
         mock_get.side_effect = self.api_traversal \
                 + [mocked_requests_get(inclination=id(sentinel.inclination))]
@@ -253,8 +262,9 @@ class TestPlanet(unittest.TestCase):
         expected_result = id(sentinel.inclination)
         self.assertEqual(instance.inclination, expected_result)
 
+    @mock.patch('tridentweb.planet.Star')
     @mock.patch('requests.get')
-    def test_property_longitude_of_ascending_node(self, mock_get):
+    def test_property_longitude_of_ascending_node(self, mock_get, _):
         """Test longitude of ascending node property of Planet."""
         mock_get.side_effect = self.api_traversal \
                 + [mocked_requests_get(longitude_of_ascending_node=id(sentinel.longitude))]
@@ -263,8 +273,9 @@ class TestPlanet(unittest.TestCase):
         expected_result = id(sentinel.longitude)
         self.assertEqual(instance.longitude_of_ascending_node, expected_result)
 
+    @mock.patch('tridentweb.planet.Star')
     @mock.patch('requests.get')
-    def test_property_argument_of_periapsis(self, mock_get):
+    def test_property_argument_of_periapsis(self, mock_get, _):
         """Test argument of periapsis property of Planet."""
         mock_get.side_effect = self.api_traversal \
                 + [mocked_requests_get(argument_of_periapsis=id(sentinel.argument))]
@@ -273,8 +284,9 @@ class TestPlanet(unittest.TestCase):
         expected_result = id(sentinel.argument)
         self.assertEqual(instance.argument_of_periapsis, expected_result)
 
+    @mock.patch('tridentweb.planet.Star')
     @mock.patch('requests.get')
-    def test_property_true_anomaly_at_epoch(self, mock_get):
+    def test_property_true_anomaly_at_epoch(self, mock_get, _):
         """Test true anomaly at epoch property of Planet."""
         mock_get.side_effect = self.api_traversal \
                 + [mocked_requests_get(true_anomaly_at_epoch=id(sentinel.true))]
@@ -283,9 +295,10 @@ class TestPlanet(unittest.TestCase):
         expected_result = id(sentinel.true)
         self.assertEqual(instance.true_anomaly_at_epoch, expected_result)
 
+    @mock.patch('tridentweb.planet.Star')
     @mock.patch('tridentweb.planet.Constant')
     @mock.patch('requests.get')
-    def test_property_gm(self, mock_get, mock_constant):
+    def test_property_gm(self, mock_get, mock_constant, _):
         """Test gm property of Planet."""
         mock_get.side_effect = self.api_traversal \
                 + [mocked_requests_get(mass=0.75)]
@@ -301,6 +314,33 @@ class TestPlanet(unittest.TestCase):
         instance = Planet(1, 1, 1)
         expected_result = 0.75 * 5.9722e24 * 6.67408e-11
         self.assertEqual(instance.gm, expected_result)
+
+    @mock.patch('tridentweb.planet.Star')
+    @mock.patch('tridentweb.planet.Constant')
+    @mock.patch('requests.get')
+    def test_property_planet_pykep(self, mock_get, mock_constant, mock_star):
+        """Test planet pykep property of Planet."""
+        mock_get.side_effect = self.api_traversal \
+                + [mocked_requests_get(
+                    semimajor_axis=1,
+                    mass=0.75)]
+
+        mock_grav = MagicMock()
+        type(mock_grav).value = PropertyMock(return_value=6.67408e-11)
+
+        mock_planet_mass = MagicMock()
+        type(mock_planet_mass).value = PropertyMock(return_value=5.9722e24)
+
+        mock_constant.side_effect = [mock_planet_mass, mock_grav]
+
+        mock_star_gm = MagicMock()
+        type(mock_star_gm).gm = PropertyMock(return_value=0.75 * 1.9884e30 * 6.67408e-11)
+
+        mock_star.return_value = mock_star_gm
+
+        instance = Planet(1, 1, 1)
+        expected_result = keplerian
+        self.assertIsInstance(instance.planet, expected_result)
 
 
 class IntegrationPlanet(unittest.TestCase):
