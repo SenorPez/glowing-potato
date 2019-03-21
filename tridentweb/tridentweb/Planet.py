@@ -56,3 +56,4 @@ class Planet:
         self.semimajor_axis = req.json()['semimajorAxis']
         self.eccentricity = req.json()['eccentricity']
         self.inclination = req.json()['inclination']
+        self.longitude_of_ascending_node = req.json()['longitudeOfAscendingNode']

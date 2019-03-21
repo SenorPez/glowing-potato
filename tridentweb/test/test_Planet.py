@@ -253,10 +253,10 @@ class TestPlanet(unittest.TestCase):
     def test_property_longitude_of_ascending_node(self, mock_get):
         """Test longitude of ascending node property of Planet."""
         mock_get.side_effect = self.api_traversal \
-                + [mocked_requests_get(inclination=id(sentinel.longitude))]
+                + [mocked_requests_get(longitude_of_ascending_node=id(sentinel.longitude))]
 
         instance = Planet(1, 1, 1)
-        expected_result = id(sentinel.longitdue)
+        expected_result = id(sentinel.longitude)
         self.assertEqual(instance.longitude_of_ascending_node, expected_result)
 
 
