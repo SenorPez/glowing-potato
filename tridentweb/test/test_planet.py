@@ -7,7 +7,7 @@ from unittest import mock
 from unittest.mock import sentinel
 
 from requests.exceptions import HTTPError
-from tridentweb.Planet import Planet
+from tridentweb.planet import Planet
 
 def mocked_requests_get(*args, **kwargs):
     """Defines a response suitable for mocking requests responses."""
