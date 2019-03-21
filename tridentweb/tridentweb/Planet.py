@@ -54,3 +54,4 @@ class Planet:
         self.mass = req.json()['mass']
         self.radius = req.json()['radius']
         self.semimajor_axis = req.json()['semimajorAxis']
+        self.eccentricity = req.json()['eccentricity']
