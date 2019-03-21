@@ -163,3 +163,29 @@ class TestStar(unittest.TestCase):
         instance = Star(1, 1)
         expected_result = id(sentinel.mass)
         self.assertEqual(instance.mass, expected_result)
+
+class IntegrationStar(unittest.TestCase):
+    """Integration tests against reference implementation of Trident API."""
+    def test_init_star(self):
+        """Test 1 Eta Veneris init."""
+        instance = Star(1817514095, 1905216634)
+        expected_result = Star
+        self.assertIsInstance(instance, expected_result)
+
+    def test_property_id(self):
+        """Test 1 Eta Veneris id."""
+        instance = Star(1817514095, 1905216634)
+        expected_result = 1905216634
+        self.assertEqual(instance.id, expected_result)
+
+    def test_property_name(self):
+        """Test 1 Eta Veneris name."""
+        instance = Star(1817514095, 1905216634)
+        expected_result = "1 Eta Veneris"
+        self.assertEqual(instance.name, expected_result)
+
+    def test_property_mass(self):
+        """Test 1 Eta Veneris mass."""
+        instance = Star(1817514095, 1905216634)
+        expected_result = 0.75
+        self.assertEqual(instance.mass, expected_result)
