@@ -4,6 +4,7 @@
 import json
 import unittest
 from unittest import mock
+from unittest.mock import sentinel
 
 from requests.exceptions import HTTPError
 from tridentweb.star import Star
@@ -14,9 +15,10 @@ def mocked_requests_get(*args, **kwargs):
         """Solution cribbed from
         https://stackoverflow.com/questions/15753390/how-can-i-mock-requests-and-the-response/28507806#28507806
         """
-        def __init__(self, *, json_string=None, idnum=0):
+        def __init__(self, *, json_string=None, idnum=0, name=""):
             if json_string is None:
-                json_string = ("{{\"id\": {0}}}").format(idnum)
+                json_string = ("{{\"id\": {0},"
+                               "\"name\": \"{1}\"}}").format(idnum, name)
             self.json_data = json.loads(json_string)
 
         def json(self):
@@ -139,3 +141,13 @@ class TestStar(unittest.TestCase):
         instance = Star(1, 1)
         expected_result = 1
         self.assertEqual(instance.id, expected_result)
+
+    @mock.patch('requests.get')
+    def test_property_name(self, mock_get):
+        """Test name property of Star."""
+        mock_get.side_effect = self.api_traversal \
+                + [mocked_requests_get(name=id(sentinel.name))]
+
+        instance = Star(1, 1)
+        expected_result = str(id(sentinel.name))
+        self.assertEqual(instance.name, expected_result)
