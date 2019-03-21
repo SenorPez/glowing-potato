@@ -1,8 +1,12 @@
 """Provides a Planet class for using planets from the Trident API.
 
 """
+from pykep import epoch, AU
+from pykep.planet import keplerian
+
 import requests
 from tridentweb.constant import Constant
+from tridentweb.star import Star
 
 class Planet:
     """Represents a planet.
@@ -15,6 +19,7 @@ class Planet:
     """
     planet_mass = None
     grav = None
+    pykep_planet = None
 
     def __init__(self, system_id, star_id, planet_id, server_url="http://trident.senorpez.com/"):
         req = requests.get(server_url)
@@ -64,6 +69,8 @@ class Planet:
         self.argument_of_periapsis = req.json()['argumentOfPeriapsis']
         self.true_anomaly_at_epoch = req.json()['trueAnomalyAtEpoch']
 
+        self._star = Star(system_id, star_id)
+
     @property
     def gm(self):
         if self.planet_mass is None:
@@ -74,3 +81,22 @@ class Planet:
             self.grav = grav_constant.value
 
         return self.mass * self.planet_mass * self.grav
+
+    @property
+    def planet(self):
+        if self.pykep_planet is None:
+            self.pykep_planet = keplerian(
+                    epoch(0),
+                    (
+                        self.semimajor_axis * AU,
+                        self.eccentricity,
+                        self.inclination,
+                        self.longitude_of_ascending_node,
+                        self.argument_of_periapsis,
+                        self.true_anomaly_at_epoch),
+                    self._star.gm,
+                    self.gm,
+                    0,
+                    0,
+                    self.name)
+        return self.pykep_planet
