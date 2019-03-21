@@ -52,3 +52,4 @@ class Planet:
         self.id = req.json()['id']
         self.name = req.json()['name']
         self.mass = req.json()['mass']
+        self.radius = req.json()['radius']
