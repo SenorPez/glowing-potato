@@ -37,3 +37,5 @@ class Star:
         req = requests.get(star_url)
         req.raise_for_status()
 
+        self.id = req.json()['id']
+
