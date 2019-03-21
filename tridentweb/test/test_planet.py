@@ -283,6 +283,25 @@ class TestPlanet(unittest.TestCase):
         expected_result = id(sentinel.true)
         self.assertEqual(instance.true_anomaly_at_epoch, expected_result)
 
+    @mock.patch('tridentweb.planet.Constant')
+    @mock.patch('requests.get')
+    def test_property_gm(self, mock_get, mock_constant):
+        """Test gm property of Planet."""
+        mock_get.side_effect = self.api_traversal \
+                + [mocked_requests_get(mass=0.75)]
+
+        mock_grav = MagicMock()
+        type(mock_grav).value = PropertyMock(return_value=6.67408e-11)
+
+        mock_planet_mass = MagicMock()
+        type(mock_planet_mass).value = PropertyMock(return_value=5.9722e24)
+
+        mock_constant.side_effect = [mock_planet_mass, mock_grav]
+
+        instance = Planet(1, 1, 1)
+        expected_result = 0.75 * 5.9722e24 * 6.67408e-11
+        self.assertEqual(instance.gm, expected_result)
+
 
 class IntegrationPlanet(unittest.TestCase):
     """Integration tests against reference implementation of Trident API."""
