@@ -98,15 +98,29 @@ class TestPlanet(unittest.TestCase):
 
     @mock.patch('requests.get')
     def test_init_system_HTTPError(self, mock_get):
-        """Test Planet init with HTTPError on API systems."""
+        """Test Planet init with HTTPError on API system."""
         mock_get.side_effect = self.api_traversal[0:2] + [HTTPError("Error", None)]
         with self.assertRaises(HTTPError):
             _ = Planet(1, 1, 1)
 
     @mock.patch('requests.get')
     def test_init_system_KeyError(self, mock_get):
-        """Test Planet init with KeyError on API systems."""
+        """Test Planet init with KeyError on API system."""
         mock_get.side_effect = self.api_traversal[0:2] + [KeyError()]
+        with self.assertRaises(KeyError):
+            _ = Planet(1, 1, 1)
+
+    @mock.patch('requests.get')
+    def test_init_stars_HTTPError(self, mock_get):
+        """Test Planet init with HTTPError on API stars."""
+        mock_get.side_effect = self.api_traversal[0:3] + [HTTPError("Error", None)]
+        with self.assertRaises(HTTPError):
+            _ = Planet(1, 1, 1)
+
+    @mock.patch('requests.get')
+    def test_init_stars_KeyError(self, mock_get):
+        """Test Planet init with KeyError on API stars."""
+        mock_get.side_effect = self.api_traversal[0:3] + [KeyError()]
         with self.assertRaises(KeyError):
             _ = Planet(1, 1, 1)
 
