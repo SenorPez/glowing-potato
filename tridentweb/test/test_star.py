@@ -4,7 +4,7 @@
 import json
 import unittest
 from unittest import mock
-from unittest.mock import sentinel
+from unittest.mock import sentinel, MagicMock, PropertyMock
 
 from requests.exceptions import HTTPError
 from tridentweb.star import Star
@@ -53,6 +53,16 @@ class TestStar(unittest.TestCase):
             "[{\"id\": 1,"
             "\"_links\": {\"self\":"
             "{\"href\": \"http://trident.senorpez.com/stars/1\"}}}]}}"))]
+
+    constant_api_traversal = [
+        mocked_requests_get(json_string=( \
+            "{\"_links\": {\"trident-api:constants\":"
+            "{\"href\": \"http://trident.senorpez.com/constants\"}}}")),
+        mocked_requests_get(json_string=( \
+            "{\"_embedded\": {\"trident-api:constant\":"
+            "[{\"symbol\": \"MC\","
+            "\"_links\": {\"self\":"
+            "{\"href\": \"http://trident.senorpez.com/constants/MC\"}}}]}}"))]
 
     @mock.patch('requests.get')
     def test_init(self, mock_get):
@@ -163,6 +173,25 @@ class TestStar(unittest.TestCase):
         instance = Star(1, 1)
         expected_result = id(sentinel.mass)
         self.assertEqual(instance.mass, expected_result)
+
+    @mock.patch('tridentweb.star.Constant')
+    @mock.patch('requests.get')
+    def test_property_gm(self, mock_get, mock_constant):
+        """Test gm property of Star."""
+        mock_get.side_effect = self.api_traversal \
+                + [mocked_requests_get(mass=0.75)]
+
+        mock_grav = MagicMock()
+        type(mock_grav).value = PropertyMock(return_value=6.67408e-11)
+
+        mock_solar_mass = MagicMock()
+        type(mock_solar_mass).value = PropertyMock(return_value=1.9884e30)
+
+        mock_constant.side_effect = [mock_solar_mass, mock_grav]
+
+        instance = Star(1, 1)
+        expected_result = 0.75 * 1.9884e30 * 6.67408e-11
+        self.assertEqual(instance.gm, expected_result)
 
 class IntegrationStar(unittest.TestCase):
     """Integration tests against reference implementation of Trident API."""
