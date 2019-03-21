@@ -171,7 +171,7 @@ class TestPlanet(unittest.TestCase):
     def test_property_id(self, mock_get):
         """Test id property of Planet."""
         mock_get.side_effect = self.api_traversal \
-                + [mocked_requests_get(idnum=id(1))]
+                + [mocked_requests_get(idnum=1)]
 
         instance = Planet(1, 1, 1)
         expected_result = 1
