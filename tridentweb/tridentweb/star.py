@@ -2,6 +2,7 @@
 
 """
 import requests
+from tridentweb.constant import Constant
 
 class Star:
     """Represents a planet.
@@ -11,6 +12,9 @@ class Star:
     star_id - ID number denoting the star.
     server_url - Trident API server URL. Defaults to http://trident.senorpez.com/
     """
+    solar_mass = None
+    grav = None
+
     def __init__(self, system_id, star_id, server_url="http://trident.senorpez.com/"):
         req = requests.get(server_url)
         req.raise_for_status()
@@ -40,3 +44,14 @@ class Star:
         self.id = req.json()['id']
         self.name = req.json()['name']
         self.mass = req.json()['mass']
+
+    @property
+    def gm(self):
+        if self.solar_mass is None:
+            solar_mass_constant = Constant("Msol")
+            self.solar_mass = solar_mass_constant.value
+        if self.grav is None:
+            grav_constant = Constant("G")
+            self.grav = grav_constant.value
+
+        return self.mass * self.solar_mass * self.grav
