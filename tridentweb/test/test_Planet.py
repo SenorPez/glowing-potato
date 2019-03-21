@@ -15,13 +15,16 @@ def mocked_requests_get(*args, **kwargs):
         """Solution cribbed from
         https://stackoverflow.com/questions/15753390/how-can-i-mock-requests-and-the-response/28507806#28507806
         """
-        def __init__(self, *, json_string=None, idnum=0, name="", mass=0, radius=0):
+        def __init__(self, *, json_string=None, idnum=0, name="", mass=0, radius=0,
+                     semimajor_axis=0):
             if json_string is None:
                 json_string = ("{{"
                                "\"id\": {0},"
                                "\"name\": \"{1}\","
                                "\"mass\": {2},"
-                               "\"radius\": {3}}}").format(idnum, name, mass, radius)
+                               "\"radius\": {3},"
+                               "\"semimajorAxis\": {4}}}"
+                               ).format(idnum, name, mass, radius, semimajor_axis)
             self.json_data = json.loads(json_string)
 
         def json(self):
@@ -210,6 +213,16 @@ class TestPlanet(unittest.TestCase):
         instance = Planet(1, 1, 1)
         expected_result = id(sentinel.radius)
         self.assertEqual(instance.radius, expected_result)
+
+    @mock.patch('requests.get')
+    def test_property_semimajor_axis(self, mock_get):
+        """Test semimajor axis property of Planet."""
+        mock_get.side_effect = self.api_traversal \
+                + [mocked_requests_get(semimajor_axis=id(sentinel.semimajor_axis))]
+
+        instance = Planet(1, 1, 1)
+        expected_result = id(sentinel.semimajor_axis)
+        self.assertEqual(instance.semimajor_axis, expected_result)
 
 
 class IntegrationPlanet(unittest.TestCase):
