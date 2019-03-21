@@ -186,7 +186,7 @@ class TestPlanet(unittest.TestCase):
                 + [mocked_requests_get(name=id(sentinel.name))]
 
         instance = Planet(1, 1, 1)
-        expected_result = 1
+        expected_result = str(id(sentinel.name))
         self.assertEqual(instance.name, expected_result)
 
 
