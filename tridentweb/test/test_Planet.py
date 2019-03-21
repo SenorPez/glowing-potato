@@ -291,3 +291,63 @@ class IntegrationPlanet(unittest.TestCase):
         instance = Planet(1817514095, 1905216634, -455609026)
         expected_result = Planet
         self.assertIsInstance(instance, expected_result)
+
+    def test_property_id(self):
+        """Test 1 Eta Veneris 3 id."""
+        instance = Planet(1817514095, 1905216634, -455609026)
+        expected_result = -455609026
+        self.assertEqual(instance.id, expected_result)
+
+    def test_property_name(self):
+        """Test 1 Eta Veneris 3 name."""
+        instance = Planet(1817514095, 1905216634, -455609026)
+        expected_result = "1 Eta Veneris 3"
+        self.assertEqual(instance.name, expected_result)
+
+    def test_property_mass(self):
+        """Test 1 Eta Veneris 3 mass."""
+        instance = Planet(1817514095, 1905216634, -455609026)
+        expected_result = 0.7156807
+        self.assertEqual(instance.mass, expected_result)
+
+    def test_property_radius(self):
+        """Test 1 Eta Veneris 3 radius."""
+        instance = Planet(1817514095, 1905216634, -455609026)
+        expected_result = 0.8665139
+        self.assertEqual(instance.radius, expected_result)
+
+    def test_property_semimajor_axis(self):
+        """Test 1 Eta Veneris 3 semimajor axis."""
+        instance = Planet(1817514095, 1905216634, -455609026)
+        expected_result = 0.50302297
+        self.assertEqual(instance.semimajor_axis, expected_result)
+
+    def test_property_eccentricity(self):
+        """Test 1 Eta Veneris 3 eccentricity."""
+        instance = Planet(1817514095, 1905216634, -455609026)
+        expected_result = 0.05
+        self.assertEqual(instance.eccentricity, expected_result)
+
+    def test_property_inclination(self):
+        """Test 1 Eta Veneris 3 inclination."""
+        instance = Planet(1817514095, 1905216634, -455609026)
+        expected_result = 0
+        self.assertEqual(instance.inclination, expected_result)
+
+    def test_property_longitude_of_ascending_node(self):
+        """Test 1 Eta Veneris 3 longitude of ascending node."""
+        instance = Planet(1817514095, 1905216634, -455609026)
+        expected_result = 0
+        self.assertEqual(instance.longitude_of_ascending_node, expected_result)
+
+    def test_property_argument_of_periapsis(self):
+        """Test 1 Eta Veneris 3 argument of periapsis."""
+        instance = Planet(1817514095, 1905216634, -455609026)
+        expected_result = 3.7920682
+        self.assertEqual(instance.argument_of_periapsis, expected_result)
+
+    def test_property_true_anomaly_at_epoch(self):
+        """Test 1 Eta Veneris 3 true anomaly at epoch."""
+        instance = Planet(1817514095, 1905216634, -455609026)
+        expected_result = 3.8604798
+        self.assertEqual(instance.true_anomaly_at_epoch, expected_result)
