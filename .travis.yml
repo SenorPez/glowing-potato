@@ -13,7 +13,7 @@ matrix:
         - "3.7-dev"
 
       install:
-        - python tridentweb/tridentweb/setup.py install
+        - python tridentweb/setup.py install
         - pip install coverage
 
       script:
