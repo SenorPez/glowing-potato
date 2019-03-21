@@ -17,7 +17,7 @@ def mocked_requests_get(*args, **kwargs):
         """
         def __init__(self, *, json_string=None, idnum=0, name="", mass=0, radius=0,
                      semimajor_axis=0, eccentricity=0, inclination=0,
-                     longitude_of_ascending_node=0):
+                     longitude_of_ascending_node=0, argument_of_periapsis=0):
             if json_string is None:
                 json_string = ("{{"
                                "\"id\": {0},"
@@ -27,9 +27,11 @@ def mocked_requests_get(*args, **kwargs):
                                "\"semimajorAxis\": {4},"
                                "\"eccentricity\": {5},"
                                "\"inclination\": {6},"
-                               "\"longitudeOfAscendingNode\": {7}}}"
+                               "\"longitudeOfAscendingNode\": {7},"
+                               "\"argumentOfPeriapsis\": {8}}}"
                                ).format(idnum, name, mass, radius, semimajor_axis, eccentricity,
-                                        inclination, longitude_of_ascending_node)
+                                        inclination, longitude_of_ascending_node,
+                                        argument_of_periapsis)
             self.json_data = json.loads(json_string)
 
         def json(self):
@@ -258,6 +260,16 @@ class TestPlanet(unittest.TestCase):
         instance = Planet(1, 1, 1)
         expected_result = id(sentinel.longitude)
         self.assertEqual(instance.longitude_of_ascending_node, expected_result)
+
+    @mock.patch('requests.get')
+    def test_property_argument_of_periapsis(self, mock_get):
+        """Test argument of periapsis property of Planet."""
+        mock_get.side_effect = self.api_traversal \
+                + [mocked_requests_get(argument_of_periapsis=id(sentinel.argument))]
+
+        instance = Planet(1, 1, 1)
+        expected_result = id(sentinel.argument)
+        self.assertEqual(instance.argument_of_periapsis, expected_result)
 
 
 class IntegrationPlanet(unittest.TestCase):
