@@ -16,7 +16,8 @@ def mocked_requests_get(*args, **kwargs):
         https://stackoverflow.com/questions/15753390/how-can-i-mock-requests-and-the-response/28507806#28507806
         """
         def __init__(self, *, json_string=None, idnum=0, name="", mass=0, radius=0,
-                     semimajor_axis=0, eccentricity=0, inclination=0):
+                     semimajor_axis=0, eccentricity=0, inclination=0,
+                     longitude_of_ascending_node=0):
             if json_string is None:
                 json_string = ("{{"
                                "\"id\": {0},"
@@ -25,9 +26,10 @@ def mocked_requests_get(*args, **kwargs):
                                "\"radius\": {3},"
                                "\"semimajorAxis\": {4},"
                                "\"eccentricity\": {5},"
-                               "\"inclination\": {6}}}"
+                               "\"inclination\": {6},"
+                               "\"longitudeOfAscendingNode\": {7}}}"
                                ).format(idnum, name, mass, radius, semimajor_axis, eccentricity,
-                                        inclination)
+                                        inclination, longitude_of_ascending_node)
             self.json_data = json.loads(json_string)
 
         def json(self):
@@ -246,6 +248,16 @@ class TestPlanet(unittest.TestCase):
         instance = Planet(1, 1, 1)
         expected_result = id(sentinel.inclination)
         self.assertEqual(instance.inclination, expected_result)
+
+    @mock.patch('requests.get')
+    def test_property_longitude_of_ascending_node(self, mock_get):
+        """Test longitude of ascending node property of Planet."""
+        mock_get.side_effect = self.api_traversal \
+                + [mocked_requests_get(inclination=id(sentinel.longitude))]
+
+        instance = Planet(1, 1, 1)
+        expected_result = id(sentinel.longitdue)
+        self.assertEqual(instance.longitude_of_ascending_node, expected_result)
 
 
 class IntegrationPlanet(unittest.TestCase):
