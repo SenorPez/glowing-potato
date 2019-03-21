@@ -14,9 +14,10 @@ def mocked_requests_get(*args, **kwargs):
         """Solution cribbed from
         https://stackoverflow.com/questions/15753390/how-can-i-mock-requests-and-the-response/28507806#28507806
         """
-        def __init__(self, *, json_string=None):
+        def __init__(self, *, json_string=None, idnum=0):
             if json_string is None:
-                json_string = ("{}")
+                json_string = ("{{"
+                               "\"id\": \"{0}\"}}").format(idnum)
             self.json_data = json.loads(json_string)
 
         def json(self):
@@ -165,6 +166,16 @@ class TestPlanet(unittest.TestCase):
         mock_get.side_effect = self.api_traversal + [KeyError()]
         with self.assertRaises(KeyError):
             _ = Planet(1, 1, 1)
+
+    @mock.patch('requests.get')
+    def test_property_id(self, mock_get):
+        """Test id property of Planet."""
+        mock_get.side_effect = self.api_traversal \
+                + [mocked_requests_get(idnum=id(1))]
+
+        instance = Planet(1, 1, 1)
+        expected_result = 1
+        self.assertEqual(instance.id, expected_result)
 
 
 class IntegrationPlanet(unittest.TestCase):
