@@ -124,6 +124,21 @@ class TestPlanet(unittest.TestCase):
         with self.assertRaises(KeyError):
             _ = Planet(1, 1, 1)
 
+    @mock.patch('requests.get')
+    def test_init_star_HTTPError(self, mock_get):
+        """Test Planet init with HTTPError on API star."""
+        mock_get.side_effect = self.api_traversal[0:4] + [HTTPError("Error", None)]
+        with self.assertRaises(HTTPError):
+            _ = Planet(1, 1, 1)
+
+    @mock.patch('requests.get')
+    def test_init_star_KeyError(self, mock_get):
+        """Test Planet init with KeyError on API star."""
+        mock_get.side_effect = self.api_traversal[0:4] + [KeyError()]
+        with self.assertRaises(KeyError):
+            _ = Planet(1, 1, 1)
+
+
 class IntegrationPlanet(unittest.TestCase):
     """Integration tests against reference implementation of Trident API."""
     def test_init_planet(self):
