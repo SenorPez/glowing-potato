@@ -16,7 +16,7 @@ def mocked_requests_get(*args, **kwargs):
         https://stackoverflow.com/questions/15753390/how-can-i-mock-requests-and-the-response/28507806#28507806
         """
         def __init__(self, *, json_string=None, idnum=0, name="", mass=0, radius=0,
-                     semimajor_axis=0, eccentricity=0):
+                     semimajor_axis=0, eccentricity=0, inclination=0):
             if json_string is None:
                 json_string = ("{{"
                                "\"id\": {0},"
@@ -24,8 +24,10 @@ def mocked_requests_get(*args, **kwargs):
                                "\"mass\": {2},"
                                "\"radius\": {3},"
                                "\"semimajorAxis\": {4},"
-                               "\"eccentricity\": {5}}}"
-                               ).format(idnum, name, mass, radius, semimajor_axis, eccentricity)
+                               "\"eccentricity\": {5},"
+                               "\"inclination\": {6}}}"
+                               ).format(idnum, name, mass, radius, semimajor_axis, eccentricity,
+                                        inclination)
             self.json_data = json.loads(json_string)
 
         def json(self):
@@ -234,6 +236,16 @@ class TestPlanet(unittest.TestCase):
         instance = Planet(1, 1, 1)
         expected_result = id(sentinel.eccentricity)
         self.assertEqual(instance.eccentricity, expected_result)
+
+    @mock.patch('requests.get')
+    def test_property_inclination(self, mock_get):
+        """Test inclination property of Planet."""
+        mock_get.side_effect = self.api_traversal \
+                + [mocked_requests_get(inclination=id(sentinel.inclination))]
+
+        instance = Planet(1, 1, 1)
+        expected_result = id(sentinel.inclination)
+        self.assertEqual(instance.inclination, expected_result)
 
 
 class IntegrationPlanet(unittest.TestCase):
