@@ -2,6 +2,7 @@
 
 """
 import requests
+from tridentweb.constant import Constant
 
 class Planet:
     """Represents a planet.
@@ -12,6 +13,9 @@ class Planet:
     planet_id - ID number denoting the planet.
     server_url - Trident API server URL. Defaults to http://trident.senorpez.com/
     """
+    planet_mass = None
+    grav = None
+
     def __init__(self, system_id, star_id, planet_id, server_url="http://trident.senorpez.com/"):
         req = requests.get(server_url)
         req.raise_for_status()
@@ -59,3 +63,14 @@ class Planet:
         self.longitude_of_ascending_node = req.json()['longitudeOfAscendingNode']
         self.argument_of_periapsis = req.json()['argumentOfPeriapsis']
         self.true_anomaly_at_epoch = req.json()['trueAnomalyAtEpoch']
+
+    @property
+    def gm(self):
+        if self.planet_mass is None:
+            planet_mass_constant = Constant("Mpln")
+            self.planet_mass = planet_mass_constant.value
+        if self.grav is None:
+            grav_constant = Constant("G")
+            self.grav = grav_constant.value
+
+        return self.mass * self.planet_mass * self.grav

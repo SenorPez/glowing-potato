@@ -4,7 +4,7 @@
 import json
 import unittest
 from unittest import mock
-from unittest.mock import sentinel
+from unittest.mock import sentinel, MagicMock, PropertyMock
 
 from requests.exceptions import HTTPError
 from tridentweb.planet import Planet
