@@ -58,3 +58,4 @@ class Planet:
         self.inclination = req.json()['inclination']
         self.longitude_of_ascending_node = req.json()['longitudeOfAscendingNode']
         self.argument_of_periapsis = req.json()['argumentOfPeriapsis']
+        self.true_anomaly_at_epoch = req.json()['trueAnomalyAtEpoch']
