@@ -15,11 +15,12 @@ def mocked_requests_get(*args, **kwargs):
         """Solution cribbed from
         https://stackoverflow.com/questions/15753390/how-can-i-mock-requests-and-the-response/28507806#28507806
         """
-        def __init__(self, *, json_string=None, idnum=0, name=""):
+        def __init__(self, *, json_string=None, idnum=0, name="", mass=0):
             if json_string is None:
                 json_string = ("{{"
                                "\"id\": {0},"
-                               "\"name\": \"{1}\"}}").format(idnum, name)
+                               "\"name\": \"{1}\","
+                               "\"mass\": {2}}}").format(idnum, name, mass)
             self.json_data = json.loads(json_string)
 
         def json(self):
@@ -188,6 +189,16 @@ class TestPlanet(unittest.TestCase):
         instance = Planet(1, 1, 1)
         expected_result = str(id(sentinel.name))
         self.assertEqual(instance.name, expected_result)
+
+    @mock.patch('requests.get')
+    def test_property_mass(self, mock_get):
+        """Test mass property of Planet."""
+        mock_get.side_effect = self.api_traversal \
+                + [mocked_requests_get(mass=id(sentinel.mass))]
+
+        instance = Planet(1, 1, 1)
+        expected_result = id(sentinel.mass)
+        self.assertEqual(instance.mass, expected_result)
 
 
 class IntegrationPlanet(unittest.TestCase):
