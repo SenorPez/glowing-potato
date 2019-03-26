@@ -1,5 +1,17 @@
 matrix:
   include:
+    - language: python
+
+      python:
+        - "3.6"
+
+      install:
+        - python tridentweb/setup.py install
+        - pip install coverage
+
+      script:
+        - nosetests -v --with-coverage --cover-package=tridentweb
+
     - language: java
       dist: trusty
       sudo: required
