@@ -1,7 +1,7 @@
 """
 Main execution script.
 """
-from flask import Flask
+from flask import Flask, has_app_context, jsonify
 from flask_cors import CORS
 import numpy as np
 from pykep import epoch
@@ -34,10 +34,10 @@ def epoch_offset():
         else:
             b = c
 
-    print(c)
+    return jsonify(c) if has_app_context() else c
 
 def main():
-    epoch_offset()
+    print(epoch_offset())
     #APP.run(host="0.0.0.0", port=5002)
 
 if __name__ == "__main__":
