@@ -34,7 +34,7 @@ setup(
     keywords='trident',
     packages=find_packages(exclude=['test']),
     python_requires='~=3.3',
-    install_requires=['Flask', 'flask_cors', 'matplotlib', 'numpy', 'pykep', 'requests'],
+    install_requires=['flask>=0.2', 'flask_cors', 'matplotlib', 'numpy', 'pykep', 'requests'],
     extras_require={
         'dev': [],
         'test': []
