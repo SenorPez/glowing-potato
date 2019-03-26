@@ -13,6 +13,9 @@ matrix:
         - cd tridentweb
         - nosetests -v --with-coverage --cover-package=tridentweb
 
+      after_success:
+        - bash <(curl -s https://codecov.io/bash)
+
     - language: java
       dist: trusty
       sudo: required
