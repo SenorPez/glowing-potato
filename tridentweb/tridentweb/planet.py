@@ -18,6 +18,7 @@ class Planet:
     server_url - Trident API server URL. Defaults to http://trident.senorpez.com/
     """
     planet_mass = None
+    planet_radius = None
     grav = None
     pykep_planet = None
 
@@ -85,6 +86,10 @@ class Planet:
     @property
     def planet(self):
         if self.pykep_planet is None:
+            if self.planet_radius is None:
+                planet_radius_constant = Constant("Rpln")
+                self.planet_radius = planet_radius_constant.value
+
             self.pykep_planet = keplerian(
                     epoch(0),
                     (
@@ -96,7 +101,7 @@ class Planet:
                         self.true_anomaly_at_epoch),
                     self._star.gm,
                     self.gm,
-                    0,
-                    0,
+                    self.radius * self.planet_radius,
+                    self.radius * self.planet_radius,
                     self.name)
         return self.pykep_planet
