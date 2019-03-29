@@ -62,7 +62,13 @@
         {
           "id": -1385166447,
           "name": "2 Eta Veneris",
-          "mass": 0.75
+          "mass": 0.75,
+          "semimajorAxis": 70,
+          "eccentricity": 0.5,
+          "inclination": 0.006273935,
+          "longitudeOfAscendingNode": 4.821009546,
+          "argumentOfPeriapsis": 2.95583028,
+          "trueAnomalyAtEpoch": 6.01675207
         }
       ]
     }
