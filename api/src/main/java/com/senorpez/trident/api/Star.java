@@ -87,27 +87,27 @@ public class Star {
         return mass;
     }
 
-    public Float getSemimajorAxis() {
+    Float getSemimajorAxis() {
         return semimajorAxis;
     }
 
-    public Float getEccentricity() {
+    Float getEccentricity() {
         return eccentricity;
     }
 
-    public Float getInclination() {
+    Float getInclination() {
         return inclination;
     }
 
-    public Float getLongitudeOfAscendingNode() {
+    Float getLongitudeOfAscendingNode() {
         return longitudeOfAscendingNode;
     }
 
-    public Float getArgumentOfPeriapsis() {
+    Float getArgumentOfPeriapsis() {
         return argumentOfPeriapsis;
     }
 
-    public Float getTrueAnomalyAtEpoch() {
+    Float getTrueAnomalyAtEpoch() {
         return trueAnomalyAtEpoch;
     }
 
