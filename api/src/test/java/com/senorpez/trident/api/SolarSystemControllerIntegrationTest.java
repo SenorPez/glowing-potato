@@ -1,5 +1,7 @@
 package com.senorpez.trident.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,9 +14,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.jayway.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchema;
 import static com.senorpez.trident.api.SupportedMediaTypes.*;
@@ -45,7 +50,19 @@ public class SolarSystemControllerIntegrationTest {
 
     @Parameterized.Parameters(name = "systemId: {0}")
     public static Collection params() {
-        return Collections.singletonList(1817514095);
+        final ObjectMapper mapper = new ObjectMapper();
+        final ClassLoader classLoader = Application.class.getClassLoader();
+        final InputStream inputStream = classLoader.getResourceAsStream("trident.json");
+        try {
+            final ObjectNode jsonData = mapper.readValue(inputStream, ObjectNode.class);
+            Set<SolarSystem> systems = mapper.readValue(jsonData.get("systems").toString(), mapper.getTypeFactory().constructCollectionType(Set.class, SolarSystem.class));
+            return systems.stream()
+                    .map(SolarSystem::getId)
+                    .collect(Collectors.toSet());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Collections.EMPTY_SET;
     }
 
     public SolarSystemControllerIntegrationTest(int systemId) {
