@@ -246,3 +246,22 @@ include::{snippets}/planet/response-fields.adoc[]
 .Links
 
 include::{snippets}/planet/links.adoc[]
+
+[[resources-trident-calendar]]
+=== Calendar
+
+Provides a calendar resource.
+
+.Request Header
+
+include::{snippets}/calendar/request-headers.adoc[]
+
+.Fields
+
+include::{snippets}/calendar/response-fields.adoc[]
+
+.Links
+
+include::{snippets}/calendar/links.adoc[]
+
+
