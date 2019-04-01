@@ -18,19 +18,19 @@ public enum Constant {
         this.units = units;
     }
 
-    public String getName() {
+    String getName() {
         return name;
     }
 
-    public String getSymbol() {
+    String getSymbol() {
         return symbol;
     }
 
-    public double getValue() {
+    double getValue() {
         return value;
     }
 
-    public String getUnits() {
+    String getUnits() {
         return units;
     }
 }

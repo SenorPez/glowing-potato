@@ -1,11 +1,11 @@
 {
   "$schema": "http://json-schema.org/draft-6/schema",
-  "title": "Trident API Root Schema",
-  "description": "Schema for the root of Trident API",
+  "title": "Trident API Calendar Schema",
+  "description": "Schema for a calendar in Trident API",
   "definitions": {
     "standardLink": {
       "type": "object",
-      "properties" : {
+      "properties": {
         "href": {
           "type": "string",
           "pattern": "^http[s]?://[a-z.]+(:[0-9]+)*((/[a-zA-Z0-9-]+)+|/)$"
@@ -15,6 +15,18 @@
       "required": [
         "href"
       ]
+    },
+    "templatedLink": {
+      "type": "object",
+      "properties": {
+        "href": {
+          "type": "string",
+          "pattern": "^http[s]?://[a-z.]+(:[0-9]+)*((/[a-zA-Z0-9-{}]+)+|/)$"
+        },
+        "templated": {
+          "type": "boolean"
+        }
+      }
     },
     "curies": {
       "type": "array",
@@ -41,6 +53,18 @@
   },
   "type": "object",
   "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "name": {
+      "type": "string"
+    },
+    "standardHoursPerDay": {
+      "type": "number"
+    },
+    "epochOffset": {
+      "type": "number"
+    },
     "_links": {
       "type": "object",
       "properties": {
@@ -53,11 +77,11 @@
         "curies": {
           "$ref": "#/definitions/curies"
         },
-        "trident-api:systems": {
+        "trident-api:calendars": {
           "$ref": "#/definitions/standardLink"
         },
-        "trident-api:constants": {
-          "$ref": "#/definitions/standardLink"
+        "trident-api:festivalYear": {
+          "$ref": "#/definitions/templatedLink"
         }
       },
       "additionalProperties": false,
@@ -65,12 +89,17 @@
         "self",
         "index",
         "curies",
-        "trident-api:systems"
+        "trident-api:calendars",
+        "trident-api:festivalYear"
       ]
     }
   },
   "additionalProperties": false,
   "required": [
+    "id",
+    "name",
+    "standardHoursPerDay",
+    "epochOffset",
     "_links"
   ]
 }

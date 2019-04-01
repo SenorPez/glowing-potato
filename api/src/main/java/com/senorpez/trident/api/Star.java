@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.Set;
 
-public class Star {
+class Star {
     private final int id;
     private final String name;
     private final float mass;

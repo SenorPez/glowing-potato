@@ -43,7 +43,15 @@
               "inclination": 0,
               "longitudeOfAscendingNode": 0,
               "argumentOfPeriapsis": 3.792068139,
-              "trueAnomalyAtEpoch": 3.86047981
+              "trueAnomalyAtEpoch": 3.86047981,
+              "calendars": [
+                {
+                  "id": -1010689347,
+                  "name": "Worker's Calendar",
+                  "standardHoursPerDay": 36.3624863,
+                  "epochOffset": -72.27522481178462
+                }
+              ]
             },
             {
               "id": 272811578,

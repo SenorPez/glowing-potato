@@ -1,11 +1,11 @@
 {
   "$schema": "http://json-schema.org/draft-6/schema",
-  "title": "Trident API Root Schema",
-  "description": "Schema for the root of Trident API",
+  "title": "Trident API Calendar Collection Schema",
+  "description": "Schema for collections of calendars in Trident API",
   "definitions": {
     "standardLink": {
       "type": "object",
-      "properties" : {
+      "properties": {
         "href": {
           "type": "string",
           "pattern": "^http[s]?://[a-z.]+(:[0-9]+)*((/[a-zA-Z0-9-]+)+|/)$"
@@ -41,6 +41,46 @@
   },
   "type": "object",
   "properties": {
+    "_embedded": {
+      "type": "object",
+      "properties": {
+        "trident-api:calendar": {
+          "type": "array",
+          "items": {
+            "properties": {
+              "id": {
+                "type": "number"
+              },
+              "name": {
+                "type": "string"
+              },
+              "_links": {
+                "type": "object",
+                "properties": {
+                  "self": {
+                    "$ref": "#/definitions/standardLink"
+                  }
+                },
+                "additionalProperties": false,
+                "required": [
+                  "self"
+                ]
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "name",
+              "_links"
+            ]
+          }
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "trident-api:calendar"
+      ]
+    },
     "_links": {
       "type": "object",
       "properties": {
@@ -53,10 +93,7 @@
         "curies": {
           "$ref": "#/definitions/curies"
         },
-        "trident-api:systems": {
-          "$ref": "#/definitions/standardLink"
-        },
-        "trident-api:constants": {
+        "trident-api:planet": {
           "$ref": "#/definitions/standardLink"
         }
       },
@@ -65,12 +102,13 @@
         "self",
         "index",
         "curies",
-        "trident-api:systems"
+        "trident-api:planet"
       ]
     }
   },
   "additionalProperties": false,
   "required": [
+    "_embedded",
     "_links"
   ]
 }

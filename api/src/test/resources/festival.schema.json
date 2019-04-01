@@ -1,11 +1,11 @@
 {
   "$schema": "http://json-schema.org/draft-6/schema",
-  "title": "Trident API Root Schema",
-  "description": "Schema for the root of Trident API",
+  "title": "Trident API Festival Schema",
+  "description": "Schema for if a year is a festival year in Trident API",
   "definitions": {
     "standardLink": {
       "type": "object",
-      "properties" : {
+      "properties": {
         "href": {
           "type": "string",
           "pattern": "^http[s]?://[a-z.]+(:[0-9]+)*((/[a-zA-Z0-9-]+)+|/)$"
@@ -41,6 +41,12 @@
   },
   "type": "object",
   "properties": {
+    "localYear": {
+      "type": "integer"
+    },
+    "isFestivalYear": {
+      "type": "boolean"
+    },
     "_links": {
       "type": "object",
       "properties": {
@@ -53,10 +59,7 @@
         "curies": {
           "$ref": "#/definitions/curies"
         },
-        "trident-api:systems": {
-          "$ref": "#/definitions/standardLink"
-        },
-        "trident-api:constants": {
+        "trident-api:calendar": {
           "$ref": "#/definitions/standardLink"
         }
       },
@@ -65,12 +68,14 @@
         "self",
         "index",
         "curies",
-        "trident-api:systems"
+        "trident-api:calendar"
       ]
     }
   },
   "additionalProperties": false,
   "required": [
+    "localYear",
+    "isFestivalYear",
     "_links"
   ]
 }
