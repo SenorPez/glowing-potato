@@ -50,6 +50,24 @@
     "mass": {
       "type": "number"
     },
+    "semimajorAxis": {
+      "type": ["number", "null"]
+    },
+    "eccentricity": {
+      "type": ["number", "null"]
+    },
+    "inclination": {
+      "type": ["number", "null"]
+    },
+    "longitudeOfAscendingNode": {
+      "type": ["number", "null"]
+    },
+    "argumentOfPeriapsis": {
+      "type": ["number", "null"]
+    },
+    "trueAnomalyAtEpoch": {
+      "type": ["number", "null"]
+    },
     "_links": {
       "type": "object",
       "properties": {
