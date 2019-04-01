@@ -1,45 +1,45 @@
 matrix:
   include:
-    - language: python
-
-      python:
-        - "3.6"
-
-      install:
-        - python tridentweb/setup.py install
-        - pip install coverage
-
-      script:
-        - nosetests -v --with-coverage --cover-package=tridentweb
-
-    - language: java
-      dist: trusty
-      sudo: required
-
-      jdk:
-        - openjdk11
-
-      cache:
-        directories:
-          - $HOME/.gradle/caches
-          - $HOME/.gradle/wrapper
-
-      before_install:
-        - chmod +x gradlew
-
-      install:
-        ./gradlew --configure-on-demand :api:assemble --console=plain
-
-      script:
-        ./gradlew --configure-on-demand :api:check --console=plain
-
-      before_cache:
-        - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-        - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
-
-      after_success:
-        - if [ -e ./gradlew ]; then ./gradlew --configure-on-demand :api:jacocoTestReport; else gradle :api:jacocoTestReport; fi
-        - bash <(curl -s https://codecov.io/bash)
+#    - language: python
+#
+#      python:
+#        - "3.6"
+#
+#      install:
+#        - python tridentweb/setup.py install
+#        - pip install coverage
+#
+#      script:
+#        - nosetests -v --with-coverage --cover-package=tridentweb
+#
+#    - language: java
+#      dist: trusty
+#      sudo: required
+#
+#      jdk:
+#        - openjdk11
+#
+#      cache:
+#        directories:
+#          - $HOME/.gradle/caches
+#          - $HOME/.gradle/wrapper
+#
+#      before_install:
+#        - chmod +x gradlew
+#
+#      install:
+#        ./gradlew --configure-on-demand :api:assemble --console=plain
+#
+#      script:
+#        ./gradlew --configure-on-demand :api:check --console=plain
+#
+#      before_cache:
+#        - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+#        - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+#
+#      after_success:
+#        - if [ -e ./gradlew ]; then ./gradlew --configure-on-demand :api:jacocoTestReport; else gradle :api:jacocoTestReport; fi
+#        - bash <(curl -s https://codecov.io/bash)
 
     - language: android
       android:
