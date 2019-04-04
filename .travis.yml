@@ -76,4 +76,4 @@ matrix:
 
     after_success:
     - if [ -e ./gradlew ]; then ./gradlew --configure-on-demand :clock:jacocoTestReport; else gradle :clock:jacocoTestReport; fi
-    - bash <(curl -s https://codecov.io/bash) -s ./clock/build/reports/coverage/debug/
+    - bash <(curl -s https://codecov.io/bash) -s ./clock/build/reports/coverage/debug
