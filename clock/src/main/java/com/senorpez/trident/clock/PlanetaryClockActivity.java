@@ -3,11 +3,12 @@ package com.senorpez.trident.clock;
 import android.os.Bundle;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import javax.inject.Inject;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 import dagger.android.AndroidInjection;
-
-import javax.inject.Inject;
 
 public class PlanetaryClockActivity extends AppCompatActivity {
     @Inject
