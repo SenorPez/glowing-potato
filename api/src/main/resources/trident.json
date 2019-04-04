@@ -7,7 +7,7 @@
         {
           "id": 1905216634,
           "name": "1 Eta Veneris",
-          "solarMass": 0.75,
+          "mass": 0.75,
           "planets": [
             {
               "id": -1485460920,
@@ -43,7 +43,15 @@
               "inclination": 0,
               "longitudeOfAscendingNode": 0,
               "argumentOfPeriapsis": 3.792068139,
-              "trueAnomalyAtEpoch": 3.86047981
+              "trueAnomalyAtEpoch": 3.86047981,
+              "calendars": [
+                {
+                  "id": -1010689347,
+                  "name": "Worker's Calendar",
+                  "standardHoursPerDay": 36.3624863,
+                  "epochOffset": -72.27522481178462
+                }
+              ]
             },
             {
               "id": 272811578,
@@ -62,7 +70,13 @@
         {
           "id": -1385166447,
           "name": "2 Eta Veneris",
-          "solarMass": 0.75
+          "mass": 0.75,
+          "semimajorAxis": 70,
+          "eccentricity": 0.5,
+          "inclination": 0.006273935,
+          "longitudeOfAscendingNode": 4.821009546,
+          "argumentOfPeriapsis": 2.95583028,
+          "trueAnomalyAtEpoch": 6.01675207
         }
       ]
     }

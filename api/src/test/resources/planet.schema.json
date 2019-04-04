@@ -8,7 +8,7 @@
       "properties": {
         "href": {
           "type": "string",
-          "pattern": "^http[s]?://[a-z.]+(:[0-9]+)*((/[a-z0-9-]+)+|/)$"
+          "pattern": "^http[s]?://[a-z.]+(:[0-9]+)*((/[a-zA-Z0-9-]+)+|/)$"
         }
       },
       "additionalProperties": false,
@@ -85,6 +85,9 @@
         },
         "trident-api:planets": {
           "$ref": "#/definitions/standardLink"
+        },
+        "trident-api:calendars": {
+          "$ref": "#/definitions/standardLink"
         }
       },
       "additionalProperties": false,
@@ -92,7 +95,8 @@
         "self",
         "index",
         "curies",
-        "trident-api:planets"
+        "trident-api:planets",
+        "trident-api:calendars"
       ]
     }
   },

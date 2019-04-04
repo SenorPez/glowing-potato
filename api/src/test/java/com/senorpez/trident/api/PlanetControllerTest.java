@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class PlanetControllerTest {
     private MockMvc mockMvc;
-    private static final MediaType INVALID_MEDIA_TYPE = new MediaType("application", "invalid+json", UTF_8);
+    private static final MediaType INVALID_MEDIA_TYPE = new MediaType("application", "vnd.senorpez.trident.v0+json", UTF_8);
     private static final ClassLoader CLASS_LOADER = PlanetControllerTest.class.getClassLoader();
     private static InputStream PLANET_SCHEMA;
     private static InputStream PLANET_COLLECTION_SCHEMA;
@@ -254,7 +254,7 @@ public class PlanetControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident.v0+json")));
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
         verifyZeroInteractions(apiService);
     }
@@ -316,7 +316,7 @@ public class PlanetControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident.v0+json")));
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
         verifyZeroInteractions(apiService);
     }
@@ -378,7 +378,7 @@ public class PlanetControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident.v0+json")));
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
         verifyZeroInteractions(apiService);
     }
@@ -440,7 +440,7 @@ public class PlanetControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident.v0+json")));
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
         verifyZeroInteractions(apiService);
     }
@@ -518,7 +518,7 @@ public class PlanetControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident.v0+json")));
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
         verifyZeroInteractions(apiService);
     }
@@ -569,6 +569,8 @@ public class PlanetControllerTest {
                                 hasEntry("templated", (Object) true)))))
                 .andExpect(jsonPath("$._links.trident-api:planets", hasEntry("href", String.format(
                         "http://localhost:8080/systems/%d/stars/%d/planets", FIRST_SYSTEM.getId(), FIRST_STAR.getId()))))
+                .andExpect(jsonPath("$._links.trident-api:calendars", hasEntry("href", String.format(
+                        "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars", FIRST_SYSTEM.getId(), FIRST_STAR.getId(), FIRST_PLANET.getId()))))
                 .andDo(document("planet",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -589,7 +591,8 @@ public class PlanetControllerTest {
                                 fieldWithPath("trueAnomalyAtEpoch").description("Planet true anomaly at epoch, in radians"),
                                 subsectionWithPath("_links").ignored()),
                         commonLinks.and(
-                                linkWithRel("trident-api:planets").description("List of planet resources."))));
+                                linkWithRel("trident-api:planets").description("List of planet resources."),
+                                linkWithRel("trident-api:calendars").description("List of calendar resources."))));
 
         verify(apiService, times(3)).findOne(any(), any(), any());
         verifyNoMoreInteractions(apiService);
@@ -625,7 +628,9 @@ public class PlanetControllerTest {
                                 hasEntry("name", (Object) "trident-api"),
                                 hasEntry("templated", (Object) true)))))
                 .andExpect(jsonPath("$._links.trident-api:planets", hasEntry("href", String.format(
-                        "http://localhost:8080/systems/%d/stars/%d/planets", FIRST_SYSTEM.getId(), FIRST_STAR.getId()))));
+                        "http://localhost:8080/systems/%d/stars/%d/planets", FIRST_SYSTEM.getId(), FIRST_STAR.getId()))))
+                .andExpect(jsonPath("$._links.trident-api:calendars", hasEntry("href", String.format(
+                        "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars", FIRST_SYSTEM.getId(), FIRST_STAR.getId(), FIRST_PLANET.getId()))));
 
         verify(apiService, times(3)).findOne(any(), any(), any());
         verifyNoMoreInteractions(apiService);
@@ -641,7 +646,7 @@ public class PlanetControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident.v0+json")));
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
         verifyZeroInteractions(apiService);
     }
@@ -703,7 +708,7 @@ public class PlanetControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident.v0+json")));
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
         verifyZeroInteractions(apiService);
     }
@@ -765,7 +770,7 @@ public class PlanetControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident.v0+json")));
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
         verifyZeroInteractions(apiService);
     }
@@ -827,7 +832,7 @@ public class PlanetControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident.v0+json")));
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
         verifyZeroInteractions(apiService);
     }
@@ -889,7 +894,7 @@ public class PlanetControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident.v0+json")));
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
         verifyZeroInteractions(apiService);
     }
@@ -951,7 +956,7 @@ public class PlanetControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident.v0+json")));
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
         verifyZeroInteractions(apiService);
     }

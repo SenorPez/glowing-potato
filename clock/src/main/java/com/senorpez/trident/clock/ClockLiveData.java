@@ -1,10 +1,9 @@
 package com.senorpez.trident.clock;
 
 import android.os.Handler;
+import androidx.lifecycle.MutableLiveData;
 
 import java.util.function.Supplier;
-
-import androidx.lifecycle.MutableLiveData;
 
 class ClockLiveData<T> extends MutableLiveData<T> {
     private final Supplier<T> supplier;

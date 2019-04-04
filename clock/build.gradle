@@ -50,7 +50,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'crea
 
 idea {
     module {
-        name = 'com.senorpez.trident.clock'
+        name = 'clock'
     }
 }
 

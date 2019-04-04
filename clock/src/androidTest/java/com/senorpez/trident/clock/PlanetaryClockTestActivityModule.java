@@ -1,9 +1,9 @@
 package com.senorpez.trident.clock;
 
-import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
+
+import javax.inject.Singleton;
 
 @Module
 class PlanetaryClockTestActivityModule {

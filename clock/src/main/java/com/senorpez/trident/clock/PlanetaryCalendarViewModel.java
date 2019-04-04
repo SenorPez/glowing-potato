@@ -1,11 +1,11 @@
 package com.senorpez.trident.clock;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
+
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
-
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModel;
 
 class PlanetaryCalendarViewModel extends ViewModel {
     private final PlanetaryCalendar planetaryCalendar;

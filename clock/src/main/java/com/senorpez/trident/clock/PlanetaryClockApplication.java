@@ -1,12 +1,11 @@
 package com.senorpez.trident.clock;
 
 import android.app.Activity;
-
-import javax.inject.Inject;
-
 import dagger.android.AndroidInjector;
 import dagger.android.DaggerApplication;
 import dagger.android.DispatchingAndroidInjector;
+
+import javax.inject.Inject;
 
 public class PlanetaryClockApplication extends DaggerApplication {
     @Inject

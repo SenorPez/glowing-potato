@@ -21,8 +21,8 @@ There is only a single version of the {apiname}.
 |===
 | API Versions | Accept Header
 
-| v0
-| `application/vnd.senorpez.trident.v0+json; charset=UTF-8`
+| Version 1.0
+| `application/vnd.senorpez.trident.v1+json; charset=UTF-8`
 |===
 
 [[overview-http-methods]]
@@ -246,3 +246,22 @@ include::{snippets}/planet/response-fields.adoc[]
 .Links
 
 include::{snippets}/planet/links.adoc[]
+
+[[resources-trident-calendar]]
+=== Calendar
+
+Provides a calendar resource.
+
+.Request Header
+
+include::{snippets}/calendar/request-headers.adoc[]
+
+.Fields
+
+include::{snippets}/calendar/response-fields.adoc[]
+
+.Links
+
+include::{snippets}/calendar/links.adoc[]
+
+

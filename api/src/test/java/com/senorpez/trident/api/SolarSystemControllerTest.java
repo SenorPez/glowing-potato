@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.JUnitRestDocumentation;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.client.HttpServerErrorException;
 
 import java.io.InputStream;
 import java.util.Arrays;
@@ -39,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class SolarSystemControllerTest {
     private MockMvc mockMvc;
-    private static final MediaType INVALID_MEDIA_TYPE = new MediaType("application", "invalid+json", UTF_8);
+    private static final MediaType INVALID_MEDIA_TYPE = new MediaType("application", "vnd.senorpez.trident.v0+json", UTF_8);
     private static final ClassLoader CLASS_LOADER = SolarSystemControllerTest.class.getClassLoader();
     private static InputStream SOLAR_SYSTEM_SCHEMA;
     private static InputStream SOLAR_SYSTEM_COLLECTION_SCHEMA;
@@ -171,7 +172,7 @@ public class SolarSystemControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident.v0+json")));
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
         verifyZeroInteractions(apiService);
     }
@@ -261,7 +262,7 @@ public class SolarSystemControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident.v0+json")));
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
         verifyZeroInteractions(apiService);
     }
@@ -330,7 +331,7 @@ public class SolarSystemControllerTest {
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
-                .andExpect(jsonPath("$.detail", is("Accept header must be \"vnd.senorpez.trident.v0+json")));
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
         verifyZeroInteractions(apiService);
     }
@@ -348,5 +349,17 @@ public class SolarSystemControllerTest {
                 .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
 
         verifyZeroInteractions(apiService);
+    }
+
+    @Test
+    public void TestServerError() throws Exception {
+        when(apiService.findAll(any())).thenThrow(new HttpServerErrorException(INTERNAL_SERVER_ERROR));
+
+        mockMvc.perform(get("/systems").accept(TRIDENT_API))
+                .andExpect(status().isInternalServerError())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(INTERNAL_SERVER_ERROR.value())))
+                .andExpect(jsonPath("$.message", is(INTERNAL_SERVER_ERROR.getReasonPhrase())));
     }
 }

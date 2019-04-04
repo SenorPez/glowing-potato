@@ -6,7 +6,7 @@ import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.core.Relation;
 
 @Relation(value = "planet", collectionRelation = "planet")
-public class EmbeddedPlanetModel implements Identifiable<Integer> {
+class EmbeddedPlanetModel implements Identifiable<Integer> {
     private final int id;
     private final String name;
 

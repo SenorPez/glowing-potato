@@ -2,12 +2,10 @@ package com.senorpez.trident.clock;
 
 import android.view.View;
 import android.widget.ProgressBar;
-
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-
 import androidx.test.espresso.matcher.BoundedMatcher;
 import androidx.test.internal.util.Checks;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 
 class PlanetaryClockMatchers {
     static Matcher<View> withProgress(final int expectedProgress) {
