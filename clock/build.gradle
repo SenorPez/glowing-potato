@@ -20,6 +20,7 @@ repositories {
 }
 
 apply plugin: 'com.android.application'
+apply from: 'jacoco.gradle'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'jacoco'
 
