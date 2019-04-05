@@ -17,7 +17,7 @@ project.afterEvaluate {
         def variantName = variant.name
         def testTaskName = "test${variantName.capitalize()}UnitTest"
 
-        tasks.create(name: "jacoco${testTaskName}Coverage", type: JacocoReport, dependsOn: "$testTaskName") {
+        tasks.create(name: "${testTaskName}Coverage", type: JacocoReport, dependsOn: "$testTaskName") {
             group = "Reporting"
             description = "Generate Jacoco coverage reports for the ${variantName.capitalize()} build."
 
