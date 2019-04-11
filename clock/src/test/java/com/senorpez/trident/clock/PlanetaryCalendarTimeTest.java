@@ -35,21 +35,28 @@ public class PlanetaryCalendarTimeTest {
         MockitoAnnotations.initMocks(this);
     }
 
-    @Parameterized.Parameters(name = "days: {0}")
+    @Parameterized.Parameters(name = "days: {2}")
     public static Collection params() {
         return Arrays.asList(new Object[][]{
-                {4569.00, 1, 0.00, 591860140233.182},
-                {4569.24, 1, 0.96, 591891557421.345},
-                {4569.25, 2, 0.00, 591892866470.852},
-                {4569.49, 2, 0.96, 591924283659.015},
-                {4569.50, 3, 0.00, 591925592708.522},
-                {4569.74, 3, 0.96, 591957009896.685},
-                {4569.75, 4, 0.00, 591958318946.192},
-                {4569.99, 4, 0.96, 591989736134.355}
+                {36.36248779296875, -72.27522277832031, 4569.00, 1, 0.00, 591860164965.819},
+                {36.36248779296875, -72.27522277832031, 4569.24, 1, 0.96, 591891582155.273},
+                {36.36248779296875, -72.27522277832031, 4569.25, 2, 0.00, 591892891204.833},
+                {36.36248779296875, -72.27522277832031, 4569.49, 2, 0.96, 591924308394.286},
+                {36.36248779296875, -72.27522277832031, 4569.50, 3, 0.00, 591925617443.847},
+                {36.36248779296875, -72.27522277832031, 4569.74, 3, 0.96, 591957034633.300},
+                {36.36248779296875, -72.27522277832031, 4569.75, 4, 0.00, 591958343682.860},
+                {36.36248779296875, -72.27522277832031, 4569.99, 4, 0.96, 591989760872.314}
         });
     }
 
-    public PlanetaryCalendarTimeTest(double days, int shift, double tithe, double standardMilliseconds) {
+    public PlanetaryCalendarTimeTest(
+            double standardHoursPerDay,
+            double epochOffset,
+            double days,
+            int shift,
+            double tithe,
+            double standardMilliseconds) {
+        this.planetaryCalendar = new PlanetaryCalendar(standardHoursPerDay, epochOffset);
         this.days = days;
         this.shift = shift;
         this.tithe = tithe;
