@@ -14,7 +14,12 @@ class PlanetaryCalendar {
     private double standardHoursPerDay;
     private double epochOffset;
 
-    private final Clock clock;
+    private Clock clock;
+
+    public PlanetaryCalendar(double standardHoursPerDay, double epochOffset) {
+        this.standardHoursPerDay = standardHoursPerDay;
+        this.epochOffset = epochOffset;
+    }
 
     @JsonCreator
     PlanetaryCalendar() {

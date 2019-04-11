@@ -35,22 +35,29 @@ public class PlanetaryCalendarYearTest {
         MockitoAnnotations.initMocks(this);
     }
 
-    @Parameterized.Parameters(name = "days: {1}")
+    @Parameterized.Parameters(name = "days: {3}")
     public static Collection params() {
         return Arrays.asList(new Object[][]{
-                {47, 4569, 598104719656.92, 591860140233.182},
-                {48, 4668, 611064309774.24, 604819730350.502},
-                {49, 4768, 624154804842.24, 617910225418.502},
-                {50, 4867, 637114394959.56, 630869815535.822},
-                {51, 4966, 650073985076.88, 643829405653.142},
-                {52, 5065, 663033575194.20, 656788995770.462},
-                {53, 5164, 675993165311.52, 669748585887.782},
-                {54, 5263, 688952755428.84, 682708176005.102},
-                {55, 5363, 702043250496.84, 695798671073.102}
+                {36.36248779296875, -72.27522277832031, 47, 4569, 598104744213.87, 591860164965.819},
+                {36.36248779296875, -72.27522277832031, 48, 4668, 611064334863.28, 604819755615.234},
+                {36.36248779296875, -72.27522277832031, 49, 4768, 624154830468.75, 617910251220.702},
+                {36.36248779296875, -72.27522277832031, 50, 4867, 637114421118.16, 630869841870.116},
+                {36.36248779296875, -72.27522277832031, 51, 4966, 650074011767.58, 643829432519.530},
+                {36.36248779296875, -72.27522277832031, 52, 5065, 663033602416.99, 656789023168.944},
+                {36.36248779296875, -72.27522277832031, 53, 5164, 675993193066.41, 669748613818.358},
+                {36.36248779296875, -72.27522277832031, 54, 5263, 688952783715.82, 682708204467.772},
+                {36.36248779296875, -72.27522277832031, 55, 5363, 702043279321.29, 695798700073.241}
         });
     }
 
-    public PlanetaryCalendarYearTest(int localYear, int days, double planetaryMilliseconds, double standardMilliseconds) {
+    public PlanetaryCalendarYearTest(
+            double standardHoursPerDay,
+            double epochOffset,
+            int localYear,
+            int days,
+            double planetaryMilliseconds,
+            double standardMilliseconds) {
+        this.planetaryCalendar = new PlanetaryCalendar(standardHoursPerDay, epochOffset);
         this.localYear = localYear;
         this.days = days;
         this.planetaryMilliseconds = planetaryMilliseconds;
@@ -65,12 +72,12 @@ public class PlanetaryCalendarYearTest {
     @Test
     public void testGetLocalDays_Current() {
         when(mockClock.millis()).thenReturn((long) Math.ceil(standardMilliseconds));
-        assertThat(planetaryCalendar.getLocalDays(), closeTo(days, 1e-8));
+        assertThat(planetaryCalendar.getLocalDays(), closeTo(days, 1e-5));
     }
 
     @Test
     public void testGetLocalMilliseconds() {
-        assertThat(planetaryCalendar.getLocalMilliseconds(standardMilliseconds), closeTo(planetaryMilliseconds, 1));
+        assertThat(planetaryCalendar.getLocalMilliseconds(standardMilliseconds), closeTo(planetaryMilliseconds, 1e-2));
     }
 
     @Test
