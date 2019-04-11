@@ -1,16 +1,27 @@
 package com.senorpez.trident.clock;
 
-import java.time.Clock;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 class PlanetaryCalendar {
-    // TODO: API integration with cache fallback.
-    private static final double STD_HOURS_PER_DAY = 36.3624863;
-    private static final double EPOCH_OFFSET = -72.27522481178462;
+    private double standardHoursPerDay;
+    private double epochOffset;
 
     private final Clock clock;
 
-    PlanetaryCalendar(Clock clock) {
-        this.clock = clock;
+    @JsonCreator
+    PlanetaryCalendar() {
+        this.clock = Clock.offset(
+                Clock.systemUTC(),
+                Duration.ofMillis(
+                        Clock.fixed(Instant.parse("2000-01-01T00:00:00Z"), ZoneId.ofOffset("GMT", ZoneOffset.UTC)).millis() * -1));
     }
 
     int getCaste() {
@@ -113,7 +124,7 @@ class PlanetaryCalendar {
 
     double getLocalDays(final double localMilliseconds) {
         final double hours = localMilliseconds / 3600000;
-        return hours / STD_HOURS_PER_DAY;
+        return hours / standardHoursPerDay;
     }
 
     double getLocalMilliseconds() {
@@ -121,7 +132,7 @@ class PlanetaryCalendar {
     }
 
     double getLocalMilliseconds(final double standardMilliseconds) {
-        return standardMilliseconds - EPOCH_OFFSET * 86400000;
+        return standardMilliseconds - epochOffset * 86400000;
     }
 
     int getLocalYear() {
@@ -186,5 +197,13 @@ class PlanetaryCalendar {
     private double removeYearDays(int year, double days) {
         year -= 1;
         return days - (year * 99 + Math.floorDiv(year, 3) - Math.floorDiv(year, 51));
+    }
+
+    public void setStandardHoursPerDay(double standardHoursPerDay) {
+        this.standardHoursPerDay = standardHoursPerDay;
+    }
+
+    public void setEpochOffset(double epochOffset) {
+        this.epochOffset = epochOffset;
     }
 }

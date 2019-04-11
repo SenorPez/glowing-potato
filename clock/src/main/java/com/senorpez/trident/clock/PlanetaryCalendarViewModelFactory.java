@@ -14,15 +14,12 @@ import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 public class PlanetaryCalendarViewModelFactory implements ViewModelProvider.Factory {
-    private final PlanetaryCalendar planetaryCalendar;
+    private PlanetaryCalendar planetaryCalendar;
+    private PlanetaryCalendarRepository planetaryCalendarRepository;
 
     @Inject
-    public PlanetaryCalendarViewModelFactory() {
-        Clock clockJ2000 = Clock.offset(
-                Clock.systemUTC(),
-                Duration.ofMillis(
-                        Clock.fixed(Instant.parse("2000-01-01T00:00:00Z"), ZoneId.ofOffset("GMT", ZoneOffset.UTC)).millis() * -1));
-        this.planetaryCalendar = new PlanetaryCalendar(clockJ2000);
+    public PlanetaryCalendarViewModelFactory(PlanetaryCalendarRepository planetaryCalendarRepository) {
+        this.planetaryCalendarRepository = planetaryCalendarRepository;
     }
 
     public PlanetaryCalendarViewModelFactory(PlanetaryCalendar planetaryCalendar) {
@@ -32,6 +29,6 @@ public class PlanetaryCalendarViewModelFactory implements ViewModelProvider.Fact
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-        return (T) new PlanetaryCalendarViewModel(planetaryCalendar);
+        return (T) new PlanetaryCalendarViewModel(planetaryCalendarRepository);
     }
 }

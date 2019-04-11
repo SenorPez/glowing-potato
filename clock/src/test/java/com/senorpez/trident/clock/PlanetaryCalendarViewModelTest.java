@@ -72,8 +72,8 @@ public class PlanetaryCalendarViewModelTest {
         when(planetaryCalendar.getCasteDay()).thenReturn(15);
         when(planetaryCalendar.getShift()).thenReturn(3);
         when(planetaryCalendar.getTithe()).thenReturn(0.329);
-        assertThat(planetaryCalendarViewModel.getLocalDateTime(), instanceOf(LiveData.class));
-        assertThat(planetaryCalendarViewModel.getLocalDateTime().getValue(), is("35 FY 2 Caste 15 Day 3.32 Shift"));
+        assertThat(planetaryCalendarViewModel.createLocalDateTime(), instanceOf(LiveData.class));
+        assertThat(planetaryCalendarViewModel.createLocalDateTime().getValue(), is("35 FY 2 Caste 15 Day 3.32 Shift"));
         verify(planetaryCalendar, times(2)).getLocalYear();
         verify(planetaryCalendar, times(2)).getCaste();
         verify(planetaryCalendar, times(4)).getCasteDay();
@@ -89,8 +89,8 @@ public class PlanetaryCalendarViewModelTest {
         when(planetaryCalendar.getCasteDay()).thenReturn(0);
         when(planetaryCalendar.getShift()).thenReturn(3);
         when(planetaryCalendar.getTithe()).thenReturn(0.329);
-        assertThat(planetaryCalendarViewModel.getLocalDateTime(), instanceOf(LiveData.class));
-        assertThat(planetaryCalendarViewModel.getLocalDateTime().getValue(), is("35 FY Festival Day 3.32 Shift"));
+        assertThat(planetaryCalendarViewModel.createLocalDateTime(), instanceOf(LiveData.class));
+        assertThat(planetaryCalendarViewModel.createLocalDateTime().getValue(), is("35 FY Festival Day 3.32 Shift"));
         verify(planetaryCalendar, times(2)).getLocalYear();
         verify(planetaryCalendar, times(2)).getCaste();
         verify(planetaryCalendar, times(2)).getCasteDay();
@@ -106,8 +106,8 @@ public class PlanetaryCalendarViewModelTest {
         when(planetaryCalendar.getCasteDay()).thenReturn(0);
         when(planetaryCalendar.getShift()).thenReturn(3);
         when(planetaryCalendar.getTithe()).thenReturn(0.329);
-        assertThat(planetaryCalendarViewModel.getLocalDateTime(), instanceOf(LiveData.class));
-        assertThat(planetaryCalendarViewModel.getLocalDateTime().getValue(), is("35 FY Midfestival Day 3.32 Shift"));
+        assertThat(planetaryCalendarViewModel.createLocalDateTime(), instanceOf(LiveData.class));
+        assertThat(planetaryCalendarViewModel.createLocalDateTime().getValue(), is("35 FY Midfestival Day 3.32 Shift"));
         verify(planetaryCalendar, times(2)).getLocalYear();
         verify(planetaryCalendar, times(4)).getCaste();
         verify(planetaryCalendar, times(2)).getCasteDay();
