@@ -44,7 +44,7 @@ public class PlanetaryCalendarViewModelTest {
     @Test
     public void testGetShift() {
         when(planetaryCalendar.getShift()).thenReturn(1);
-        planetaryCalendarViewModel.getShift().update();
+        ((ClockLiveData<Integer>) planetaryCalendarViewModel.getShift()).update();
 
         assertThat(planetaryCalendarViewModel.getShift(), instanceOf(LiveData.class));
         assertThat(planetaryCalendarViewModel.getShift().getValue(), is(0));
@@ -59,7 +59,7 @@ public class PlanetaryCalendarViewModelTest {
     @Test
     public void testGetTithe() {
         when(planetaryCalendar.getTithe()).thenReturn(0.329);
-        planetaryCalendarViewModel.getTithe().update();
+        ((ClockLiveData<Integer>) planetaryCalendarViewModel.getTithe()).update();
 
         assertThat(planetaryCalendarViewModel.getTithe(), instanceOf(LiveData.class));
         assertThat(planetaryCalendarViewModel.getTithe().getValue(), is(3));
@@ -74,7 +74,7 @@ public class PlanetaryCalendarViewModelTest {
     @Test
     public void testGetSubtithe() {
         when(planetaryCalendar.getTithe()).thenReturn(0.329);
-        planetaryCalendarViewModel.getSubTithe().update();
+        ((ClockLiveData<Integer>) planetaryCalendarViewModel.getSubTithe()).update();
 
         assertThat(planetaryCalendarViewModel.getSubTithe(), instanceOf(LiveData.class));
         assertThat(planetaryCalendarViewModel.getSubTithe().getValue(), is(2));
@@ -89,7 +89,7 @@ public class PlanetaryCalendarViewModelTest {
     @Test
     public void testGetSpinner() {
         when(planetaryCalendar.getTithe()).thenReturn(0.329);
-        planetaryCalendarViewModel.getSpinner().update();
+        ((ClockLiveData<Integer>) planetaryCalendarViewModel.getSpinner()).update();
 
         assertThat(planetaryCalendarViewModel.getSpinner(), instanceOf(LiveData.class));
         assertThat(planetaryCalendarViewModel.getSpinner().getValue(), is(9));
@@ -109,11 +109,11 @@ public class PlanetaryCalendarViewModelTest {
         when(planetaryCalendar.getShift()).thenReturn(3);
         when(planetaryCalendar.getTithe()).thenReturn(0.329);
 
-        planetaryCalendarViewModel.getLocalDateTime().update();
-        planetaryCalendarViewModel.getShift().update();
-        planetaryCalendarViewModel.getTithe().update();
-        planetaryCalendarViewModel.getSubTithe().update();
-        planetaryCalendarViewModel.getSpinner().update();
+        ((ClockLiveData<String>) planetaryCalendarViewModel.getLocalDateTime()).update();
+        ((ClockLiveData<Integer>) planetaryCalendarViewModel.getShift()).update();
+        ((ClockLiveData<Integer>) planetaryCalendarViewModel.getTithe()).update();
+        ((ClockLiveData<Integer>) planetaryCalendarViewModel.getSubTithe()).update();
+        ((ClockLiveData<Integer>) planetaryCalendarViewModel.getSpinner()).update();
 
         assertThat(planetaryCalendarViewModel.getLocalDateTime(), instanceOf(LiveData.class));
         assertThat(planetaryCalendarViewModel.getLocalDateTime().getValue(), is("35 FY 2 Caste 15 Day 3.32 Shift"));
@@ -137,11 +137,11 @@ public class PlanetaryCalendarViewModelTest {
         when(planetaryCalendar.getShift()).thenReturn(3);
         when(planetaryCalendar.getTithe()).thenReturn(0.329);
 
-        planetaryCalendarViewModel.getLocalDateTime().update();
-        planetaryCalendarViewModel.getShift().update();
-        planetaryCalendarViewModel.getTithe().update();
-        planetaryCalendarViewModel.getSubTithe().update();
-        planetaryCalendarViewModel.getSpinner().update();
+        ((ClockLiveData<String>) planetaryCalendarViewModel.getLocalDateTime()).update();
+        ((ClockLiveData<Integer>) planetaryCalendarViewModel.getShift()).update();
+        ((ClockLiveData<Integer>) planetaryCalendarViewModel.getTithe()).update();
+        ((ClockLiveData<Integer>) planetaryCalendarViewModel.getSubTithe()).update();
+        ((ClockLiveData<Integer>) planetaryCalendarViewModel.getSpinner()).update();
 
         assertThat(planetaryCalendarViewModel.getLocalDateTime(), instanceOf(LiveData.class));
         assertThat(planetaryCalendarViewModel.getLocalDateTime().getValue(), is("35 FY Festival Day 3.32 Shift"));
@@ -165,11 +165,11 @@ public class PlanetaryCalendarViewModelTest {
         when(planetaryCalendar.getShift()).thenReturn(3);
         when(planetaryCalendar.getTithe()).thenReturn(0.329);
 
-        planetaryCalendarViewModel.getLocalDateTime().update();
-        planetaryCalendarViewModel.getShift().update();
-        planetaryCalendarViewModel.getTithe().update();
-        planetaryCalendarViewModel.getSubTithe().update();
-        planetaryCalendarViewModel.getSpinner().update();
+        ((ClockLiveData<String>) planetaryCalendarViewModel.getLocalDateTime()).update();
+        ((ClockLiveData<Integer>) planetaryCalendarViewModel.getShift()).update();
+        ((ClockLiveData<Integer>) planetaryCalendarViewModel.getTithe()).update();
+        ((ClockLiveData<Integer>) planetaryCalendarViewModel.getSubTithe()).update();
+        ((ClockLiveData<Integer>) planetaryCalendarViewModel.getSpinner()).update();
 
         assertThat(planetaryCalendarViewModel.getLocalDateTime(), instanceOf(LiveData.class));
         assertThat(planetaryCalendarViewModel.getLocalDateTime().getValue(), is("35 FY Midfestival Day 3.32 Shift"));
@@ -187,7 +187,7 @@ public class PlanetaryCalendarViewModelTest {
 
     @Test
     public void testGetStandardDateTime() {
-        planetaryCalendarViewModel.getStandardDateTime().update();
+        ((ClockLiveData<String>) planetaryCalendarViewModel.getStandardDateTime()).update();
 
         assertThat(planetaryCalendarViewModel.getStandardDateTime(), instanceOf(LiveData.class));
         assertThat(planetaryCalendarViewModel.getStandardDateTime().getValue(), is(notNullValue()));
