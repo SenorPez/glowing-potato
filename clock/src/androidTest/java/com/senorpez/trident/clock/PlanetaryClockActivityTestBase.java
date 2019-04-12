@@ -16,13 +16,15 @@ import static org.mockito.Mockito.when;
 
 public class PlanetaryClockActivityTestBase {
     @Rule
-    public ActivityTestRule<PlanetaryClockActivity> activityTestRule = new ActivityTestRule<>(PlanetaryClockActivity.class, true, false);
+    public ActivityTestRule<PlanetaryClockActivity> activityTestRule =
+            new ActivityTestRule<>(PlanetaryClockActivity.class, true, false);
 
     final String localDateTimeValue = "Local Date Time";
     final String standardDateTimeValue = "Standard Date Time";
 
     @Mock
     PlanetaryCalendarViewModel planetaryCalendarViewModel;
+
     @Mock
     PlanetaryCalendarViewModelFactory planetaryCalendarViewModelFactory;
 
@@ -41,7 +43,7 @@ public class PlanetaryClockActivityTestBase {
 
         MutableLiveData<Integer> subtithe = new MutableLiveData<>();
         subtithe.postValue(2);
-        when(planetaryCalendarViewModel.getSubtithe()).thenReturn(subtithe);
+        when(planetaryCalendarViewModel.getSubTithe()).thenReturn(subtithe);
 
         MutableLiveData<Integer> spinner = new MutableLiveData<>();
         spinner.postValue(9);

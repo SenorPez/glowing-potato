@@ -23,27 +23,27 @@ class PlanetaryCalendarViewModel extends ViewModel {
         planetaryCalendar = planetaryCalendarRepository.getPlanetaryCalendar();
     }
 
-    ClockLiveData<Integer> getShift() {
+    LiveData<Integer> getShift() {
         return shift;
     }
 
-    ClockLiveData<Integer> getTithe() {
+    LiveData<Integer> getTithe() {
         return tithe;
     }
 
-    ClockLiveData<Integer> getSubTithe() {
+    LiveData<Integer> getSubTithe() {
         return subTithe;
     }
 
-    ClockLiveData<Integer> getSpinner() {
+    LiveData<Integer> getSpinner() {
         return spinner;
     }
 
-    ClockLiveData<String> getLocalDateTime() {
+    LiveData<String> getLocalDateTime() {
         return localDateTime;
     }
 
-    ClockLiveData<String> getStandardDateTime() {
+    LiveData<String> getStandardDateTime() {
         return standardDateTime;
     }
 
