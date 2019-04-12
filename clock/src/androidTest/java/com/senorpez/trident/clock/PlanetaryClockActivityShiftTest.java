@@ -17,26 +17,26 @@ import static org.mockito.Mockito.when;
 
 @RunWith(Parameterized.class)
 public class PlanetaryClockActivityShiftTest extends PlanetaryClockActivityTestBase {
-//    @Parameterized.Parameter
-//    public int shiftValue = 1;
-//
-//    @Parameterized.Parameters(name = "shift: {0}")
-//    public static Collection params() {
-//        return Arrays.asList(new Object[][]{
-//                {1},
-//                {2},
-//                {3},
-//                {4}
-//        });
-//    }
-//
-//    @Test
-//    public void testShiftProgress() {
-//        MutableLiveData<Integer> shift = new MutableLiveData<>();
-//        shift.postValue(shiftValue);
-//        when(planetaryCalendarViewModel.getShift()).thenReturn(shift);
-//
-//        activityTestRule.launchActivity(new Intent());
-//        onView(withId(R.id.prgShift)).check(matches(withProgress(this.shiftValue - 1)));
-//    }
+    @Parameterized.Parameter
+    public int shiftValue = 1;
+
+    @Parameterized.Parameters(name = "shift: {0}")
+    public static Collection params() {
+        return Arrays.asList(new Object[][]{
+                {1},
+                {2},
+                {3},
+                {4}
+        });
+    }
+
+    @Test
+    public void testShiftProgress() {
+        MutableLiveData<Integer> shift = new MutableLiveData<>();
+        shift.postValue(shiftValue - 1);
+        when(planetaryCalendarViewModel.getShift()).thenReturn(shift);
+
+        activityTestRule.launchActivity(new Intent());
+        onView(withId(R.id.prgShift)).check(matches(withProgress(shiftValue - 1)));
+    }
 }
