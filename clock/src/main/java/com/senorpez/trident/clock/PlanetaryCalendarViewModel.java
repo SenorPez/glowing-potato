@@ -10,13 +10,13 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
 
 class PlanetaryCalendarViewModel extends ViewModel {
-    private LiveData<PlanetaryCalendar> planetaryCalendar;
-    private ClockLiveData<Integer> shift = new ClockLiveData<>(this::createShift);
-    private ClockLiveData<Integer> tithe = new ClockLiveData<>(this::createTithe);
-    private ClockLiveData<Integer> subTithe = new ClockLiveData<>(this::createSubTithe);
-    private ClockLiveData<Integer> spinner = new ClockLiveData<>(this::createSpinner);
-    private ClockLiveData<String> localDateTime = new ClockLiveData<>(this::createLocalDateTime);
-    private ClockLiveData<String> standardDateTime = new ClockLiveData<>(this::createStandardDateTime);
+    private final LiveData<PlanetaryCalendar> planetaryCalendar;
+    private final ClockLiveData<Integer> shift = new ClockLiveData<>(this::createShift);
+    private final ClockLiveData<Integer> tithe = new ClockLiveData<>(this::createTithe);
+    private final ClockLiveData<Integer> subTithe = new ClockLiveData<>(this::createSubTithe);
+    private final ClockLiveData<Integer> spinner = new ClockLiveData<>(this::createSpinner);
+    private final ClockLiveData<String> localDateTime = new ClockLiveData<>(this::createLocalDateTime);
+    private final ClockLiveData<String> standardDateTime = new ClockLiveData<>(this::createStandardDateTime);
 
     @Inject
     PlanetaryCalendarViewModel(PlanetaryCalendarRepository planetaryCalendarRepository) {

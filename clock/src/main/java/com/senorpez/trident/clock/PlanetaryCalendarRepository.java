@@ -11,7 +11,7 @@ import retrofit2.Response;
 
 @Singleton
 class PlanetaryCalendarRepository {
-    private TridentAPI tridentAPI;
+    private final TridentAPI tridentAPI;
     private LiveData<PlanetaryCalendar> calendarCache;
 
     @Inject

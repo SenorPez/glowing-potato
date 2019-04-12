@@ -41,9 +41,9 @@ public class PlanetaryClockActivityTestBase {
         tithe.postValue(3);
         when(planetaryCalendarViewModel.getTithe()).thenReturn(tithe);
 
-        MutableLiveData<Integer> subtithe = new MutableLiveData<>();
-        subtithe.postValue(2);
-        when(planetaryCalendarViewModel.getSubTithe()).thenReturn(subtithe);
+        MutableLiveData<Integer> subTithe = new MutableLiveData<>();
+        subTithe.postValue(2);
+        when(planetaryCalendarViewModel.getSubTithe()).thenReturn(subTithe);
 
         MutableLiveData<Integer> spinner = new MutableLiveData<>();
         spinner.postValue(9);
