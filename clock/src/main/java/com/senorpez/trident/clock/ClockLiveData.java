@@ -22,6 +22,10 @@ class ClockLiveData<T> extends MutableLiveData<T> {
         this.supplier = supplier;
     }
 
+    void update() {
+        this.setValue(supplier.get());
+    }
+
     @Override
     protected void onActive() {
         super.onActive();
