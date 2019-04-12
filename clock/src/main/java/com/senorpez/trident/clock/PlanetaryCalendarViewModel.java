@@ -81,7 +81,7 @@ class PlanetaryCalendarViewModel extends ViewModel {
 
     private String createLocalDateTime() {
         if (planetaryCalendar.getValue() == null) {
-            return "NULL";
+            return "Connecting...";
         } else {
             if (planetaryCalendar.getValue().getCasteDay() == 0
                     && planetaryCalendar.getValue().getCaste() == 0) {
