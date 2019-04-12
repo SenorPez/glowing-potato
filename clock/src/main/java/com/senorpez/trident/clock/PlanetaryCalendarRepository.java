@@ -40,4 +40,12 @@ class PlanetaryCalendarRepository {
         });
         return calendar;
     }
+
+    LiveData<PlanetaryCalendar> getCalendarCache() {
+        return calendarCache;
+    }
+
+    void setCalendarCache(LiveData<PlanetaryCalendar> calendarCache) {
+        this.calendarCache = calendarCache;
+    }
 }
