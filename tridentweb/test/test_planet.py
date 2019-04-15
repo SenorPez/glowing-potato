@@ -331,7 +331,10 @@ class TestPlanet(unittest.TestCase):
         mock_planet_mass = MagicMock()
         type(mock_planet_mass).value = PropertyMock(return_value=5.9722e24)
 
-        mock_constant.side_effect = [mock_planet_mass, mock_grav]
+        mock_planet_radius = MagicMock()
+        type(mock_planet_radius).value = PropertyMock(return_value=6378136.6)
+
+        mock_constant.side_effect = [mock_planet_radius, mock_planet_mass, mock_grav]
 
         mock_star_gm = MagicMock()
         type(mock_star_gm).gm = PropertyMock(return_value=0.75 * 1.9884e30 * 6.67408e-11)

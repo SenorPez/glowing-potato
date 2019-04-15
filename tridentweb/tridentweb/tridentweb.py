@@ -23,7 +23,7 @@ def epoch_offset():
     winter = np.arctan2(-1, 0)
 
     a = -75.0
-    b = 0.0
+    b = 75.0
 
     for _ in range(1000):
         c = (a + b) / 2
