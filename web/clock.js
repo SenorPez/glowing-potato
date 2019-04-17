@@ -1,3 +1,5 @@
+var scaleFactor = 1;
+
 function drawClockArc(ctx, radius, lineWidth, color, endAngle) {
   var startAngle = 0.25 * Math.PI;
   var center_x = 150;
@@ -124,35 +126,46 @@ function makeClock(time_adj, hours_per_local_day) {
   var shiftAngle = (0.25 + 0.5 * (Math.floor(shift) - 1)) * Math.PI;
   var nextShiftAngle = shiftAngle + 0.5 * Math.PI;
 
-  drawClockArc(ctx, 100, 8, "#d3d3d3", nextShiftAngle);
-  drawClockArc(ctx, 100, 10, "#aa0000", rawShiftAngle);
-  drawClockArc(ctx, 100, 12, "#ff0000", shiftAngle);
+  drawClockArc(ctx, 100 * scaleFactor, 8, "#d3d3d3", nextShiftAngle);
+  drawClockArc(ctx, 100 * scaleFactor, 10, "#aa0000", rawShiftAngle);
+  drawClockArc(ctx, 100 * scaleFactor, 12, "#ff0000", shiftAngle);
 
   var rawTitheAngle = (0.25 + 2 * (rawshift - Math.floor(rawshift))) * Math.PI;
   var titheAngle = (0.25 + 2 * decimals[0] / 10) * Math.PI;
   var nextTitheAngle = titheAngle + 0.2 * Math.PI;
 
-  drawClockArc(ctx, 75, 8, "#d3d3d3", nextTitheAngle);
-  drawClockArc(ctx, 75, 10, "#6a9f00", rawTitheAngle);
-  drawClockArc(ctx, 75, 12, "#00ff00", titheAngle);
+  drawClockArc(ctx, 75 * scaleFactor, 8, "#d3d3d3", nextTitheAngle);
+  drawClockArc(ctx, 75 * scaleFactor, 10, "#6a9f00", rawTitheAngle);
+  drawClockArc(ctx, 75 * scaleFactor, 12, "#00ff00", titheAngle);
 
   var rawSubtitheAngle =
     (0.25 + 2 * (rawshift * 10 - Math.floor(rawshift * 10))) * Math.PI;
   var subtitheAngle = (0.25 + 2 * decimals[1] / 10) * Math.PI;
   var nextSubtitheAngle = subtitheAngle + 0.2 * Math.PI;
 
-  drawClockArc(ctx, 50, 8, "#d3d3d3", nextSubtitheAngle);
-  drawClockArc(ctx, 50, 10, "#006666", rawSubtitheAngle);
-  drawClockArc(ctx, 50, 12, "#0000ff", subtitheAngle);
+  drawClockArc(ctx, 50 * scaleFactor, 8, "#d3d3d3", nextSubtitheAngle);
+  drawClockArc(ctx, 50 * scaleFactor, 10, "#006666", rawSubtitheAngle);
+  drawClockArc(ctx, 50 * scaleFactor, 12, "#0000ff", subtitheAngle);
 
   var rawSpinnerAngle =
     (0.25 + 2 * (rawshift * 100 - Math.floor(rawshift * 100))) * Math.PI;
   var spinnerAngle = (0.25 + 2 * decimals[2] / 10) * Math.PI;
   var nextSpinnerAngle = spinnerAngle + 0.2 * Math.PI;
 
-  drawClockArc(ctx, 25, 8, "#d3d3d3", nextSpinnerAngle);
-  drawClockArc(ctx, 25, 10, "#a0a0a0", rawSpinnerAngle);
-  drawClockArc(ctx, 25, 12, "#000000", spinnerAngle);
+  drawClockArc(ctx, 25 * scaleFactor, 8, "#d3d3d3", nextSpinnerAngle);
+  drawClockArc(ctx, 25 * scaleFactor, 10, "#a0a0a0", rawSpinnerAngle);
+  drawClockArc(ctx, 25 * scaleFactor, 12, "#000000", spinnerAngle);
 
-  var t = setTimeout(getTime, 500);
+  var t = setTimeout(getTime, 100);
+}
+
+$(document).ready(function() {
+  canvas = document.getElementById("clockface");
+  canvas.addEventListener("mousewheel", handleMouseWheel, false);
+  canvas.addEventListener("DOMMouseScroll", handleMouseWheel, false);
+});
+
+function handleMouseWheel(event) {
+  scaleFactor = (event.wheelDelta < 0 || event.detail > 0) ? scaleFactor * 1.1 : scaleFactor * 0.9;
+  scaleFactor = Math.max(1, scaleFactor);
 }
