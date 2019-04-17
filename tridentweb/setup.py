@@ -1,5 +1,5 @@
 """
-Setup file for Trident API Web Worker
+Setup file for Trident API Web Backend
 """
 
 from setuptools import setup, find_packages
@@ -12,9 +12,9 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='webworker',
-    version='0.1',
-    description='Trident API Webworker 0.1',
+    name='tridentweb',
+    version='0.0.1.dev1',
+    description='Trident API Web Backend Development',
     long_description=long_description,
     url='https://github.com/SenorPez/glowing-potato',
     author='Senor Pez',
@@ -22,7 +22,7 @@ setup(
     license='MIT',
     classifiers=[
         'Development Status :: 4 - Beta',
-        'Intended Audience :: End Users/Desktop',
+        'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
@@ -31,16 +31,20 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3 :: Only',
     ],
-    keywords='random',
+    keywords='trident',
     packages=find_packages(exclude=['test']),
-    install_requires=['flask', 'flask_cors', 'matplotlib', 'numpy', 'pykep', 'requests'],
+    python_requires='~=3.3',
+    install_requires=['flask>=0.2', 'flask_cors', 'matplotlib', 'numpy', 'pykep', 'requests'],
     extras_require={
         'dev': [],
         'test': []
     },
     entry_points={
         'console_scripts': [
-            'webworker=webworker.webworker:main'
+            'tridentweb=tridentweb.tridentweb:main'
         ],
+    },
+    project_urls={
+        'Feature Requests and Bug Reports': 'https://github.com/SenorPez/glowing-potato/issues'
     },
 )

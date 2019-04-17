@@ -11,8 +11,8 @@ function drawClockArc(ctx, radius, lineWidth, color, endAngle) {
 }
 
 function getTime() {
-  //var time_adj = -34.28646951536321; // TODO: API Call
-  var time_adj = -72.27522481178462;
+  var time_adj = -72.27522481178462; // TODO: API Call
+  
   var time_now = new Date(new Date() - time_adj * 86400000);
   var time_epoch = new Date("January 1, 2000 00:00:00 GMT+00:00");
   var time_delta = time_now - time_epoch;
@@ -21,13 +21,10 @@ function getTime() {
   var hours = time_delta / 3600000;
 
   // Standard hours per local day
-  var hours_per_local_day = 36.362486; // TODO: API Call
+  var hours_per_local_day = 36.36248779296875; // TODO: API Call
 
   // Local days
   var local_days = hours / hours_per_local_day;
-
-  // Local days per loca year
-  var local_days_per_local_year = 99.3142; // TODO: API Call
 
   // Local year, accounting for local calendar:
   // 2 years of 99 days followed by 1 year of 100 days // TODO: Leap year skips
