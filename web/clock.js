@@ -36,17 +36,17 @@ function makeClock(time_adj, hours_per_local_day) {
   var year = 1;
 
   while (true) {
-    if (year % 3 && !(year % 51)) { 
-      if (local_days_countdown > 99) {
+    if (year % 3 == 0 && year % 51 != 0) {
+      if (local_days_countdown > 100) {
         year += 1;
-        local_days_countdown -= 99;
+        local_days_countdown -= 100;
       } else {
         break;
       }
     } else {
-      if (local_days_countdown > 100) {
+      if (local_days_countdown > 99) {
         year += 1;
-        local_days_countdown -= 100;
+        local_days_countdown -= 99;
       } else {
         break;
       }
