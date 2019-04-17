@@ -11,8 +11,16 @@ function drawClockArc(ctx, radius, lineWidth, color, endAngle) {
 }
 
 function getTime() {
-  var time_adj = -72.27522481178462; // TODO: API Call
-  
+  callAPI()
+    .then(json => makeClock(json.epochOffset, json.standardHoursPerDay));
+}
+
+function callAPI() {
+  return fetch('http://trident.senorpez.com/systems/1817514095/stars/1905216634/planets/-455609026/calendars/-1010689347')
+    .then(response => response.json());
+}
+
+function makeClock(time_adj, hours_per_local_day) {
   var time_now = new Date(new Date() - time_adj * 86400000);
   var time_epoch = new Date("January 1, 2000 00:00:00 GMT+00:00");
   var time_delta = time_now - time_epoch;
@@ -20,19 +28,15 @@ function getTime() {
   // Standard hours
   var hours = time_delta / 3600000;
 
-  // Standard hours per local day
-  var hours_per_local_day = 36.36248779296875; // TODO: API Call
-
   // Local days
   var local_days = hours / hours_per_local_day;
 
   // Local year, accounting for local calendar:
-  // 2 years of 99 days followed by 1 year of 100 days // TODO: Leap year skips
   var local_days_countdown = local_days;
   var year = 1;
 
   while (true) {
-    if (year % 3) {
+    if (year % 3 && !(year % 51)) { 
       if (local_days_countdown > 99) {
         year += 1;
         local_days_countdown -= 99;
