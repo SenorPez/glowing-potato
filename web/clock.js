@@ -1,4 +1,5 @@
 var scaleFactor = 1;
+var apiResult;
 
 function drawClockArc(ctx, radius, lineWidth, color, endAngle) {
   var startAngle = 0.25 * Math.PI;
@@ -13,8 +14,10 @@ function drawClockArc(ctx, radius, lineWidth, color, endAngle) {
 }
 
 function getTime() {
-  callAPI()
-    .then(json => makeClock(json.epochOffset, json.standardHoursPerDay));
+  if (apiResult == null) {
+    apiResult = callAPI();
+  }
+  apiResult.then(json => makeClock(json.epochOffset, json.standardHoursPerDay));
 }
 
 function callAPI() {
@@ -126,37 +129,55 @@ function makeClock(time_adj, hours_per_local_day) {
   var shiftAngle = (0.25 + 0.5 * (Math.floor(shift) - 1)) * Math.PI;
   var nextShiftAngle = shiftAngle + 0.5 * Math.PI;
 
-  drawClockArc(ctx, 100 * scaleFactor, 8, "#d3d3d3", nextShiftAngle);
-  drawClockArc(ctx, 100 * scaleFactor, 10, "#aa0000", rawShiftAngle);
-  drawClockArc(ctx, 100 * scaleFactor, 12, "#ff0000", shiftAngle);
+  var ringNumber = 0;
+  var ringRadius = -25 * ringNumber;
+
+  drawClockArc(ctx, 100 * scaleFactor + ringRadius, 8, "#d3d3d3", nextShiftAngle);
+  drawClockArc(ctx, 100 * scaleFactor + ringRadius, 10, "#aa0000", rawShiftAngle);
+  drawClockArc(ctx, 100 * scaleFactor + ringRadius, 12, "#ff0000", shiftAngle);
 
   var rawTitheAngle = (0.25 + 2 * (rawshift - Math.floor(rawshift))) * Math.PI;
   var titheAngle = (0.25 + 2 * decimals[0] / 10) * Math.PI;
   var nextTitheAngle = titheAngle + 0.2 * Math.PI;
 
-  drawClockArc(ctx, 75 * scaleFactor, 8, "#d3d3d3", nextTitheAngle);
-  drawClockArc(ctx, 75 * scaleFactor, 10, "#6a9f00", rawTitheAngle);
-  drawClockArc(ctx, 75 * scaleFactor, 12, "#00ff00", titheAngle);
+  var ringNumber = 1;
+  var ringRadius = -25 * ringNumber;
+
+  drawClockArc(ctx, 100 * scaleFactor + ringRadius, 8, "#d3d3d3", nextTitheAngle);
+  drawClockArc(ctx, 100 * scaleFactor + ringRadius, 10, "#6a9f00", rawTitheAngle);
+  drawClockArc(ctx, 100 * scaleFactor + ringRadius, 12, "#00ff00", titheAngle);
 
   var rawSubtitheAngle =
     (0.25 + 2 * (rawshift * 10 - Math.floor(rawshift * 10))) * Math.PI;
   var subtitheAngle = (0.25 + 2 * decimals[1] / 10) * Math.PI;
   var nextSubtitheAngle = subtitheAngle + 0.2 * Math.PI;
 
-  drawClockArc(ctx, 50 * scaleFactor, 8, "#d3d3d3", nextSubtitheAngle);
-  drawClockArc(ctx, 50 * scaleFactor, 10, "#006666", rawSubtitheAngle);
-  drawClockArc(ctx, 50 * scaleFactor, 12, "#0000ff", subtitheAngle);
+  var ringNumber = 2;
+  var ringRadius = -25 * ringNumber;
 
-  var rawSpinnerAngle =
-    (0.25 + 2 * (rawshift * 100 - Math.floor(rawshift * 100))) * Math.PI;
-  var spinnerAngle = (0.25 + 2 * decimals[2] / 10) * Math.PI;
-  var nextSpinnerAngle = spinnerAngle + 0.2 * Math.PI;
+  drawClockArc(ctx, 100 * scaleFactor + ringRadius, 8, "#d3d3d3", nextSubtitheAngle);
+  drawClockArc(ctx, 100 * scaleFactor + ringRadius, 10, "#006666", rawSubtitheAngle);
+  drawClockArc(ctx, 100 * scaleFactor + ringRadius, 12, "#0000ff", subtitheAngle);
 
-  drawClockArc(ctx, 25 * scaleFactor, 8, "#d3d3d3", nextSpinnerAngle);
-  drawClockArc(ctx, 25 * scaleFactor, 10, "#a0a0a0", rawSpinnerAngle);
-  drawClockArc(ctx, 25 * scaleFactor, 12, "#000000", spinnerAngle);
+  var ringNumber = 3;
+  var ringRadius = -25 * ringNumber;
 
-  var t = setTimeout(getTime, 100);
+  while(100 * scaleFactor + ringRadius >= 25) {
+    var power = ringNumber - 1;
+    var rawSpinnerAngle =
+      (0.25 + 2 * (rawshift * Math.pow(10, power) - Math.floor(rawshift * Math.pow(10, power)))) * Math.PI;
+    var spinnerAngle = (0.25 + 2 * decimals[power] / 10) * Math.PI;
+    var nextSpinnerAngle = spinnerAngle + 0.2 * Math.PI;
+
+    drawClockArc(ctx, 100 * scaleFactor + ringRadius, 8, "#d3d3d3", nextSpinnerAngle);
+    drawClockArc(ctx, 100 * scaleFactor + ringRadius, 10, "#a0a0a0", rawSpinnerAngle);
+    drawClockArc(ctx, 100 * scaleFactor + ringRadius, 12, "#000000", spinnerAngle);
+
+    ringNumber++;
+    ringRadius = -25 * ringNumber;
+  }
+
+  var t = setTimeout(getTime, 50);
 }
 
 $(document).ready(function() {
@@ -168,4 +189,5 @@ $(document).ready(function() {
 function handleMouseWheel(event) {
   scaleFactor = (event.wheelDelta < 0 || event.detail > 0) ? scaleFactor * 1.1 : scaleFactor * 0.9;
   scaleFactor = Math.max(1, scaleFactor);
+  scaleFactor = Math.min(scaleFactor, 1.5);
 }
