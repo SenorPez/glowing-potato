@@ -73,7 +73,10 @@ def orbit():
         z_val.append(z.tolist())
 
         planet_positions.append(list((x[0], y[0], z[0])))
-        planet_colors.append("gray")
+        if orbiter.id == -455609026:
+            planet_colors.append("green")
+        else:
+            planet_colors.append("gray")
         planet_names.append(orbiter.name)
 
     return jsonify(
@@ -160,7 +163,7 @@ def transfer():
 
     t1 = epoch(int(launch_time))
     t2 = epoch(int(launch_time) + int(flight_time))
-    plot_planet(origin.planet, t0=t1, color='gray', legend=True, units=AU, ax=orbit_ax)
+    plot_planet(origin.planet, t0=t1, color='green', legend=True, units=AU, ax=orbit_ax)
     plot_planet(target.planet, t0=t2, color='gray', legend=True, units=AU, ax=orbit_ax)
 
     max_value = max(
