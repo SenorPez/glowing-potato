@@ -33,10 +33,10 @@ public class PlanetaryClockActivityShiftTest extends PlanetaryClockActivityTestB
     @Test
     public void testShiftProgress() {
         MutableLiveData<Integer> shift = new MutableLiveData<>();
-        shift.postValue(shiftValue);
+        shift.postValue(shiftValue - 1);
         when(planetaryCalendarViewModel.getShift()).thenReturn(shift);
 
         activityTestRule.launchActivity(new Intent());
-        onView(withId(R.id.prgShift)).check(matches(withProgress(this.shiftValue - 1)));
+        onView(withId(R.id.prgShift)).check(matches(withProgress(shiftValue - 1)));
     }
 }

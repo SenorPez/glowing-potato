@@ -1,13 +1,15 @@
 package com.senorpez.trident.clock;
 
 import android.content.Intent;
-import androidx.lifecycle.MutableLiveData;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.Arrays;
 import java.util.Collection;
+
+import androidx.lifecycle.MutableLiveData;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -21,7 +23,7 @@ public class PlanetaryClockActivityTitheTest extends PlanetaryClockActivityTestB
     public int titheValue;
 
     @Parameterized.Parameter(value = 1)
-    public int subtitheValue;
+    public int subTitheValue;
 
     @Parameterized.Parameter(value = 2)
     public int spinnerValue;
@@ -52,13 +54,13 @@ public class PlanetaryClockActivityTitheTest extends PlanetaryClockActivityTestB
         onView(withId(R.id.prgTithe)).check(matches(withProgress(titheValue)));
     }
     @Test
-    public void testSubtitheProgress() {
-        MutableLiveData<Integer> subtithe = new MutableLiveData<>();
-        subtithe.postValue(subtitheValue);
-        when(planetaryCalendarViewModel.getSubtithe()).thenReturn(subtithe);
+    public void testSubTitheProgress() {
+        MutableLiveData<Integer> subTithe = new MutableLiveData<>();
+        subTithe.postValue(subTitheValue);
+        when(planetaryCalendarViewModel.getSubTithe()).thenReturn(subTithe);
 
         activityTestRule.launchActivity(new Intent());
-        onView(withId(R.id.prgSubtithe)).check(matches(withProgress(subtitheValue)));
+        onView(withId(R.id.prgSubtithe)).check(matches(withProgress(subTitheValue)));
     }
     @Test
     public void testSpinnerProgress() {

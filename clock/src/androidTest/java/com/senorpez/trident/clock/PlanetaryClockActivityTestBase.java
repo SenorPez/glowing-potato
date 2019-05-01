@@ -1,26 +1,30 @@
 package com.senorpez.trident.clock;
 
 import android.app.Instrumentation;
-import androidx.lifecycle.MutableLiveData;
-import androidx.test.platform.app.InstrumentationRegistry;
-import androidx.test.rule.ActivityTestRule;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import androidx.lifecycle.MutableLiveData;
+import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.rule.ActivityTestRule;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 public class PlanetaryClockActivityTestBase {
     @Rule
-    public ActivityTestRule<PlanetaryClockActivity> activityTestRule = new ActivityTestRule<>(PlanetaryClockActivity.class, true, false);
+    public ActivityTestRule<PlanetaryClockActivity> activityTestRule =
+            new ActivityTestRule<>(PlanetaryClockActivity.class, true, false);
 
     final String localDateTimeValue = "Local Date Time";
     final String standardDateTimeValue = "Standard Date Time";
 
     @Mock
     PlanetaryCalendarViewModel planetaryCalendarViewModel;
+
     @Mock
     PlanetaryCalendarViewModelFactory planetaryCalendarViewModelFactory;
 
@@ -37,9 +41,9 @@ public class PlanetaryClockActivityTestBase {
         tithe.postValue(3);
         when(planetaryCalendarViewModel.getTithe()).thenReturn(tithe);
 
-        MutableLiveData<Integer> subtithe = new MutableLiveData<>();
-        subtithe.postValue(2);
-        when(planetaryCalendarViewModel.getSubtithe()).thenReturn(subtithe);
+        MutableLiveData<Integer> subTithe = new MutableLiveData<>();
+        subTithe.postValue(2);
+        when(planetaryCalendarViewModel.getSubTithe()).thenReturn(subTithe);
 
         MutableLiveData<Integer> spinner = new MutableLiveData<>();
         spinner.postValue(9);
