@@ -9,11 +9,6 @@ public class WorkersCalendar {
     private double epochOffset;
     private Clock clock;
 
-    WorkersCalendar(double standardHoursPerDay, double epochOffset) {
-        this.standardHoursPerDay = standardHoursPerDay;
-        this.epochOffset = epochOffset;
-    }
-
     @JsonCreator
     WorkersCalendar() {
         this.clock = Clock.offset(
@@ -22,7 +17,19 @@ public class WorkersCalendar {
                         Clock.fixed(Instant.parse("2000-01-01T00:00:00Z"), ZoneId.ofOffset("GMT", ZoneOffset.UTC)).millis() * -1));
     }
 
-    int getCaste() {
+    WorkersCalendar(double standardHoursPerDay, double epochOffset) {
+        this.standardHoursPerDay = standardHoursPerDay;
+        this.epochOffset = epochOffset;
+    }
+
+    public static WorkersCalendar buildWorkersCalendar(double standardHoursPerDay, double epochOffset) {
+        WorkersCalendar workersCalendar = new WorkersCalendar();
+        workersCalendar.setStandardHoursPerDay(standardHoursPerDay);
+        workersCalendar.setEpochOffset(epochOffset);
+        return workersCalendar;
+    }
+
+    public int getCaste() {
         double localMilliseconds = getLocalMilliseconds(clock.millis());
         double localDays = getLocalDays(localMilliseconds);
         return getCaste(localDays);
@@ -62,7 +69,7 @@ public class WorkersCalendar {
         }
     }
 
-    int getCasteDay() {
+    public int getCasteDay() {
         double localMilliseconds = getLocalMilliseconds(clock.millis());
         double localDays = getLocalDays(localMilliseconds);
         return getCasteDay(localDays);
@@ -133,7 +140,7 @@ public class WorkersCalendar {
         return standardMilliseconds - epochOffset * 86400000;
     }
 
-    int getLocalYear() {
+    public int getLocalYear() {
         double localMilliseconds = getLocalMilliseconds(clock.millis());
         double localDays = getLocalDays(localMilliseconds);
         return getLocalYear(localDays);
@@ -148,7 +155,7 @@ public class WorkersCalendar {
         return year;
     }
 
-    int getShift() {
+    public int getShift() {
         double localMilliseconds = getLocalMilliseconds(clock.millis());
         double localDays = getLocalDays(localMilliseconds);
         return getShift(localDays);
@@ -158,7 +165,7 @@ public class WorkersCalendar {
         return (int) Math.floor(days % 1 / 0.25) + 1;
     }
 
-    double getTithe() {
+    public double getTithe() {
         double localMilliseconds = getLocalMilliseconds(clock.millis());
         double localDays = getLocalDays(localMilliseconds);
         return getTithe(localDays);
