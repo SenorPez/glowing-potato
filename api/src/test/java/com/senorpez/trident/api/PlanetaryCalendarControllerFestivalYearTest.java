@@ -25,8 +25,7 @@ import static com.senorpez.trident.api.SupportedMediaTypes.TRIDENT_API;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
 import static org.springframework.http.MediaType.ALL;
@@ -98,7 +97,7 @@ public class PlanetaryCalendarControllerFestivalYearTest {
         MockitoAnnotations.initMocks(this);
 
         this.mockMvc = MockMvcBuilders
-                .standaloneSetup(new FestivalYearController(apiService))
+                .standaloneSetup(new PlanetaryCalendarController(apiService))
                 .setMessageConverters(HALMessageConverter.getConverter(Collections.singletonList(ALL)))
                 .setControllerAdvice(new APIExceptionHandler())
                 .apply(documentationConfiguration(this.restDocumentation))
@@ -160,7 +159,8 @@ public class PlanetaryCalendarControllerFestivalYearTest {
                         FIRST_PLANET.getId(),
                         FIRST_CALENDAR.getId()))));
 
-        verifyZeroInteractions(apiService);
+        verify(apiService, times(4)).findOne(any(), any(), any());
+        verifyNoMoreInteractions(apiService);
     }
 
     @Test
@@ -198,7 +198,8 @@ public class PlanetaryCalendarControllerFestivalYearTest {
                         FIRST_PLANET.getId(),
                         FIRST_CALENDAR.getId()))));
 
-        verifyZeroInteractions(apiService);
+        verify(apiService, times(4)).findOne(any(), any(), any());
+        verifyNoMoreInteractions(apiService);
     }
 
     @Test

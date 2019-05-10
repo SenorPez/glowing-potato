@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-6/schema",
-  "title": "Trident API Calendar Schema",
-  "description": "Schema for a calendar in Trident API",
+  "title": "Trident API Worker's Calendar Schema",
+  "description": "Schema for the worker's calendar in Trident API",
   "definitions": {
     "standardLink": {
       "type": "object",
@@ -56,13 +56,19 @@
     "id": {
       "type": "integer"
     },
-    "name": {
-      "type": "string"
+    "year": {
+      "type": "integer"
     },
-    "standardHoursPerDay": {
-      "type": "number"
+    "caste": {
+      "type": "integer"
     },
-    "epochOffset": {
+    "day": {
+      "type": "integer"
+    },
+    "shift": {
+      "type": "integer"
+    },
+    "tithe": {
       "type": "number"
     },
     "_links": {
@@ -77,14 +83,8 @@
         "curies": {
           "$ref": "#/definitions/curies"
         },
-        "trident-api:calendars": {
+        "trident-api:calendar": {
           "$ref": "#/definitions/standardLink"
-        },
-        "trident-api:currentTime": {
-          "$ref": "#/definitions/standardLink"
-        },
-        "trident-api:festivalYear": {
-          "$ref": "#/definitions/templatedLink"
         }
       },
       "additionalProperties": false,
@@ -92,18 +92,18 @@
         "self",
         "index",
         "curies",
-        "trident-api:calendars",
-        "trident-api:currentTime",
-        "trident-api:festivalYear"
+        "trident-api:calendar"
       ]
     }
   },
   "additionalProperties": false,
   "required": [
     "id",
-    "name",
-    "standardHoursPerDay",
-    "epochOffset",
+    "year",
+    "caste",
+    "day",
+    "shift",
+    "tithe",
     "_links"
   ]
 }

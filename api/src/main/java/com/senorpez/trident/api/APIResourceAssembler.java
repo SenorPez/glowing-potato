@@ -26,7 +26,7 @@ public class APIResourceAssembler<M extends Identifiable<? extends Serializable>
         return addIndexLink(resource);
     }
 
-    private R addIndexLink(final R resource) {
+    R addIndexLink(final R resource) {
         resource.add(linkTo(methodOn(RootController.class).root()).withRel("index"));
         return resource;
     }

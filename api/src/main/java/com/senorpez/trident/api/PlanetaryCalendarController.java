@@ -93,4 +93,59 @@ class PlanetaryCalendarController {
         final PlanetaryCalendarResource calendarResource = calendarModel.toResource(solarSystemId, starId, planetId);
         return ResponseEntity.ok(calendarResource);
     }
+
+    @RequestMapping("/{calendarId}/currentTime")
+    ResponseEntity<WorkersCalendarResource> currentCalendar(
+            @PathVariable final int solarSystemId,
+            @PathVariable final int starId,
+            @PathVariable final int planetId,
+            @PathVariable final int calendarId) {
+        final SolarSystem solarSystem = apiService.findOne(
+                this.solarSystems,
+                findSolarSystem -> findSolarSystem.getId() == solarSystemId,
+                () -> new SolarSystemNotFoundException(solarSystemId));
+        final Star star = apiService.findOne(
+                solarSystem.getStars(),
+                findStar -> findStar.getId() == starId,
+                () -> new StarNotFoundException(starId));
+        final Planet planet = apiService.findOne(
+                star.getPlanets(),
+                findPlanet -> findPlanet.getId() == planetId,
+                () -> new PlanetNotFoundException(planetId));
+        final PlanetaryCalendar calendar = apiService.findOne(
+                planet.getCalendars(),
+                findCalendar -> findCalendar.getId() == calendarId,
+                () -> new PlanetaryCalendarNotFoundException(calendarId));
+        final WorkersCalendarModel workersCalendarModel = new WorkersCalendarModel(calendar);
+        final WorkersCalendarResource workersCalendarResource = workersCalendarModel.toResource(solarSystemId, starId, planetId, calendarId);
+        return ResponseEntity.ok(workersCalendarResource);
+    }
+
+    @RequestMapping(value = "/{calendarId}/festivalYear/{localYear}")
+    ResponseEntity<FestivalYearResource> festivalYear(
+            @PathVariable final int solarSystemId,
+            @PathVariable final int starId,
+            @PathVariable final int planetId,
+            @PathVariable final int calendarId,
+            @PathVariable final Integer localYear) {
+        final SolarSystem solarSystem = apiService.findOne(
+                this.solarSystems,
+                findSolarSystem -> findSolarSystem.getId() == solarSystemId,
+                () -> new SolarSystemNotFoundException(solarSystemId));
+        final Star star = apiService.findOne(
+                solarSystem.getStars(),
+                findStar -> findStar.getId() == starId,
+                () -> new StarNotFoundException(starId));
+        final Planet planet = apiService.findOne(
+                star.getPlanets(),
+                findPlanet -> findPlanet.getId() == planetId,
+                () -> new PlanetNotFoundException(planetId));
+        final PlanetaryCalendar calendar = apiService.findOne(
+                planet.getCalendars(),
+                findCalendar -> findCalendar.getId() == calendarId,
+                () -> new PlanetaryCalendarNotFoundException(calendarId));
+        final FestivalYearModel festivalYearModel = new FestivalYearModel(calendar, localYear);
+        final FestivalYearResource festivalYearResource = festivalYearModel.toResource(solarSystemId, starId, planetId, calendarId);
+        return ResponseEntity.ok(festivalYearResource);
+    }
 }

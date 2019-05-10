@@ -44,6 +44,7 @@ public class PlanetaryCalendarControllerTest {
     private static final ClassLoader CLASS_LOADER = PlanetaryCalendarControllerTest.class.getClassLoader();
     private static InputStream CALENDAR_SCHEMA;
     private static InputStream CALENDAR_COLLECTION_SCHEMA;
+    private static InputStream WORKERS_CALENDAR_SCHEMA;
     private static InputStream ERROR_SCHEMA;
 
     private static final PlanetaryCalendar FIRST_CALENDAR = new PlanetaryCalendarBuilder()
@@ -128,6 +129,7 @@ public class PlanetaryCalendarControllerTest {
     public void setUp() {
         CALENDAR_SCHEMA = CLASS_LOADER.getResourceAsStream("calendar.schema.json");
         CALENDAR_COLLECTION_SCHEMA = CLASS_LOADER.getResourceAsStream("calendars.schema.json");
+        WORKERS_CALENDAR_SCHEMA = CLASS_LOADER.getResourceAsStream("workerscalendar.schema.json");
         ERROR_SCHEMA = CLASS_LOADER.getResourceAsStream("error.schema.json");
         MockitoAnnotations.initMocks(this);
 
@@ -827,6 +829,12 @@ public class PlanetaryCalendarControllerTest {
                         FIRST_SYSTEM.getId(),
                         FIRST_STAR.getId(),
                         FIRST_PLANET.getId()))))
+                .andExpect(jsonPath("$._links.trident-api:currentTime", hasEntry("href", String.format(
+                        "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d/currentTime",
+                        FIRST_SYSTEM.getId(),
+                        FIRST_STAR.getId(),
+                        FIRST_PLANET.getId(),
+                        FIRST_CALENDAR.getId()))))
                 .andDo(document("calendar",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
@@ -842,6 +850,7 @@ public class PlanetaryCalendarControllerTest {
                                 subsectionWithPath("_links").ignored()),
                         commonLinks.and(
                                 linkWithRel("trident-api:calendars").description("List of calendar resources."),
+                                linkWithRel("trident-api:currentTime").description("Current time on this calendar."),
                                 linkWithRel("trident-api:festivalYear").description("Given a local year, returns if a festival year."))));
 
         verify(apiService, times(4)).findOne(any(), any(), any());
@@ -973,11 +982,10 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET).thenThrow(new PlanetaryCalendarNotFoundException(8675309));
 
         mockMvc.perform(get(String.format(
-                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/8675309",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
-                FIRST_PLANET.getId(),
-                FIRST_CALENDAR.getId())).accept(INVALID_MEDIA_TYPE))
+                FIRST_PLANET.getId())).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
@@ -993,11 +1001,10 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET).thenThrow(new PlanetaryCalendarNotFoundException(8675309));
 
         mockMvc.perform(put(String.format(
-                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/8675309",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
-                FIRST_PLANET.getId(),
-                FIRST_CALENDAR.getId())).accept(TRIDENT_API))
+                FIRST_PLANET.getId())).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
@@ -1053,10 +1060,9 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR).thenThrow(new PlanetNotFoundException(8675309));
 
         mockMvc.perform(get(String.format(
-                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/8675309/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
-                FIRST_PLANET.getId(),
                 FIRST_CALENDAR.getId())).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
@@ -1073,10 +1079,9 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR).thenThrow(new PlanetNotFoundException(8675309));
 
         mockMvc.perform(put(String.format(
-                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/%d/planets/8675309/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
-                FIRST_PLANET.getId(),
                 FIRST_CALENDAR.getId())).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
                 .andExpect(content().contentType(APPLICATION_JSON_UTF8))
@@ -1133,9 +1138,8 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM).thenThrow(new StarNotFoundException(8675309));
 
         mockMvc.perform(get(String.format(
-                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/8675309/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
-                FIRST_STAR.getId(),
                 FIRST_PLANET.getId(),
                 FIRST_CALENDAR.getId())).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
@@ -1153,9 +1157,8 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM).thenThrow(new StarNotFoundException(8675309));
 
         mockMvc.perform(put(String.format(
-                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/%d/stars/8675309/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
-                FIRST_STAR.getId(),
                 FIRST_PLANET.getId(),
                 FIRST_CALENDAR.getId())).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
@@ -1173,7 +1176,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenThrow(new SolarSystemNotFoundException(8675309));
 
         mockMvc.perform(get(String.format(
-                "/systems/8675309/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/8675309/stars/%d/planets/%d/calendars/%d",
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId(),
                 FIRST_CALENDAR.getId())).accept(TRIDENT_API))
@@ -1193,7 +1196,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenThrow(new SolarSystemNotFoundException(8675309));
 
         mockMvc.perform(get(String.format(
-                "/systems/8675309/stars/%d/planets/%d/calendars/%d",
+                "http://localhost:8080/systems/8675309/stars/%d/planets/%d/calendars/%d",
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId(),
                 FIRST_CALENDAR.getId())).accept(FALLBACK))
@@ -1213,8 +1216,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenThrow(new SolarSystemNotFoundException(8675309));
 
         mockMvc.perform(get(String.format(
-                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
-                FIRST_SYSTEM.getId(),
+                "http://localhost:8080/systems/8675309/stars/%d/planets/%d/calendars/%d",
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId(),
                 FIRST_CALENDAR.getId())).accept(INVALID_MEDIA_TYPE))
@@ -1233,8 +1235,7 @@ public class PlanetaryCalendarControllerTest {
         when(apiService.findOne(any(), any(), any())).thenThrow(new SolarSystemNotFoundException(8675309));
 
         mockMvc.perform(put(String.format(
-                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
-                FIRST_SYSTEM.getId(),
+                "http://localhost:8080/systems/8675309/stars/%d/planets/%d/calendars/%d",
                 FIRST_STAR.getId(),
                 FIRST_PLANET.getId(),
                 FIRST_CALENDAR.getId())).accept(TRIDENT_API))
@@ -1482,6 +1483,706 @@ public class PlanetaryCalendarControllerTest {
                 "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                 FIRST_SYSTEM.getId(),
                 FIRST_STAR.getId(),
+                FIRST_PLANET.getId(),
+                FIRST_CALENDAR.getId())).accept(TRIDENT_API))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
+                .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
+
+        verifyZeroInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_ValidSystemId_ValidStarId_ValidPlanetId_ValidCalendarId_ValidAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET, FIRST_CALENDAR);
+
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d/currentTime",
+                FIRST_SYSTEM.getId(),
+                FIRST_STAR.getId(),
+                FIRST_PLANET.getId(),
+                FIRST_CALENDAR.getId())).accept(TRIDENT_API))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(TRIDENT_API))
+                .andExpect(content().string(matchesJsonSchema(WORKERS_CALENDAR_SCHEMA)))
+                .andExpect(jsonPath("$.id", is(FIRST_CALENDAR.getId())))
+                .andExpect(jsonPath("$.year", instanceOf(Integer.class)))
+                .andExpect(jsonPath("$.caste", instanceOf(Integer.class)))
+                .andExpect(jsonPath("$.day", instanceOf(Integer.class)))
+                .andExpect(jsonPath("$.shift", instanceOf(Integer.class)))
+                .andExpect(jsonPath("$.tithe", instanceOf(Double.class)))
+                .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format(
+                        "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d/currentTime",
+                        FIRST_SYSTEM.getId(),
+                        FIRST_STAR.getId(),
+                        FIRST_PLANET.getId(),
+                        FIRST_CALENDAR.getId()))))
+                .andExpect(jsonPath("$._links.curies", everyItem(
+                        allOf(
+                                hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-trident-{rel}"),
+                                hasEntry("name", (Object) "trident-api"),
+                                hasEntry("templated", (Object) true)))))
+                .andExpect(jsonPath("$._links.trident-api:calendar", hasEntry("href", String.format(
+                        "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
+                        FIRST_SYSTEM.getId(),
+                        FIRST_STAR.getId(),
+                        FIRST_PLANET.getId(),
+                        FIRST_CALENDAR.getId()))))
+                .andDo(document("calendar",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        requestHeaders(
+                                headerWithName("Accept")
+                                        .description("Accept header.")
+                                        .attributes(key("acceptvalue").value(TRIDENT_API_VALUE))),
+                        responseFields(
+                                fieldWithPath("id").description("Calendar ID number."),
+                                fieldWithPath("year").description("Current year."),
+                                fieldWithPath("caste").description("Current caste."),
+                                fieldWithPath("day").description("Current day."),
+                                fieldWithPath("shift").description("Current shift."),
+                                fieldWithPath("tithe").description("Current tithe."),
+                                subsectionWithPath("_links").ignored()),
+                        commonLinks.and(
+                                linkWithRel("trident-api:calendar").description("Calendar."))));
+
+        verify(apiService, times(4)).findOne(any(), any(), any());
+        verifyNoMoreInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_ValidSystemId_ValidStarId_ValidPlanetId_ValidCalendarId_FallbackAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET, FIRST_CALENDAR);
+
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d/currentTime",
+                FIRST_SYSTEM.getId(),
+                FIRST_STAR.getId(),
+                FIRST_PLANET.getId(),
+                FIRST_CALENDAR.getId())).accept(FALLBACK))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(FALLBACK))
+                .andExpect(content().string(matchesJsonSchema(WORKERS_CALENDAR_SCHEMA)))
+                .andExpect(jsonPath("$.id", is(FIRST_CALENDAR.getId())))
+                .andExpect(jsonPath("$.year", instanceOf(Integer.class)))
+                .andExpect(jsonPath("$.caste", instanceOf(Integer.class)))
+                .andExpect(jsonPath("$.day", instanceOf(Integer.class)))
+                .andExpect(jsonPath("$.shift", instanceOf(Integer.class)))
+                .andExpect(jsonPath("$.tithe", instanceOf(Double.class)))
+                .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format(
+                        "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d/currentTime",
+                        FIRST_SYSTEM.getId(),
+                        FIRST_STAR.getId(),
+                        FIRST_PLANET.getId(),
+                        FIRST_CALENDAR.getId()))))
+                .andExpect(jsonPath("$._links.curies", everyItem(
+                        allOf(
+                                hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-trident-{rel}"),
+                                hasEntry("name", (Object) "trident-api"),
+                                hasEntry("templated", (Object) true)))))
+                .andExpect(jsonPath("$._links.trident-api:calendar", hasEntry("href", String.format(
+                        "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
+                        FIRST_SYSTEM.getId(),
+                        FIRST_STAR.getId(),
+                        FIRST_PLANET.getId(),
+                        FIRST_CALENDAR.getId()))));
+
+        verify(apiService, times(4)).findOne(any(), any(), any());
+        verifyNoMoreInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_ValidSystemId_ValidStarId_ValidPlanetId_ValidCalendarId_InvalidAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET, FIRST_CALENDAR);
+
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d/currentTime",
+                FIRST_SYSTEM.getId(),
+                FIRST_STAR.getId(),
+                FIRST_PLANET.getId(),
+                FIRST_CALENDAR.getId())).accept(INVALID_MEDIA_TYPE))
+                .andExpect(status().isNotAcceptable())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
+                .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
+
+        verifyZeroInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_ValidSystemId_ValidStarId_ValidPlanetId_ValidCalendarId_InvalidMethod() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET, FIRST_CALENDAR);
+
+        mockMvc.perform(put(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d/currentTime",
+                FIRST_SYSTEM.getId(),
+                FIRST_STAR.getId(),
+                FIRST_PLANET.getId(),
+                FIRST_CALENDAR.getId())).accept(TRIDENT_API))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
+                .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
+
+        verifyZeroInteractions(apiService);
+    }
+
+
+    @Test
+    public void GetCurrentTime_ValidSystemId_ValidStarId_ValidPlanetId_InvalidCalendarId_ValidAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET).thenThrow(new PlanetaryCalendarNotFoundException(8675309));
+
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/8675309/currentTime",
+                FIRST_SYSTEM.getId(),
+                FIRST_STAR.getId(),
+                FIRST_PLANET.getId())).accept(TRIDENT_API))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
+                .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is(String.format("Calendar with ID of %d not found", 8675309))));
+
+        verify(apiService, times(4)).findOne(any(), any(), any());
+        verifyNoMoreInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_ValidSystemId_ValidStarId_ValidPlanetId_InvalidCalendarId_FallbackAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET).thenThrow(new PlanetaryCalendarNotFoundException(8675309));
+
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/8675309/currentTime",
+                FIRST_SYSTEM.getId(),
+                FIRST_STAR.getId(),
+                FIRST_PLANET.getId())).accept(FALLBACK))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
+                .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is(String.format("Calendar with ID of %d not found", 8675309))));
+
+        verify(apiService, times(4)).findOne(any(), any(), any());
+        verifyNoMoreInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_ValidSystemId_ValidStarId_ValidPlanetId_InvalidCalendarId_InvalidAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET).thenThrow(new PlanetaryCalendarNotFoundException(8675309));
+
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/8675309/currentTime",
+                FIRST_SYSTEM.getId(),
+                FIRST_STAR.getId(),
+                FIRST_PLANET.getId())).accept(INVALID_MEDIA_TYPE))
+                .andExpect(status().isNotAcceptable())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
+                .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
+
+        verifyZeroInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_ValidSystemId_ValidStarId_ValidPlanetId_InvalidCalendarId_InvalidMethod() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET).thenThrow(new PlanetaryCalendarNotFoundException(8675309));
+
+        mockMvc.perform(put(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/8675309/currentTime",
+                FIRST_SYSTEM.getId(),
+                FIRST_STAR.getId(),
+                FIRST_PLANET.getId())).accept(TRIDENT_API))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
+                .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
+
+        verifyZeroInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_ValidSystemId_ValidStarId_InvalidPlanetId_XXXCalendarId_ValidAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR).thenThrow(new PlanetNotFoundException(8675309));
+
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/8675309/calendars/%d/currentTime",
+                FIRST_SYSTEM.getId(),
+                FIRST_STAR.getId(),
+                FIRST_CALENDAR.getId())).accept(TRIDENT_API))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
+                .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is(String.format("Planet with ID of %d not found", 8675309))));
+
+        verify(apiService, times(3)).findOne(any(), any(), any());
+        verifyNoMoreInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_ValidSystemId_ValidStarId_InvalidPlanetId_XXXCalendarId_FallbackAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR).thenThrow(new PlanetNotFoundException(8675309));
+
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/8675309/calendars/%d/currentTime",
+                FIRST_SYSTEM.getId(),
+                FIRST_STAR.getId(),
+                FIRST_CALENDAR.getId())).accept(FALLBACK))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
+                .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is(String.format("Planet with ID of %d not found", 8675309))));
+
+        verify(apiService, times(3)).findOne(any(), any(), any());
+        verifyNoMoreInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_ValidSystemId_ValidStarId_InvalidPlanetId_XXXCalendarId_InvalidAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR).thenThrow(new PlanetNotFoundException(8675309));
+
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/8675309/calendars/%d/currentTime",
+                FIRST_SYSTEM.getId(),
+                FIRST_STAR.getId(),
+                FIRST_CALENDAR.getId())).accept(INVALID_MEDIA_TYPE))
+                .andExpect(status().isNotAcceptable())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
+                .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
+
+        verifyZeroInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_ValidSystemId_ValidStarId_InvalidPlanetId_XXXCalendarId_InvalidMethod() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR).thenThrow(new PlanetNotFoundException(8675309));
+
+        mockMvc.perform(put(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/8675309/calendars/%d/currentTime",
+                FIRST_SYSTEM.getId(),
+                FIRST_STAR.getId(),
+                FIRST_CALENDAR.getId())).accept(TRIDENT_API))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
+                .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
+
+        verifyZeroInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_ValidSystemId_InvalidStarId_XXXPlanetId_XXXCalendarId_ValidAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM).thenThrow(new StarNotFoundException(8675309));
+
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/8675309/planets/%d/calendars/%d/currentTime",
+                FIRST_SYSTEM.getId(),
+                FIRST_PLANET.getId(),
+                FIRST_CALENDAR.getId())).accept(TRIDENT_API))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
+                .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is(String.format("Star with ID of %d not found", 8675309))));
+
+        verify(apiService, times(2)).findOne(any(), any(), any());
+        verifyNoMoreInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_ValidSystemId_InvalidStarId_XXXPlanetId_XXXCalendarId_FallbackAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM).thenThrow(new StarNotFoundException(8675309));
+
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/8675309/planets/%d/calendars/%d/currentTime",
+                FIRST_SYSTEM.getId(),
+                FIRST_PLANET.getId(),
+                FIRST_CALENDAR.getId())).accept(FALLBACK))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
+                .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is(String.format("Star with ID of %d not found", 8675309))));
+
+        verify(apiService, times(2)).findOne(any(), any(), any());
+        verifyNoMoreInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_ValidSystemId_InvalidStarId_XXXPlanetId_XXXCalendarId_InvalidAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM).thenThrow(new StarNotFoundException(8675309));
+
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/8675309/planets/%d/calendars/%d/currentTime",
+                FIRST_SYSTEM.getId(),
+                FIRST_PLANET.getId(),
+                FIRST_CALENDAR.getId())).accept(INVALID_MEDIA_TYPE))
+                .andExpect(status().isNotAcceptable())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
+                .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
+
+        verifyZeroInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_ValidSystemId_InvalidStarId_XXXPlanetId_XXXCalendarId_InvalidMethod() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM).thenThrow(new StarNotFoundException(8675309));
+
+        mockMvc.perform(put(String.format(
+                "http://localhost:8080/systems/%d/stars/8675309/planets/%d/calendars/%d/currentTime",
+                FIRST_SYSTEM.getId(),
+                FIRST_PLANET.getId(),
+                FIRST_CALENDAR.getId())).accept(TRIDENT_API))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
+                .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
+
+        verifyZeroInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_InvalidSystemId_XXXStarId_XXXPlanetId_XXXCalendarId_ValidAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenThrow(new SolarSystemNotFoundException(8675309));
+
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/8675309/stars/%d/planets/%d/calendars/%d/currentTime",
+                FIRST_STAR.getId(),
+                FIRST_PLANET.getId(),
+                FIRST_CALENDAR.getId())).accept(TRIDENT_API))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
+                .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is(String.format("Solar system with ID of %d not found", 8675309))));
+
+        verify(apiService, times(1)).findOne(any(), any(), any());
+        verifyNoMoreInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_InvalidSystemId_XXXStarId_XXXPlanetId_XXXCalendarId_FallbackAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenThrow(new SolarSystemNotFoundException(8675309));
+
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/8675309/stars/%d/planets/%d/calendars/%d/currentTime",
+                FIRST_STAR.getId(),
+                FIRST_PLANET.getId(),
+                FIRST_CALENDAR.getId())).accept(FALLBACK))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
+                .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is(String.format("Solar system with ID of %d not found", 8675309))));
+
+        verify(apiService, times(1)).findOne(any(), any(), any());
+        verifyNoMoreInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_InvalidSystemId_XXXStarId_XXXPlanetId_XXXCalendarId_InvalidAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenThrow(new SolarSystemNotFoundException(8675309));
+
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/8675309/stars/%d/planets/%d/calendars/%d/currentTime",
+                FIRST_STAR.getId(),
+                FIRST_PLANET.getId(),
+                FIRST_CALENDAR.getId())).accept(INVALID_MEDIA_TYPE))
+                .andExpect(status().isNotAcceptable())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
+                .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
+
+        verifyZeroInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_InvalidSystemId_XXXStarId_XXXPlanetId_XXXCalendarId_InvalidMethod() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenThrow(new SolarSystemNotFoundException(8675309));
+
+        mockMvc.perform(put(String.format(
+                "http://localhost:8080/systems/8675309/stars/%d/planets/%d/calendars/%d/currentTime",
+                FIRST_STAR.getId(),
+                FIRST_PLANET.getId(),
+                FIRST_CALENDAR.getId())).accept(TRIDENT_API))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
+                .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
+
+        verifyZeroInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_ValidSystemId_ValidStarId_ValidPlanetId_MismatchCalendarId_ValidAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET).thenThrow(new PlanetaryCalendarNotFoundException(SECOND_CALENDAR.getId()));
+
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d/currentTime",
+                FIRST_SYSTEM.getId(),
+                FIRST_STAR.getId(),
+                FIRST_PLANET.getId(),
+                SECOND_CALENDAR.getId())).accept(TRIDENT_API))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
+                .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is(String.format("Calendar with ID of %d not found", SECOND_CALENDAR.getId()))));
+
+        verify(apiService, times(4)).findOne(any(), any(), any());
+        verifyNoMoreInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_ValidSystemId_ValidStarId_ValidPlanetId_MismatchCalendarId_FallbackAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET).thenThrow(new PlanetaryCalendarNotFoundException(SECOND_CALENDAR.getId()));
+
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d/currentTime",
+                FIRST_SYSTEM.getId(),
+                FIRST_STAR.getId(),
+                FIRST_PLANET.getId(),
+                SECOND_CALENDAR.getId())).accept(FALLBACK))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
+                .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is(String.format("Calendar with ID of %d not found", SECOND_CALENDAR.getId()))));
+
+        verify(apiService, times(4)).findOne(any(), any(), any());
+        verifyNoMoreInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_ValidSystemId_ValidStarId_ValidPlanetId_MismatchCalendarId_InvalidAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET).thenThrow(new PlanetaryCalendarNotFoundException(SECOND_CALENDAR.getId()));
+
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d/currentTime",
+                FIRST_SYSTEM.getId(),
+                FIRST_STAR.getId(),
+                FIRST_PLANET.getId(),
+                SECOND_CALENDAR.getId())).accept(INVALID_MEDIA_TYPE))
+                .andExpect(status().isNotAcceptable())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
+                .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
+
+        verifyZeroInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_ValidSystemId_ValidStarId_ValidPlanetId_MismatchCalendarId_InvalidMethod() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR, FIRST_PLANET).thenThrow(new PlanetaryCalendarNotFoundException(SECOND_CALENDAR.getId()));
+
+        mockMvc.perform(put(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d/currentTime",
+                FIRST_SYSTEM.getId(),
+                FIRST_STAR.getId(),
+                FIRST_PLANET.getId(),
+                SECOND_CALENDAR.getId())).accept(TRIDENT_API))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
+                .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
+
+        verifyZeroInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_ValidSystemId_ValidStarId_MismatchPlanetId_XXXCalendarId_ValidAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR).thenThrow(new PlanetNotFoundException(SECOND_PLANET.getId()));
+
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d/currentTime",
+                FIRST_SYSTEM.getId(),
+                FIRST_STAR.getId(),
+                SECOND_PLANET.getId(),
+                FIRST_CALENDAR.getId())).accept(TRIDENT_API))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
+                .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is(String.format("Planet with ID of %d not found", SECOND_PLANET.getId()))));
+
+        verify(apiService, times(3)).findOne(any(), any(), any());
+        verifyNoMoreInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_ValidSystemId_ValidStarId_MismatchPlanetId_XXXCalendarId_FallbackAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR).thenThrow(new PlanetNotFoundException(SECOND_PLANET.getId()));
+
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d/currentTime",
+                FIRST_SYSTEM.getId(),
+                FIRST_STAR.getId(),
+                SECOND_PLANET.getId(),
+                FIRST_CALENDAR.getId())).accept(FALLBACK))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
+                .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is(String.format("Planet with ID of %d not found", SECOND_PLANET.getId()))));
+
+        verify(apiService, times(3)).findOne(any(), any(), any());
+        verifyNoMoreInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_ValidSystemId_ValidStarId_MismatchPlanetId_XXXCalendarId_InvalidAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR).thenThrow(new PlanetNotFoundException(SECOND_PLANET.getId()));
+
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d/currentTime",
+                FIRST_SYSTEM.getId(),
+                FIRST_STAR.getId(),
+                SECOND_PLANET.getId(),
+                FIRST_CALENDAR.getId())).accept(INVALID_MEDIA_TYPE))
+                .andExpect(status().isNotAcceptable())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
+                .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
+
+        verifyZeroInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_ValidSystemId_ValidStarId_MismatchPlanetId_XXXCalendarId_InvalidMethod() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, FIRST_STAR).thenThrow(new PlanetNotFoundException(SECOND_PLANET.getId()));
+
+        mockMvc.perform(put(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d/currentTime",
+                FIRST_SYSTEM.getId(),
+                FIRST_STAR.getId(),
+                SECOND_PLANET.getId(),
+                FIRST_CALENDAR.getId())).accept(TRIDENT_API))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
+                .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
+
+        verifyZeroInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_ValidSystemId_MismatchStarId_XXXPlanetId_XXXCalendarId_ValidAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM).thenThrow(new StarNotFoundException(SECOND_STAR.getId()));
+
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d/currentTime",
+                FIRST_SYSTEM.getId(),
+                SECOND_STAR.getId(),
+                FIRST_PLANET.getId(),
+                FIRST_CALENDAR.getId())).accept(TRIDENT_API))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
+                .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is(String.format("Star with ID of %d not found", SECOND_STAR.getId()))));
+
+        verify(apiService, times(2)).findOne(any(), any(), any());
+        verifyNoMoreInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_ValidSystemId_MismatchStarId_XXXPlanetId_XXXCalendarId_FallbackAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM).thenThrow(new StarNotFoundException(SECOND_STAR.getId()));
+
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d/currentTime",
+                FIRST_SYSTEM.getId(),
+                SECOND_STAR.getId(),
+                FIRST_PLANET.getId(),
+                FIRST_CALENDAR.getId())).accept(FALLBACK))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
+                .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is(String.format("Star with ID of %d not found", SECOND_STAR.getId()))));
+
+        verify(apiService, times(2)).findOne(any(), any(), any());
+        verifyNoMoreInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_ValidSystemId_MismatchStarId_XXXPlanetId_XXXCalendarId_InvalidAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM).thenThrow(new StarNotFoundException(SECOND_STAR.getId()));
+
+        mockMvc.perform(get(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d/currentTime",
+                FIRST_SYSTEM.getId(),
+                SECOND_STAR.getId(),
+                FIRST_PLANET.getId(),
+                FIRST_CALENDAR.getId())).accept(INVALID_MEDIA_TYPE))
+                .andExpect(status().isNotAcceptable())
+                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
+                .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
+                .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
+                .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
+
+        verifyZeroInteractions(apiService);
+    }
+
+    @Test
+    public void GetCurrentTime_ValidSystemId_MismatchStarId_XXXPlanetId_XXXCalendarId_InvalidMethod() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM).thenThrow(new StarNotFoundException(SECOND_STAR.getId()));
+
+        mockMvc.perform(put(String.format(
+                "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d/currentTime",
+                FIRST_SYSTEM.getId(),
+                SECOND_STAR.getId(),
                 FIRST_PLANET.getId(),
                 FIRST_CALENDAR.getId())).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())

@@ -1,4 +1,4 @@
-package com.senorpez.trident.clock;
+package com.senorpez.trident.libraries;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(Parameterized.class)
-public class PlanetaryCalendarCasteTest {
+public class WorkersCalendarCasteTest {
     private final double days;
     private final boolean festivalDay;
     private final int caste;
@@ -25,7 +25,7 @@ public class PlanetaryCalendarCasteTest {
     private final double standardMilliseconds;
 
     @InjectMocks
-    PlanetaryCalendar planetaryCalendar;
+    WorkersCalendar workersCalendar;
 
     @Mock
     Clock mockClock;
@@ -66,7 +66,7 @@ public class PlanetaryCalendarCasteTest {
         });
     }
 
-    public PlanetaryCalendarCasteTest(
+    public WorkersCalendarCasteTest(
             double standardHoursPerDay,
             double epochOffset,
             double days,
@@ -74,7 +74,7 @@ public class PlanetaryCalendarCasteTest {
             int caste,
             int casteDay,
             double standardMilliseconds) {
-        this.planetaryCalendar = new PlanetaryCalendar(standardHoursPerDay, epochOffset);
+        this.workersCalendar = new WorkersCalendar(standardHoursPerDay, epochOffset);
         this.days = days;
         this.festivalDay = festivalDay;
         this.caste = caste;
@@ -84,34 +84,35 @@ public class PlanetaryCalendarCasteTest {
 
     @Test
     public void testGetCaste() {
-        assertThat(planetaryCalendar.getCaste(days), is(caste));
+        assertThat(workersCalendar.getCaste(days), is(caste));
     }
 
     @Test
     public void testGetCaste_Current() {
         when(mockClock.millis()).thenReturn((long) Math.ceil(standardMilliseconds));
-        assertThat(planetaryCalendar.getCaste(), is(caste));
+        assertThat(workersCalendar.getCaste(), is(caste));
     }
 
     @Test
     public void testGetCasteDay() {
-        assertThat(planetaryCalendar.getCasteDay(days), is(casteDay));
+        assertThat(workersCalendar.getCasteDay(days), is(casteDay));
     }
 
     @Test
     public void testGetCasteDay_Current() {
         when(mockClock.millis()).thenReturn((long) Math.ceil(standardMilliseconds));
-        assertThat(planetaryCalendar.getCasteDay(), is(casteDay));
+        assertThat(workersCalendar.getCasteDay(), is(casteDay));
     }
 
     @Test
     public void testIsFestivalDay() {
-        assertThat(planetaryCalendar.isFestivalDay(days), is(festivalDay));
+        assertThat(workersCalendar.isFestivalDay(days), is(festivalDay));
     }
 
     @Test
     public void testIsFestivalDay_Current() {
         when(mockClock.millis()).thenReturn((long) Math.ceil(standardMilliseconds));
-        assertThat(planetaryCalendar.isFestivalDay(), is(festivalDay));
+        assertThat(workersCalendar.isFestivalDay(), is(festivalDay));
     }
+
 }

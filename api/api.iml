@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module external.linked.project.id=":api" external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$/.." external.system.id="GRADLE" type="JAVA_MODULE" version="4">
+  <component name="ExternalSystem" externalSystem="GRADLE" linkedProjectId=":api" linkedProjectPath="$MODULE_DIR$" rootProjectPath="$MODULE_DIR$/.." />
   <component name="FacetManager">
     <facet type="android-gradle" name="Android-Gradle">
       <configuration>
@@ -26,6 +27,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="libraries" exported="" />
     <orderEntry type="library" exported="" name="Gradle: spring-boot-starter-hateoas-1.5.6.RELEASE" level="project" />
     <orderEntry type="library" exported="" name="Gradle: spring-boot-starter-web-1.5.6.RELEASE" level="project" />
     <orderEntry type="library" exported="" name="Gradle: spring-hateoas-0.23.0.RELEASE" level="project" />

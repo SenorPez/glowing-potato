@@ -1,5 +1,9 @@
 package com.senorpez.trident.clock;
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import com.senorpez.trident.libraries.WorkersCalendar;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -7,26 +11,16 @@ import org.junit.rules.TestRule;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class PlanetaryCalendarViewModelTest {
     @Mock
     PlanetaryCalendarRepository planetaryCalendarRepository;
 
     @Mock
-    PlanetaryCalendar planetaryCalendar;
+    WorkersCalendar planetaryCalendar;
 
     private PlanetaryCalendarViewModel planetaryCalendarViewModel;
 
@@ -34,7 +28,7 @@ public class PlanetaryCalendarViewModelTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        MutableLiveData<PlanetaryCalendar> planetaryCalendarLiveData = new MutableLiveData<>();
+        MutableLiveData<WorkersCalendar> planetaryCalendarLiveData = new MutableLiveData<>();
         planetaryCalendarLiveData.postValue(planetaryCalendar);
         when(planetaryCalendarRepository.getPlanetaryCalendar()).thenReturn(planetaryCalendarLiveData);
         PlanetaryCalendarViewModelFactory planetaryCalendarViewModelFactory = new PlanetaryCalendarViewModelFactory(planetaryCalendarRepository);

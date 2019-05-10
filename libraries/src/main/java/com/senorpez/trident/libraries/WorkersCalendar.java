@@ -1,35 +1,37 @@
-package com.senorpez.trident.clock;
+package com.senorpez.trident.libraries;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.time.Clock;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.time.*;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-class PlanetaryCalendar {
+public class WorkersCalendar {
     private double standardHoursPerDay;
     private double epochOffset;
-
     private Clock clock;
 
-    public PlanetaryCalendar(double standardHoursPerDay, double epochOffset) {
-        this.standardHoursPerDay = standardHoursPerDay;
-        this.epochOffset = epochOffset;
-    }
-
     @JsonCreator
-    PlanetaryCalendar() {
+    public WorkersCalendar() {
         this.clock = Clock.offset(
                 Clock.systemUTC(),
                 Duration.ofMillis(
                         Clock.fixed(Instant.parse("2000-01-01T00:00:00Z"), ZoneId.ofOffset("GMT", ZoneOffset.UTC)).millis() * -1));
     }
 
-    int getCaste() {
+    WorkersCalendar(double standardHoursPerDay, double epochOffset) {
+        this.standardHoursPerDay = standardHoursPerDay;
+        this.epochOffset = epochOffset;
+    }
+
+    public static WorkersCalendar buildWorkersCalendar(double standardHoursPerDay, double epochOffset) {
+        WorkersCalendar workersCalendar = new WorkersCalendar();
+        workersCalendar.setStandardHoursPerDay(standardHoursPerDay);
+        workersCalendar.setEpochOffset(epochOffset);
+        return workersCalendar;
+    }
+
+    public int getCaste() {
         double localMilliseconds = getLocalMilliseconds(clock.millis());
         double localDays = getLocalDays(localMilliseconds);
         return getCaste(localDays);
@@ -69,7 +71,7 @@ class PlanetaryCalendar {
         }
     }
 
-    int getCasteDay() {
+    public int getCasteDay() {
         double localMilliseconds = getLocalMilliseconds(clock.millis());
         double localDays = getLocalDays(localMilliseconds);
         return getCasteDay(localDays);
@@ -140,7 +142,7 @@ class PlanetaryCalendar {
         return standardMilliseconds - epochOffset * 86400000;
     }
 
-    int getLocalYear() {
+    public int getLocalYear() {
         double localMilliseconds = getLocalMilliseconds(clock.millis());
         double localDays = getLocalDays(localMilliseconds);
         return getLocalYear(localDays);
@@ -155,7 +157,7 @@ class PlanetaryCalendar {
         return year;
     }
 
-    int getShift() {
+    public int getShift() {
         double localMilliseconds = getLocalMilliseconds(clock.millis());
         double localDays = getLocalDays(localMilliseconds);
         return getShift(localDays);
@@ -165,7 +167,7 @@ class PlanetaryCalendar {
         return (int) Math.floor(days % 1 / 0.25) + 1;
     }
 
-    double getTithe() {
+    public double getTithe() {
         double localMilliseconds = getLocalMilliseconds(clock.millis());
         double localDays = getLocalDays(localMilliseconds);
         return getTithe(localDays);
@@ -195,7 +197,7 @@ class PlanetaryCalendar {
         return year % 3 == 0 && year % 51 != 0 ? 100 : 99;
     }
 
-    private boolean isFestivalYear(final int year) {
+    public boolean isFestivalYear(final int year) {
         return year % 3 == 0 && year % 51 != 0;
     }
 

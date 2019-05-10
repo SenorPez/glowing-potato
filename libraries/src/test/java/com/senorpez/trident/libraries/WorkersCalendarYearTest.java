@@ -1,4 +1,4 @@
-package com.senorpez.trident.clock;
+package com.senorpez.trident.libraries;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,14 +18,14 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 
 @RunWith(Parameterized.class)
-public class PlanetaryCalendarYearTest {
+public class WorkersCalendarYearTest {
     private final int localYear;
     private final int days;
     private final double planetaryMilliseconds;
     private final double standardMilliseconds;
 
     @InjectMocks
-    PlanetaryCalendar planetaryCalendar;
+    WorkersCalendar workersCalendar;
 
     @Mock
     Clock mockClock;
@@ -50,14 +50,14 @@ public class PlanetaryCalendarYearTest {
         });
     }
 
-    public PlanetaryCalendarYearTest(
+    public WorkersCalendarYearTest(
             double standardHoursPerDay,
             double epochOffset,
             int localYear,
             int days,
             double planetaryMilliseconds,
             double standardMilliseconds) {
-        this.planetaryCalendar = new PlanetaryCalendar(standardHoursPerDay, epochOffset);
+        this.workersCalendar = new WorkersCalendar(standardHoursPerDay, epochOffset);
         this.localYear = localYear;
         this.days = days;
         this.planetaryMilliseconds = planetaryMilliseconds;
@@ -66,34 +66,34 @@ public class PlanetaryCalendarYearTest {
 
     @Test
     public void testGetLocalDays() {
-        assertThat(planetaryCalendar.getLocalDays(planetaryMilliseconds), closeTo(days, 1e-9));
+        assertThat(workersCalendar.getLocalDays(planetaryMilliseconds), closeTo(days, 1e-9));
     }
 
     @Test
     public void testGetLocalDays_Current() {
         when(mockClock.millis()).thenReturn((long) Math.ceil(standardMilliseconds));
-        assertThat(planetaryCalendar.getLocalDays(), closeTo(days, 1e-5));
+        assertThat(workersCalendar.getLocalDays(), closeTo(days, 1e-5));
     }
 
     @Test
     public void testGetLocalMilliseconds() {
-        assertThat(planetaryCalendar.getLocalMilliseconds(standardMilliseconds), closeTo(planetaryMilliseconds, 1e-2));
+        assertThat(workersCalendar.getLocalMilliseconds(standardMilliseconds), closeTo(planetaryMilliseconds, 1e-2));
     }
 
     @Test
     public void testGetLocalMilliseconds_Current() {
         when(mockClock.millis()).thenReturn((long) Math.ceil(standardMilliseconds));
-        assertThat(planetaryCalendar.getLocalMilliseconds(), closeTo(planetaryMilliseconds, 1));
+        assertThat(workersCalendar.getLocalMilliseconds(), closeTo(planetaryMilliseconds, 1));
     }
 
     @Test
     public void testGetLocalYear() {
-        assertThat(planetaryCalendar.getLocalYear(days), is(localYear));
+        assertThat(workersCalendar.getLocalYear(days), is(localYear));
     }
 
     @Test
     public void testGetLocalYear_Current() {
         when(mockClock.millis()).thenReturn((long) Math.ceil(standardMilliseconds));
-        assertThat(planetaryCalendar.getLocalYear(), is(localYear));
+        assertThat(workersCalendar.getLocalYear(), is(localYear));
     }
 }

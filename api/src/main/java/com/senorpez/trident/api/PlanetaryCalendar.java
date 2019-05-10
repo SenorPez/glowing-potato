@@ -1,12 +1,15 @@
 package com.senorpez.trident.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.senorpez.trident.libraries.WorkersCalendar;
 
 class PlanetaryCalendar {
     private final int id;
     private final String name;
     private final float standardHoursPerDay;
     private final float epochOffset;
+
+    private final WorkersCalendar workersCalendar;
 
     PlanetaryCalendar(
             @JsonProperty("id") final int id,
@@ -17,6 +20,9 @@ class PlanetaryCalendar {
         this.name = name;
         this.standardHoursPerDay = standardHoursPerDay;
         this.epochOffset = epochOffset;
+
+        // TODO: Account for calendars that aren't the Worker's Calendar.
+        this.workersCalendar = WorkersCalendar.buildWorkersCalendar(standardHoursPerDay, epochOffset);
     }
 
     int getId() {
@@ -33,5 +39,9 @@ class PlanetaryCalendar {
 
     float getEpochOffset() {
         return epochOffset;
+    }
+
+    WorkersCalendar getWorkersCalendar() {
+        return workersCalendar;
     }
 }

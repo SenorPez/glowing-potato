@@ -1,4 +1,4 @@
-package com.senorpez.trident.clock;
+package com.senorpez.trident.libraries;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,14 +18,14 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 
 @RunWith(Parameterized.class)
-public class PlanetaryCalendarTimeTest {
+public class WorkersCalendarTimeTest {
     private final double days;
     private final int shift;
     private final double tithe;
     private final double standardMilliseconds;
 
     @InjectMocks
-    PlanetaryCalendar planetaryCalendar;
+    WorkersCalendar workersCalendar;
 
     @Mock
     Clock mockClock;
@@ -49,14 +49,14 @@ public class PlanetaryCalendarTimeTest {
         });
     }
 
-    public PlanetaryCalendarTimeTest(
+    public WorkersCalendarTimeTest(
             double standardHoursPerDay,
             double epochOffset,
             double days,
             int shift,
             double tithe,
             double standardMilliseconds) {
-        this.planetaryCalendar = new PlanetaryCalendar(standardHoursPerDay, epochOffset);
+        this.workersCalendar = new WorkersCalendar(standardHoursPerDay, epochOffset);
         this.days = days;
         this.shift = shift;
         this.tithe = tithe;
@@ -65,23 +65,23 @@ public class PlanetaryCalendarTimeTest {
 
     @Test
     public void testGetShift() {
-        assertThat(planetaryCalendar.getShift(days), is(shift));
+        assertThat(workersCalendar.getShift(days), is(shift));
     }
 
     @Test
     public void testGetShift_Current() {
         when(mockClock.millis()).thenReturn((long) Math.ceil(standardMilliseconds));
-        assertThat(planetaryCalendar.getShift(), is(shift));
+        assertThat(workersCalendar.getShift(), is(shift));
     }
 
     @Test
     public void testGetTithe() {
-        assertThat(planetaryCalendar.getTithe(days), closeTo(tithe, 1e-9));
+        assertThat(workersCalendar.getTithe(days), closeTo(tithe, 1e-9));
     }
 
     @Test
     public void testGetTithe_Current() {
         when(mockClock.millis()).thenReturn((long) Math.ceil(standardMilliseconds));
-        assertThat(planetaryCalendar.getTithe(), closeTo(tithe, 1e-7));
+        assertThat(workersCalendar.getTithe(), closeTo(tithe, 1e-7));
     }
 }
