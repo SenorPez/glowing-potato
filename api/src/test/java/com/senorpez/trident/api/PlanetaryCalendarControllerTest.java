@@ -850,7 +850,8 @@ public class PlanetaryCalendarControllerTest {
                                 subsectionWithPath("_links").ignored()),
                         commonLinks.and(
                                 linkWithRel("trident-api:calendars").description("List of calendar resources."),
-                                linkWithRel("trident-api:current-time").description("Current time on this calendar."))));
+                                linkWithRel("trident-api:current-time").description("Current time on this calendar."),
+                                linkWithRel("trident-api:festivalYear").description("Given a local year, returns if a festival year."))));
 
         verify(apiService, times(4)).findOne(any(), any(), any());
         verifyNoMoreInteractions(apiService);

@@ -82,6 +82,9 @@
         },
         "trident-api:current-time": {
           "$ref": "#/definitions/standardLink"
+        },
+        "trident-api:festivalYear": {
+          "$ref": "#/definitions/templatedLink"
         }
       },
       "additionalProperties": false,
@@ -90,7 +93,8 @@
         "index",
         "curies",
         "trident-api:calendars",
-        "trident-api:current-time"
+        "trident-api:current-time",
+        "trident-api:festivalYear"
       ]
     }
   },
