@@ -1,16 +1,18 @@
 package com.senorpez.trident.clock;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
+
+import com.senorpez.trident.libraries.WorkersCalendar;
+
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 import javax.inject.Inject;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModel;
-
 class PlanetaryCalendarViewModel extends ViewModel {
-    private final LiveData<PlanetaryCalendar> planetaryCalendar;
+    private final LiveData<WorkersCalendar> planetaryCalendar;
     private final ClockLiveData<Integer> shift = new ClockLiveData<>(this::createShift);
     private final ClockLiveData<Integer> tithe = new ClockLiveData<>(this::createTithe);
     private final ClockLiveData<Integer> subTithe = new ClockLiveData<>(this::createSubTithe);

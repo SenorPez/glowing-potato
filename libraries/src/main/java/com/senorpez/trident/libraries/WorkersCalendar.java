@@ -1,16 +1,22 @@
 package com.senorpez.trident.libraries;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.time.*;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class WorkersCalendar {
     private double standardHoursPerDay;
     private double epochOffset;
     private Clock clock;
 
     @JsonCreator
-    WorkersCalendar() {
+    public WorkersCalendar() {
         this.clock = Clock.offset(
                 Clock.systemUTC(),
                 Duration.ofMillis(
