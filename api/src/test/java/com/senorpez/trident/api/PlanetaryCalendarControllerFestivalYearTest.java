@@ -98,7 +98,7 @@ public class PlanetaryCalendarControllerFestivalYearTest {
         MockitoAnnotations.initMocks(this);
 
         this.mockMvc = MockMvcBuilders
-                .standaloneSetup(new FestivalYearController(apiService))
+                .standaloneSetup(new FestivalYearController())
                 .setMessageConverters(HALMessageConverter.getConverter(Collections.singletonList(ALL)))
                 .setControllerAdvice(new APIExceptionHandler())
                 .apply(documentationConfiguration(this.restDocumentation))

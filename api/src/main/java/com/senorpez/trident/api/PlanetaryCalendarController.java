@@ -94,7 +94,7 @@ class PlanetaryCalendarController {
         return ResponseEntity.ok(calendarResource);
     }
 
-    @RequestMapping("/{calendarId}/current-time")
+    @RequestMapping("/{calendarId}/currentTime")
     ResponseEntity<WorkersCalendarResource> currentCalendar(
             @PathVariable final int solarSystemId,
             @PathVariable final int starId,

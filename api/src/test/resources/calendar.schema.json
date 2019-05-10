@@ -80,7 +80,7 @@
         "trident-api:calendars": {
           "$ref": "#/definitions/standardLink"
         },
-        "trident-api:current-time": {
+        "trident-api:currentTime": {
           "$ref": "#/definitions/standardLink"
         },
         "trident-api:festivalYear": {
@@ -93,7 +93,7 @@
         "index",
         "curies",
         "trident-api:calendars",
-        "trident-api:current-time",
+        "trident-api:currentTime",
         "trident-api:festivalYear"
       ]
     }

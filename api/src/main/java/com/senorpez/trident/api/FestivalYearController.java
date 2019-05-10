@@ -1,6 +1,5 @@
 package com.senorpez.trident.api;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,13 +16,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 )
 @RestController
 class FestivalYearController {
-    private final APIService apiService;
-
-    @Autowired
-    FestivalYearController(APIService apiService) {
-        this.apiService = apiService;
-    }
-
     @RequestMapping(value = "/{localYear}")
     ResponseEntity<FestivalYearResource> festivalYear(
             @PathVariable final int solarSystemId,
