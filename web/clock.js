@@ -14,91 +14,27 @@ function drawClockArc(ctx, radius, lineWidth, color, endAngle) {
 }
 
 function getTime() {
-  if (apiResult == null) {
-    apiResult = callAPI();
-  }
-  apiResult.then(json => makeClock(json.epochOffset, json.standardHoursPerDay));
+  apiResult = callAPI();
+  apiResult.then(json => makeClock(json));
 }
 
 function callAPI() {
-  return fetch('http://trident.senorpez.com/systems/1817514095/stars/1905216634/planets/-455609026/calendars/-1010689347')
+  return fetch('http://trident.senorpez.com/systems/1817514095/stars/1905216634/planets/-455609026/calendars/-1010689347/currentTime')
     .then(response => response.json());
 }
 
-function makeClock(time_adj, hours_per_local_day) {
-  var time_now = new Date(new Date() - time_adj * 86400000);
-  var time_epoch = new Date("January 1, 2000 00:00:00 GMT+00:00");
-  var time_delta = time_now - time_epoch;
+function makeClock(json) {
+  year = json.year;
+  caste = json.caste;
+  day = json.day;
+  rawshift = json.shift + json.tithe;
+  shift = Math.floor(rawshift * 100) / 100;
 
-  // Standard hours
-  var hours = time_delta / 3600000;
-
-  // Local days
-  var local_days = hours / hours_per_local_day;
-
-  // Local year, accounting for local calendar:
-  var local_days_countdown = local_days;
-  var year = 1;
-
-  while (true) {
-    if (year % 3 == 0 && year % 51 != 0) {
-      if (local_days_countdown > 100) {
-        year += 1;
-        local_days_countdown -= 100;
-      } else {
-        break;
-      }
-    } else {
-      if (local_days_countdown > 99) {
-        year += 1;
-        local_days_countdown -= 99;
-      } else {
-        break;
-      }
-    }
-  }
-
-  var caste = 0;
-  var festival_day = false;
-
-  if (local_days_countdown < 1) {
+  if (day === 0) {
     festival_day = true;
-  } else if (local_days_countdown < 20) {
-    caste = 1;
-    local_days_countdown -= 1;
-  } else if (local_days_countdown < 41) {
-    caste = 2;
-    local_days_countdown -= 20;
-  } else if (year % 3 && local_days_countdown < 61) {
-    caste = 3;
-    local_days_countdown -= 41;
-  } else if (local_days_countdown < 51) {
-    caste = 3;
-    local_days_countdown -= 41;
-  } else if (local_days_countdown < 52) {
-    caste = 3;
-    festival_day = true;
-    local_days_countdown -= 51;
-  } else if (local_days_countdown < 62) {
-    caste = 3;
-    local_days_countdown -= 52;
-  } else if (year % 3 === 0) {
-    local_days_countdown -= 1;
-  } else if (local_days_countdown < 80) {
-    caste = 4;
-    local_days_countdown -= 61;
-  } else if (local_days_countdown < 99) {
-    caste = 5;
-    local_days_countdown -= 80;
   } else {
-    caste = null;
-    local_days_countdown = null;
+    festival_day = false;
   }
-
-  var day = Math.ceil(local_days_countdown);
-  local_days_countdown %= 1;
-  var rawshift = (1 + local_days_countdown / 0.25);
-  var shift = Math.floor(rawshift * 100) / 100;
 
   var dispYear = year + " FY";
   var dispCaste = "";
@@ -117,7 +53,6 @@ function makeClock(time_adj, hours_per_local_day) {
   document.getElementById("year").innerHTML =
     dispYear + " " + dispCaste + " " + dispDay + " " + dispShift;
   document.getElementById("t0").innerHTML = new Date();
-  document.getElementById("remainder").innerHTML = local_days;
 
   var c = document.getElementById("clockface");
   var ctx = c.getContext("2d");
@@ -187,7 +122,7 @@ $(document).ready(function() {
 });
 
 function handleMouseWheel(event) {
-  scaleFactor = (event.wheelDelta < 0 || event.detail > 0) ? scaleFactor * 1.1 : scaleFactor * 0.9;
+  scaleFactor = (event.wheelDelta > 0 || event.detail < 0) ? scaleFactor * 1.1 : scaleFactor * 0.9;
   scaleFactor = Math.max(1, scaleFactor);
   scaleFactor = Math.min(scaleFactor, 1.5);
 }
