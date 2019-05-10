@@ -27,7 +27,7 @@ class WorkersCalendarModel implements Identifiable<Integer> {
                 PlanetaryCalendarController.class,
                 WorkersCalendarResource.class,
                 () -> new WorkersCalendarResource(this, solarSystemId, starId, planetId, calendarId));
-        return assembler.toResource(this, solarSystemId, starId, planetId, calendarId);
+        return assembler.addIndexLink(assembler.instantiateResource(this));
     }
 
     @Override
