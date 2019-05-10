@@ -27,6 +27,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="Gradle: jackson-databind-2.9.4" level="project" />
+    <orderEntry type="library" exported="" name="Gradle: jackson-core-2.9.4" level="project" />
     <orderEntry type="library" exported="" name="Gradle: jackson-annotations-2.9.4" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="Gradle: junit-4.12" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="Gradle: hamcrest-all-1.3" level="project" />
@@ -35,5 +37,13 @@
     <orderEntry type="library" exported="" scope="TEST" name="Gradle: byte-buddy-1.9.7" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="Gradle: byte-buddy-agent-1.9.7" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="Gradle: objenesis-2.6" level="project" />
+    <orderEntry type="library" exported="" name="libraries.libraries-0.1.0" level="project" />
+    <orderEntry type="library" exported="" name="libraries.libraries-0.1.0" level="project" />
+    <orderEntry type="library" exported="" name="libraries.libraries-0.1.0" level="project" />
+    <orderEntry type="library" exported="" name="libraries.libraries-0.1.0" level="project" />
+    <orderEntry type="library" exported="" name="libraries.libraries-0.1.0" level="project" />
+    <orderEntry type="library" exported="" name="libraries.libraries-0.1.0" level="project" />
+    <orderEntry type="library" exported="" name="libraries.libraries-0.1.0" level="project" />
+    <orderEntry type="library" exported="" name="libraries.libraries-0.1.0" level="project" />
   </component>
 </module>
