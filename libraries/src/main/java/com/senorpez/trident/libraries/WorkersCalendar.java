@@ -195,7 +195,7 @@ public class WorkersCalendar {
         return year % 3 == 0 && year % 51 != 0 ? 100 : 99;
     }
 
-    private boolean isFestivalYear(final int year) {
+    public boolean isFestivalYear(final int year) {
         return year % 3 == 0 && year % 51 != 0;
     }
 

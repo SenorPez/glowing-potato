@@ -11,6 +11,6 @@ class PlanetaryCalendarResource extends Resource<PlanetaryCalendarModel> {
         super(content, links);
         this.add(linkTo(methodOn(PlanetaryCalendarController.class).calendars(solarSystemId, starId, planetId)).withRel("calendars"));
         this.add(linkTo(methodOn(PlanetaryCalendarController.class).currentCalendar(solarSystemId, starId, planetId, content.getId())).withRel("currentTime"));
-        this.add(linkTo(methodOn(FestivalYearController.class).festivalYear(solarSystemId, starId, planetId, content.getId(), null)).withRel("festivalYear"));
+        this.add(linkTo(methodOn(PlanetaryCalendarController.class).festivalYear(solarSystemId, starId, planetId, content.getId(), null)).withRel("festivalYear"));
     }
 }

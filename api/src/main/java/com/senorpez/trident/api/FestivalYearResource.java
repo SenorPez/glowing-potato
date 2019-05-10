@@ -9,6 +9,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 class FestivalYearResource extends Resource<FestivalYearModel> {
     FestivalYearResource(final FestivalYearModel content, final int solarSystemId, final int starId, final int planetId, final int calendarId, final Link... links) {
         super(content, links);
+        this.add(linkTo(methodOn(PlanetaryCalendarController.class).festivalYear(solarSystemId, starId, planetId, calendarId, content.getId())).withSelfRel());
         this.add(linkTo(methodOn(PlanetaryCalendarController.class).calendars(solarSystemId, starId, planetId, calendarId)).withRel("calendar"));
     }
 }
