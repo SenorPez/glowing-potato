@@ -80,6 +80,7 @@ matrix:
       - tools
       - platform-tools
       - extra-android-m2repository
+      - sys-img-x86-android-28
 
     cache:
       directories:
@@ -96,6 +97,12 @@ matrix:
 
     install:
       ./gradlew --configure-on-demand :clock:clean --console=plain
+
+    before_script:
+    - echo no | android create avd --force -n test -t android-28 --abi x86
+    - emulator -avd test -no-skin -no-audio -no-window &
+    - android-wait-for-emulator
+    - adb shell input keyevent 82 &
 
     script:
       ./gradlew --configure-on-demand :clock:testDebugUnitTest :clock:connectedCheck --console=plain
