@@ -38,16 +38,19 @@ function makeClock(json) {
 
   var dispYear = year + " FY";
   var dispCaste = "";
+  var dispDay;
 
   if (festival_day && caste === 0) {
     dispCaste = "Festival";
+    dispDay = " Day";
   } else if (festival_day) {
     dispCaste = "Midfestival";
+    dispDay = " Day";
   } else {
     dispCaste = caste + " Caste";
+    dispDay = day + " Day";
   }
 
-  var dispDay = day + " Day";
   var dispShift = shift + " Shift";
 
   document.getElementById("year").innerHTML =
