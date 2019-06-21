@@ -6,7 +6,7 @@ var x_max = 500;
 
 $(document).ready(function() {
   var posting = $.post(
-    "http://senorpez.com:5001/transfer2",
+    "http://senorpez.com:5001/transfer",
     {
       flight_start: y_min,
       flight_end: y_max,
