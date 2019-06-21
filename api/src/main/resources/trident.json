@@ -64,6 +64,18 @@
               "longitudeOfAscendingNode": 6.171541831,
               "argumentOfPeriapsis": 3.135553814,
               "trueAnomalyAtEpoch": 3.384338282
+            },
+            {
+              "id": -393577255,
+              "name": "1 Eta Veneris 5",
+              "mass": 0.506640626,
+              "radius": 0.810946373,
+              "semimajorAxis": 1.368222523,
+              "eccentricity": 0.005,
+              "inclination": 0.042777444,
+              "longitudeOfAscendingNode": 5.304268527,
+              "argumentOfPeriapsis": 5.664392784,
+              "trueAnomalyAtEpoch": 3.478230014
             }
           ]
         },
