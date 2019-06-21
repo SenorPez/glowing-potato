@@ -156,7 +156,7 @@ def plottransfer():
     t1 = epoch(int(launch_time))
     t2 = epoch(int(launch_time) + int(flight_time))
 
-    fig = plt.figure(figsize=(4,4))
+    fig = plt.figure(figsize=(4, 4))
     orbit_ax = fig.gca(projection='3d', proj_type='ortho')
     orbit_ax.scatter([0], [0], [0], color='orange')
     orbit_ax.set_aspect('equal')
@@ -213,36 +213,35 @@ def plottransfer():
     plt.savefig('orbit-z')
 
     plt.close(fig)
-    
+
     return jsonify(success=True)
 
-
-@APP.route("/transfer2", methods=['POST'])
-def transfer2():
+@APP.route("/transfer", methods=['POST'])
+def transfer():
     star = Star(1817514095, 1905216634)
     origin = Planet(1817514095, 1905216634, -455609026)
     target = Planet(1817514095, 1905216634, 272811578)
     origin_orbit_radius = origin.planet.radius + 200000
     target_orbit_radius = target.planet.radius + 200000
 
-    launch_time_start = int(float(flask_request.values['launch_start']));
-    launch_time_end = int(float(flask_request.values['launch_end']));
+    launch_time_start = int(float(flask_request.values['launch_start']))
+    launch_time_end = int(float(flask_request.values['launch_end']))
     launch_time_offset = 0 if launch_time_start >= 0 else -launch_time_start
 
-    flight_time_start = int(float(flask_request.values['flight_start']));
-    flight_time_start = max(1, flight_time_start);
-    flight_time_end = int(float(flask_request.values['flight_end']));
-    flight_time_end = max(1, flight_time_end);
+    flight_time_start = int(float(flask_request.values['flight_start']))
+    flight_time_start = max(1, flight_time_start)
+    flight_time_end = int(float(flask_request.values['flight_end']))
+    flight_time_end = max(1, flight_time_end)
 
     t0 = epoch_from_string(str(datetime.now()))
     t0_number = int(t0.mjd2000)
 
     delta_v = np.full(
-            (
-                flight_time_end - flight_time_start, 
-                launch_time_end + launch_time_offset), 
-            None)
-    
+        (
+            flight_time_end - flight_time_start,
+            launch_time_end + launch_time_offset),
+        None)
+
     for launch_time in range(launch_time_start, launch_time_end):
         for flight_time in range(flight_time_start, flight_time_end):
             launch_time = int(launch_time)
@@ -277,131 +276,17 @@ def transfer2():
                 delta_vs.append(inj_delta_v + ins_delta_v)
 
             delta_v[
-                    flight_time_index,
-                    launch_time_index] = min(delta_vs)
-
-    return jsonify(
-            success=True,
-            delta_v=delta_v.tolist(),
-            launch_start=launch_time_start,
-            launch_end=launch_time_end,
-            flight_start=flight_time_start,
-            flight_end=flight_time_end,
-            launch_offset=-launch_time_offset)
-
-
-@APP.route("/transfer", methods=['POST'])
-def transfer():
-    star = Star(1817514095, 1905216634)
-    origin = Planet(1817514095, 1905216634, -455609026)
-    target = Planet(1817514095, 1905216634, 272811578)
-    origin_orbit_radius = origin.planet.radius + 200000
-    target_orbit_radius = target.planet.radius + 200000
-
-    t0 = epoch_from_string(str(datetime.now()))
-    t0_number = int(t0.mjd2000)
-    launch_time_offset = t0_number
-    flight_time_offset = 50
-
-    fig = plt.figure(figsize=(4, 4))
-    orbit_ax = fig.gca(projection='3d', proj_type='ortho')
-    orbit_ax.scatter([0], [0], [0], color='orange')
-    orbit_ax.set_aspect('equal')
-
-    flight_times = np.array(range(50, 251))
-    launch_times = np.array(range(t0_number, t0_number + 501))
-    delta_v = np.empty((len(flight_times), len(launch_times)))
-
-    if ('launch_time' not in flask_request.values) and ('flight_time' not in flask_request.values):
-        for launch_time in launch_times:
-            for flight_time in flight_times:
-                launch_time = int(launch_time)
-                flight_time = int(flight_time)
-
-                t1 = epoch(launch_time)
-                t2 = epoch(launch_time + flight_time)
-                dt = (t2.mjd - t1.mjd) * DAY2SEC
-                r1, v1 = origin.planet.eph(t1)
-                r2, v2 = target.planet.eph(t2)
-                lambert = lambert_problem(list(r1), list(r2), dt, star.gm)
-
-                delta_vs = list()
-
-                for x in range(lambert.get_Nmax() + 1):
-                    vp_vec = np.array(v1)
-                    vs_vec = np.array(lambert.get_v1()[x])
-                    vsp_vec = vs_vec - vp_vec
-                    vsp = np.linalg.norm(vsp_vec)
-                    vo = sqrt(vsp * vsp + 2 * origin.planet.mu_self / origin_orbit_radius)
-                    inj_delta_v = vo - sqrt(origin.planet.mu_self / origin_orbit_radius)
-
-                    vp_vec = np.array(v2)
-                    vs_vec = np.array(lambert.get_v2()[x])
-                    vsp_vec = vs_vec - vp_vec
-                    vsp = np.linalg.norm(vsp_vec)
-                    vo = sqrt(vsp * vsp + 2 * target.planet.mu_self / target_orbit_radius)
-                    ins_delta_v = vo - sqrt(target.planet.mu_self / target_orbit_radius)
-
-                    delta_vs.append(inj_delta_v + ins_delta_v)
-                delta_v[
-                    flight_time - flight_time_offset,
-                    launch_time - launch_time_offset] = min(delta_vs)
-
-        min_delta_v = np.min(delta_v)
-        find_min = (delta_v == min_delta_v).nonzero()
-        min_delta_v_flight_time = find_min[0][0]
-        min_delta_v_launch_time = find_min[1][0]
-
-        launch_time = int(min_delta_v_launch_time) + launch_time_offset
-        flight_time = int(min_delta_v_flight_time) + flight_time_offset
-    else:
-        min_delta_v_flight_time = int(flask_request.values['flight_time']) - flight_time_offset
-        min_delta_v_launch_time = int(flask_request.values['launch_time'])
-
-        flight_time = min_delta_v_flight_time + flight_time_offset
-        launch_time = min_delta_v_launch_time + launch_time_offset
-
-        min_delta_v = flask_request.values['delta_v']
-
-    t1 = epoch(int(launch_time))
-    t2 = epoch(int(launch_time) + int(flight_time))
-    plot_planet(origin.planet, t0=t1, color='green', legend=True, units=AU, ax=orbit_ax)
-    plot_planet(target.planet, t0=t2, color='gray', legend=True, units=AU, ax=orbit_ax)
-
-    max_value = max(
-        max([abs(x) for x in orbit_ax.get_xlim()]),
-        max([abs(y) for y in orbit_ax.get_ylim()]))
-    max_z_value = max([abs(z) for z in orbit_ax.get_zlim()])
-
-    dt = (t2.mjd - t1.mjd) * DAY2SEC
-    r1, v1 = origin.planet.eph(t1)
-    r2, v2 = target.planet.eph(t2)
-    lambert = lambert_problem(list(r1), list(r2), dt, star.gm)
-    plot_lambert(lambert, color='purple', sol=0, legend=False, units=AU, ax=orbit_ax)
-
-    orbit_ax.set_xlim(-max_value * 1.2, max_value * 1.2)
-    orbit_ax.set_ylim(-max_value * 1.2, max_value * 1.2)
-    orbit_ax.set_zlim(-max_z_value * 1.2, max_z_value * 1.2)
-
-    plt.savefig('orbit')
-
-    orbit_ax.view_init(0, 0)
-    plt.savefig('orbit-x')
-
-    orbit_ax.view_init(0, -90)
-    plt.savefig('orbit-y')
-
-    orbit_ax.view_init(90, 0)
-    plt.savefig('orbit-z')
-
-    plt.close(fig)
+                flight_time_index,
+                launch_time_index] = min(delta_vs)
 
     return jsonify(
         success=True,
         delta_v=delta_v.tolist(),
-        min_delta_v=min_delta_v,
-        flight_time=int(min_delta_v_flight_time + flight_time_offset),
-        launch_time=int(min_delta_v_launch_time)) if has_app_context() else min_delta_v
+        launch_start=launch_time_start,
+        launch_end=launch_time_end,
+        flight_start=flight_time_start,
+        flight_end=flight_time_end,
+        launch_offset=-launch_time_offset)
 
 def main():
     APP.run(host="0.0.0.0", port=5001)
