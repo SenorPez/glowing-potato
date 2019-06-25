@@ -8,7 +8,8 @@ from flask import Flask, has_app_context, jsonify, request as flask_request
 from flask_cors import CORS
 import matplotlib.pyplot as plt
 import numpy as np
-from pykep import epoch, epoch_from_string, lambert_problem, propagate_lagrangian, AU, DAY2SEC, SEC2DAY
+from pykep import epoch, epoch_from_string, lambert_problem, \
+        propagate_lagrangian, AU, DAY2SEC, SEC2DAY
 from pykep.orbit_plots import plot_lambert, plot_planet
 from tridentweb.planet import Planet
 from tridentweb.star import Star
@@ -139,7 +140,7 @@ def orbit():
         c=planet_colors,
         n=planet_names) if has_app_context() else x_val
 
-def plot_planet_2d(planet, t0, color, legend, units, ax):
+def plot_planet_2d(planet, t0):
     T = planet.compute_period(t0) * SEC2DAY
     when = np.linspace(0, T, 60)
 
@@ -148,16 +149,19 @@ def plot_planet_2d(planet, t0, color, legend, units, ax):
     z = np.array([0.0] * 60)
 
     for i, day in enumerate(when):
-        r, v = planet.eph(epoch(t0.mjd2000 + day))
-        x[i] = r[0] / units
-        y[i] = r[1] / units
-        z[i] = r[2] / units
+        r, _ = planet.eph(epoch(t0.mjd2000 + day))
+        x[i] = r[0] / AU
+        y[i] = r[1] / AU
+        z[i] = r[2] / AU
 
     return x, y, z
 
 def plot_lambert_2d(lambert, sol=0):
     if sol > lambert.get_Nmax() * 2:
-        return ValueError("sol must be in 0 .. NMax*2 \n * Nmax is the maximum number of revolutions for which there exists a solution.")
+        return ValueError(
+            "sol must be in 0 .. NMax*2 \n",
+            "* Nmax is the maximum number of revolutions ",
+            "for which there exists a solution.")
 
     r = lambert.get_r1()
     v = lambert.get_v1()[sol]
@@ -212,27 +216,43 @@ def plottransfer():
     z_ax = z_fig.gca()
     z_ax.scatter([0], [0], color='orange')
 
-    plot_planet(origin.planet, t0=t1, color='green', legend=True, units=AU, ax=orbit_ax)
-    plot_planet(target.planet, t0=t2, color='gray', legend=True, units=AU, ax=orbit_ax)
+    plot_planet(
+        origin.planet,
+        t0=t1,
+        color='green',
+        legend=True,
+        units=AU,
+        ax=orbit_ax)
+    plot_planet(
+        target.planet,
+        t0=t2,
+        color='gray',
+        legend=True,
+        units=AU,
+        ax=orbit_ax)
 
-    o_x, o_y, o_z = plot_planet_2d(origin.planet, t0=t1, color='green', legend=True, units=AU, ax=x_ax)
-    t_x, t_y, t_z = plot_planet_2d(target.planet, t0=t2, color='gray', legend=True, units=AU, ax=x_ax)
+    o_x, o_y, o_z = plot_planet_2d(
+        origin.planet,
+        t0=t1)
+    t_x, t_y, t_z = plot_planet_2d(
+        target.planet,
+        t0=t2)
 
     x_ax.plot(o_y, o_z, label=origin.planet.name, c='green')
     x_ax.scatter(o_y[0], o_z[0], s=40, color='green')
     x_ax.plot(t_y, t_z, label=target.planet.name, c='gray')
     x_ax.scatter(t_y[0], t_z[0], s=40, color='gray')
-    
+
     y_ax.plot(o_x, o_z, label=origin.planet.name, c='green')
     y_ax.scatter(o_x[0], o_z[0], s=40, color='green')
     y_ax.plot(t_x, t_z, label=target.planet.name, c='gray')
     y_ax.scatter(t_x[0], t_z[0], s=40, color='gray')
-    
+
     z_ax.plot(o_x, o_y, label=origin.planet.name, c='green')
     z_ax.scatter(o_x[0], o_y[0], s=40, color='green')
     z_ax.plot(t_x, t_y, label=target.planet.name, c='gray')
     z_ax.scatter(t_x[0], t_y[0], s=40, color='gray')
-    
+
     max_value = max(
         max([abs(x) for x in orbit_ax.get_xlim()]),
         max([abs(x) for x in orbit_ax.get_ylim()]))
@@ -290,6 +310,8 @@ def plottransfer():
     x_fig.savefig('orbit-x')
     y_fig.savefig('orbit-y')
     z_fig.savefig('orbit-z')
+
+    plt.close('all')
 
     return jsonify(success=True)
 
