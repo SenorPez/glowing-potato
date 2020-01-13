@@ -2,6 +2,7 @@
 
 """
 import json
+from pykep.planet import keplerian
 import unittest
 from unittest import mock
 from unittest.mock import sentinel, MagicMock, PropertyMock
@@ -15,12 +16,23 @@ def mocked_requests_get(*args, **kwargs):
         """Solution cribbed from
         https://stackoverflow.com/questions/15753390/how-can-i-mock-requests-and-the-response/28507806#28507806
         """
-        def __init__(self, *, json_string=None, idnum=0, name="", mass=0):
+        def __init__(self, *, json_string=None, idnum=0, name="", mass=0, 
+                     semimajor_axis=0, eccentricity=0, inclination=0,
+                     longitude_of_ascending_node=0, argument_of_periapsis=0,
+                     true_anomaly_at_epoch=0):
             if json_string is None:
                 json_string = ("{{\"id\": {0},"
                                "\"name\": \"{1}\","
-                               "\"mass\": {2}}}"
-                              ).format(idnum, name, mass)
+                               "\"mass\": {2},"
+                               "\"semimajorAxis\": {3},"
+                               "\"eccentricity\": {4},"
+                               "\"inclination\": {5},"
+                               "\"longitudeOfAscendingNode\": {6},"
+                               "\"argumentOfPeriapsis\": {7},"
+                               "\"trueAnomalyAtEpoch\": {8}}}"
+                              ).format(idnum, name, mass, semimajor_axis,
+                                       eccentricity, inclination, longitude_of_ascending_node,
+                                       argument_of_periapsis, true_anomaly_at_epoch)
             self.json_data = json.loads(json_string)
 
         def json(self):
@@ -174,6 +186,126 @@ class TestStar(unittest.TestCase):
         expected_result = id(sentinel.mass)
         self.assertEqual(instance.mass, expected_result)
 
+    @mock.patch('requests.get')
+    def test_property_semimajor_axis_primary(self, mock_get):
+        """Test semimajor axis property of primary Star."""
+        mock_get.side_effect = self.api_traversal \
+                + [mocked_requests_get()]
+
+        instance = Star(1, 1)
+        self.assertIsNone(instance.semimajor_axis)
+
+    @mock.patch('requests.get')
+    def test_property_semimajor_axis_secondary(self, mock_get):
+        """Test semimajor axis property of secondary Star."""
+        mock_get.side_effect = self.api_traversal \
+                + [mocked_requests_get(semimajor_axis=id(sentinel.semimajor_axis))]
+        mock_star = MagicMock()
+
+        instance = Star(1, 1, mock_star)
+        expected_result = id(sentinel.semimajor_axis)
+        self.assertEqual(instance.semimajor_axis, expected_result)
+
+    @mock.patch('requests.get')
+    def test_property_eccentricity_primary(self, mock_get):
+        """Test eccentricity property of primary Star."""
+        mock_get.side_effect = self.api_traversal \
+                + [mocked_requests_get()]
+
+        instance = Star(1, 1)
+        self.assertIsNone(instance.eccentricity)
+
+    @mock.patch('requests.get')
+    def test_property_eccentricity_secondary(self, mock_get):
+        """Test eccentricity property of secondary Star."""
+        mock_get.side_effect = self.api_traversal \
+                + [mocked_requests_get(eccentricity=id(sentinel.eccentricity))]
+        mock_star = MagicMock()
+
+        instance = Star(1, 1, mock_star)
+        expected_result = id(sentinel.eccentricity)
+        self.assertEqual(instance.eccentricity, expected_result)
+
+    @mock.patch('requests.get')
+    def test_property_inclination_primary(self, mock_get):
+        """Test inclination property of primary Star."""
+        mock_get.side_effect = self.api_traversal \
+                + [mocked_requests_get()]
+
+        instance = Star(1, 1)
+        self.assertIsNone(instance.inclination)
+
+    @mock.patch('requests.get')
+    def test_property_inclination_secondary(self, mock_get):
+        """Test inclination property of secondary Star."""
+        mock_get.side_effect = self.api_traversal \
+                + [mocked_requests_get(inclination=id(sentinel.eccentricity))]
+        mock_star = MagicMock()
+
+        instance = Star(1, 1, mock_star)
+        expected_result = id(sentinel.eccentricity)
+        self.assertEqual(instance.inclination, expected_result)
+
+    @mock.patch('requests.get')
+    def test_property_longitude_of_ascending_node_primary(self, mock_get):
+        """Test longitude of ascending node property of primary Star."""
+        mock_get.side_effect = self.api_traversal \
+                + [mocked_requests_get()]
+
+        instance = Star(1, 1)
+        self.assertIsNone(instance.longitude_of_ascending_node)
+
+    @mock.patch('requests.get')
+    def test_property_longitude_of_ascending_node_secondary(self, mock_get):
+        """Test longitude of ascending node property of secondary Star."""
+        mock_get.side_effect = self.api_traversal \
+                + [mocked_requests_get(longitude_of_ascending_node=id(sentinel.longitude_of_ascending_node))]
+        mock_star = MagicMock()
+
+        instance = Star(1, 1, mock_star)
+        expected_result = id(sentinel.longitude_of_ascending_node)
+        self.assertEqual(instance.longitude_of_ascending_node, expected_result)
+
+    @mock.patch('requests.get')
+    def test_property_argument_of_periapsis_primary(self, mock_get):
+        """Test argument of periapsis property of primary Star."""
+        mock_get.side_effect = self.api_traversal \
+                + [mocked_requests_get()]
+
+        instance = Star(1, 1)
+        self.assertIsNone(instance.argument_of_periapsis)
+
+    @mock.patch('requests.get')
+    def test_property_argument_of_periapsis_secondary(self, mock_get):
+        """Test argument of periapsis property of secondary Star."""
+        mock_get.side_effect = self.api_traversal \
+                + [mocked_requests_get(argument_of_periapsis=id(sentinel.argument_of_periapsis))]
+        mock_star = MagicMock()
+
+        instance = Star(1, 1, mock_star)
+        expected_result = id(sentinel.argument_of_periapsis)
+        self.assertEqual(instance.argument_of_periapsis, expected_result)
+
+    @mock.patch('requests.get')
+    def test_property_true_anomaly_at_epoch_primary(self, mock_get):
+        """Test true anomaly at epoch property of primary Star."""
+        mock_get.side_effect = self.api_traversal \
+                + [mocked_requests_get()]
+
+        instance = Star(1, 1)
+        self.assertIsNone(instance.true_anomaly_at_epoch)
+
+    @mock.patch('requests.get')
+    def test_property_true_anomaly_at_epoch_secondary(self, mock_get):
+        """Test true anomaly at epoch property of secondary Star."""
+        mock_get.side_effect = self.api_traversal \
+                + [mocked_requests_get(true_anomaly_at_epoch=id(sentinel.true_anomaly_at_epoch))]
+        mock_star = MagicMock()
+
+        instance = Star(1, 1, mock_star)
+        expected_result = id(sentinel.true_anomaly_at_epoch)
+        self.assertEqual(instance.true_anomaly_at_epoch, expected_result)
+
     @mock.patch('tridentweb.star.Constant')
     @mock.patch('requests.get')
     def test_property_gm(self, mock_get, mock_constant):
@@ -193,28 +325,149 @@ class TestStar(unittest.TestCase):
         expected_result = 0.75 * 1.9884e30 * 6.67408e-11
         self.assertEqual(instance.gm, expected_result)
 
+    @mock.patch('requests.get')
+    def test_property_planet_primary(self, mock_get):
+        """Test planet property of primary Star."""
+        mock_get.side_effect = self.api_traversal \
+                + [mocked_requests_get()]
+
+        instance = Star(1, 1)
+        with self.assertRaises(ValueError):
+            _ = instance.planet
+
+    @mock.patch('tridentweb.star.Constant')
+    @mock.patch('requests.get')
+    def test_property_planet_secondary(self, mock_get, mock_constant):
+        mock_get.side_effect = self.api_traversal \
+                + [mocked_requests_get(mass=0.75, semimajor_axis=1)]
+
+        mock_star = MagicMock()
+        type(mock_star).gm = mock.PropertyMock(return_value=0.75 * 1.9884e30 * 6.67408e-11)
+
+        mock_grav = MagicMock()
+        type(mock_grav).value = PropertyMock(return_value=6.67408e-11)
+
+        mock_solar_mass = MagicMock()
+        type(mock_solar_mass).value = PropertyMock(return_value=1.9884e30)
+
+        mock_constant.side_effect = [mock_solar_mass, mock_grav]
+
+        instance = Star(1, 1, mock_star)
+        expected_result = keplerian
+        self.assertIsInstance(instance.planet, expected_result)
+
 class IntegrationStar(unittest.TestCase):
     """Integration tests against reference implementation of Trident API."""
-    def test_init_star(self):
+    def test_init_star_primary(self):
         """Test 1 Eta Veneris init."""
         instance = Star(1817514095, 1905216634)
         expected_result = Star
         self.assertIsInstance(instance, expected_result)
 
-    def test_property_id(self):
+    def test_property_id_primary(self):
         """Test 1 Eta Veneris id."""
         instance = Star(1817514095, 1905216634)
         expected_result = 1905216634
         self.assertEqual(instance.id, expected_result)
 
-    def test_property_name(self):
+    def test_property_name_primary(self):
         """Test 1 Eta Veneris name."""
         instance = Star(1817514095, 1905216634)
         expected_result = "1 Eta Veneris"
         self.assertEqual(instance.name, expected_result)
 
-    def test_property_mass(self):
+    def test_property_mass_primary(self):
         """Test 1 Eta Veneris mass."""
         instance = Star(1817514095, 1905216634)
         expected_result = 0.75
         self.assertEqual(instance.mass, expected_result)
+
+    def test_property_semimajor_axis_primary(self):
+        """Test 1 Eta Veneris semimajor axis."""
+        instance = Star(1817514095, 1905216634)
+        self.assertIsNone(instance.semimajor_axis)
+
+    def test_property_eccentricity_primary(self):
+        """Test 1 Eta Veneris eccentricity."""
+        instance = Star(1817514095, 1905216634)
+        self.assertIsNone(instance.eccentricity)
+
+    def test_property_inclination_primary(self):
+        """Test 1 Eta Veneris inclination."""
+        instance = Star(1817514095, 1905216634)
+        self.assertIsNone(instance.inclination)
+
+    def test_property_longitude_of_ascending_node_primary(self):
+        """Test 1 Eta Veneris longitude of ascending node."""
+        instance = Star(1817514095, 1905216634)
+        self.assertIsNone(instance.longitude_of_ascending_node)
+
+    def test_property_argument_of_periapsis_primary(self):
+        """Test 1 Eta Veneris argument of periapsis."""
+        instance = Star(1817514095, 1905216634)
+        self.assertIsNone(instance.argument_of_periapsis)
+
+    def test_property_true_anomaly_at_epoch_primary(self):
+        """Test 1 Eta Veneris true anomaly at epoch."""
+        instance = Star(1817514095, 1905216634)
+        self.assertIsNone(instance.true_anomaly_at_epoch)
+
+    def test_init_star_secondary(self):
+        """Test 2 Eta Veneris init."""
+        instance = Star(1817514095, -1385166447, Star(1817514095, 1905216634))
+        expected_result = Star
+        self.assertIsInstance(instance, expected_result)
+
+    def test_property_id_secondary(self):
+        """Test 2 Eta Veneris id."""
+        instance = Star(1817514095, -1385166447, Star(1817514095, 1905216634))
+        expected_result = -1385166447
+        self.assertEqual(instance.id, expected_result)
+
+    def test_property_name_secondary(self):
+        """Test 2 Eta Veneris name."""
+        instance = Star(1817514095, -1385166447, Star(1817514095, 1905216634))
+        expected_result = "2 Eta Veneris"
+        self.assertEqual(instance.name, expected_result)
+
+    def test_property_mass_secondary(self):
+        """Test 2 Eta Veneris mass."""
+        instance = Star(1817514095, -1385166447, Star(1817514095, 1905216634))
+        expected_result = 0.75
+        self.assertEqual(instance.mass, expected_result)
+
+    def test_property_semimajor_axis_secondary(self):
+        """Test 2 Eta Veneris semimajor axis."""
+        instance = Star(1817514095, -1385166447, Star(1817514095, 1905216634))
+        expected_result = 70.0
+        self.assertEqual(instance.semimajor_axis, expected_result)
+
+    def test_property_eccentricity_secondary(self):
+        """Test 2 Eta Veneris eccentricity."""
+        instance = Star(1817514095, -1385166447, Star(1817514095, 1905216634))
+        expected_result = 0.5
+        self.assertEqual(instance.eccentricity, expected_result)
+
+    def test_property_inclination_secondary(self):
+        """Test 2 Eta Veneris inclination."""
+        instance = Star(1817514095, -1385166447, Star(1817514095, 1905216634))
+        expected_result = 0.006273935
+        self.assertEqual(instance.inclination, expected_result)
+
+    def test_property_longitude_of_ascending_node_secondary(self):
+        """Test 2 Eta Veneris longitude of ascending node."""
+        instance = Star(1817514095, -1385166447, Star(1817514095, 1905216634))
+        expected_result = 4.8210096
+        self.assertEqual(instance.longitude_of_ascending_node, expected_result)
+
+    def test_property_argument_of_periapsis_secondary(self):
+        """Test 2 Eta Veneris argument of periapsis."""
+        instance = Star(1817514095, -1385166447, Star(1817514095, 1905216634))
+        expected_result = 2.9558303
+        self.assertEqual(instance.argument_of_periapsis, expected_result)
+
+    def test_property_true_anomaly_at_epoch_secondary(self):
+        """Test 2 Eta Veneris true anomaly at epoch."""
+        instance = Star(1817514095, -1385166447, Star(1817514095, 1905216634))
+        expected_result = 6.0167522
+        self.assertEqual(instance.true_anomaly_at_epoch, expected_result)

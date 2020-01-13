@@ -45,12 +45,19 @@ class Star:
         req = requests.get(star_url)
         req.raise_for_status()
 
+        self._primary = primary
         self.id = req.json()['id']
         self.name = req.json()['name']
         self.mass = req.json()['mass']
 
-        if primary is not None:
-            self._primary = primary
+        self.semimajor_axis = None
+        self.eccentricity = None
+        self.inclination = None
+        self.longitude_of_ascending_node = None
+        self.argument_of_periapsis = None
+        self.true_anomaly_at_epoch = None
+
+        if self._primary is not None:
             self.semimajor_axis = req.json()['semimajorAxis']
             self.eccentricity = req.json()['eccentricity']
             self.inclination = req.json()['inclination']
