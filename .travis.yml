@@ -14,7 +14,7 @@ matrix:
     - nosetests -v --with-coverage --cover-package=tridentweb
 
     after_success:
-    - bash <(curl -s https://codecov.io/bash) -v
+    - bash <(curl -s https://codecov.io/bash)
 
   - language: java
     dist: trusty
@@ -43,7 +43,7 @@ matrix:
 
     after_success:
     - if [ -e ./gradlew ]; then ./gradlew --configure-on-demand :api:jacocoTestReport; else gradle :api:jacocoTestReport; fi
-    - bash <(curl -s https://codecov.io/bash) -v
+    - bash <(curl -s https://codecov.io/bash)
 
   - language: java
     dist: trusty
@@ -72,7 +72,7 @@ matrix:
 
     after_success:
     - if [ -e ./gradlew ]; then ./gradlew --configure-on-demand :libraries:jacocoTestReport; else gradle :libraries:jacocoTestReport; fi
-    - bash <(curl -s https://codecov.io/bash) -v
+    - bash <(curl -s https://codecov.io/bash)
 
   - language: android
     android:
@@ -109,4 +109,4 @@ matrix:
 
     after_success:
     - if [ -e ./gradlew ]; then ./gradlew --configure-on-demand :clock:testDebugUnitTestCoverage; else gradle :clock:testDebugUnitTestCoverage; fi
-    - bash <(curl -s https://codecov.io/bash) -f 'test*.xml' -v
+    - bash <(curl -s https://codecov.io/bash) -f 'test*.xml'
