@@ -3,9 +3,7 @@
 apply plugin:  'jacoco'
 
 jacoco {
-    toolVersion = "0.8.2"
-    // Custom reports directory can be specfied like this:
-    // reportsDir = file("$buildDir/customJacocoReportDir")
+    toolVersion = "0.8.1"
 }
 
 tasks.withType(Test) {
@@ -16,8 +14,9 @@ project.afterEvaluate {
     android.applicationVariants.all { variant ->
         def variantName = variant.name
         def testTaskName = "test${variantName.capitalize()}UnitTest"
+        def uiTestCoverageTaskName = "create${variantName.capitalize()}CoverageReport"
 
-        tasks.create(name: "${testTaskName}Coverage", type: JacocoReport, dependsOn: "$testTaskName") {
+        tasks.create(name: "${testTaskName}Coverage", type: JacocoReport, dependsOn: ["$testTaskName", "$uiTestCoverageTaskName"]) {
             group = "Reporting"
             description = "Generate Jacoco coverage reports for the ${variantName.capitalize()} build."
 
@@ -45,7 +44,10 @@ project.afterEvaluate {
                     "$project.projectDir/src/${variantName}/kotlin"
             ])
 
-            executionData = files("${project.buildDir}/jacoco/${testTaskName}.exec")
+            executionData = files([
+                    "${project.buildDir}/jacoco/${testTaskName}.exec",
+                    "${project.buildDir}/outputs/code_coverage/debugAndroidTest/connected/SM-G950U - 9-coverage.ec"
+            ])
         }
     }
 }

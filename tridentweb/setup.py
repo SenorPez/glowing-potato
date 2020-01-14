@@ -2,9 +2,9 @@
 Setup file for Trident API Web Backend
 """
 
-from setuptools import setup, find_packages
 from codecs import open
 from os import path
+from setuptools import setup, find_packages
 
 here = path.abspath(path.dirname(__file__))
 
@@ -13,7 +13,7 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name='tridentweb',
-    version='0.0.1.dev1',
+    version='2.0.0',
     description='Trident API Web Backend Development',
     long_description=long_description,
     url='https://github.com/SenorPez/glowing-potato',
