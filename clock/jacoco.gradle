@@ -46,7 +46,8 @@ project.afterEvaluate {
 
             executionData = files([
                     "${project.buildDir}/jacoco/${testTaskName}.exec",
-                    "${project.buildDir}/outputs/code_coverage/debugAndroidTest/connected/SM-G950U - 9-coverage.ec"
+                    //"${project.buildDir}/outputs/code_coverage/debugAndroidTest/connected/SM-G950U - 9-coverage.ec",
+                    "${project.buildDir}/outputs/code_coverage/debugAndroidTest/connected/Pixel 3a - 10-coverage.ec"
             ])
         }
     }
