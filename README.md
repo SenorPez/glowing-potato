@@ -14,7 +14,7 @@ Trident consists of tools and support for something vague and pointless. So, rea
 ## API
 The current version of **API** is **Version 1.1.0**.
 
-The API provides a HAL-compliant HATEOAS REST application for serving data
+The API provides a HAL-compliant HATEOAS REST application for serving data.
 
 The reference implementation is located at http://trident.senorpez.com/.
 Complete documentation of acceptable headers, HTTP methods, and endpoints is located at http://\<server\>/docs/reference.html.
@@ -30,6 +30,8 @@ First release.
 The current version of **Clock** is **Version 1.0.0**.
 
 Clock is an Android application that provides a conversion between standard time (UTC) and local 1 Eta Veneris 3 time (STK), and displays it using a local clock format. If none of this makes sense to you, don't worry.
+
+Clock is available on the Google Play Store: https://play.google.com/store/apps/details?id=com.senorpez.trident.clock
 
 ### Changelog
 **Version 1.0.0**
