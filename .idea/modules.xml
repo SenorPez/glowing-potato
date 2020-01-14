@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/clock/clock.iml" filepath="$PROJECT_DIR$/clock/clock.iml" />
       <module fileurl="file://$PROJECT_DIR$/libraries/libraries.iml" filepath="$PROJECT_DIR$/libraries/libraries.iml" />
       <module fileurl="file://$PROJECT_DIR$/trident.iml" filepath="$PROJECT_DIR$/trident.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tridentweb/tridentweb.iml" filepath="$PROJECT_DIR$/tridentweb/tridentweb.iml" />
     </modules>
   </component>
 </project>
