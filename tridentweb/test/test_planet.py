@@ -2,11 +2,11 @@
 
 """
 import json
-from pykep.planet import keplerian
 import unittest
 from unittest import mock
 from unittest.mock import sentinel, MagicMock, PropertyMock
 
+from pykep.planet import keplerian
 from requests.exceptions import HTTPError
 from tridentweb.planet import Planet
 

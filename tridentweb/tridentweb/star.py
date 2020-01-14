@@ -67,6 +67,7 @@ class Star:
 
     @property
     def gm(self):
+        """Standard gravitational parameter of the Planet."""
         if self.solar_mass is None:
             solar_mass_constant = Constant("Msol")
             self.solar_mass = solar_mass_constant.value
@@ -78,22 +79,23 @@ class Star:
 
     @property
     def planet(self):
+        """PyKep object (pykep.planet.keplerian) representation of Planet."""
         if self._primary is None:
-            raise ValueError;
+            raise ValueError
 
         if self.pykep_planet is None:
             self.pykep_planet = keplerian(
-                    epoch(0),
-                    (
-                        self.semimajor_axis * AU,
-                        self.eccentricity,
-                        self.inclination,
-                        self.longitude_of_ascending_node,
-                        self.argument_of_periapsis,
-                        self.true_anomaly_at_epoch),
-                    self._primary.gm,
-                    self.gm,
-                    1000,
-                    1000,
-                    self.name)
+                epoch(0),
+                (
+                    self.semimajor_axis * AU,
+                    self.eccentricity,
+                    self.inclination,
+                    self.longitude_of_ascending_node,
+                    self.argument_of_periapsis,
+                    self.true_anomaly_at_epoch),
+                self._primary.gm,
+                self.gm,
+                1000,
+                1000,
+                self.name)
         return self.pykep_planet
