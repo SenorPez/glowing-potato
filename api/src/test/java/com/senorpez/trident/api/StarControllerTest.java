@@ -56,6 +56,12 @@ public class StarControllerTest {
             .setId(12)
             .setName("2 Eta Veneris")
             .setMass((float) 0.75)
+            .setSemimajorAxis((float) 70)
+            .setEccentricty((float) 0.5)
+            .setInclination((float) 0.00627394)
+            .setLongitudeofAscendingNode((float) 4.82101)
+            .setArgumentOfPeriapsis((float) 2.95583)
+            .setTrueAnomalyAtEpoch((float) 6.01675)
             .build();
 
     private static final Star THIRD_STAR = new StarBuilder()
@@ -308,6 +314,12 @@ public class StarControllerTest {
                 .andExpect(jsonPath("$.id", is(FIRST_STAR.getId())))
                 .andExpect(jsonPath("$.name", is(FIRST_STAR.getName())))
                 .andExpect(jsonPath("$.mass", closeTo((double) FIRST_STAR.getMass(), 0.001)))
+                .andExpect(jsonPath("$.semimajorAxis", nullValue()))
+                .andExpect(jsonPath("$.eccentricity", nullValue()))
+                .andExpect(jsonPath("$.inclination", nullValue()))
+                .andExpect(jsonPath("$.longitudeOfAscendingNode", nullValue()))
+                .andExpect(jsonPath("$.argumentOfPeriapsis", nullValue()))
+                .andExpect(jsonPath("$.trueAnomalyAtEpoch", nullValue()))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", String.format(
                         "http://localhost:8080/systems/%d/stars/%d",
@@ -331,6 +343,12 @@ public class StarControllerTest {
                                 fieldWithPath("id").description("Star ID number."),
                                 fieldWithPath("name").description("Star name."),
                                 fieldWithPath("mass").description("Star mass."),
+                                fieldWithPath("semimajorAxis").description("Orbit semimajor axis, in astronomical units, secondary stars only."),
+                                fieldWithPath("eccentricity").description("Orbit eccentricity, secondary stars only."),
+                                fieldWithPath("inclination").description("Orbit inclination, in radians, secondary stars only."),
+                                fieldWithPath("longitudeOfAscendingNode").description("Longitude of ascending node, in radians, secondary stars only."),
+                                fieldWithPath("argumentOfPeriapsis").description("Argument of periapsis, in radians, secondary stars only."),
+                                fieldWithPath("trueAnomalyAtEpoch").description("True anomaly at epoch, in radians, secondary stars only."),
                                 subsectionWithPath("_links").ignored()),
                         commonLinks.and(
                                 linkWithRel("trident-api:stars").description("List of star resources."),
@@ -351,6 +369,12 @@ public class StarControllerTest {
                 .andExpect(jsonPath("$.id", is(FIRST_STAR.getId())))
                 .andExpect(jsonPath("$.name", is(FIRST_STAR.getName())))
                 .andExpect(jsonPath("$.mass", closeTo((double) FIRST_STAR.getMass(), 0.001)))
+                .andExpect(jsonPath("$.semimajorAxis", nullValue()))
+                .andExpect(jsonPath("$.eccentricity", nullValue()))
+                .andExpect(jsonPath("$.inclination", nullValue()))
+                .andExpect(jsonPath("$.longitudeOfAscendingNode", nullValue()))
+                .andExpect(jsonPath("$.argumentOfPeriapsis", nullValue()))
+                .andExpect(jsonPath("$.trueAnomalyAtEpoch", nullValue()))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
                 .andExpect(jsonPath("$._links.self", hasEntry("href", String.format(
                         "http://localhost:8080/systems/%d/stars/%d",
@@ -582,5 +606,72 @@ public class StarControllerTest {
                 .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
 
         verifyZeroInteractions(apiService);
+    }
+
+    @Test
+    public void GetSecondaryStar_ValidSystemId_ValidStarId_ValidAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, SECOND_STAR);
+
+        mockMvc.perform(get(String.format("/systems/%d/stars/%d", FIRST_SYSTEM.getId(), SECOND_STAR.getId())).accept(TRIDENT_API))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(TRIDENT_API))
+                .andExpect(content().string(matchesJsonSchema(STAR_SCHEMA)))
+                .andExpect(jsonPath("$.id", is(SECOND_STAR.getId())))
+                .andExpect(jsonPath("$.name", is(SECOND_STAR.getName())))
+                .andExpect(jsonPath("$.mass", closeTo((double) SECOND_STAR.getMass(), 0.001)))
+                .andExpect(jsonPath("$.semimajorAxis", closeTo((double) SECOND_STAR.getSemimajorAxis(), 0.001)))
+                .andExpect(jsonPath("$.eccentricity", closeTo((double) SECOND_STAR.getEccentricity(), 0.001)))
+                .andExpect(jsonPath("$.inclination", closeTo((double) SECOND_STAR.getInclination(), 0.001)))
+                .andExpect(jsonPath("$.longitudeOfAscendingNode", closeTo((double) SECOND_STAR.getLongitudeOfAscendingNode(), 0.001)))
+                .andExpect(jsonPath("$.argumentOfPeriapsis", closeTo((double) SECOND_STAR.getArgumentOfPeriapsis(), 0.001)))
+                .andExpect(jsonPath("$.trueAnomalyAtEpoch", closeTo((double) SECOND_STAR.getTrueAnomalyAtEpoch(), 0.001)))
+                .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format(
+                        "http://localhost:8080/systems/%d/stars/%d",
+                        FIRST_SYSTEM.getId(),
+                        SECOND_STAR.getId()))))
+                .andExpect(jsonPath("$._links.curies", everyItem(
+                        allOf(
+                                hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-trident-{rel}"),
+                                hasEntry("name", (Object) "trident-api"),
+                                hasEntry("templated", (Object) true)))))
+                .andExpect(jsonPath("$._links.trident-api:stars", hasEntry("href", String.format(
+                        "http://localhost:8080/systems/%d/stars", FIRST_SYSTEM.getId()))));
+        verify(apiService, times(2)).findOne(any(), any(), any());
+        verifyNoMoreInteractions(apiService);
+    }
+
+    @Test
+    public void GetSecondaryStar_ValidSystemId_ValidStarId_FallbackAcceptHeader() throws Exception {
+        when(apiService.findOne(any(), any(), any())).thenReturn(FIRST_SYSTEM, SECOND_STAR);
+
+        mockMvc.perform(get(String.format("/systems/%d/stars/%d", FIRST_SYSTEM.getId(), SECOND_STAR.getId())).accept(FALLBACK))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(FALLBACK))
+                .andExpect(content().string(matchesJsonSchema(STAR_SCHEMA)))
+                .andExpect(jsonPath("$.id", is(SECOND_STAR.getId())))
+                .andExpect(jsonPath("$.name", is(SECOND_STAR.getName())))
+                .andExpect(jsonPath("$.mass", closeTo((double) SECOND_STAR.getMass(), 0.001)))
+                .andExpect(jsonPath("$.semimajorAxis", closeTo((double) SECOND_STAR.getSemimajorAxis(), 0.001)))
+                .andExpect(jsonPath("$.eccentricity", closeTo((double) SECOND_STAR.getEccentricity(), 0.001)))
+                .andExpect(jsonPath("$.inclination", closeTo((double) SECOND_STAR.getInclination(), 0.001)))
+                .andExpect(jsonPath("$.longitudeOfAscendingNode", closeTo((double) SECOND_STAR.getLongitudeOfAscendingNode(), 0.001)))
+                .andExpect(jsonPath("$.argumentOfPeriapsis", closeTo((double) SECOND_STAR.getArgumentOfPeriapsis(), 0.001)))
+                .andExpect(jsonPath("$.trueAnomalyAtEpoch", closeTo((double) SECOND_STAR.getTrueAnomalyAtEpoch(), 0.001)))
+                .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format(
+                        "http://localhost:8080/systems/%d/stars/%d",
+                        FIRST_SYSTEM.getId(),
+                        SECOND_STAR.getId()))))
+                .andExpect(jsonPath("$._links.curies", everyItem(
+                        allOf(
+                                hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-trident-{rel}"),
+                                hasEntry("name", (Object) "trident-api"),
+                                hasEntry("templated", (Object) true)))))
+                .andExpect(jsonPath("$._links.trident-api:stars", hasEntry("href", String.format(
+                        "http://localhost:8080/systems/%d/stars", FIRST_SYSTEM.getId()))));
+
+        verify(apiService, times(2)).findOne(any(), any(), any());
+        verifyNoMoreInteractions(apiService);
     }
 }

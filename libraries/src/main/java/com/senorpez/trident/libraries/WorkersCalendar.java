@@ -1,19 +1,37 @@
-package com.senorpez.trident.clock;
+package com.senorpez.trident.libraries;
 
-import java.time.Clock;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-class PlanetaryCalendar {
-    // TODO: API integration with cache fallback.
-    private static final double STD_HOURS_PER_DAY = 36.3624863;
-    private static final double EPOCH_OFFSET = -72.27522481178462;
+import java.time.*;
 
-    private final Clock clock;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class WorkersCalendar {
+    private double standardHoursPerDay;
+    private double epochOffset;
+    private Clock clock;
 
-    PlanetaryCalendar(Clock clock) {
-        this.clock = clock;
+    @JsonCreator
+    public WorkersCalendar() {
+        this.clock = Clock.offset(
+                Clock.systemUTC(),
+                Duration.ofMillis(
+                        Clock.fixed(Instant.parse("2000-01-01T00:00:00Z"), ZoneId.ofOffset("GMT", ZoneOffset.UTC)).millis() * -1));
     }
 
-    int getCaste() {
+    WorkersCalendar(double standardHoursPerDay, double epochOffset) {
+        this.standardHoursPerDay = standardHoursPerDay;
+        this.epochOffset = epochOffset;
+    }
+
+    public static WorkersCalendar buildWorkersCalendar(double standardHoursPerDay, double epochOffset) {
+        WorkersCalendar workersCalendar = new WorkersCalendar();
+        workersCalendar.setStandardHoursPerDay(standardHoursPerDay);
+        workersCalendar.setEpochOffset(epochOffset);
+        return workersCalendar;
+    }
+
+    public int getCaste() {
         double localMilliseconds = getLocalMilliseconds(clock.millis());
         double localDays = getLocalDays(localMilliseconds);
         return getCaste(localDays);
@@ -53,7 +71,7 @@ class PlanetaryCalendar {
         }
     }
 
-    int getCasteDay() {
+    public int getCasteDay() {
         double localMilliseconds = getLocalMilliseconds(clock.millis());
         double localDays = getLocalDays(localMilliseconds);
         return getCasteDay(localDays);
@@ -113,7 +131,7 @@ class PlanetaryCalendar {
 
     double getLocalDays(final double localMilliseconds) {
         final double hours = localMilliseconds / 3600000;
-        return hours / STD_HOURS_PER_DAY;
+        return hours / standardHoursPerDay;
     }
 
     double getLocalMilliseconds() {
@@ -121,10 +139,10 @@ class PlanetaryCalendar {
     }
 
     double getLocalMilliseconds(final double standardMilliseconds) {
-        return standardMilliseconds - EPOCH_OFFSET * 86400000;
+        return standardMilliseconds - epochOffset * 86400000;
     }
 
-    int getLocalYear() {
+    public int getLocalYear() {
         double localMilliseconds = getLocalMilliseconds(clock.millis());
         double localDays = getLocalDays(localMilliseconds);
         return getLocalYear(localDays);
@@ -139,7 +157,7 @@ class PlanetaryCalendar {
         return year;
     }
 
-    int getShift() {
+    public int getShift() {
         double localMilliseconds = getLocalMilliseconds(clock.millis());
         double localDays = getLocalDays(localMilliseconds);
         return getShift(localDays);
@@ -149,7 +167,7 @@ class PlanetaryCalendar {
         return (int) Math.floor(days % 1 / 0.25) + 1;
     }
 
-    double getTithe() {
+    public double getTithe() {
         double localMilliseconds = getLocalMilliseconds(clock.millis());
         double localDays = getLocalDays(localMilliseconds);
         return getTithe(localDays);
@@ -179,12 +197,20 @@ class PlanetaryCalendar {
         return year % 3 == 0 && year % 51 != 0 ? 100 : 99;
     }
 
-    private boolean isFestivalYear(final int year) {
+    public boolean isFestivalYear(final int year) {
         return year % 3 == 0 && year % 51 != 0;
     }
 
     private double removeYearDays(int year, double days) {
         year -= 1;
         return days - (year * 99 + Math.floorDiv(year, 3) - Math.floorDiv(year, 51));
+    }
+
+    public void setStandardHoursPerDay(double standardHoursPerDay) {
+        this.standardHoursPerDay = standardHoursPerDay;
+    }
+
+    public void setEpochOffset(double epochOffset) {
+        this.epochOffset = epochOffset;
     }
 }

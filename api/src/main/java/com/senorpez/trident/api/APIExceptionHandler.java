@@ -8,6 +8,10 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import static com.senorpez.trident.api.SupportedMediaTypes.TRIDENT_API;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
@@ -17,7 +21,8 @@ class APIExceptionHandler {
     @ExceptionHandler({
             SolarSystemNotFoundException.class,
             StarNotFoundException.class,
-            PlanetNotFoundException.class
+            PlanetNotFoundException.class,
+            PlanetaryCalendarNotFoundException.class
     })
     ResponseEntity<ErrorResponse> handleAPIObjectNotFound(final Exception e) {
         return ResponseEntity
@@ -41,6 +46,20 @@ class APIExceptionHandler {
                 .contentType(APPLICATION_JSON_UTF8)
                 .body(new ErrorResponse(NOT_ACCEPTABLE,
                         String.format("Accept header must be \"%s\"", TRIDENT_API.toString())));
+    }
+
+    @ExceptionHandler(Exception.class)
+    ResponseEntity<ErrorResponse> handle500ServerError(Exception ex, HttpServletRequest request) {
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(stringWriter);
+        ex.printStackTrace(printWriter);
+        return ResponseEntity
+                .status(INTERNAL_SERVER_ERROR)
+                .contentType(APPLICATION_JSON_UTF8)
+                .body(new ErrorResponse(INTERNAL_SERVER_ERROR,
+                        String.format(">>>>>Internal server error occurred.<<<<<\r\n " +
+                                ">>>>>Please report to https://github.com/SenorPez/glowing-potato/issues<<<< \r\n " +
+                                "%s \r\n %s", stringWriter.toString(), request.getRequestURI())));
     }
 
     private class ErrorResponse {

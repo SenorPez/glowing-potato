@@ -1,0 +1,109 @@
+{
+  "$schema": "http://json-schema.org/draft-6/schema",
+  "title": "Trident API Worker's Calendar Schema",
+  "description": "Schema for the worker's calendar in Trident API",
+  "definitions": {
+    "standardLink": {
+      "type": "object",
+      "properties": {
+        "href": {
+          "type": "string",
+          "pattern": "^http[s]?://[a-z.]+(:[0-9]+)*((/[a-zA-Z0-9-]+)+|/)$"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "href"
+      ]
+    },
+    "templatedLink": {
+      "type": "object",
+      "properties": {
+        "href": {
+          "type": "string",
+          "pattern": "^http[s]?://[a-z.]+(:[0-9]+)*((/[a-zA-Z0-9-{}]+)+|/)$"
+        },
+        "templated": {
+          "type": "boolean"
+        }
+      }
+    },
+    "curies": {
+      "type": "array",
+      "items": {
+        "properties": {
+          "href": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "templated": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "href",
+          "name",
+          "templated"
+        ]
+      }
+    }
+  },
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer"
+    },
+    "year": {
+      "type": "integer"
+    },
+    "caste": {
+      "type": "integer"
+    },
+    "day": {
+      "type": "integer"
+    },
+    "shift": {
+      "type": "integer"
+    },
+    "tithe": {
+      "type": "number"
+    },
+    "_links": {
+      "type": "object",
+      "properties": {
+        "self": {
+          "$ref": "#/definitions/standardLink"
+        },
+        "index": {
+          "$ref": "#/definitions/standardLink"
+        },
+        "curies": {
+          "$ref": "#/definitions/curies"
+        },
+        "trident-api:calendar": {
+          "$ref": "#/definitions/standardLink"
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "self",
+        "index",
+        "curies",
+        "trident-api:calendar"
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "year",
+    "caste",
+    "day",
+    "shift",
+    "tithe",
+    "_links"
+  ]
+}

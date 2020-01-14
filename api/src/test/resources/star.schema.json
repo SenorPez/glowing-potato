@@ -8,7 +8,7 @@
       "properties": {
         "href": {
           "type": "string",
-          "pattern": "^http[s]?://[a-z.]+(:[0-9]+)*((/[a-z0-9-]+)+|/)$"
+          "pattern": "^http[s]?://[a-z.]+(:[0-9]+)*((/[a-zA-Z0-9-]+)+|/)$"
         }
       },
       "additionalProperties": false,
@@ -49,6 +49,24 @@
     },
     "mass": {
       "type": "number"
+    },
+    "semimajorAxis": {
+      "type": ["number", "null"]
+    },
+    "eccentricity": {
+      "type": ["number", "null"]
+    },
+    "inclination": {
+      "type": ["number", "null"]
+    },
+    "longitudeOfAscendingNode": {
+      "type": ["number", "null"]
+    },
+    "argumentOfPeriapsis": {
+      "type": ["number", "null"]
+    },
+    "trueAnomalyAtEpoch": {
+      "type": ["number", "null"]
     },
     "_links": {
       "type": "object",

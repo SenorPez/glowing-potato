@@ -43,7 +43,15 @@
               "inclination": 0,
               "longitudeOfAscendingNode": 0,
               "argumentOfPeriapsis": 3.792068139,
-              "trueAnomalyAtEpoch": 3.86047981
+              "trueAnomalyAtEpoch": 3.86047981,
+              "calendars": [
+                {
+                  "id": -1010689347,
+                  "name": "Worker's Calendar",
+                  "standardHoursPerDay": 36.3624863,
+                  "epochOffset": -72.27522481178462
+                }
+              ]
             },
             {
               "id": 272811578,
@@ -56,13 +64,55 @@
               "longitudeOfAscendingNode": 6.171541831,
               "argumentOfPeriapsis": 3.135553814,
               "trueAnomalyAtEpoch": 3.384338282
+            },
+            {
+              "id": -393577255,
+              "name": "1 Eta Veneris 5",
+              "mass": 0.506640626,
+              "radius": 0.810946373,
+              "semimajorAxis": 1.368222523,
+              "eccentricity": 0.005,
+              "inclination": 0.042777444,
+              "longitudeOfAscendingNode": 5.304268527,
+              "argumentOfPeriapsis": 5.664392784,
+              "trueAnomalyAtEpoch": 3.478230014
+            },
+            {
+              "id": -1420756477,
+              "name": "1 Eta Veneris 6",
+              "mass": 860,
+              "radius": 13.2945137,
+              "semimajorAxis": 3.256369604,
+              "eccentricity": 0.135,
+              "inclination": 0.014338054,
+              "longitudeOfAscendingNode": 5.48533422,
+              "argumentOfPeriapsis": 2.765465473,
+              "trueAnomalyAtEpoch": 4.516098781
+            },
+            {
+              "id": -93488736,
+              "name": "1 Eta Veneris 7",
+              "mass": 9.5,
+              "radius": 2.79305211,
+              "semimajorAxis": 9.37834446,
+              "eccentricity": 0.02,
+              "inclination": 0.015607816,
+              "longitudeOfAscendingNode": 4.01277375,
+              "argumentOfPeriapsis": 2.167491237,
+              "trueAnomalyAtEpoch": 4.533440372
             }
           ]
         },
         {
           "id": -1385166447,
           "name": "2 Eta Veneris",
-          "mass": 0.75
+          "mass": 0.75,
+          "semimajorAxis": 70,
+          "eccentricity": 0.5,
+          "inclination": 0.006273935,
+          "longitudeOfAscendingNode": 4.821009546,
+          "argumentOfPeriapsis": 2.95583028,
+          "trueAnomalyAtEpoch": 6.01675207
         }
       ]
     }

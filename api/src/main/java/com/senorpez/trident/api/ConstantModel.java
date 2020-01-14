@@ -5,7 +5,7 @@ import org.springframework.hateoas.Identifiable;
 import org.springframework.hateoas.core.Relation;
 
 @Relation(value = "constant", collectionRelation = "constant")
-public class ConstantModel implements Identifiable<String> {
+class ConstantModel implements Identifiable<String> {
     private final String name;
     private final String symbol;
     private final double value;
@@ -19,7 +19,11 @@ public class ConstantModel implements Identifiable<String> {
     }
 
     ConstantResource toResource() {
-        final APIResourceAssembler<ConstantModel, ConstantResource> assembler = new APIResourceAssembler<>(ConstantController.class, ConstantResource.class, () -> new ConstantResource(this));
+        final APIResourceAssembler<ConstantModel, ConstantResource> assembler =
+                new APIResourceAssembler<>(
+                        ConstantController.class,
+                        ConstantResource.class,
+                        () -> new ConstantResource(this));
         return assembler.toResource(this);
     }
 

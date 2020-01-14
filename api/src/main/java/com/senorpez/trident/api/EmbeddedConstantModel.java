@@ -7,7 +7,7 @@ import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.core.Relation;
 
 @Relation(value = "constant", collectionRelation = "constant")
-public class EmbeddedConstantModel implements Identifiable<String> {
+class EmbeddedConstantModel implements Identifiable<String> {
     private final String symbol;
 
     EmbeddedConstantModel(final Constant constant) {
@@ -15,7 +15,11 @@ public class EmbeddedConstantModel implements Identifiable<String> {
     }
 
     Resource<EmbeddedConstantModel> toResource() {
-        final APIEmbeddedResourceAssembler<EmbeddedConstantModel, EmbeddedConstantResource> assembler = new APIEmbeddedResourceAssembler<>(ConstantController.class, EmbeddedConstantResource.class, () -> new EmbeddedConstantResource(this));
+        final APIEmbeddedResourceAssembler<EmbeddedConstantModel, EmbeddedConstantResource> assembler =
+                new APIEmbeddedResourceAssembler<>(
+                        ConstantController.class,
+                        EmbeddedConstantResource.class,
+                        () -> new EmbeddedConstantResource(this));
         return assembler.toResource(this);
     }
 

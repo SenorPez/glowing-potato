@@ -6,7 +6,7 @@ import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.core.Relation;
 
 @Relation(value = "star", collectionRelation = "star")
-public class EmbeddedStarModel implements Identifiable<Integer> {
+class EmbeddedStarModel implements Identifiable<Integer> {
     private final int id;
     private final String name;
 
