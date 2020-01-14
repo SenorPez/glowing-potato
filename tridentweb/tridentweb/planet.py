@@ -74,6 +74,7 @@ class Planet:
 
     @property
     def gm(self):
+        """Standard gravitational parameter of the Planet."""
         if self.planet_mass is None:
             planet_mass_constant = Constant("Mpln")
             self.planet_mass = planet_mass_constant.value
@@ -85,23 +86,24 @@ class Planet:
 
     @property
     def planet(self):
+        """PyKep object (pykep.planet.keplerian) representation of Planet."""
         if self.pykep_planet is None:
             if self.planet_radius is None:
                 planet_radius_constant = Constant("Rpln")
                 self.planet_radius = planet_radius_constant.value
 
             self.pykep_planet = keplerian(
-                    epoch(0),
-                    (
-                        self.semimajor_axis * AU,
-                        self.eccentricity,
-                        self.inclination,
-                        self.longitude_of_ascending_node,
-                        self.argument_of_periapsis,
-                        self.true_anomaly_at_epoch),
-                    self._star.gm,
-                    self.gm,
-                    self.radius * self.planet_radius,
-                    self.radius * self.planet_radius,
-                    self.name)
+                epoch(0),
+                (
+                    self.semimajor_axis * AU,
+                    self.eccentricity,
+                    self.inclination,
+                    self.longitude_of_ascending_node,
+                    self.argument_of_periapsis,
+                    self.true_anomaly_at_epoch),
+                self._star.gm,
+                self.gm,
+                self.radius * self.planet_radius,
+                self.radius * self.planet_radius,
+                self.name)
         return self.pykep_planet

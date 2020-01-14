@@ -2,11 +2,11 @@
 
 """
 import json
-from pykep.planet import keplerian
 import unittest
 from unittest import mock
 from unittest.mock import sentinel, MagicMock, PropertyMock
 
+from pykep.planet import keplerian
 from requests.exceptions import HTTPError
 from tridentweb.star import Star
 
@@ -16,7 +16,7 @@ def mocked_requests_get(*args, **kwargs):
         """Solution cribbed from
         https://stackoverflow.com/questions/15753390/how-can-i-mock-requests-and-the-response/28507806#28507806
         """
-        def __init__(self, *, json_string=None, idnum=0, name="", mass=0, 
+        def __init__(self, *, json_string=None, idnum=0, name="", mass=0,
                      semimajor_axis=0, eccentricity=0, inclination=0,
                      longitude_of_ascending_node=0, argument_of_periapsis=0,
                      true_anomaly_at_epoch=0):
@@ -259,7 +259,8 @@ class TestStar(unittest.TestCase):
     def test_property_longitude_of_ascending_node_secondary(self, mock_get):
         """Test longitude of ascending node property of secondary Star."""
         mock_get.side_effect = self.api_traversal \
-                + [mocked_requests_get(longitude_of_ascending_node=id(sentinel.longitude_of_ascending_node))]
+                + [mocked_requests_get(
+                    longitude_of_ascending_node=id(sentinel.longitude_of_ascending_node))]
         mock_star = MagicMock()
 
         instance = Star(1, 1, mock_star)
@@ -338,6 +339,7 @@ class TestStar(unittest.TestCase):
     @mock.patch('tridentweb.star.Constant')
     @mock.patch('requests.get')
     def test_property_planet_secondary(self, mock_get, mock_constant):
+        """Test planet property of secondary Star."""
         mock_get.side_effect = self.api_traversal \
                 + [mocked_requests_get(mass=0.75, semimajor_axis=1)]
 
