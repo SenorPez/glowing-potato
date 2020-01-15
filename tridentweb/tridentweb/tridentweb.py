@@ -5,6 +5,7 @@ from datetime import datetime
 from math import sqrt
 
 from tridentweb.epoch_offset import epoch_offset
+from tridentweb.pykep_addons import lambert_positions, orbit_positions
 
 from flask import Flask, has_app_context, jsonify, request as flask_request
 from flask_cors import CORS
@@ -131,22 +132,6 @@ def orbit():
         c=planet_colors,
         n=planet_names) if has_app_context() else x_val
 
-def plot_planet_2d(planet, t0):
-    T = planet.compute_period(t0) * SEC2DAY
-    when = np.linspace(0, T, 60)
-
-    x = np.array([0.0] * 60)
-    y = np.array([0.0] * 60)
-    z = np.array([0.0] * 60)
-
-    for i, day in enumerate(when):
-        r, _ = planet.eph(epoch(t0.mjd2000 + day))
-        x[i] = r[0] / AU
-        y[i] = r[1] / AU
-        z[i] = r[2] / AU
-
-    return x, y, z
-
 def plot_lambert_2d(lambert, sol=0):
     if sol > lambert.get_Nmax() * 2:
         return ValueError(
@@ -222,12 +207,8 @@ def plottransfer():
         units=AU,
         ax=orbit_ax)
 
-    o_x, o_y, o_z = plot_planet_2d(
-        origin.planet,
-        t0=t1)
-    t_x, t_y, t_z = plot_planet_2d(
-        target.planet,
-        t0=t2)
+    o_x, o_y, o_z = tuple(x / AU for x in orbit_positions(origin.planet, t1))
+    t_x, t_y, t_z = tuple(x / AU for x in orbit_positions(target.planet, t2))
 
     x_ax.plot(o_y, o_z, label=origin.planet.name, c='green')
     x_ax.scatter(o_y[0], o_z[0], s=40, color='green')
