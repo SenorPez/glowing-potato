@@ -7,6 +7,7 @@ from unittest.mock import sentinel
 from tridentweb.epoch_offset import epoch_offset
 
 class TestEpochOffset(unittest.TestCase):
+    """Tests for the epoch_offset function."""
     def test_epoch_offset_angle_overflow(self):
         """Test epoch offset with angle over pi."""
         with self.assertRaises(ValueError):
@@ -34,6 +35,10 @@ class TestEpochOffset(unittest.TestCase):
             ((0, 1, 0), 0),
             ((1, 1, 0), 0),
             ((0.92, 0.38, 0), 0)]
-        offset, _ = epoch_offset(mock_planet, target_angle=pi / 4,  low_bound=0, high_bound=4, iterations=3)
-        self.assertEquals(offset, 0.5)
-            
+        offset, _ = epoch_offset(
+            mock_planet,
+            target_angle=pi / 4,
+            low_bound=0,
+            high_bound=4,
+            iterations=3)
+        self.assertEqual(offset, 0.5)
