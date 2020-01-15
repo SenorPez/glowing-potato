@@ -1,3 +1,4 @@
+"""Tests the epoch offset module."""
 from math import pi
 import unittest
 from unittest import mock
@@ -5,7 +6,7 @@ from unittest.mock import sentinel
 
 from tridentweb.epoch_offset import epoch_offset
 
-class TestThing(unittest.TestCase):
+class TestEpochOffset(unittest.TestCase):
     def test_epoch_offset_angle_overflow(self):
         """Test epoch offset with angle over pi."""
         with self.assertRaises(ValueError):
