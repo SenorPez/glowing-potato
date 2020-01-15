@@ -132,32 +132,6 @@ def orbit():
         c=planet_colors,
         n=planet_names) if has_app_context() else x_val
 
-def plot_lambert_2d(lambert, sol=0):
-    if sol > lambert.get_Nmax() * 2:
-        return ValueError(
-            "sol must be in 0 .. NMax*2 \n",
-            "* Nmax is the maximum number of revolutions ",
-            "for which there exists a solution.")
-
-    r = lambert.get_r1()
-    v = lambert.get_v1()[sol]
-    T = lambert.get_tof()
-    mu = lambert.get_mu()
-
-    dt = T / (60 - 1)
-
-    x = np.array([0.0] * 60)
-    y = np.array([0.0] * 60)
-    z = np.array([0.0] * 60)
-
-    for i in range(60):
-        x[i] = r[0] / AU
-        y[i] = r[1] / AU
-        z[i] = r[2] / AU
-        r, v = propagate_lagrangian(r, v, dt, mu)
-
-    return x, y, z
-
 @APP.route("/plottransfer", methods=['POST'])
 def plottransfer():
     star = Star(1817514095, 1905216634)
@@ -258,7 +232,7 @@ def plottransfer():
 
     plot_lambert(lambert, color='purple', sol=min_n, legend=False, units=AU, ax=orbit_ax)
 
-    l_x, l_y, l_z = plot_lambert_2d(lambert, sol=min_n)
+    l_x, l_y, l_z = tuple(x / AU for x in lambert_positions(lambert, sol=min_n))
 
     x_ax.plot(l_y, l_z, c='purple')
     y_ax.plot(l_x, l_z, c='purple')
