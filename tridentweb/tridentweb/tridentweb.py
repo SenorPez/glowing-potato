@@ -4,6 +4,8 @@ Main execution script.
 from datetime import datetime
 from math import sqrt
 
+from tridentweb.epoch_offset import epoch_offset
+
 from flask import Flask, has_app_context, jsonify, request as flask_request
 from flask_cors import CORS
 import matplotlib.pyplot as plt
@@ -18,26 +20,11 @@ APP = Flask(__name__)
 CORS(APP, resources={r"/*": {"origins": "http://senorpez.com"}})
 
 @APP.route("/epochoffset", methods=['GET'])
-def epoch_offset():
+def get_epoch_offset():
     planet = Planet(1817514095, 1905216634, -455609026)
-
     winter = np.arctan2(-1, 0)
-
-    a = -75.0
-    b = 75.0
-
-    for _ in range(1000):
-        c = (a + b) / 2
-        r_c, _ = planet.planet.eph(epoch(c))
-
-        angle = np.arctan2(r_c[1], r_c[0])
-
-        if angle - winter < 0:
-            a = c
-        else:
-            b = c
-
-    return jsonify(c) if has_app_context() else c
+    offset, error = epoch_offset(planet.planet, winter)
+    return jsonify(offset,error) if has_app_context() else (offset, error)
 
 @APP.route("/orbit2", methods=['GET'])
 def orbit2():
@@ -102,6 +89,7 @@ def orbit():
         Planet(1817514095, 1905216634, 272811578)]
 
     t0 = epoch_from_string(str(datetime.now()))
+    #t0 = epoch_from_string("2000-01-01 00:00:00")
     x_val = list()
     y_val = list()
     z_val = list()
