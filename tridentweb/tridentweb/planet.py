@@ -7,6 +7,7 @@ from pykep.planet import keplerian
 import requests
 from tridentweb.constant import Constant
 from tridentweb.star import Star
+from tridentweb.pykep_addons import mean_from_true
 
 class Planet:
     """Represents a planet.
@@ -100,7 +101,7 @@ class Planet:
                     self.inclination,
                     self.longitude_of_ascending_node,
                     self.argument_of_periapsis,
-                    self.true_anomaly_at_epoch),
+                    mean_from_true(self.eccentricity, self.true_anomaly_at_epoch)),
                 self._star.gm,
                 self.gm,
                 self.radius * self.planet_radius,

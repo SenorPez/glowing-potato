@@ -2,6 +2,7 @@
 
 """
 
+from math import atan2, cos, pi, sin, sqrt
 from numpy import array, linspace
 from pykep import SEC2DAY, epoch, propagate_lagrangian
 
@@ -84,3 +85,45 @@ def lambert_positions(lambert, sol=0, N=60):
         r, v = propagate_lagrangian(r, v, dt, mu)
 
     return x, y, z
+
+def eccentric_from_true(e, f):
+    """Provides the eccentric anomaly given the eccentricity of an orbit and the true anomaly of
+        an object in that orbit.
+
+    Parameters:
+        e: Eccentricity of the orbit. Dimensionless
+        f: True anomaly of an object in the orbit. Radians
+
+    Returns:
+        E: The eccentric anomaly of the object in the orbit.
+    """
+
+    return atan2(sqrt(1 - e ** 2) * sin(f), e + cos(f)) % (2 * pi)
+
+def mean_from_eccentric(e, E):
+    """Provides the mean anomaly given the eccentricity of an orbit and the eccentric anomaly of
+        an object in that orbit.
+
+    Parameters:
+        e: Eccentricty of the orbit. Dimensionless
+        E: Eccentric anomaly of an object in the orbit. Radians
+
+    Returns:
+        M: The mean anomaly of the object in the orbit.
+    """
+
+    return E - e * sin(E)
+
+def mean_from_true(e, f):
+    """Provides the mean anomaly given the eccentricty of an orbit and the true anomaly of an
+        object in that orbit.
+
+    Parameters:
+        e: Eccentricty of the orbit. Dimensionless
+        f: True anomaly of an object in the oribt. Radians
+
+    Returns:
+        M: The mean anomaly of the object in the orbit. Radians
+    """
+
+    return mean_from_eccentric(e, eccentric_from_true(e, f))

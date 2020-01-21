@@ -4,7 +4,8 @@ import unittest
 from unittest import mock
 
 from pykep import epoch
-from tridentweb.pykep_addons import lambert_positions, orbit_positions
+from tridentweb.pykep_addons import lambert_positions, orbit_positions, eccentric_from_true, \
+    mean_from_true, mean_from_eccentric
 
 def generate_test_data():
     """Generates ridicuous 'orbit' test data."""
@@ -24,6 +25,39 @@ def generate_test_data():
         ephemerides.append([[value_x, value_y, value_z], None])
 
     return ephemerides, expected_x, expected_y, expected_z
+
+class TestEccentricFromTrue(unittest.TestCase):
+    """Tests for the eccentric_from_true function.
+        Numbers taken from http://www.braeunig.us/space/"""
+    def test_eccentric_from_true(self):
+        """Test function."""
+        eccentricity = 0.1
+        true_anomaly = 0.523599
+        expected_value = 0.4755680
+
+        self.assertAlmostEqual(eccentric_from_true(eccentricity, true_anomaly), expected_value)
+
+class TestMeanFromEccentric(unittest.TestCase):
+    """Test for the mean_from_eccentric function.
+        Numbers taken from http://www.braeunig.us/space/"""
+    def test_mean_from_eccentric(self):
+        """Test function."""
+        eccentricity = 0.1
+        eccentric_anomaly = 0.4755680
+        expected_value = 0.4297837
+
+        self.assertAlmostEqual(mean_from_eccentric(eccentricity, eccentric_anomaly), expected_value)
+
+class TestMeanFromTrue(unittest.TestCase):
+    """Test for the mean_from_true function.
+        Numbers taken from http://www.braeunig.us/space/"""
+    def test_mean_from_true(self):
+        """Test function."""
+        eccentricity = 0.1
+        true_anomaly = 0.523599
+        expected_value = 0.4297837
+
+        self.assertAlmostEqual(mean_from_true(eccentricity, true_anomaly), expected_value)
 
 class TestOrbitPositions(unittest.TestCase):
     """Tests for the orbit_positions function."""
