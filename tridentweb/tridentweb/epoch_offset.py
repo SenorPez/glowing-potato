@@ -12,8 +12,8 @@ def epoch_offset(planet, target_angle=0, low_bound=-100, high_bound=100, iterati
         planet: A Pykep object (pykep.planet._base) representing the orbiting element.
         target_angle: The angle, in radians, against which to calculate the epoch offset.
             The angle must be in the range -pi < x <= pi.
-            Defaults to 0 rad. 0 rad is defined as the vernal equinox of the system primary
-                planet.
+            Defaults to 0 rad. 0 rad for the Earth system corresponds to the first point of Ares
+                pi rad corresponds to the vernal equinox of the system primary planet.
         low_bound: The low bound for number of standard days to check.
             Defaults to -100; 100 days before the J2000 epoch.
         high_bound: The high bound for number of standard days to check.
@@ -39,11 +39,14 @@ def epoch_offset(planet, target_angle=0, low_bound=-100, high_bound=100, iterati
 
     for _ in range(iterations):
         midpoint = (low_bound + high_bound) / 2
+        r_a, _ = planet.eph(epoch(low_bound))
         r_c, _ = planet.eph(epoch(midpoint))
-        current_angle = arctan2(r_c[1], r_c[0])
 
-        if current_angle - target_angle < 0:
+        angle_a = arctan2(r_a[1], r_a[0])
+        angle_c = arctan2(r_c[1], r_c[0])
+
+        if abs(target_angle - angle_a) > abs(angle_c - angle_a):
             low_bound = midpoint
         else:
             high_bound = midpoint
-    return (midpoint, current_angle - target_angle)
+    return (midpoint, angle_c - target_angle)

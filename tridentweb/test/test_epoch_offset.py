@@ -34,6 +34,9 @@ class TestEpochOffset(unittest.TestCase):
         mock_planet.eph.side_effect = [
             ((0, 1, 0), 0),
             ((1, 1, 0), 0),
+            ((1, 1, 0), 0),
+            ((0.92, 0.38, 0), 0),
+            ((0.92, 0.38, 0), 0),
             ((0.92, 0.38, 0), 0)]
         offset, _ = epoch_offset(
             mock_planet,
