@@ -41,7 +41,8 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'tridentweb=tridentweb.tridentweb:main'
+            'tridentweb=tridentweb.tridentweb:main',
+            'transfer_calc=tridentweb.transfer_calc:transfer_calc'
         ],
     },
     project_urls={
