@@ -1,4 +1,6 @@
-"""Provides a crontab-compatible function for generating transfer delta_vs."""
+"""Provides a crontab-compatible function for generating transfer delta_vs.
+
+"""
 from datetime import datetime, timedelta
 import gzip
 from json import dumps
@@ -10,6 +12,28 @@ from pykep import epoch, epoch_from_string, lambert_problem, DAY2SEC
 
 from tridentweb.star import Star
 from tridentweb.planet import Planet
+
+def transfer_delta_v(vp_input, vs_input, mu, orbit_radius):
+    """Calculates the delta-v requirement for an injection or insertion manuever.
+
+    Parameters:
+        vp_input: [x, y, z] components of planetary velocity.
+            Typically created by pykep.planet.eph(t)
+        vs_input: [x, y, z] components of spacecraft velocity.
+            Typically created by the solution to a Lambert problem.
+        mu: Gravitational parameter for planet.
+        orbit_radius: Circular orbit radius around planet.
+
+    Returns:
+        delta_v: Delta-v requirement for the manuever.
+    """
+    vp_vec = np.array(vp_input)
+    vs_vec = np.array(vs_input)
+    vsp_vec = vs_vec - vp_vec
+    vsp = np.linalg.norm(vsp_vec)
+    vo = sqrt(vsp * vsp + 2 * mu / orbit_radius)
+    return vo - sqrt(mu / orbit_radius)
+
 
 def transfer_calc():
     """A crontab-compatible function for generating transfer delta_vs."""
@@ -42,21 +66,20 @@ def transfer_calc():
 
             lambert_delta_vs = list()
             for x in range(lambert.get_Nmax() + 1):
-                vp_vec = np.array(v1)
-                vs_vec = np.array(lambert.get_v1()[x])
-                vsp_vec = vs_vec - vp_vec
-                vsp = np.linalg.norm(vsp_vec)
-                vo = sqrt(vsp * vsp + 2 * origin.planet.mu_self / origin_orbit_radius)
-                inj_delta_v = vo - sqrt(origin.planet.mu_self / origin_orbit_radius)
-
-                vp_vec = np.array(v2)
-                vs_vec = np.array(lambert.get_v2()[x])
-                vsp_vec = vs_vec - vp_vec
-                vsp = np.linalg.norm(vsp_vec)
-                vo = sqrt(vsp * vsp + 2 * target.planet.mu_self / target_orbit_radius)
-                ins_delta_v = vo - sqrt(target.planet.mu_self / target_orbit_radius)
-
-                lambert_delta_vs.append(inj_delta_v + ins_delta_v)
+                lambert_delta_vs.append(
+                    transfer_delta_v(
+                        v1,
+                        lambert.get_v1()[x],
+                        origin.planet.mu_self,
+                        origin_orbit_radius
+                    )
+                    + transfer_delta_v(
+                        v2,
+                        lambert.get_v2()[x],
+                        target.planet.mu_self,
+                        target_orbit_radius
+                    )
+                )
 
             delta_v[flight_time + launch_time, launch_time] = min(lambert_delta_vs)
             if min_delta_v[2] is None or min(lambert_delta_vs) < min_delta_v[2]:
