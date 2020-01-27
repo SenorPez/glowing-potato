@@ -1,9 +1,12 @@
 """Tests the transfer calc module.
 
 """
+from datetime import datetime
 import unittest
+from unittest import mock
+from unittest.mock import patch, mock_open
 
-from tridentweb.transfer_calc import transfer_delta_v
+from tridentweb.transfer_calc import transfer_calc, transfer_delta_v
 
 class TestTransferDeltaV(unittest.TestCase):
     """Tests the transfer_delta_v function."""
@@ -16,3 +19,11 @@ class TestTransferDeltaV(unittest.TestCase):
 
         expected_value = 3824.1
         self.assertAlmostEqual(transfer_delta_v(vp, vs, mu, orbit_radius), expected_value, 1)
+
+class TestTransferCalc(unittest.TestCase):
+    """Test the transfer_calc function."""
+    def test_transfer_calc(self):
+        with patch('tridentweb.transfer_calc.gzip.open', mock_open()) as mocked_file:
+            transfer_calc()
+            mocked_file.assert_called_once_with(mock.ANY, 'wt')
+            mocked_file().write.assert_called_once_with(mock.ANY)

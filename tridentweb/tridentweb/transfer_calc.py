@@ -34,7 +34,6 @@ def transfer_delta_v(vp_input, vs_input, mu, orbit_radius):
     vo = sqrt(vsp * vsp + 2 * mu / orbit_radius)
     return vo - sqrt(mu / orbit_radius)
 
-
 def transfer_calc():
     """A crontab-compatible function for generating transfer delta_vs."""
     arrival_time_max = 500
@@ -86,9 +85,6 @@ def transfer_calc():
 
     launch_delta = timedelta(min_delta_v[1])
     arrival_delta = timedelta(min_delta_v[0] )
-    print(
-            launch_delta,
-            arrival_delta)
     output = {
         "date": "{:%Y-%m-%d}".format(datetime.now()),
         "delta_v": delta_v.tolist(),
@@ -101,6 +97,3 @@ def transfer_calc():
 
     with gzip.open(sys.argv[1] + 'transfer_data.gz', 'wt') as file_out:
         file_out.write(dumps(output))
-
-if __name__ == "__main__":
-    transfer_calc()
