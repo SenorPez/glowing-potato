@@ -56,7 +56,7 @@ def transfer_calc():
     for launch_time in range(launch_time_start, launch_time_end):
         for flight_time in range(1, arrival_time_max - launch_time):
             t1 = epoch(launch_time + t0_number)
-            t2 = epoch(launch_time + flight_time + t0_number)
+            t2 = epoch(flight_time + launch_time + t0_number)
             dt = (t2.mjd - t1.mjd) * DAY2SEC
 
             r1, v1 = origin.planet.eph(t1)
@@ -82,15 +82,20 @@ def transfer_calc():
 
             delta_v[flight_time + launch_time, launch_time] = min(lambert_delta_vs)
             if min_delta_v[2] is None or min(lambert_delta_vs) < min_delta_v[2]:
-                min_delta_v = (flight_time, launch_time, min(lambert_delta_vs))
+                min_delta_v = (flight_time + launch_time, launch_time, min(lambert_delta_vs))
 
     launch_delta = timedelta(min_delta_v[1])
-    arrival_delta = timedelta(min_delta_v[0])
+    arrival_delta = timedelta(min_delta_v[0] )
+    print(
+            launch_delta,
+            arrival_delta)
     output = {
         "date": "{:%Y-%m-%d}".format(datetime.now()),
         "delta_v": delta_v.tolist(),
         "launch_date": "{:%x} ({} days)".format(datetime.now() + launch_delta, min_delta_v[1]),
         "arrival_date": "{:%x} ({} days)".format(datetime.now() + arrival_delta, min_delta_v[0]),
+        "launch_time": min_delta_v[1],
+        "flight_time": min_delta_v[0] - min_delta_v[1],
         "min_delta_v": "{} m/s".format(min_delta_v[2])
     }
 

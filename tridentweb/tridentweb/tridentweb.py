@@ -1,8 +1,11 @@
 """
 Main execution script.
 """
-from datetime import datetime
-from math import sqrt
+from datetime import datetime, timedelta
+from tqdm import tqdm
+from math import sqrt, atan2, cos, sin, pi
+import gzip
+import json
 
 from tridentweb.epoch_offset import epoch_offset
 from tridentweb.pykep_addons import lambert_positions, orbit_positions
@@ -11,24 +14,31 @@ from flask import Flask, has_app_context, jsonify, request as flask_request
 from flask_cors import CORS
 import matplotlib.pyplot as plt
 import numpy as np
+from numpy import mod
 from pykep import epoch, epoch_from_string, lambert_problem, \
-        propagate_lagrangian, AU, DAY2SEC, SEC2DAY
+        propagate_lagrangian, AU, DAY2SEC, SEC2DAY, DEG2RAD, MU_SUN, RAD2DEG
 from pykep.orbit_plots import plot_lambert, plot_planet
 from tridentweb.planet import Planet
 from tridentweb.star import Star
+from tridentweb.transfer_calc import transfer_calc
+
+from pykep.planet import jpl_lp, keplerian
 
 APP = Flask(__name__)
 CORS(APP, resources={r"/*": {"origins": "http://senorpez.com"}})
 
+def transfer_calc():
+    transfer_calc()
+
 @APP.route("/epochoffset", methods=['GET'])
 def get_epoch_offset():
     planet = Planet(1817514095, 1905216634, -455609026)
-    winter = np.arctan2(-1, 0)
-    offset, error = epoch_offset(planet.planet, winter)
+    summer = np.arctan2(-1, 0)
+    offset, error = epoch_offset(planet.planet, summer)
     return jsonify(offset,error) if has_app_context() else (offset, error)
 
-@APP.route("/orbit2", methods=['GET'])
-def orbit2():
+@APP.route("/systemorbits", methods=['GET'])
+def systemorbits():
     planets = [
         Planet(1817514095, 1905216634, -1485460920),
         Planet(1817514095, 1905216634, -1722015868),
@@ -39,98 +49,60 @@ def orbit2():
         Planet(1817514095, 1905216634, -93488736),
         Star(1817514095, -1385166447, Star(1817514095, 1905216634))]
 
-    t0 = epoch_from_string(str(datetime.now()))
-    x_val = list()
-    y_val = list()
-    z_val = list()
-    planet_positions = list()
-    planet_names = list()
-    planet_colors = list()
+    return plot_orbits(planets)
 
-    for orbiter in planets:
-        orbit_period = orbiter.planet.compute_period(epoch(0)) * SEC2DAY
-        orbit_when = np.linspace(0, orbit_period, 60)
-
-        x = np.zeros(60)
-        y = np.zeros(60)
-        z = np.zeros(60)
-
-        for i, day in enumerate(orbit_when):
-            r, _ = orbiter.planet.eph(epoch(t0.mjd2000 + day))
-            x[i] = r[0] / AU
-            y[i] = r[1] / AU
-            z[i] = r[2] / AU
-
-        x_val.append(x.tolist())
-        y_val.append(y.tolist())
-        z_val.append(z.tolist())
-
-        planet_positions.append(list((x[0], y[0], z[0])))
-        if orbiter.id == -455609026:
-            planet_colors.append("green")
-        else:
-            planet_colors.append("gray")
-        planet_names.append(orbiter.name)
-
-    return jsonify(
-        success=True,
-        x=x_val,
-        y=y_val,
-        z=z_val,
-        p=planet_positions,
-        c=planet_colors,
-        n=planet_names) if has_app_context() else x_val
-
-@APP.route("/orbit", methods=['GET'])
-def orbit():
+@APP.route("/innerorbits", methods=['GET'])
+def innerorbits():
     planets = [
         Planet(1817514095, 1905216634, -1485460920),
         Planet(1817514095, 1905216634, -1722015868),
         Planet(1817514095, 1905216634, -455609026),
         Planet(1817514095, 1905216634, 272811578)]
 
+    return plot_orbits(planets)
+
+def plot_orbits(planets):
     t0 = epoch_from_string(str(datetime.now()))
     #t0 = epoch_from_string("2000-01-01 00:00:00")
-    x_val = list()
-    y_val = list()
-    z_val = list()
+
+    system_x = list()
+    system_y = list()
+    system_z = list()
     planet_positions = list()
     planet_names = list()
     planet_colors = list()
 
-    for orbiter in planets:
-        orbit_period = orbiter.planet.compute_period(epoch(0)) * SEC2DAY
-        orbit_when = np.linspace(0, orbit_period, 60)
-
-        x = np.zeros(60)
-        y = np.zeros(60)
-        z = np.zeros(60)
-
-        for i, day in enumerate(orbit_when):
-            r, _ = orbiter.planet.eph(epoch(t0.mjd2000 + day))
-            x[i] = r[0] / AU
-            y[i] = r[1] / AU
-            z[i] = r[2] / AU
-
-        x_val.append(x.tolist())
-        y_val.append(y.tolist())
-        z_val.append(z.tolist())
-
-        planet_positions.append(list((x[0], y[0], z[0])))
-        if orbiter.id == -455609026:
+    for planet in planets:
+        planet_x, planet_y, planet_z = tuple(x / AU for x in orbit_positions(planet.planet, t0))
+        system_x.append(planet_x.tolist())
+        system_y.append(planet_y.tolist())
+        system_z.append(planet_z.tolist())
+        planet_positions.append(list((planet_x[0], planet_y[0], planet_z[0])))
+        if planet.id == -455609026:
             planet_colors.append("green")
+        elif planet.id == -1385166447:
+            planet_colors.append("orange")
         else:
             planet_colors.append("gray")
-        planet_names.append(orbiter.name)
+        planet_names.append(planet.name)
+
+    earth = jpl_lp('earth')
+    planet_x, planet_y, planet_z = tuple(x / AU for x in orbit_positions(earth, t0))
+    system_x.append(planet_x.tolist())
+    system_y.append(planet_y.tolist())
+    system_z.append(planet_z.tolist())
+    planet_positions.append(list((planet_x[0], planet_y[0], planet_z[0])))
+    planet_colors.append("blue")
+    planet_names.append("Earth")
 
     return jsonify(
         success=True,
-        x=x_val,
-        y=y_val,
-        z=z_val,
+        x=system_x,
+        y=system_y,
+        z=system_z,
         p=planet_positions,
         c=planet_colors,
-        n=planet_names) if has_app_context() else x_val
+        n=planet_names) if has_app_context() else 0
 
 @APP.route("/plottransfer", methods=['POST'])
 def plottransfer():
@@ -140,14 +112,13 @@ def plottransfer():
     origin_orbit_radius = origin.planet.radius + 200000
     target_orbit_radius = target.planet.radius + 200000
 
-    flight_time = int(flask_request.values['flight_time'])
-
-    t0 = epoch_from_string(str(datetime.now()))
+    t0 = epoch_from_string("{:%Y-%m-%d 00:00:00}".format(datetime.now()))
     t0_number = int(t0.mjd2000)
     launch_time = int(flask_request.values['launch_time']) + t0_number
+    flight_time = int(flask_request.values['flight_time']) + launch_time
 
     t1 = epoch(int(launch_time))
-    t2 = epoch(int(launch_time) + int(flight_time))
+    t2 = epoch(int(flight_time))
 
     fig = plt.figure(figsize=(4, 4))
     orbit_ax = fig.gca(projection='3d', proj_type='ortho')
@@ -261,7 +232,25 @@ def plottransfer():
 
     return jsonify(success=True)
 
-@APP.route("/transfer", methods=['POST'])
+@APP.route("/transfernew", methods=['POST'])
+def transfernew():
+    with gzip.open(
+            '/home/senorpez/glowing-potato/tridentweb/tridentweb/transfer_data.gz',
+            'rt') as fp:
+        json_data = json.load(fp)
+
+    delta_v = np.array(json_data['delta_v'])
+
+    return jsonify(
+            success=True,
+            delta_v=delta_v.tolist(),
+            launch_date=json_data['launch_date'],
+            arrival_date=json_data['arrival_date'],
+            launch_time=json_data['launch_time'],
+            flight_time=json_data['flight_time'],
+            min_delta_v=json_data['min_delta_v']
+            )
+
 def transfer():
     star = Star(1817514095, 1905216634)
     origin = Planet(1817514095, 1905216634, -455609026)
@@ -334,7 +323,7 @@ def transfer():
         launch_offset=-launch_time_offset)
 
 def main():
-    APP.run(host="0.0.0.0", port=5001)
+    APP.run(host="0.0.0.0", port=5001, debug=True)
 
 if __name__ == "__main__":
     main()

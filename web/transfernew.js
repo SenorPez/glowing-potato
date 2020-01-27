@@ -44,9 +44,19 @@ $(document).ready(function() {
     };
     Plotly.newPlot('porkchop', plotData, layout);
 
-    $("#launch_time").text(data.launch_time);
-    $("#flight_time").text(data.flight_time);
+    $("#launch_time").text(data.launch_date);
+    $("#flight_time").text(data.arrival_date);
     $("#delta_v").text(data.min_delta_v);
+
+    $.post(
+      "http://senorpez.com:5001/plottransfer",
+      {flight_time: data.flight_time, launch_time: data.launch_time})
+    .done(function(data) {
+      $("#orbit").attr('src', 'http://senorpez.com/orbit.png?' + $.now());
+      $("#orbit-x").attr('src', 'http://senorpez.com/orbit-x.png?' + $.now());
+      $("#orbit-y").attr('src', 'http://senorpez.com/orbit-y.png?' + $.now());
+      $("#orbit-z").attr('src', 'http://senorpez.com/orbit-z.png?' + $.now());
+    });
   });
 });
 

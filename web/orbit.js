@@ -1,6 +1,6 @@
 $(document).ready(function() {
   $.get(
-    "http://senorpez.com:5001/orbit",
+    "http://senorpez.com:5001/innerorbits",
     function(data) {
       var plotData = [];
 
@@ -42,7 +42,7 @@ $(document).ready(function() {
         showlegend: false,
         mode: 'lines',
         x: [0, 0],
-        y: [0, -1],
+        y: [0, 1],
         z: [0, 0],
         opacity: 0.5,
         line: {
@@ -57,7 +57,7 @@ $(document).ready(function() {
         showlegend: false,
         mode: 'lines',
         x: [0, 0],
-        y: [0, 1],
+        y: [0, -1],
         z: [0, 0],
         opacity: 0.5,
         line: {
@@ -115,19 +115,19 @@ $(document).ready(function() {
           xaxis: {
             showspikes: false,
             hoverformat: '.2f',
-            range: [-1, 1],
+            range: [-2, 2],
             fixedrange: false
           },
           yaxis: {
             showspikes: false,
             hoverformat: '.2f',
-            range: [-1, 1],
+            range: [-2, 2],
             fixedrange: false
           },
           zaxis: {
             showspikes: false,
             hoverformat: '.2f',
-            range: [-0.04, 0.04],
+            range: [-0.1, 0.1],
             dtick: 0.02
           }
         }
