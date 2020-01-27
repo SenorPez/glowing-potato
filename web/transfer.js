@@ -1,36 +1,21 @@
 var porkchopPlot = document.getElementById('porkchop');
-var y_min = 50;
-var y_max = 250
-var x_min = 0;
-var x_max = 500;
 
 $(document).ready(function() {
   var posting = $.post(
-    "http://senorpez.com:5001/transfer",
-    {
-      flight_start: y_min,
-      flight_end: y_max,
-      launch_start: x_min,
-      launch_end: x_max,
-    })
+    "http://senorpez.com:5001/transfer")
   .done(function(data) {
     var plotData = [{
       z: data.delta_v,
       type: 'contour',
       x0: 0,
       dx: 1,
-      y0: 50,
+      y0: 0,
       dy: 1,
       contours: {
         showlines: false,
         size: 5000,
         start: 10000,
         end: 95000
-      },
-      colorbar: {
-        ticks: 'outside',
-        tick0: 10000,
-        dtick: 10000
       },
       colorscale: [
           [0, '#006837'],
@@ -45,27 +30,33 @@ $(document).ready(function() {
           [0.9, '#d73027'],
           [1, '#a50026']
         ]
-      }];
+      }]; 
 
     var layout = {
       xaxis: {
         title: 'Launch Day',
-        range: [data.launch_start, data.launch_end]
+        range: [0, 200]
       },
       yaxis: {
-        title: 'Flight Time',
-        range: [data.flight_start, data.flight_end]
+        title: 'Arrival Day',
+        range: [0, 500]
       }
     };
     Plotly.newPlot('porkchop', plotData, layout);
 
-    $("#orbit").attr('src', 'http://senorpez.com/orbit.png?' + $.now());
-    $("#orbit-x").attr('src', 'http://senorpez.com/orbit-x.png?' + $.now());
-    $("#orbit-y").attr('src', 'http://senorpez.com/orbit-y.png?' + $.now());
-    $("#orbit-z").attr('src', 'http://senorpez.com/orbit-z.png?' + $.now());
-    $("#launch_time").text(data.launch_time);
-    $("#flight_time").text(data.flight_time);
+    $("#launch_time").text(data.launch_date);
+    $("#flight_time").text(data.arrival_date);
     $("#delta_v").text(data.min_delta_v);
+
+    $.post(
+      "http://senorpez.com:5001/plottransfer",
+      {flight_time: data.flight_time, launch_time: data.launch_time})
+    .done(function(data) {
+      $("#orbit").attr('src', 'http://senorpez.com/orbit.png?' + $.now());
+      $("#orbit-x").attr('src', 'http://senorpez.com/orbit-x.png?' + $.now());
+      $("#orbit-y").attr('src', 'http://senorpez.com/orbit-y.png?' + $.now());
+      $("#orbit-z").attr('src', 'http://senorpez.com/orbit-z.png?' + $.now());
+    });
 
     porkchopPlot.on('plotly_click', function(data) {
       var x = data.points[0].x;
@@ -86,34 +77,6 @@ $(document).ready(function() {
         $("#orbit-z").attr('src', 'http://senorpez.com/orbit-z.png?' + $.now());
       });
     });
-
-    porkchopPlot.on('plotly_relayout', function(eventData) {
-      if (typeof eventData['yaxis.range[0]'] !== 'undefined') {
-        y_min = eventData['yaxis.range[0]']
-        y_max = eventData['yaxis.range[1]']
-      }
-
-      if (typeof eventData['xaxis.range[0]'] !== 'undefined') {
-        x_min = eventData['xaxis.range[0]']
-        x_max = eventData['xaxis.range[1]']
-      }
-
-      var posting = $.post(
-        "http://senorpez.com:5001/transfer",
-        {
-          flight_start: y_min,
-          flight_end: y_max,
-          launch_start: x_min,
-          launch_end: x_max
-        })
-      .done(function(data) {
-        var update = {
-          z: [data.delta_v],
-          x0: data.launch_offset,
-          y0: data.flight_start
-        }
-        Plotly.restyle('porkchop', update);
-      });
-    });
   });
 });
+
