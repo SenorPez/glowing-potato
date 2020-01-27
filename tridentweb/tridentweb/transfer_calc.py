@@ -37,15 +37,14 @@ def transfer_delta_v(vp_input, vs_input, mu, orbit_radius):
 
 def transfer_calc():
     """A crontab-compatible function for generating transfer delta_vs."""
-    flight_time_start = 1
-    flight_time_end = 300
+    arrival_time_max = 500
     launch_time_start = 0
     launch_time_end = 200
 
     t0 = epoch_from_string("{:%Y-%m-%d 00:00:00}".format(datetime.now()))
     t0_number = int(t0.mjd2000)
 
-    delta_v = np.full((flight_time_end + launch_time_end - 1, launch_time_end), None)
+    delta_v = np.full((arrival_time_max, launch_time_end), None)
     min_delta_v = (None, None, None)
 
     star = Star(1817514095, 1905216634)
@@ -55,7 +54,7 @@ def transfer_calc():
     target_orbit_radius = target.planet.radius + 200000
 
     for launch_time in range(launch_time_start, launch_time_end):
-        for flight_time in range(flight_time_start, flight_time_end):
+        for flight_time in range(1, arrival_time_max - launch_time):
             t1 = epoch(launch_time + t0_number)
             t2 = epoch(launch_time + flight_time + t0_number)
             dt = (t2.mjd - t1.mjd) * DAY2SEC
