@@ -9,6 +9,7 @@ import json
 
 from tridentweb.epoch_offset import epoch_offset
 from tridentweb.pykep_addons import lambert_positions, orbit_positions
+from tridentweb.plotting import plot_orbits
 
 from flask import Flask, has_app_context, jsonify, request as flask_request
 from flask_cors import CORS
@@ -45,7 +46,15 @@ def systemorbits():
         Planet(1817514095, 1905216634, -93488736),
         Star(1817514095, -1385166447, Star(1817514095, 1905216634))]
 
-    return plot_orbits(planets)
+    system_x, system_y, system_z, planet_positions, planet_colors, planet_names = plot_orbits(planets)
+    return jsonify(
+        success=True,
+        x=system_x,
+        y=system_y,
+        z=system_z,
+        p=planet_positions,
+        c=planet_colors,
+        n=planet_names) if has_app_context() else planet_names
 
 @APP.route("/innerorbits", methods=['GET'])
 def innerorbits():
@@ -55,42 +64,7 @@ def innerorbits():
         Planet(1817514095, 1905216634, -455609026),
         Planet(1817514095, 1905216634, 272811578)]
 
-    return plot_orbits(planets)
-
-def plot_orbits(planets):
-    t0 = epoch_from_string(str(datetime.now()))
-    #t0 = epoch_from_string("2000-01-01 00:00:00")
-
-    system_x = list()
-    system_y = list()
-    system_z = list()
-    planet_positions = list()
-    planet_names = list()
-    planet_colors = list()
-
-    for planet in planets:
-        planet_x, planet_y, planet_z = tuple(x / AU for x in orbit_positions(planet.planet, t0))
-        system_x.append(planet_x.tolist())
-        system_y.append(planet_y.tolist())
-        system_z.append(planet_z.tolist())
-        planet_positions.append(list((planet_x[0], planet_y[0], planet_z[0])))
-        if planet.id == -455609026:
-            planet_colors.append("green")
-        elif planet.id == -1385166447:
-            planet_colors.append("orange")
-        else:
-            planet_colors.append("gray")
-        planet_names.append(planet.name)
-
-    earth = jpl_lp('earth')
-    planet_x, planet_y, planet_z = tuple(x / AU for x in orbit_positions(earth, t0))
-    system_x.append(planet_x.tolist())
-    system_y.append(planet_y.tolist())
-    system_z.append(planet_z.tolist())
-    planet_positions.append(list((planet_x[0], planet_y[0], planet_z[0])))
-    planet_colors.append("blue")
-    planet_names.append("Earth")
-
+    system_x, system_y, system_z, planet_positions, planet_colors, planet_names = plot_orbits(planets)
     return jsonify(
         success=True,
         x=system_x,
@@ -98,7 +72,7 @@ def plot_orbits(planets):
         z=system_z,
         p=planet_positions,
         c=planet_colors,
-        n=planet_names) if has_app_context() else 0
+        n=planet_names) if has_app_context() else planet_names
 
 @APP.route("/plottransfer", methods=['POST'])
 def plottransfer():
