@@ -82,7 +82,6 @@ def plot_transfer(flask_values):
     fig = plt.figure(figsize=(4, 4))
     orbit_ax = fig.gca(projection='3d', proj_type='ortho')
     orbit_ax.scatter([0], [0], [0], color='orange')
-    orbit_ax.set_aspect('equal')
 
     x_fig = plt.figure(figsize=(4, 4))
     x_ax = x_fig.gca()
