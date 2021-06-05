@@ -1,29 +1,22 @@
 package com.senorpez.trident.api;
 
-import org.springframework.hateoas.Identifiable;
-import org.springframework.hateoas.core.Relation;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Relation(value = "system", collectionRelation = "system")
-class SolarSystemModel implements Identifiable<Integer> {
-    private final int id;
-    private final String name;
-
-    SolarSystemModel(final SolarSystem solarSystem) {
-        this.id = solarSystem.getId();
-        this.name = solarSystem.getName();
-    }
-
-    SolarSystemResource toResource() {
-        final APIResourceAssembler<SolarSystemModel, SolarSystemResource> assembler = new APIResourceAssembler<>(SolarSystemController.class, SolarSystemResource.class, () -> new SolarSystemResource(this));
-        return assembler.toResource(this);
-    }
-
-    @Override
-    public Integer getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
+class SolarSystemModel extends RepresentationModel<SolarSystemModel> {
+    SolarSystemModel(final SolarSystemEntity content, final Link... links) {
+        final APIResourceAssembler<SolarSystemEntity, SolarSystemModel> assembler = new APIResourceAssembler<>(
+                SolarSystemController.class,
+                SolarSystemModel.class,
+                () -> new SolarSystemModel(content)
+        );
+        assembler.toModel(content);
+        this.add(linkTo(methodOn(SolarSystemController.class).solarSystems()).withRel("systems"));
+        this.add(linkTo(methodOn(StarController.class).stars(content.getId())).withRel("stars"));
     }
 }

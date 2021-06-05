@@ -1,7 +1,7 @@
 package com.senorpez.trident.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Resources;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,12 +13,12 @@ import java.util.stream.Collectors;
 
 import static com.senorpez.trident.api.Application.SOLAR_SYSTEMS;
 import static com.senorpez.trident.api.SupportedMediaTypes.TRIDENT_API_VALUE;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RequestMapping(
         value = "/systems",
         method = RequestMethod.GET,
-        produces = {TRIDENT_API_VALUE, APPLICATION_JSON_UTF8_VALUE}
+        produces = {TRIDENT_API_VALUE, APPLICATION_JSON_VALUE}
 )
 @RestController
 class SolarSystemController {
@@ -37,25 +37,25 @@ class SolarSystemController {
     }
 
     @RequestMapping
-    ResponseEntity<Resources<SolarSystemResource>> solarSystems() {
+    ResponseEntity<CollectionModel<SolarSystemModel>> solarSystems() {
         final Collection<SolarSystem> solarSystems = apiService.findAll(this.solarSystems);
-        final Collection<SolarSystemModel> solarSystemModels = solarSystems.stream()
+        final CollectionModel<SolarSystemModel> solarSystemModels = CollectionModel.of(solarSystems
+                .stream()
+                .map(SolarSystemEntity::new)
                 .map(SolarSystemModel::new)
-                .collect(Collectors.toList());
-        final Collection<SolarSystemResource> solarSystemResources = solarSystemModels.stream()
-                .map(SolarSystemModel::toResource)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(SolarSystemResource.makeResources(solarSystemResources));
+                .collect(Collectors.toList())
+        );
+        return ResponseEntity.ok(solarSystemModels);
     }
 
     @RequestMapping("/{solarSystemId}")
-    ResponseEntity<SolarSystemResource> solarSystems(@PathVariable final int solarSystemId) {
+    ResponseEntity<SolarSystemModel> solarSystems(@PathVariable final int solarSystemId) {
         final SolarSystem solarSystem = apiService.findOne(
                 this.solarSystems,
                 findSolarSystem -> findSolarSystem.getId() == solarSystemId,
                 () -> new SolarSystemNotFoundException(solarSystemId));
-        final SolarSystemModel solarSystemModel = new SolarSystemModel(solarSystem);
-        final SolarSystemResource solarSystemResource = solarSystemModel.toResource();
-        return ResponseEntity.ok(solarSystemResource);
+        final SolarSystemEntity solarSystemEntity = new SolarSystemEntity(solarSystem);
+        final SolarSystemModel solarSystemModel = new SolarSystemModel(solarSystemEntity);
+        return ResponseEntity.ok(solarSystemModel);
     }
 }
