@@ -1,76 +1,31 @@
 package com.senorpez.trident.api;
 
-import org.springframework.hateoas.Identifiable;
-import org.springframework.hateoas.core.Relation;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Relation(value = "star", collectionRelation = "star")
-class StarModel implements Identifiable<Integer> {
-    private final int id;
-    private final String name;
-    private final float mass;
-
-    private final Float semimajorAxis;
-    private final Float eccentricity;
-    private final Float inclination;
-    private final Float longitudeOfAscendingNode;
-    private final Float argumentOfPeriapsis;
-    private final Float trueAnomalyAtEpoch;
-
-    StarModel(final Star star) {
-        this.id = star.getId();
-        this.name = star.getName();
-        this.mass = star.getMass();
-
-        this.semimajorAxis = star.getSemimajorAxis();
-        this.eccentricity = star.getEccentricity();
-        this.inclination = star.getInclination();
-        this.longitudeOfAscendingNode = star.getLongitudeOfAscendingNode();
-        this.argumentOfPeriapsis = star.getArgumentOfPeriapsis();
-        this.trueAnomalyAtEpoch = star.getTrueAnomalyAtEpoch();
-    }
-
-    StarResource toResource(final int solarSystemId) {
-        final APIResourceAssembler<StarModel, StarResource> assembler = new APIResourceAssembler<>(
+class StarModel extends RepresentationModel<StarModel> {
+    StarModel(final StarEntity content, final int solarSystemId) {
+        final APIResourceAssembler<StarEntity, StarModel> assembler = new APIResourceAssembler<>(
                 StarController.class,
-                StarResource.class,
-                () -> new StarResource(this, solarSystemId));
-        return assembler.toResource(this, solarSystemId);
+                StarModel.class,
+                () -> new StarModel(content, solarSystemId)
+        );
+        assembler.toModel(content, solarSystemId);
+        this.add(linkTo(methodOn(StarController.class).stars(solarSystemId)).withRel("stars"));
+        this.add(linkTo(methodOn(PlanetController.class).planets(solarSystemId, content.getId())).withRel("planets"));
     }
 
-    @Override
-    public Integer getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public float getMass() {
-        return mass;
-    }
-
-    public Float getSemimajorAxis() {
-        return semimajorAxis;
-    }
-
-    public Float getEccentricity() {
-        return eccentricity;
-    }
-
-    public Float getInclination() {
-        return inclination;
-    }
-
-    public Float getLongitudeOfAscendingNode() {
-        return longitudeOfAscendingNode;
-    }
-
-    public Float getArgumentOfPeriapsis() {
-        return argumentOfPeriapsis;
-    }
-
-    public Float getTrueAnomalyAtEpoch() {
-        return trueAnomalyAtEpoch;
+    StarModel(final EmbeddedStarEntity content, final int solarSystemId) {
+        final APIResourceAssembler<EmbeddedStarEntity, StarModel> assembler = new APIResourceAssembler<>(
+                StarController.class,
+                StarModel.class,
+                () -> new StarModel(content, solarSystemId));
+        assembler.toModel(content, solarSystemId);
+        this.add(linkTo(methodOn(StarController.class).stars(solarSystemId)).withRel("stars"));
+        this.add(linkTo(methodOn(PlanetController.class).planets(solarSystemId, content.getId())).withRel("planets"));
     }
 }

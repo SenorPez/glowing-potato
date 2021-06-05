@@ -2,7 +2,6 @@ package com.senorpez.trident.api;
 
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
-import org.springframework.lang.NonNullApi;
 
 import java.util.function.Supplier;
 

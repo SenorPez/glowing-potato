@@ -9,7 +9,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Relation(value = "system", collectionRelation = "system")
 class SolarSystemModel extends RepresentationModel<SolarSystemModel> {
-    SolarSystemModel(final SolarSystemEntity content, final Link... links) {
+    SolarSystemModel(final SolarSystemEntity content) {
         final APIResourceAssembler<SolarSystemEntity, SolarSystemModel> assembler = new APIResourceAssembler<>(
                 SolarSystemController.class,
                 SolarSystemModel.class,
