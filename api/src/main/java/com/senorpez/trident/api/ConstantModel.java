@@ -1,47 +1,29 @@
 package com.senorpez.trident.api;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.hateoas.Identifiable;
-import org.springframework.hateoas.core.Relation;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Relation(value = "constant", collectionRelation = "constant")
-class ConstantModel implements Identifiable<String> {
-    private final String name;
-    private final String symbol;
-    private final double value;
-    private final String units;
-
-    ConstantModel(final Constant constant) {
-        this.name = constant.getName();
-        this.symbol = constant.getSymbol();
-        this.value = constant.getValue();
-        this.units = constant.getUnits();
+class ConstantModel extends RepresentationModel<ConstantModel> {
+    ConstantModel(final ConstantEntity content) {
+        final APIResourceAssembler<ConstantEntity, ConstantModel> assembler = new APIResourceAssembler<>(
+                ConstantController.class,
+                ConstantModel.class,
+                () -> new ConstantModel(content)
+        );
+        assembler.toModel(content);
+        this.add(linkTo(methodOn(ConstantController.class).constants()).withRel("constants"));
     }
 
-    ConstantResource toResource() {
-        final APIResourceAssembler<ConstantModel, ConstantResource> assembler =
-                new APIResourceAssembler<>(
-                        ConstantController.class,
-                        ConstantResource.class,
-                        () -> new ConstantResource(this));
-        return assembler.toResource(this);
-    }
-
-    @Override
-    @JsonProperty("symbol")
-    public String getId() {
-        return symbol;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public double getValue() {
-        return value;
-    }
-
-    public String getUnits() {
-        return units;
+    ConstantModel(final EmbeddedConstantEntity content) {
+        final APIResourceAssembler<EmbeddedConstantEntity, ConstantModel> assembler = new APIResourceAssembler<>(
+                ConstantController.class,
+                ConstantModel.class,
+                () -> new ConstantModel(content)
+        );
+        assembler.toModel(content);
     }
 }
