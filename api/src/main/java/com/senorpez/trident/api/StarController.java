@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import static com.senorpez.trident.api.APIService.findSolarSystem;
+import static com.senorpez.trident.api.APIService.findStar;
 import static com.senorpez.trident.api.SupportedMediaTypes.TRIDENT_API_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -37,10 +39,7 @@ class StarController {
 
     @RequestMapping
     ResponseEntity<CollectionModel<StarModel>> stars(@PathVariable final int solarSystemId) {
-        final SolarSystem solarSystem = apiService.findOne(
-                this.solarSystems,
-                findSolarSystem -> findSolarSystem.getId() == solarSystemId,
-                () -> new SolarSystemNotFoundException(solarSystemId));
+        final SolarSystem solarSystem = findSolarSystem(apiService, solarSystems, solarSystemId);
         final Collection<Star> stars = solarSystem.getStars();
         final CollectionModel<StarModel> starModels = CollectionModel.of(stars
                 .stream()
@@ -53,14 +52,7 @@ class StarController {
 
     @RequestMapping("/{starId}")
     ResponseEntity<StarModel> stars(@PathVariable final int solarSystemId, @PathVariable final int starId) {
-        final SolarSystem solarSystem = apiService.findOne(
-                this.solarSystems,
-                findSolarSystem -> findSolarSystem.getId() == solarSystemId,
-                () -> new SolarSystemNotFoundException(solarSystemId));
-        final Star star = apiService.findOne(
-                solarSystem.getStars(),
-                findStar -> findStar.getId() == starId,
-                () -> new StarNotFoundException(starId));
+        final Star star = findStar(apiService, solarSystems, solarSystemId, starId);
         final StarEntity starEntity = new StarEntity(star);
         final StarModel starModel = new StarModel(starEntity, solarSystemId);
         return ResponseEntity.ok(starModel);

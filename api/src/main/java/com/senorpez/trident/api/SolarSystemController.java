@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import static com.senorpez.trident.api.APIService.findSolarSystem;
 import static com.senorpez.trident.api.Application.SOLAR_SYSTEMS;
 import static com.senorpez.trident.api.SupportedMediaTypes.TRIDENT_API_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -50,12 +51,11 @@ class SolarSystemController {
 
     @RequestMapping("/{solarSystemId}")
     ResponseEntity<SolarSystemModel> solarSystems(@PathVariable final int solarSystemId) {
-        final SolarSystem solarSystem = apiService.findOne(
-                this.solarSystems,
-                findSolarSystem -> findSolarSystem.getId() == solarSystemId,
-                () -> new SolarSystemNotFoundException(solarSystemId));
+        final SolarSystem solarSystem = findSolarSystem(apiService, solarSystems, solarSystemId);
         final SolarSystemEntity solarSystemEntity = new SolarSystemEntity(solarSystem);
         final SolarSystemModel solarSystemModel = new SolarSystemModel(solarSystemEntity);
         return ResponseEntity.ok(solarSystemModel);
     }
+
+
 }

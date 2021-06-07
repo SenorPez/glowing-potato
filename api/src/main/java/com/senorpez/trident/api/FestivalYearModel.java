@@ -1,36 +1,19 @@
 package com.senorpez.trident.api;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.senorpez.trident.libraries.WorkersCalendar;
-import org.springframework.hateoas.Identifiable;
+import org.springframework.hateoas.RepresentationModel;
 
-public class FestivalYearModel implements Identifiable<Integer> {
-    private final int localYear;
-    private final boolean festivalYear;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-    FestivalYearModel(final PlanetaryCalendar planetaryCalendar, final int localYear) {
-        this.localYear = localYear;
-
-        WorkersCalendar workersCalendar = planetaryCalendar.getWorkersCalendar();
-        this.festivalYear = workersCalendar.isFestivalYear(localYear);
-    }
-
-    FestivalYearResource toResource(final int solarSystemId, final int starId, final int planetId, final int calendarId) {
-        final APIResourceAssembler<FestivalYearModel, FestivalYearResource> assembler = new APIResourceAssembler<>(
+class FestivalYearModel extends RepresentationModel<FestivalYearModel> {
+    FestivalYearModel(final FestivalYearEntity content, final int solarSystemId, final int starId, final int planetId, final int calendarId) {
+        final APIResourceAssembler<FestivalYearEntity, FestivalYearModel> assembler = new APIResourceAssembler<>(
                 PlanetaryCalendarController.class,
-                FestivalYearResource.class,
-                () -> new FestivalYearResource(this, solarSystemId, starId, planetId, calendarId));
-        return assembler.addIndexLink(assembler.instantiateResource(this));
-    }
-
-    @Override
-    @JsonProperty("localYear")
-    public Integer getId() {
-        return localYear;
-    }
-
-    @JsonProperty("isFestivalYear")
-    public boolean isFestivalYear() {
-        return festivalYear;
+                FestivalYearModel.class,
+                () -> new FestivalYearModel(content, solarSystemId, starId, planetId, calendarId)
+        );
+        assembler.toModel(content, solarSystemId, starId, planetId, calendarId);
+        this.add(linkTo(methodOn(PlanetaryCalendarController.class).festivalYear(solarSystemId, starId, planetId, calendarId, content.getId())).withSelfRel());
+        this.add(linkTo(methodOn(PlanetaryCalendarController.class).calendars(solarSystemId, starId, planetId, calendarId)).withRel("calendar"));
     }
 }

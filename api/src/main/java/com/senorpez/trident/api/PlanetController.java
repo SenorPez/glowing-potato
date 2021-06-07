@@ -15,6 +15,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
+import static com.senorpez.trident.api.APIService.findPlanet;
+import static com.senorpez.trident.api.APIService.findStar;
 import static com.senorpez.trident.api.SupportedMediaTypes.TRIDENT_API_VALUE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
@@ -36,14 +38,7 @@ class PlanetController {
 
     @RequestMapping
     ResponseEntity<? extends RepresentationModel<?>> planets(@PathVariable final int solarSystemId, @PathVariable final int starId) {
-        final SolarSystem solarSystem = apiService.findOne(
-                this.solarSystems,
-                findSolarSystem -> findSolarSystem.getId() == solarSystemId,
-                () -> new SolarSystemNotFoundException(solarSystemId));
-        final Star star = apiService.findOne(
-                solarSystem.getStars(),
-                findStar -> findStar.getId() == starId,
-                () -> new StarNotFoundException(starId));
+        final Star star = findStar(apiService, solarSystems, solarSystemId, starId);
         if (star.getPlanets() == null) {
             EmbeddedWrappers wrappers = new EmbeddedWrappers(false);
             EmbeddedWrapper wrapper = wrappers.emptyCollectionOf(PlanetEntity.class);
@@ -62,18 +57,7 @@ class PlanetController {
 
     @RequestMapping("/{planetId}")
     ResponseEntity<PlanetModel> planets(@PathVariable final int solarSystemId, @PathVariable final int starId, @PathVariable final int planetId) {
-        final SolarSystem solarSystem = apiService.findOne(
-                this.solarSystems,
-                findSolarSystem -> findSolarSystem.getId() == solarSystemId,
-                () -> new SolarSystemNotFoundException(solarSystemId));
-        final Star star = apiService.findOne(
-                solarSystem.getStars(),
-                findStar -> findStar.getId() == starId,
-                () -> new StarNotFoundException(starId));
-        final Planet planet = apiService.findOne(
-                star.getPlanets(),
-                findPlanet -> findPlanet.getId() == planetId,
-                () -> new PlanetNotFoundException(planetId));
+        final Planet planet = findPlanet(apiService, solarSystems, solarSystemId, starId, planetId);
         final PlanetEntity planetEntity = new PlanetEntity(planet);
         final PlanetModel planetModel = new PlanetModel(planetEntity, solarSystemId, starId);
         return ResponseEntity.ok(planetModel);
