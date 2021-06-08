@@ -7,15 +7,15 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.web.HttpMessageConverters;
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.context.annotation.Bean;
 import org.springframework.hateoas.UriTemplate;
-import org.springframework.hateoas.hal.CurieProvider;
-import org.springframework.hateoas.hal.DefaultCurieProvider;
+import org.springframework.hateoas.mediatype.hal.CurieProvider;
+import org.springframework.hateoas.mediatype.hal.DefaultCurieProvider;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,7 +38,7 @@ public class Application {
         SpringApplication.run(Application.class, args);
     }
 
-    private static <T> Set<T> getData(final Class objectClass, final String field) {
+    private static <T> Set<T> getData(final Class<?> objectClass, final String field) {
         final ObjectMapper mapper = new ObjectMapper();
         final ClassLoader classLoader = Application.class.getClassLoader();
         final InputStream inputStream = classLoader.getResourceAsStream("trident.json");
@@ -51,7 +51,7 @@ public class Application {
         return new HashSet<>();
     }
 
-    static <T> Set<T> getData(final Class objectClass, final JsonNode jsonNode) {
+    static <T> Set<T> getData(final Class<?> objectClass, final JsonNode jsonNode) {
         final ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.readValue(jsonNode.toString(), mapper.getTypeFactory().constructCollectionType(Set.class, objectClass));
@@ -77,14 +77,14 @@ public class Application {
 
     @Bean
     public CurieProvider curieProvider() {
-        return new DefaultCurieProvider("trident-api", new UriTemplate("/docs/reference.html#resources-trident-{rel}"));
+        return new DefaultCurieProvider("trident-api", UriTemplate.of("/docs/reference.html#resources-trident-{rel}"));
     }
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurerAdapter() {
+        return new WebMvcConfigurer() {
             @Override
-            public void addCorsMappings(CorsRegistry registry) {
+            public void addCorsMappings(@NonNull CorsRegistry registry) {
                 registry.addMapping("/**");
             }
         };

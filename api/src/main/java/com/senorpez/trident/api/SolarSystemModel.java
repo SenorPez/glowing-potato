@@ -1,6 +1,5 @@
 package com.senorpez.trident.api;
 
-import org.springframework.hateoas.Link;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 

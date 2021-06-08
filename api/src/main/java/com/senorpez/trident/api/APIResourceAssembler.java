@@ -2,6 +2,7 @@ package com.senorpez.trident.api;
 
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
+import org.springframework.lang.NonNull;
 
 import java.util.function.Supplier;
 
@@ -17,7 +18,8 @@ public class APIResourceAssembler<E extends APIEntity<?>, M extends Representati
     private final Supplier<M> supplier;
 
     @Override
-    public M toModel(E entity) {
+    @NonNull
+    public M toModel(@NonNull E entity) {
         final M model = createModelWithId(entity.getId(), entity);
         return addIndexLink(model);
     }
@@ -28,7 +30,8 @@ public class APIResourceAssembler<E extends APIEntity<?>, M extends Representati
     }
 
     @Override
-    protected M instantiateModel(E entity) {
+    @NonNull
+    protected M instantiateModel(@NonNull E entity) {
         return supplier.get();
     }
 
