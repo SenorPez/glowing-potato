@@ -132,10 +132,11 @@ public class PlanetaryCalendarControllerTest {
         WORKERS_CALENDAR_SCHEMA = CLASS_LOADER.getResourceAsStream("workerscalendar.schema.json");
         ERROR_SCHEMA = CLASS_LOADER.getResourceAsStream("error.schema.json");
         MockitoAnnotations.initMocks(this);
+        SupportedMediaTypes supportedMediaTypes = new SupportedMediaTypes();
 
         this.mockMvc = MockMvcBuilders
                 .standaloneSetup(new PlanetaryCalendarController(apiService))
-                .setMessageConverters(HALMessageConverter.getConverter(Collections.singletonList(ALL)))
+                .setMessageConverters(supportedMediaTypes.getConverter(Collections.singletonList(ALL)))
                 .setControllerAdvice(new APIExceptionHandler())
                 .apply(documentationConfiguration(this.restDocumentation))
                 .build();

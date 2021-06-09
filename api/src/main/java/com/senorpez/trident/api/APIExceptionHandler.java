@@ -14,7 +14,7 @@ import java.io.StringWriter;
 
 import static com.senorpez.trident.api.SupportedMediaTypes.TRIDENT_API;
 import static org.springframework.http.HttpStatus.*;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON;
 
 @RestControllerAdvice
 class APIExceptionHandler {
@@ -27,7 +27,7 @@ class APIExceptionHandler {
     ResponseEntity<ErrorResponse> handleAPIObjectNotFound(final Exception e) {
         return ResponseEntity
                 .status(NOT_FOUND)
-                .contentType(APPLICATION_JSON)
+                .contentType(APPLICATION_PROBLEM_JSON)
                 .body(new ErrorResponse(NOT_FOUND, e.getMessage()));
     }
 
@@ -35,7 +35,7 @@ class APIExceptionHandler {
     ResponseEntity<ErrorResponse> handle405MethodNotAllowed() {
         return ResponseEntity
                 .status(METHOD_NOT_ALLOWED)
-                .contentType(APPLICATION_JSON)
+                .contentType(APPLICATION_PROBLEM_JSON)
                 .body(new ErrorResponse(METHOD_NOT_ALLOWED, "Only GET methods allowed."));
     }
 
@@ -43,7 +43,7 @@ class APIExceptionHandler {
     ResponseEntity<ErrorResponse> handle406NotAcceptable() {
         return ResponseEntity
                 .status(NOT_ACCEPTABLE)
-                .contentType(APPLICATION_JSON)
+                .contentType(APPLICATION_PROBLEM_JSON)
                 .body(new ErrorResponse(NOT_ACCEPTABLE,
                         String.format("Accept header must be \"%s\"", TRIDENT_API)));
     }
@@ -55,7 +55,7 @@ class APIExceptionHandler {
         ex.printStackTrace(printWriter);
         return ResponseEntity
                 .status(INTERNAL_SERVER_ERROR)
-                .contentType(APPLICATION_JSON)
+                .contentType(APPLICATION_PROBLEM_JSON)
                 .body(new ErrorResponse(INTERNAL_SERVER_ERROR,
                         String.format(">>>>>Internal server error occurred.<<<<<\r\n " +
                                 ">>>>>Please report to https://github.com/SenorPez/glowing-potato/issues<<<< \r\n " +
@@ -63,11 +63,11 @@ class APIExceptionHandler {
     }
 
     private static class ErrorResponse {
-        @JsonProperty("code")
+        @JsonProperty
         private final int code;
-        @JsonProperty("message")
+        @JsonProperty
         private final String message;
-        @JsonProperty("detail")
+        @JsonProperty
         private final String detail;
 
         private ErrorResponse(final HttpStatus httpStatus, final String detail) {

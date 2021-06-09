@@ -52,10 +52,11 @@ public class RootControllerTest {
     public void setUp() {
         OBJECT_SCHEMA = CLASS_LOADER.getResourceAsStream("root.schema.json");
         ERROR_SCHEMA = CLASS_LOADER.getResourceAsStream("error.schema.json");
+        SupportedMediaTypes supportedMediaTypes = new SupportedMediaTypes();
 
         this.mockMvc = MockMvcBuilders
                 .standaloneSetup(new RootController())
-                .setMessageConverters(HALMessageConverter.getConverter(Collections.singletonList(ALL)))
+                .setMessageConverters(supportedMediaTypes.getConverter(Collections.singletonList(ALL)))
                 .setControllerAdvice(new APIExceptionHandler())
                 .apply(documentationConfiguration(this.restDocumentation))
                 .build();
