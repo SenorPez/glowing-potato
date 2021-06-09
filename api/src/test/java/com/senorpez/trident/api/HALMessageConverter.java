@@ -3,6 +3,7 @@ package com.senorpez.trident.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.hateoas.LinkRelation;
 import org.springframework.hateoas.UriTemplate;
+import org.springframework.hateoas.mediatype.MessageResolver;
 import org.springframework.hateoas.mediatype.hal.DefaultCurieProvider;
 import org.springframework.hateoas.mediatype.hal.Jackson2HalModule;
 import org.springframework.hateoas.server.LinkRelationProvider;
@@ -21,8 +22,9 @@ class HALMessageConverter {
 
         final DefaultCurieProvider curieProvider = new DefaultCurieProvider("trident-api", UriTemplate.of("/docs/reference.html#resources-trident-{rel}"));
         final ResourcesRelProvider relProvider = new ResourcesRelProvider();
+        final MessageResolver messageResolver = MessageResolver.DEFAULTS_ONLY;
 
-        objectMapper.setHandlerInstantiator(new Jackson2HalModule.HalHandlerInstantiator(relProvider, curieProvider, null));
+        objectMapper.setHandlerInstantiator(new Jackson2HalModule.HalHandlerInstantiator(relProvider, curieProvider, messageResolver));
 
         final MappingJackson2HttpMessageConverter halConverter = new MappingJackson2HttpMessageConverter(objectMapper);
         halConverter.setObjectMapper(objectMapper);

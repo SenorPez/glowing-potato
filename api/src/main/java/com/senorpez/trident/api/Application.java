@@ -61,19 +61,19 @@ public class Application {
         return new HashSet<>();
     }
 
-    @Bean
-    public HttpMessageConverters customConverters() {
-        return new HttpMessageConverters(new Application.HalMappingJackson2HttpMessageConverter());
-    }
+//    @Bean
+//    public HttpMessageConverters customConverters() {
+//        return new HttpMessageConverters(new Application.HalMappingJackson2HttpMessageConverter());
+//    }
 
-    private class HalMappingJackson2HttpMessageConverter extends MappingJackson2HttpMessageConverter {
-        private HalMappingJackson2HttpMessageConverter() {
-            setSupportedMediaTypes(Collections.singletonList(ALL));
-
-            final ObjectMapper halObjectMapper = beanFactory.getBean(HAL_OBJECT_MAPPER_BEAN_NAME, ObjectMapper.class);
-            setObjectMapper(halObjectMapper);
-        }
-    }
+//    private class HalMappingJackson2HttpMessageConverter extends MappingJackson2HttpMessageConverter {
+//        private HalMappingJackson2HttpMessageConverter() {
+//            setSupportedMediaTypes(Collections.singletonList(ALL));
+//
+//            final ObjectMapper halObjectMapper = beanFactory.getBean(HAL_OBJECT_MAPPER_BEAN_NAME, ObjectMapper.class);
+//            setObjectMapper(halObjectMapper);
+//        }
+//    }
 
     @Bean
     public CurieProvider curieProvider() {
