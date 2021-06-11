@@ -24,8 +24,7 @@ import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpStatus.*;
-import static org.springframework.http.MediaType.ALL;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
+import static org.springframework.http.MediaType.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
@@ -218,13 +217,13 @@ public class StarControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/", FIRST_SYSTEM.getId())).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -233,13 +232,13 @@ public class StarControllerTest {
 
         mockMvc.perform(put(String.format("/systems/%d/stars/", FIRST_SYSTEM.getId())).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -248,7 +247,7 @@ public class StarControllerTest {
 
         mockMvc.perform(get("/systems/8675309/stars/").accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -264,7 +263,7 @@ public class StarControllerTest {
 
         mockMvc.perform(get("/systems/8675309/stars/").accept(FALLBACK))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -280,13 +279,13 @@ public class StarControllerTest {
 
         mockMvc.perform(get("/systems/8675309/stars/").accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -295,13 +294,13 @@ public class StarControllerTest {
 
         mockMvc.perform(put("/systems/8675309/stars").accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -314,7 +313,7 @@ public class StarControllerTest {
                 .andExpect(content().string(matchesJsonSchema(STAR_SCHEMA)))
                 .andExpect(jsonPath("$.id", is(FIRST_STAR.getId())))
                 .andExpect(jsonPath("$.name", is(FIRST_STAR.getName())))
-                .andExpect(jsonPath("$.mass", closeTo((double) FIRST_STAR.getMass(), 0.001)))
+                .andExpect(jsonPath("$.mass", closeTo(FIRST_STAR.getMass(), 0.001)))
                 .andExpect(jsonPath("$.semimajorAxis", nullValue()))
                 .andExpect(jsonPath("$.eccentricity", nullValue()))
                 .andExpect(jsonPath("$.inclination", nullValue()))
@@ -369,7 +368,7 @@ public class StarControllerTest {
                 .andExpect(content().string(matchesJsonSchema(STAR_SCHEMA)))
                 .andExpect(jsonPath("$.id", is(FIRST_STAR.getId())))
                 .andExpect(jsonPath("$.name", is(FIRST_STAR.getName())))
-                .andExpect(jsonPath("$.mass", closeTo((double) FIRST_STAR.getMass(), 0.001)))
+                .andExpect(jsonPath("$.mass", closeTo(FIRST_STAR.getMass(), 0.001)))
                 .andExpect(jsonPath("$.semimajorAxis", nullValue()))
                 .andExpect(jsonPath("$.eccentricity", nullValue()))
                 .andExpect(jsonPath("$.inclination", nullValue()))
@@ -399,13 +398,13 @@ public class StarControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/%d", FIRST_SYSTEM.getId(), FIRST_STAR.getId())).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -414,13 +413,13 @@ public class StarControllerTest {
 
         mockMvc.perform(put(String.format("/systems/%d/stars/%d", FIRST_SYSTEM.getId(), FIRST_STAR.getId())).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -429,7 +428,7 @@ public class StarControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/8675309", FIRST_SYSTEM.getId())).accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -445,7 +444,7 @@ public class StarControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/8675309", FIRST_SYSTEM.getId())).accept(FALLBACK))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -461,13 +460,13 @@ public class StarControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/8675309", FIRST_SYSTEM.getId())).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -476,13 +475,13 @@ public class StarControllerTest {
 
         mockMvc.perform(put(String.format("/systems/%d/stars/8675309", FIRST_SYSTEM.getId())).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -491,7 +490,7 @@ public class StarControllerTest {
 
         mockMvc.perform(get(String.format("/systems/8675309/stars/%d", FIRST_STAR.getId())).accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -507,7 +506,7 @@ public class StarControllerTest {
 
         mockMvc.perform(get(String.format("/systems/8675309/stars/%d", FIRST_STAR.getId())).accept(FALLBACK))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -523,13 +522,13 @@ public class StarControllerTest {
 
         mockMvc.perform(get(String.format("/systems/8675309/stars/%d", FIRST_STAR.getId())).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -538,13 +537,13 @@ public class StarControllerTest {
 
         mockMvc.perform(put(String.format("/systems/8675309/stars/%d", FIRST_STAR.getId())).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -553,7 +552,7 @@ public class StarControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/%d", SECOND_SYSTEM.getId(), FIRST_STAR.getId())).accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -569,7 +568,7 @@ public class StarControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/%d", SECOND_SYSTEM.getId(), FIRST_STAR.getId())).accept(FALLBACK))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -585,13 +584,13 @@ public class StarControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/%d", SECOND_SYSTEM.getId(), FIRST_STAR.getId())).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -600,13 +599,13 @@ public class StarControllerTest {
 
         mockMvc.perform(put(String.format("/systems/%d/stars/%d", SECOND_SYSTEM.getId(), FIRST_STAR.getId())).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -619,7 +618,7 @@ public class StarControllerTest {
                 .andExpect(content().string(matchesJsonSchema(STAR_SCHEMA)))
                 .andExpect(jsonPath("$.id", is(SECOND_STAR.getId())))
                 .andExpect(jsonPath("$.name", is(SECOND_STAR.getName())))
-                .andExpect(jsonPath("$.mass", closeTo((double) SECOND_STAR.getMass(), 0.001)))
+                .andExpect(jsonPath("$.mass", closeTo(SECOND_STAR.getMass(), 0.001)))
                 .andExpect(jsonPath("$.semimajorAxis", closeTo((double) SECOND_STAR.getSemimajorAxis(), 0.001)))
                 .andExpect(jsonPath("$.eccentricity", closeTo((double) SECOND_STAR.getEccentricity(), 0.001)))
                 .andExpect(jsonPath("$.inclination", closeTo((double) SECOND_STAR.getInclination(), 0.001)))
@@ -652,7 +651,7 @@ public class StarControllerTest {
                 .andExpect(content().string(matchesJsonSchema(STAR_SCHEMA)))
                 .andExpect(jsonPath("$.id", is(SECOND_STAR.getId())))
                 .andExpect(jsonPath("$.name", is(SECOND_STAR.getName())))
-                .andExpect(jsonPath("$.mass", closeTo((double) SECOND_STAR.getMass(), 0.001)))
+                .andExpect(jsonPath("$.mass", closeTo(SECOND_STAR.getMass(), 0.001)))
                 .andExpect(jsonPath("$.semimajorAxis", closeTo((double) SECOND_STAR.getSemimajorAxis(), 0.001)))
                 .andExpect(jsonPath("$.eccentricity", closeTo((double) SECOND_STAR.getEccentricity(), 0.001)))
                 .andExpect(jsonPath("$.inclination", closeTo((double) SECOND_STAR.getInclination(), 0.001)))

@@ -89,5 +89,4 @@ class SupportedMediaTypes implements HypermediaMappingInformation {
             return defaultRelProvider.supports(delimiter);
         }
     }
-
 }

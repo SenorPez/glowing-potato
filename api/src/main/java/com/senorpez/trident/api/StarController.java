@@ -2,6 +2,8 @@ package com.senorpez.trident.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,13 +15,17 @@ import java.util.stream.Collectors;
 
 import static com.senorpez.trident.api.APIService.findSolarSystem;
 import static com.senorpez.trident.api.APIService.findStar;
+import static com.senorpez.trident.api.SupportedMediaTypes.FALLBACK_VALUE;
 import static com.senorpez.trident.api.SupportedMediaTypes.TRIDENT_API_VALUE;
+import static org.springframework.hateoas.IanaLinkRelations.INDEX;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RequestMapping(
         value = "/systems/{solarSystemId}/stars",
         method = RequestMethod.GET,
-        produces = {TRIDENT_API_VALUE, APPLICATION_JSON_VALUE}
+        produces = {TRIDENT_API_VALUE, FALLBACK_VALUE}
 )
 @RestController
 class StarController {
@@ -38,23 +44,34 @@ class StarController {
     }
 
     @RequestMapping
-    ResponseEntity<CollectionModel<StarModel>> stars(@PathVariable final int solarSystemId) {
+    ResponseEntity<CollectionModel<RepresentationModel<EmbeddedStarModel>>> stars(@PathVariable final int solarSystemId) {
         final SolarSystem solarSystem = findSolarSystem(apiService, solarSystems, solarSystemId);
         final Collection<Star> stars = solarSystem.getStars();
-        final CollectionModel<StarModel> starModels = CollectionModel.of(stars
+        final Collection<StarEntity> starEntities = stars
                 .stream()
-                .map(EmbeddedStarEntity::new)
-                .map(embeddedStarEntity -> new StarModel(embeddedStarEntity, solarSystemId))
-                .collect(Collectors.toList())
-        );
-        return ResponseEntity.ok(starModels);
+                .map(StarEntity::new)
+                .collect(Collectors.toList());
+        final Collection<RepresentationModel<EmbeddedStarModel>> starModels = starEntities
+                .stream()
+                .map(entity -> EmbeddedStarModel.toModel(entity, solarSystemId))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(CollectionModel.of(
+                starModels,
+                linkTo(methodOn(StarController.class).stars(solarSystemId)).withSelfRel(),
+                linkTo(methodOn(SolarSystemController.class).solarSystems(solarSystemId)).withRel("system"),
+                linkTo(methodOn(RootController.class).root()).withRel(INDEX)));
     }
 
     @RequestMapping("/{starId}")
-    ResponseEntity<StarModel> stars(@PathVariable final int solarSystemId, @PathVariable final int starId) {
+    ResponseEntity<RepresentationModel<StarModel>> stars(@PathVariable final int solarSystemId, @PathVariable final int starId) {
         final Star star = findStar(apiService, solarSystems, solarSystemId, starId);
         final StarEntity starEntity = new StarEntity(star);
-        final StarModel starModel = new StarModel(starEntity, solarSystemId);
+        final RepresentationModel<StarModel> starModel = StarModel.toModel(starEntity, solarSystemId);
+        starModel.add(
+                linkTo(methodOn(PlanetController.class).planets(solarSystemId, starId)).withRel("planets"),
+                linkTo(methodOn(StarController.class).stars(solarSystemId)).withRel("stars"),
+                linkTo(methodOn(RootController.class).root()).withRel(INDEX)
+        );
         return ResponseEntity.ok(starModel);
     }
 }

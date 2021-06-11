@@ -14,11 +14,6 @@ class SolarSystemModel extends RepresentationModel<SolarSystemModel> {
     @JsonProperty
     private String name;
 
-    static RepresentationModel<SolarSystemModel> toModel(final SolarSystemEntity content) {
-        SolarSystemModelAssembler assembler = new SolarSystemModelAssembler();
-        return assembler.toModel(content);
-    }
-
     private SolarSystemModel setId(int id) {
         this.id = id;
         return this;
@@ -27,6 +22,11 @@ class SolarSystemModel extends RepresentationModel<SolarSystemModel> {
     private SolarSystemModel setName(String name) {
         this.name = name;
         return this;
+    }
+
+    static RepresentationModel<SolarSystemModel> toModel(final SolarSystemEntity content) {
+        SolarSystemModelAssembler assembler = new SolarSystemModelAssembler();
+        return assembler.toModel(content);
     }
 
     static class SolarSystemModelAssembler extends RepresentationModelAssemblerSupport<SolarSystemEntity, SolarSystemModel> {
