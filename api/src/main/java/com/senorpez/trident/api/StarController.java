@@ -2,7 +2,6 @@ package com.senorpez.trident.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +19,6 @@ import static com.senorpez.trident.api.SupportedMediaTypes.TRIDENT_API_VALUE;
 import static org.springframework.hateoas.IanaLinkRelations.INDEX;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RequestMapping(
         value = "/systems/{solarSystemId}/stars",
@@ -36,11 +34,6 @@ class StarController {
     StarController(final APIService apiService) {
         this.apiService = apiService;
         this.solarSystems = Application.SOLAR_SYSTEMS;
-    }
-
-    StarController(final APIService apiService, final Collection<SolarSystem> solarSystems) {
-        this.apiService = apiService;
-        this.solarSystems = solarSystems;
     }
 
     @RequestMapping

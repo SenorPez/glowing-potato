@@ -18,6 +18,9 @@ import java.util.stream.Collectors;
 import static com.senorpez.trident.api.APIService.findPlanet;
 import static com.senorpez.trident.api.APIService.findStar;
 import static com.senorpez.trident.api.SupportedMediaTypes.TRIDENT_API_VALUE;
+import static org.springframework.hateoas.IanaLinkRelations.INDEX;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RequestMapping(
@@ -37,29 +40,44 @@ class PlanetController {
     }
 
     @RequestMapping
-    ResponseEntity<? extends RepresentationModel<?>> planets(@PathVariable final int solarSystemId, @PathVariable final int starId) {
+    ResponseEntity<CollectionModel<?>> planets(@PathVariable final int solarSystemId, @PathVariable final int starId) {
         final Star star = findStar(apiService, solarSystems, solarSystemId, starId);
         if (star.getPlanets() == null) {
             EmbeddedWrappers wrappers = new EmbeddedWrappers(false);
-            EmbeddedWrapper wrapper = wrappers.emptyCollectionOf(PlanetEntity.class);
-            return ResponseEntity.ok(CollectionModel.of(new EmptyPlanetResources(Collections.singletonList(wrapper), solarSystemId, starId)));
+            EmbeddedWrapper wrapper = wrappers.emptyCollectionOf(EmptyPlanetModel.class);
+            CollectionModel<EmbeddedWrapper> resources = CollectionModel.of(Collections.singletonList(wrapper));
+            resources.add(linkTo(methodOn(RootController.class).root()).withRel(INDEX));
+            resources.add(linkTo(methodOn(PlanetController.class).planets(solarSystemId, starId)).withSelfRel());
+            resources.add(linkTo(methodOn(StarController.class).stars(solarSystemId, starId)).withRel("star"));
+            return ResponseEntity.ok(resources);
         } else {
             final Collection<Planet> planets = star.getPlanets();
-            final CollectionModel<PlanetModel> planetModels = CollectionModel.of(planets
+            final Collection<PlanetEntity> planetEntities = planets
                     .stream()
-                    .map(EmbeddedPlanetEntity::new)
-                    .map(embeddedPlanetEntity -> new PlanetModel(embeddedPlanetEntity, solarSystemId, starId))
-                    .collect(Collectors.toList())
-            );
-            return ResponseEntity.ok(planetModels);
+                    .map(PlanetEntity::new)
+                    .collect(Collectors.toList());
+            final Collection<RepresentationModel<EmbeddedPlanetModel>> planetModels = planetEntities
+                    .stream()
+                    .map(entity -> EmbeddedPlanetModel.toModel(entity, solarSystemId, starId))
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(CollectionModel.of(
+                    planetModels,
+                    linkTo(methodOn(PlanetController.class).planets(solarSystemId, starId)).withSelfRel(),
+                    linkTo(methodOn(StarController.class).stars(solarSystemId, starId)).withRel("star"),
+                    linkTo(methodOn(RootController.class).root()).withRel(INDEX)));
         }
     }
 
     @RequestMapping("/{planetId}")
-    ResponseEntity<PlanetModel> planets(@PathVariable final int solarSystemId, @PathVariable final int starId, @PathVariable final int planetId) {
+    ResponseEntity<RepresentationModel<PlanetModel>> planets(@PathVariable final int solarSystemId, @PathVariable final int starId, @PathVariable final int planetId) {
         final Planet planet = findPlanet(apiService, solarSystems, solarSystemId, starId, planetId);
         final PlanetEntity planetEntity = new PlanetEntity(planet);
-        final PlanetModel planetModel = new PlanetModel(planetEntity, solarSystemId, starId);
+        final RepresentationModel<PlanetModel> planetModel = PlanetModel.toModel(planetEntity, solarSystemId, starId);
+        planetModel.add(
+                linkTo(methodOn(PlanetaryCalendarController.class).calendars(solarSystemId, starId, planetId)).withRel("calendars"),
+                linkTo(methodOn(PlanetController.class).planets(solarSystemId, starId)).withRel("planets"),
+                linkTo(methodOn(RootController.class).root()).withRel(INDEX)
+        );
         return ResponseEntity.ok(planetModel);
     }
 }

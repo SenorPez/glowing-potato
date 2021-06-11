@@ -25,7 +25,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.ALL;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
+import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
@@ -251,13 +251,13 @@ public class PlanetControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/%d/planets", FIRST_SYSTEM.getId(), FIRST_STAR.getId())).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -266,13 +266,13 @@ public class PlanetControllerTest {
 
         mockMvc.perform(put(String.format("/systems/%d/stars/%d/planets", FIRST_SYSTEM.getId(), FIRST_STAR.getId())).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -281,7 +281,7 @@ public class PlanetControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/8675309/planets", FIRST_SYSTEM.getId())).accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -297,7 +297,7 @@ public class PlanetControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/8675309/planets", FIRST_SYSTEM.getId())).accept(FALLBACK))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -313,13 +313,13 @@ public class PlanetControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/8675309/planets", FIRST_SYSTEM.getId())).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -328,13 +328,13 @@ public class PlanetControllerTest {
 
         mockMvc.perform(put(String.format("/systems/%d/stars/8675309/planets", FIRST_SYSTEM.getId())).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -343,7 +343,7 @@ public class PlanetControllerTest {
 
         mockMvc.perform(get(String.format("/systems/8675309/stars/%d/planets", FIRST_STAR.getId())).accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -359,7 +359,7 @@ public class PlanetControllerTest {
 
         mockMvc.perform(get(String.format("/systems/8675309/stars/%d/planets", FIRST_STAR.getId())).accept(FALLBACK))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -375,13 +375,13 @@ public class PlanetControllerTest {
 
         mockMvc.perform(get("/systems/8675309/stars/8675309/planets").accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -390,13 +390,13 @@ public class PlanetControllerTest {
 
         mockMvc.perform(put("/systems/8675309/stars/8675309/planets").accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -405,7 +405,7 @@ public class PlanetControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/%d/planets", FIRST_SYSTEM.getId(), SECOND_STAR.getId())).accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -421,7 +421,7 @@ public class PlanetControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/%d/planets", FIRST_SYSTEM.getId(), SECOND_STAR.getId())).accept(FALLBACK))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -437,13 +437,13 @@ public class PlanetControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/%d/planets", FIRST_SYSTEM.getId(), SECOND_STAR.getId())).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -452,13 +452,13 @@ public class PlanetControllerTest {
 
         mockMvc.perform(put(String.format("/systems/%d/stars/%d/planets", FIRST_SYSTEM.getId(), SECOND_STAR.getId())).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -515,13 +515,13 @@ public class PlanetControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/%d/planets", FIRST_SYSTEM.getId(), EMPTY_STAR.getId())).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -530,13 +530,13 @@ public class PlanetControllerTest {
 
         mockMvc.perform(put(String.format("/systems/%d/stars/%d/planets", FIRST_SYSTEM.getId(), EMPTY_STAR.getId())).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -643,13 +643,13 @@ public class PlanetControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/%d/planets/%d", FIRST_SYSTEM.getId(), FIRST_STAR.getId(), FIRST_PLANET.getId())).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -658,13 +658,13 @@ public class PlanetControllerTest {
 
         mockMvc.perform(put(String.format("/systems/%d/stars/%d/planets/%d", FIRST_SYSTEM.getId(), FIRST_STAR.getId(), FIRST_PLANET.getId())).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -673,7 +673,7 @@ public class PlanetControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/%d/planets/8675309", FIRST_SYSTEM.getId(), FIRST_STAR.getId())).accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -689,7 +689,7 @@ public class PlanetControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/%d/planets/8675309", FIRST_SYSTEM.getId(), FIRST_STAR.getId())).accept(FALLBACK))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -705,13 +705,13 @@ public class PlanetControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/%d/planets/8675309", FIRST_SYSTEM.getId(), FIRST_STAR.getId())).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -720,13 +720,13 @@ public class PlanetControllerTest {
 
         mockMvc.perform(put(String.format("/systems/%d/stars/%d/planets/8675309", FIRST_SYSTEM.getId(), FIRST_STAR.getId())).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -735,7 +735,7 @@ public class PlanetControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/8675309/planets/%d", FIRST_SYSTEM.getId(), FIRST_PLANET.getId())).accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -751,7 +751,7 @@ public class PlanetControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/8675309/planets/%d", FIRST_SYSTEM.getId(), FIRST_PLANET.getId())).accept(FALLBACK))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -767,13 +767,13 @@ public class PlanetControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/8675309/planets/%d", FIRST_SYSTEM.getId(), FIRST_PLANET.getId())).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -782,13 +782,13 @@ public class PlanetControllerTest {
 
         mockMvc.perform(put(String.format("/systems/%d/stars/8675309/planets/%d", FIRST_SYSTEM.getId(), FIRST_PLANET.getId())).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -797,7 +797,7 @@ public class PlanetControllerTest {
 
         mockMvc.perform(get(String.format("/systems/8675309/stars/%d/planets/%d", FIRST_STAR.getId(), FIRST_PLANET.getId())).accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -813,7 +813,7 @@ public class PlanetControllerTest {
 
         mockMvc.perform(get(String.format("/systems/8675309/stars/%d/planets/%d", FIRST_STAR.getId(), FIRST_PLANET.getId())).accept(FALLBACK))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -829,13 +829,13 @@ public class PlanetControllerTest {
 
         mockMvc.perform(get(String.format("/systems/8675309/stars/%d/planets/%d", FIRST_STAR.getId(), FIRST_PLANET.getId())).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -844,13 +844,13 @@ public class PlanetControllerTest {
 
         mockMvc.perform(put(String.format("/systems/8675309/stars/%d/planets/%d", FIRST_STAR.getId(), FIRST_PLANET.getId())).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -859,7 +859,7 @@ public class PlanetControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/%d/planets/%d", FIRST_SYSTEM.getId(), FIRST_STAR.getId(), THIRD_PLANET.getId())).accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -875,7 +875,7 @@ public class PlanetControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/%d/planets/%d", FIRST_SYSTEM.getId(), FIRST_STAR.getId(), THIRD_PLANET.getId())).accept(FALLBACK))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -891,13 +891,13 @@ public class PlanetControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/%d/planets/%d", FIRST_SYSTEM.getId(), FIRST_STAR.getId(), THIRD_PLANET.getId())).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -906,13 +906,13 @@ public class PlanetControllerTest {
 
         mockMvc.perform(put(String.format("/systems/%d/stars/%d/planets/%d", FIRST_SYSTEM.getId(), FIRST_STAR.getId(), THIRD_PLANET.getId())).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -921,7 +921,7 @@ public class PlanetControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/%d/planets/%d", FIRST_SYSTEM.getId(), SECOND_STAR.getId(), THIRD_PLANET.getId())).accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -937,7 +937,7 @@ public class PlanetControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/%d/planets/%d", FIRST_SYSTEM.getId(), FIRST_STAR.getId(), THIRD_PLANET.getId())).accept(FALLBACK))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -953,13 +953,13 @@ public class PlanetControllerTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/%d/planets/%d", FIRST_SYSTEM.getId(), SECOND_STAR.getId(), FIRST_PLANET.getId())).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -968,12 +968,12 @@ public class PlanetControllerTest {
 
         mockMvc.perform(put(String.format("/systems/%d/stars/%d/planets/%d", FIRST_SYSTEM.getId(), SECOND_STAR.getId(), FIRST_PLANET.getId())).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 }

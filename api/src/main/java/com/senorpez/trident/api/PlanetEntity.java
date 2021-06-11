@@ -3,7 +3,6 @@ package com.senorpez.trident.api;
 class PlanetEntity implements APIEntity<Integer> {
     private final int id;
     private final String name;
-
     private final float mass;
     private final float radius;
 
@@ -19,6 +18,7 @@ class PlanetEntity implements APIEntity<Integer> {
         this.name = planet.getName();
         this.mass = planet.getMass();
         this.radius = planet.getRadius();
+
         this.semimajorAxis = planet.getSemimajorAxis();
         this.eccentricity = planet.getEccentricity();
         this.inclination = planet.getInclination();
