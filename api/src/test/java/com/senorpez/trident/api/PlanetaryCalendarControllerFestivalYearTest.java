@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
 import static org.springframework.http.MediaType.ALL;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
+import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -215,13 +215,13 @@ public class PlanetaryCalendarControllerFestivalYearTest {
                 FIRST_CALENDAR.getId(),
                 localYear)).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -236,12 +236,12 @@ public class PlanetaryCalendarControllerFestivalYearTest {
                 FIRST_CALENDAR.getId(),
                 localYear)).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 }

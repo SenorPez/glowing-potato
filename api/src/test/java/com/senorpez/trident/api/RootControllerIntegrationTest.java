@@ -17,7 +17,7 @@ import static com.senorpez.trident.api.SupportedMediaTypes.FALLBACK;
 import static com.senorpez.trident.api.SupportedMediaTypes.TRIDENT_API;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.Matchers.hasEntry;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
+import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -74,7 +74,7 @@ public class RootControllerIntegrationTest {
     public void getRoot_InvalidAcceptHeader() throws Exception {
         mockMvc.perform(get("/").accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)));
     }
 
@@ -82,7 +82,7 @@ public class RootControllerIntegrationTest {
     public void getRoot_InvalidMethod() throws Exception {
         mockMvc.perform(put("/").accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)));
     }
 }

@@ -18,6 +18,9 @@ import java.util.stream.Collectors;
 import static com.senorpez.trident.api.APIService.findCalendar;
 import static com.senorpez.trident.api.APIService.findPlanet;
 import static com.senorpez.trident.api.SupportedMediaTypes.TRIDENT_API_VALUE;
+import static org.springframework.hateoas.IanaLinkRelations.INDEX;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RequestMapping(
@@ -37,54 +40,70 @@ class PlanetaryCalendarController {
     }
 
     @RequestMapping
-    ResponseEntity<? extends RepresentationModel<?>> calendars(
-            @PathVariable final int solarSystemId,
-            @PathVariable final int starId,
-            @PathVariable final int planetId) {
+    ResponseEntity<CollectionModel<?>> calendars(@PathVariable final int solarSystemId, @PathVariable final int starId, @PathVariable final int planetId) {
         final Planet planet = findPlanet(apiService, solarSystems, solarSystemId, starId, planetId);
         if (planet.getCalendars() == null) {
             EmbeddedWrappers wrappers = new EmbeddedWrappers(false);
-            EmbeddedWrapper wrapper = wrappers.emptyCollectionOf(PlanetaryCalendarEntity.class);
-            return ResponseEntity.ok(new EmptyPlanetaryCalendarResources(Collections.singletonList(wrapper), solarSystemId, starId, planetId));
+            EmbeddedWrapper wrapper = wrappers.emptyCollectionOf(EmptyPlanetaryCalendarModel.class);
+            CollectionModel<EmbeddedWrapper> resources = CollectionModel.of(Collections.singletonList(wrapper));
+            resources.add(linkTo(methodOn(RootController.class).root()).withRel(INDEX));
+            resources.add(linkTo(methodOn(PlanetaryCalendarController.class).calendars(solarSystemId, starId, planetId)).withSelfRel());
+            resources.add(linkTo(methodOn(PlanetController.class).planets(solarSystemId, starId, planetId)).withRel("planet"));
+            return ResponseEntity.ok(resources);
         } else {
             final Collection<PlanetaryCalendar> calendars = planet.getCalendars();
-            final CollectionModel<PlanetaryCalendarModel> calendarModels = CollectionModel.of(calendars
+            final Collection<PlanetaryCalendarEntity> planetaryCalendarEntities = calendars
                     .stream()
-                    .map(EmbeddedPlanetaryCalendarEntity::new)
-                    .map(embeddedPlanetaryCalendarEntity -> new PlanetaryCalendarModel(embeddedPlanetaryCalendarEntity, solarSystemId, starId, planetId))
-                    .collect(Collectors.toList())
-            );
-            return ResponseEntity.ok(calendarModels);
+                    .map(PlanetaryCalendarEntity::new)
+                    .collect(Collectors.toList());
+            final Collection<RepresentationModel<EmbeddedPlanetaryCalendarModel>> calendarModels = planetaryCalendarEntities
+                    .stream()
+                    .map(entity -> EmbeddedPlanetaryCalendarModel.toModel(entity, solarSystemId, starId, planetId))
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(CollectionModel.of(
+                    calendarModels,
+                    linkTo(methodOn(PlanetaryCalendarController.class).calendars(solarSystemId, starId, planetId)).withSelfRel(),
+                    linkTo(methodOn(PlanetController.class).planets(solarSystemId, starId, planetId)).withRel("planet"),
+                    linkTo(methodOn(RootController.class).root()).withRel(INDEX)));
         }
     }
 
-
     @RequestMapping("/{calendarId}")
-    ResponseEntity<PlanetaryCalendarModel> calendars(
+    ResponseEntity<RepresentationModel<PlanetaryCalendarModel>> calendars(
             @PathVariable final int solarSystemId,
             @PathVariable final int starId,
             @PathVariable final int planetId,
             @PathVariable final int calendarId) {
         final PlanetaryCalendar calendar = findCalendar(apiService, solarSystems, solarSystemId, starId, planetId, calendarId);
-        final PlanetaryCalendarEntity planetaryCalendarEntity = new PlanetaryCalendarEntity(calendar);
-        final PlanetaryCalendarModel planetaryCalendarModel = new PlanetaryCalendarModel(planetaryCalendarEntity, solarSystemId, starId, planetId);
-        return ResponseEntity.ok(planetaryCalendarModel);
+        final PlanetaryCalendarEntity calendarEntity = new PlanetaryCalendarEntity(calendar);
+        final RepresentationModel<PlanetaryCalendarModel> calendarModel = PlanetaryCalendarModel.toModel(calendarEntity, solarSystemId, starId, planetId, calendarId);
+        calendarModel.add(
+                linkTo(methodOn(PlanetaryCalendarController.class).calendars(solarSystemId, starId, planetId)).withRel("calendars"),
+                linkTo(methodOn(PlanetaryCalendarController.class).currentCalendar(solarSystemId, starId, planetId, calendarId)).withRel("currentTime"),
+                linkTo(methodOn(PlanetaryCalendarController.class).festivalYear(solarSystemId, starId, planetId, calendarId, 1234)).withRel("festivalYear"),
+                linkTo(methodOn(RootController.class).root()).withRel(INDEX)
+        );
+        return ResponseEntity.ok(calendarModel);
     }
 
     @RequestMapping("/{calendarId}/currentTime")
-    ResponseEntity<WorkersCalendarModel> currentCalendar(
+    ResponseEntity<RepresentationModel<WorkersCalendarModel>> currentCalendar(
             @PathVariable final int solarSystemId,
             @PathVariable final int starId,
             @PathVariable final int planetId,
             @PathVariable final int calendarId) {
         final PlanetaryCalendar calendar = findCalendar(apiService, solarSystems, solarSystemId, starId, planetId, calendarId);
         final WorkersCalendarEntity workersCalendarEntity = new WorkersCalendarEntity(calendar);
-        final WorkersCalendarModel workersCalendarModel = new WorkersCalendarModel(workersCalendarEntity, solarSystemId, starId, planetId, calendarId);
-        return ResponseEntity.ok(workersCalendarModel);
+        final RepresentationModel<WorkersCalendarModel> calendarModel = WorkersCalendarModel.toModel(workersCalendarEntity, solarSystemId, starId, planetId, calendarId);
+        calendarModel.add(
+                linkTo(methodOn(RootController.class).root()).withRel(INDEX),
+                linkTo(methodOn(PlanetaryCalendarController.class).calendars(solarSystemId, starId, planetId, calendarId)).withRel("calendar")
+        );
+        return ResponseEntity.ok(calendarModel);
     }
 
     @RequestMapping(value = "/{calendarId}/festivalYear/{localYear}")
-    ResponseEntity<FestivalYearModel> festivalYear(
+    ResponseEntity<RepresentationModel<FestivalYearModel>> festivalYear(
             @PathVariable final int solarSystemId,
             @PathVariable final int starId,
             @PathVariable final int planetId,
@@ -92,7 +111,11 @@ class PlanetaryCalendarController {
             @PathVariable final Integer localYear) {
         final PlanetaryCalendar calendar = findCalendar(apiService, solarSystems, solarSystemId, starId, planetId, calendarId);
         final FestivalYearEntity festivalYearEntity = new FestivalYearEntity(calendar, localYear);
-        final FestivalYearModel festivalYearModel = new FestivalYearModel(festivalYearEntity, solarSystemId, starId, planetId, calendarId);
-        return ResponseEntity.ok(festivalYearModel);
+        final RepresentationModel<FestivalYearModel> calendarModel = FestivalYearModel.toModel(festivalYearEntity, solarSystemId, starId, planetId, calendarId, localYear);
+        calendarModel.add(
+                linkTo(methodOn(RootController.class).root()).withRel(INDEX),
+                linkTo(methodOn(PlanetaryCalendarController.class).calendars(solarSystemId, starId, planetId, calendarId)).withRel("calendar")
+        );
+        return ResponseEntity.ok(calendarModel);
     }
 }

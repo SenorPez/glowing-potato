@@ -1,7 +1,7 @@
 package com.senorpez.trident.api;
 
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.mediatype.hal.HalModelBuilder;
+import org.springframework.hateoas.IanaLinkRelations;
+import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,35 +14,21 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RequestMapping(
         value = "/",
-        method = RequestMethod.GET
+        method = RequestMethod.GET,
+        produces = {TRIDENT_API_VALUE, FALLBACK_VALUE}
 )
 @RestController
 class RootController {
-//    @RequestMapping(produces = {TRIDENT_API_VALUE, FALLBACK_VALUE})
-//    ResponseEntity<EntityModel<Object>> root() {
-//        HalModelBuilder.emptyHalModel().build();
-//    }
-
-
+    @RequestMapping
     ResponseEntity<RootObject> root() {
-        return ResponseEntity.ok(new RootObject());
+        final RootObject root = new RootObject();
+        root.add(linkTo(methodOn(RootController.class).root()).withSelfRel());
+        root.add(linkTo(methodOn(RootController.class).root()).withRel(IanaLinkRelations.INDEX));
+        root.add(linkTo(methodOn(ConstantController.class).constants()).withRel("constants"));
+        root.add(linkTo(methodOn(SolarSystemController.class).solarSystems()).withRel("systems"));
+        return ResponseEntity.ok(root);
     }
-//    ResponseEntity<EntityModel<Object>> root() {
-//        final EntityModel<Object> root = EntityModel.of(new Object());
-//        root.add(linkTo(methodOn(RootController.class).root()).withSelfRel());
-//        root.add(linkTo(methodOn(RootController.class).root()).withRel("index"));
-//        root.add(linkTo(methodOn(ConstantController.class).constants()).withRel("constants"));
-//        root.add(linkTo(methodOn(SolarSystemController.class).solarSystems()).withRel("systems"));
-//        return ResponseEntity.ok(root);
-//    }
 
-    private static class RootObject {
-        public int number;
-        public String name;
-
-        public RootObject() {
-            this.number = 1;
-            this.name = "Hi";
-        }
+    private static class RootObject extends RepresentationModel<RootObject> {
     }
 }

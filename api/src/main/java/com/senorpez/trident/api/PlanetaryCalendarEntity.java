@@ -3,8 +3,8 @@ package com.senorpez.trident.api;
 class PlanetaryCalendarEntity implements APIEntity<Integer> {
     private final int id;
     private final String name;
-    private final float standardHoursPerDay;
-    private final float epochOffset;
+    private final double standardHoursPerDay;
+    private final double epochOffset;
 
     PlanetaryCalendarEntity(final PlanetaryCalendar planetaryCalendar) {
         this.id = planetaryCalendar.getId();
