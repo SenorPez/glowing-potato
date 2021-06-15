@@ -1,33 +1,42 @@
 package com.senorpez.trident.api;
 
-import org.springframework.hateoas.Identifiable;
-import org.springframework.hateoas.ResourceSupport;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
+import org.springframework.lang.NonNull;
 
-import java.io.Serializable;
 import java.util.function.Supplier;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-public class APIResourceAssembler<M extends Identifiable<? extends Serializable>, R extends ResourceSupport> extends APIEmbeddedResourceAssembler<M, R> {
-    APIResourceAssembler(final Class controllerClass, final Class<R> resourceType, final Supplier<R> supplier) {
-        super(controllerClass, resourceType, supplier);
+public class APIResourceAssembler<E extends APIEntity<?>, M extends RepresentationModel<M>> extends RepresentationModelAssemblerSupport<E, M> {
+    public APIResourceAssembler(Class<?> controllerClass, Class<M> resourceType, Supplier<M> supplier) {
+        super(controllerClass, resourceType);
+        this.supplier = supplier;
+    }
+
+    private final Supplier<M> supplier;
+
+    @Override
+    @NonNull
+    public M toModel(@NonNull E entity) {
+        final M model = createModelWithId(entity.getId(), entity);
+        return addIndexLink(model);
+    }
+
+    M toModel(E entity, Object... parameters) {
+        final M model = createModelWithId(entity.getId(), entity, parameters);
+        return addIndexLink(model);
     }
 
     @Override
-    public R toResource(M entity) {
-        final R resource = super.toResource(entity);
-        return addIndexLink(resource);
+    @NonNull
+    protected M instantiateModel(@NonNull E entity) {
+        return supplier.get();
     }
 
-    @Override
-    R toResource(M entity, Object... parameters) {
-        final R resource = super.toResource(entity, parameters);
-        return addIndexLink(resource);
-    }
-
-    R addIndexLink(final R resource) {
-        resource.add(linkTo(methodOn(RootController.class).root()).withRel("index"));
-        return resource;
+    private M addIndexLink(final M model) {
+        model.add(linkTo(methodOn(RootController.class).root()).withRel("index"));
+        return model;
     }
 }

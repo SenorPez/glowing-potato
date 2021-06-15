@@ -1,76 +1,105 @@
 package com.senorpez.trident.api;
 
-import org.springframework.hateoas.Identifiable;
-import org.springframework.hateoas.core.Relation;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
+import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
+import org.springframework.lang.NonNull;
 
 @Relation(value = "star", collectionRelation = "star")
-class StarModel implements Identifiable<Integer> {
-    private final int id;
-    private final String name;
-    private final float mass;
+class StarModel extends RepresentationModel<StarModel> {
+    @JsonProperty
+    private int id;
+    @JsonProperty
+    private String name;
+    @JsonProperty
+    private float mass;
 
-    private final Float semimajorAxis;
-    private final Float eccentricity;
-    private final Float inclination;
-    private final Float longitudeOfAscendingNode;
-    private final Float argumentOfPeriapsis;
-    private final Float trueAnomalyAtEpoch;
+    @JsonProperty
+    private Float semimajorAxis;
+    @JsonProperty
+    private Float eccentricity;
+    @JsonProperty
+    private Float inclination;
+    @JsonProperty
+    private Float longitudeOfAscendingNode;
+    @JsonProperty
+    private Float argumentOfPeriapsis;
+    @JsonProperty
+    private Float trueAnomalyAtEpoch;
 
-    StarModel(final Star star) {
-        this.id = star.getId();
-        this.name = star.getName();
-        this.mass = star.getMass();
-
-        this.semimajorAxis = star.getSemimajorAxis();
-        this.eccentricity = star.getEccentricity();
-        this.inclination = star.getInclination();
-        this.longitudeOfAscendingNode = star.getLongitudeOfAscendingNode();
-        this.argumentOfPeriapsis = star.getArgumentOfPeriapsis();
-        this.trueAnomalyAtEpoch = star.getTrueAnomalyAtEpoch();
+    public StarModel setId(int id) {
+        this.id = id;
+        return this;
     }
 
-    StarResource toResource(final int solarSystemId) {
-        final APIResourceAssembler<StarModel, StarResource> assembler = new APIResourceAssembler<>(
-                StarController.class,
-                StarResource.class,
-                () -> new StarResource(this, solarSystemId));
-        return assembler.toResource(this, solarSystemId);
+    public StarModel setName(String name) {
+        this.name = name;
+        return this;
     }
 
-    @Override
-    public Integer getId() {
-        return id;
+    public StarModel setMass(float mass) {
+        this.mass = mass;
+        return this;
     }
 
-    public String getName() {
-        return name;
+    public StarModel setSemimajorAxis(Float semimajorAxis) {
+        this.semimajorAxis = semimajorAxis;
+        return this;
     }
 
-    public float getMass() {
-        return mass;
+    public StarModel setEccentricity(Float eccentricity) {
+        this.eccentricity = eccentricity;
+        return this;
     }
 
-    public Float getSemimajorAxis() {
-        return semimajorAxis;
+    public StarModel setInclination(Float inclination) {
+        this.inclination = inclination;
+        return this;
     }
 
-    public Float getEccentricity() {
-        return eccentricity;
+    public StarModel setLongitudeOfAscendingNode(Float longitudeOfAscendingNode) {
+        this.longitudeOfAscendingNode = longitudeOfAscendingNode;
+        return this;
     }
 
-    public Float getInclination() {
-        return inclination;
+    public StarModel setArgumentOfPeriapsis(Float argumentOfPeriapsis) {
+        this.argumentOfPeriapsis = argumentOfPeriapsis;
+        return this;
     }
 
-    public Float getLongitudeOfAscendingNode() {
-        return longitudeOfAscendingNode;
+    public StarModel setTrueAnomalyAtEpoch(Float trueAnomalyAtEpoch) {
+        this.trueAnomalyAtEpoch = trueAnomalyAtEpoch;
+        return this;
     }
 
-    public Float getArgumentOfPeriapsis() {
-        return argumentOfPeriapsis;
+    static RepresentationModel<StarModel> toModel(final StarEntity content, final int solarSystemId) {
+        StarModelAssembler assembler = new StarModelAssembler();
+        return assembler.toModel(content, solarSystemId);
     }
 
-    public Float getTrueAnomalyAtEpoch() {
-        return trueAnomalyAtEpoch;
+    static class StarModelAssembler extends RepresentationModelAssemblerSupport<StarEntity, StarModel> {
+        public StarModelAssembler() {
+            super(StarController.class, StarModel.class);
+        }
+
+        @Override
+        @NonNull
+        public StarModel toModel(@NonNull StarEntity entity) {
+            throw new NotImplementedException();
+        }
+
+        public StarModel toModel(StarEntity entity, final int solarSystemId) {
+            return createModelWithId(entity.getId(), entity, solarSystemId)
+                    .setId(entity.getId())
+                    .setName(entity.getName())
+                    .setMass(entity.getMass())
+                    .setSemimajorAxis(entity.getSemimajorAxis())
+                    .setEccentricity(entity.getEccentricity())
+                    .setInclination(entity.getInclination())
+                    .setLongitudeOfAscendingNode(entity.getLongitudeOfAscendingNode())
+                    .setArgumentOfPeriapsis(entity.getArgumentOfPeriapsis())
+                    .setTrueAnomalyAtEpoch(entity.getTrueAnomalyAtEpoch());
+        }
     }
 }

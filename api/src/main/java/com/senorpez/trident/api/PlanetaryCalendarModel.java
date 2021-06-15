@@ -1,45 +1,64 @@
 package com.senorpez.trident.api;
 
-import org.springframework.hateoas.Identifiable;
-import org.springframework.hateoas.core.Relation;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
+import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
+import org.springframework.lang.NonNull;
 
 @Relation(value = "calendar", collectionRelation = "calendar")
-class PlanetaryCalendarModel implements Identifiable<Integer> {
-    private final int id;
-    private final String name;
-    private final float standardHoursPerDay;
-    private final float epochOffset;
+class PlanetaryCalendarModel extends RepresentationModel<PlanetaryCalendarModel> {
+    @JsonProperty
+    private int id;
+    @JsonProperty
+    private String name;
+    @JsonProperty
+    private double standardHoursPerDay;
+    @JsonProperty
+    private double epochOffset;
 
-    PlanetaryCalendarModel(final PlanetaryCalendar planetaryCalendar) {
-        this.id = planetaryCalendar.getId();
-        this.name = planetaryCalendar.getName();
-        this.standardHoursPerDay = planetaryCalendar.getStandardHoursPerDay();
-        this.epochOffset = planetaryCalendar.getEpochOffset();
+    public PlanetaryCalendarModel setId(int id) {
+        this.id = id;
+        return this;
     }
 
-    PlanetaryCalendarResource toResource(final int solarSystemId, final int starId, final int planetId) {
-        final APIResourceAssembler<PlanetaryCalendarModel, PlanetaryCalendarResource> assembler = new APIResourceAssembler<>(
-                PlanetaryCalendarController.class,
-                PlanetaryCalendarResource.class,
-                () -> new PlanetaryCalendarResource(this, solarSystemId, starId, planetId));
-        return assembler.toResource(this, solarSystemId, starId, planetId);
+    public PlanetaryCalendarModel setName(String name) {
+        this.name = name;
+        return this;
     }
 
-    @Override
-    public Integer getId() {
-        return id;
+    public PlanetaryCalendarModel setStandardHoursPerDay(double standardHoursPerDay) {
+        this.standardHoursPerDay = standardHoursPerDay;
+        return this;
     }
 
-    public String getName() {
-        return name;
+    public PlanetaryCalendarModel setEpochOffset(double epochOffset) {
+        this.epochOffset = epochOffset;
+        return this;
     }
 
-    public double getStandardHoursPerDay() {
-        return standardHoursPerDay;
+    static RepresentationModel<PlanetaryCalendarModel> toModel(final PlanetaryCalendarEntity content, final int solarSystemId, final int starId, final int planetId, final int calendarId) {
+        PlanetaryCalendarModelAssembler assembler = new PlanetaryCalendarModelAssembler();
+        return assembler.toModel(content, solarSystemId, starId, planetId, calendarId);
     }
 
-    public double getEpochOffset() {
-        return epochOffset;
-    }
+    static class PlanetaryCalendarModelAssembler extends RepresentationModelAssemblerSupport<PlanetaryCalendarEntity, PlanetaryCalendarModel> {
+        public PlanetaryCalendarModelAssembler() {
+            super(PlanetaryCalendarController.class, PlanetaryCalendarModel.class);
+        }
 
+        @Override
+        @NonNull
+        public PlanetaryCalendarModel toModel(@NonNull PlanetaryCalendarEntity entity) {
+            throw new NotImplementedException();
+        }
+
+        public PlanetaryCalendarModel toModel(final PlanetaryCalendarEntity entity, final int solarSystemId, final int starId, final int planetId, final int calendarId) {
+            return createModelWithId(entity.getId(), entity, solarSystemId, starId, planetId, calendarId)
+                    .setId(entity.getId())
+                    .setName(entity.getName())
+                    .setStandardHoursPerDay(entity.getStandardHoursPerDay())
+                    .setEpochOffset(entity.getEpochOffset());
+        }
+    }
 }

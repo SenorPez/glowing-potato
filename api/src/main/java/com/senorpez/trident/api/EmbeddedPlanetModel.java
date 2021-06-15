@@ -1,37 +1,49 @@
 package com.senorpez.trident.api;
 
-import org.springframework.hateoas.Identifiable;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.core.Relation;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
+import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
+import org.springframework.lang.NonNull;
 
 @Relation(value = "planet", collectionRelation = "planet")
-class EmbeddedPlanetModel implements Identifiable<Integer> {
-    private final int id;
-    private final String name;
+class EmbeddedPlanetModel extends RepresentationModel<EmbeddedPlanetModel> {
+    @JsonProperty
+    private int id;
+    @JsonProperty
+    private String name;
 
-    EmbeddedPlanetModel(final Planet planet) {
-        this.id = planet.getId();
-        this.name = planet.getName();
+    public EmbeddedPlanetModel setId(int id) {
+        this.id = id;
+        return this;
     }
 
-    Resource<EmbeddedPlanetModel> toResource(final int solarSystemId, final int starId) {
-        final APIEmbeddedResourceAssembler<EmbeddedPlanetModel, EmbeddedPlanetResource> assembler = new APIEmbeddedResourceAssembler<>(PlanetController.class, EmbeddedPlanetResource.class, () -> new EmbeddedPlanetResource(this, solarSystemId, starId));
-        return assembler.toResource(this, solarSystemId, starId);
+    public EmbeddedPlanetModel setName(String name) {
+        this.name = name;
+        return this;
     }
 
-    private class EmbeddedPlanetResource extends Resource<EmbeddedPlanetModel> {
-        private EmbeddedPlanetResource(final EmbeddedPlanetModel content, final int solarSystemId, final int starId, final Link... links) {
-            super(content, links);
+    static RepresentationModel<EmbeddedPlanetModel> toModel(final PlanetEntity entity, final int solarSystemId, final int starId) {
+        EmbeddedPlanetModelAssembler assembler = new EmbeddedPlanetModelAssembler();
+        return assembler.toModel(entity, solarSystemId, starId);
+    }
+
+    static class EmbeddedPlanetModelAssembler extends RepresentationModelAssemblerSupport<PlanetEntity, EmbeddedPlanetModel> {
+        public EmbeddedPlanetModelAssembler() {
+            super(PlanetController.class, EmbeddedPlanetModel.class);
+        }
+
+        @Override
+        @NonNull
+        public EmbeddedPlanetModel toModel(@NonNull PlanetEntity entity) {
+            throw new NotImplementedException();
+        }
+
+        public EmbeddedPlanetModel toModel(final PlanetEntity entity, final int solarSystemId, final int starId) {
+            return createModelWithId(entity.getId(), entity, solarSystemId, starId)
+                    .setId(entity.getId())
+                    .setName(entity.getName());
         }
     }
 
-    @Override
-    public Integer getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
 }

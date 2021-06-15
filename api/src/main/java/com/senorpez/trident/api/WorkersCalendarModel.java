@@ -1,57 +1,84 @@
 package com.senorpez.trident.api;
 
-import com.senorpez.trident.libraries.WorkersCalendar;
-import org.springframework.hateoas.Identifiable;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
+import org.springframework.lang.NonNull;
 
-class WorkersCalendarModel implements Identifiable<Integer> {
-    private final int id;
-    private final int year;
-    private final int caste;
-    private final int day;
-    private final int shift;
-    private final double tithe;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-    WorkersCalendarModel(final PlanetaryCalendar planetaryCalendar) {
-        this.id = planetaryCalendar.getId();
+class WorkersCalendarModel extends RepresentationModel<WorkersCalendarModel> {
+    @JsonProperty
+    private int id;
+    @JsonProperty
+    private int year;
+    @JsonProperty
+    private int caste;
+    @JsonProperty
+    private int day;
+    @JsonProperty
+    private int shift;
+    @JsonProperty
+    private double tithe;
 
-        WorkersCalendar workersCalendar = planetaryCalendar.getWorkersCalendar();
-        this.year = workersCalendar.getLocalYear();
-        this.caste = workersCalendar.getCaste();
-        this.day = workersCalendar.getCasteDay();
-        this.shift = workersCalendar.getShift();
-        this.tithe = workersCalendar.getTithe();
+    public WorkersCalendarModel setId(int id) {
+        this.id = id;
+        return this;
     }
 
-    WorkersCalendarResource toResource(final int solarSystemId, final int starId, final int planetId, final int calendarId) {
-        final APIResourceAssembler<WorkersCalendarModel, WorkersCalendarResource> assembler = new APIResourceAssembler<>(
-                PlanetaryCalendarController.class,
-                WorkersCalendarResource.class,
-                () -> new WorkersCalendarResource(this, solarSystemId, starId, planetId, calendarId));
-        return assembler.addIndexLink(assembler.instantiateResource(this));
+    public WorkersCalendarModel setYear(int year) {
+        this.year = year;
+        return this;
     }
 
-    @Override
-    public Integer getId() {
-        return id;
+    public WorkersCalendarModel setCaste(int caste) {
+        this.caste = caste;
+        return this;
     }
 
-    public int getYear() {
-        return year;
+    public WorkersCalendarModel setDay(int day) {
+        this.day = day;
+        return this;
     }
 
-    public int getCaste() {
-        return caste;
+    public WorkersCalendarModel setShift(int shift) {
+        this.shift = shift;
+        return this;
     }
 
-    public int getDay() {
-        return day;
+    public WorkersCalendarModel setTithe(double tithe) {
+        this.tithe = tithe;
+        return this;
     }
-
-    public int getShift() {
-        return shift;
+    
+    static RepresentationModel<WorkersCalendarModel> toModel(final WorkersCalendarEntity content, final int solarSystemId, final int starId, final int planetId, final int calendarId) {
+        WorkersCalendarModelAssembler assembler = new WorkersCalendarModelAssembler();
+        return assembler.toModel(content, solarSystemId, starId, planetId, calendarId);
     }
+    
+    static class WorkersCalendarModelAssembler extends RepresentationModelAssemblerSupport<WorkersCalendarEntity, WorkersCalendarModel> {
+        public WorkersCalendarModelAssembler() {
+            super(PlanetaryCalendarController.class, WorkersCalendarModel.class);
+        }
 
-    public double getTithe() {
-        return tithe;
+        @Override
+        @NonNull
+        public WorkersCalendarModel toModel(@NonNull WorkersCalendarEntity entity) {
+            throw new NotImplementedException();
+        }
+
+        public WorkersCalendarModel toModel(final WorkersCalendarEntity entity, final int solarSystemId, final int starId, final int planetId, final int calendarId) {
+            WorkersCalendarModel model = createModelWithId(entity.getId(), entity, solarSystemId, starId, planetId, calendarId)
+                    .setId(entity.getId())
+                    .setYear(entity.getYear())
+                    .setCaste(entity.getCaste())
+                    .setDay(entity.getDay())
+                    .setShift(entity.getShift())
+                    .setTithe(entity.getTithe());
+            model.removeLinks();
+            model.add(linkTo(methodOn(PlanetaryCalendarController.class).currentCalendar(solarSystemId, starId, planetId, calendarId)).withSelfRel());
+            return model;
+        }
     }
 }

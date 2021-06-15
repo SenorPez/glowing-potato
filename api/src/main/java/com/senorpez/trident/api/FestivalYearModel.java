@@ -1,36 +1,53 @@
 package com.senorpez.trident.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.senorpez.trident.libraries.WorkersCalendar;
-import org.springframework.hateoas.Identifiable;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
+import org.springframework.lang.NonNull;
 
-public class FestivalYearModel implements Identifiable<Integer> {
-    private final int localYear;
-    private final boolean festivalYear;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-    FestivalYearModel(final PlanetaryCalendar planetaryCalendar, final int localYear) {
+class FestivalYearModel extends RepresentationModel<FestivalYearModel> {
+    @JsonProperty
+    private int localYear;
+    @JsonProperty
+    private boolean isFestivalYear;
+
+    public FestivalYearModel setLocalYear(int localYear) {
         this.localYear = localYear;
-
-        WorkersCalendar workersCalendar = planetaryCalendar.getWorkersCalendar();
-        this.festivalYear = workersCalendar.isFestivalYear(localYear);
+        return this;
     }
 
-    FestivalYearResource toResource(final int solarSystemId, final int starId, final int planetId, final int calendarId) {
-        final APIResourceAssembler<FestivalYearModel, FestivalYearResource> assembler = new APIResourceAssembler<>(
-                PlanetaryCalendarController.class,
-                FestivalYearResource.class,
-                () -> new FestivalYearResource(this, solarSystemId, starId, planetId, calendarId));
-        return assembler.addIndexLink(assembler.instantiateResource(this));
+    public FestivalYearModel setFestivalYear(boolean isFestivalYear) {
+        this.isFestivalYear = isFestivalYear;
+        return this;
     }
 
-    @Override
-    @JsonProperty("localYear")
-    public Integer getId() {
-        return localYear;
+    static RepresentationModel<FestivalYearModel> toModel(final FestivalYearEntity content, final int solarSystemId, final int starId, final int planetId, final int calendarId, final int currentYear) {
+        FestivalYearModel.FestivalYearModelAssembler assembler = new FestivalYearModel.FestivalYearModelAssembler();
+        return assembler.toModel(content, solarSystemId, starId, planetId, calendarId, currentYear);
     }
 
-    @JsonProperty("isFestivalYear")
-    public boolean isFestivalYear() {
-        return festivalYear;
+    static class FestivalYearModelAssembler extends RepresentationModelAssemblerSupport<FestivalYearEntity, FestivalYearModel> {
+        public FestivalYearModelAssembler() {
+            super(PlanetaryCalendarController.class, FestivalYearModel.class);
+        }
+
+        @Override
+        @NonNull
+        public FestivalYearModel toModel(@NonNull FestivalYearEntity entity) {
+            throw new NotImplementedException();
+        }
+
+        public FestivalYearModel toModel(final FestivalYearEntity entity, final int solarSystemId, final int starId, final int planetId, final int calendarId, final int currentYear) {
+            FestivalYearModel model = createModelWithId(entity.getId(), entity, solarSystemId, starId, planetId, calendarId)
+                    .setLocalYear(entity.getId())
+                    .setFestivalYear(entity.isFestivalYear());
+            model.removeLinks();
+            model.add(linkTo(methodOn(PlanetaryCalendarController.class).festivalYear(solarSystemId, starId, planetId, calendarId, currentYear)).withSelfRel());
+            return model;
+
+        }
     }
 }

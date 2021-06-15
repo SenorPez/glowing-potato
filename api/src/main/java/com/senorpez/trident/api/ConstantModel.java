@@ -1,47 +1,63 @@
 package com.senorpez.trident.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.hateoas.Identifiable;
-import org.springframework.hateoas.core.Relation;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
+import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
+import org.springframework.lang.NonNull;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Relation(value = "constant", collectionRelation = "constant")
-class ConstantModel implements Identifiable<String> {
-    private final String name;
-    private final String symbol;
-    private final double value;
-    private final String units;
+class ConstantModel extends RepresentationModel<ConstantModel> {
+    @JsonProperty
+    private String name;
+    @JsonProperty
+    private String symbol;
+    @JsonProperty
+    private double value;
+    @JsonProperty
+    private String units;
 
-    ConstantModel(final Constant constant) {
-        this.name = constant.getName();
-        this.symbol = constant.getSymbol();
-        this.value = constant.getValue();
-        this.units = constant.getUnits();
+    public ConstantModel setName(String name) {
+        this.name = name;
+        return this;
     }
 
-    ConstantResource toResource() {
-        final APIResourceAssembler<ConstantModel, ConstantResource> assembler =
-                new APIResourceAssembler<>(
-                        ConstantController.class,
-                        ConstantResource.class,
-                        () -> new ConstantResource(this));
-        return assembler.toResource(this);
+    public ConstantModel setSymbol(String symbol) {
+        this.symbol = symbol;
+        return this;
     }
 
-    @Override
-    @JsonProperty("symbol")
-    public String getId() {
-        return symbol;
+    public ConstantModel setValue(double value) {
+        this.value = value;
+        return this;
     }
 
-    public String getName() {
-        return name;
+    public ConstantModel setUnits(String units) {
+        this.units = units;
+        return this;
     }
 
-    public double getValue() {
-        return value;
+    static RepresentationModel<ConstantModel> toModel(final ConstantEntity content) {
+        ConstantModelAssembler assembler = new ConstantModelAssembler();
+        return assembler.toModel(content);
     }
 
-    public String getUnits() {
-        return units;
+    static class ConstantModelAssembler extends RepresentationModelAssemblerSupport<ConstantEntity, ConstantModel> {
+        public ConstantModelAssembler() {
+            super(ConstantController.class, ConstantModel.class);
+        }
+
+        @Override
+        @NonNull
+        public ConstantModel toModel(@NonNull ConstantEntity entity) {
+            return createModelWithId(entity.getId(), entity)
+                    .setName(entity.getName())
+                    .setSymbol(entity.getId())
+                    .setValue(entity.getValue())
+                    .setUnits(entity.getUnits());
+        }
     }
 }

@@ -1,29 +1,45 @@
 package com.senorpez.trident.api;
 
-import org.springframework.hateoas.Identifiable;
-import org.springframework.hateoas.core.Relation;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
+import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
+import org.springframework.lang.NonNull;
 
 @Relation(value = "system", collectionRelation = "system")
-class SolarSystemModel implements Identifiable<Integer> {
-    private final int id;
-    private final String name;
+class SolarSystemModel extends RepresentationModel<SolarSystemModel> {
+    @JsonProperty
+    private int id;
+    @JsonProperty
+    private String name;
 
-    SolarSystemModel(final SolarSystem solarSystem) {
-        this.id = solarSystem.getId();
-        this.name = solarSystem.getName();
+    private SolarSystemModel setId(int id) {
+        this.id = id;
+        return this;
     }
 
-    SolarSystemResource toResource() {
-        final APIResourceAssembler<SolarSystemModel, SolarSystemResource> assembler = new APIResourceAssembler<>(SolarSystemController.class, SolarSystemResource.class, () -> new SolarSystemResource(this));
-        return assembler.toResource(this);
+    private SolarSystemModel setName(String name) {
+        this.name = name;
+        return this;
     }
 
-    @Override
-    public Integer getId() {
-        return id;
+    static RepresentationModel<SolarSystemModel> toModel(final SolarSystemEntity content) {
+        SolarSystemModelAssembler assembler = new SolarSystemModelAssembler();
+        return assembler.toModel(content);
     }
 
-    public String getName() {
-        return name;
+    static class SolarSystemModelAssembler extends RepresentationModelAssemblerSupport<SolarSystemEntity, SolarSystemModel> {
+        public SolarSystemModelAssembler() {
+            super(SolarSystemController.class, SolarSystemModel.class);
+        }
+
+        @Override
+        @NonNull
+        public SolarSystemModel toModel(@NonNull SolarSystemEntity entity) {
+            return createModelWithId(entity.getId(), entity)
+                    .setId(entity.getId())
+                    .setName(entity.getName());
+        }
     }
 }

@@ -28,7 +28,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.EMPTY_SET;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpStatus.*;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
+import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -153,7 +153,7 @@ public class PlanetControllerIntegrationTest {
     public void GetAllPlanets_ValidSystemId_ValidStarId_InvalidAcceptHeader() throws Exception {
         mockMvc.perform(get(String.format("/systems/%d/stars/%d/planets", systemId, starId)).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
@@ -164,7 +164,7 @@ public class PlanetControllerIntegrationTest {
     public void GetAllPlanets_ValidSystemId_ValidStarId_InvalidMethod() throws Exception {
         mockMvc.perform(put(String.format("/systems/%d/stars/%d/planets", systemId, starId)).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
@@ -175,7 +175,7 @@ public class PlanetControllerIntegrationTest {
     public void GetAllPlanets_ValidSystemId_InvalidStarId_ValidAcceptHeader() throws Exception {
         mockMvc.perform(get(String.format("/systems/%d/stars/8675309/planets", systemId)).accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -186,7 +186,7 @@ public class PlanetControllerIntegrationTest {
     public void GetAllPlanets_ValidSystemId_InvalidStarId_FallbackAcceptHeader() throws Exception {
         mockMvc.perform(get(String.format("/systems/%d/stars/8675309/planets", systemId)).accept(FALLBACK))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -197,7 +197,7 @@ public class PlanetControllerIntegrationTest {
     public void GetAllPlanets_ValidSystemId_InvalidStarId_InvalidAcceptHeader() throws Exception {
         mockMvc.perform(get(String.format("/systems/%d/stars/8675309/planets", systemId)).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
@@ -208,7 +208,7 @@ public class PlanetControllerIntegrationTest {
     public void GetAllPlanets_ValidSystemId_InvalidStarId_InvalidMethod() throws Exception {
         mockMvc.perform(put(String.format("/systems/%d/stars/8675309/planets", systemId)).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
@@ -219,7 +219,7 @@ public class PlanetControllerIntegrationTest {
     public void GetAllPlanets_InvalidSystemId_XXXStarId_ValidAcceptHeader() throws Exception {
         mockMvc.perform(get(String.format("/systems/8675309/stars/%d/planets", starId)).accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -230,7 +230,7 @@ public class PlanetControllerIntegrationTest {
     public void GetAllPlanets_InvalidSystemId_XXXStarId_FallbackAcceptHeader() throws Exception {
         mockMvc.perform(get(String.format("/systems/8675309/stars/%d/planets", starId)).accept(FALLBACK))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -241,7 +241,7 @@ public class PlanetControllerIntegrationTest {
     public void GetAllPlanets_InvalidSystemId_XXXStarId_InvalidAcceptHeader() throws Exception {
         mockMvc.perform(get("/systems/8675309/stars/8675309/planets").accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
@@ -252,7 +252,7 @@ public class PlanetControllerIntegrationTest {
     public void GetAllPlanets_InvalidSystemId_XXXStarId_InvalidMethod() throws Exception {
         mockMvc.perform(put("/systems/8675309/stars/8675309/planets").accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
@@ -307,7 +307,7 @@ public class PlanetControllerIntegrationTest {
     public void GetSinglePlanet_ValidSystemId_ValidStarId_ValidPlanetId_InvalidAcceptHeader() throws Exception {
         mockMvc.perform(get(String.format("/systems/%d/stars/%d/planets/%d", systemId, starId, planetId)).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
@@ -318,7 +318,7 @@ public class PlanetControllerIntegrationTest {
     public void GetSinglePlanet_ValidSystemId_ValidStarId_ValidPlanetId_InvalidMethod() throws Exception {
         mockMvc.perform(put(String.format("/systems/%d/stars/%d/planets/%d", systemId, starId, planetId)).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
@@ -329,7 +329,7 @@ public class PlanetControllerIntegrationTest {
     public void GetSinglePlanet_ValidSystemId_ValidStarId_InvalidPlanetId_ValidAcceptHeader() throws Exception {
         mockMvc.perform(get(String.format("/systems/%d/stars/%d/planets/8675309", systemId, starId)).accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -340,7 +340,7 @@ public class PlanetControllerIntegrationTest {
     public void GetSinglePlanet_ValidSystemId_ValidStarId_InvalidPlanetId_FallbackAcceptHeader() throws Exception {
         mockMvc.perform(get(String.format("/systems/%d/stars/%d/planets/8675309", systemId, starId)).accept(FALLBACK))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -351,7 +351,7 @@ public class PlanetControllerIntegrationTest {
     public void GetSinglePlanet_ValidSystemId_ValidStarId_InvalidPlanetId_InvalidAcceptHeader() throws Exception {
         mockMvc.perform(get(String.format("/systems/%d/stars/%d/planets/8675309", systemId, starId)).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
@@ -362,7 +362,7 @@ public class PlanetControllerIntegrationTest {
     public void GetSinglePlanet_ValidSystemId_ValidStarId_InvalidPlanetId_InvalidMethod() throws Exception {
         mockMvc.perform(put(String.format("/systems/%d/stars/%d/planets/8675309", systemId, starId)).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
@@ -373,7 +373,7 @@ public class PlanetControllerIntegrationTest {
     public void GetSinglePlanet_ValidSystemId_InvalidStarId_XXXPlanetId_ValidAcceptHeader() throws Exception {
         mockMvc.perform(get(String.format("/systems/%d/stars/8675309/planets/%d", systemId, planetId)).accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -384,7 +384,7 @@ public class PlanetControllerIntegrationTest {
     public void GetSinglePlanet_ValidSystemId_InvalidStarId_XXXPlanetId_FallbackAcceptHeader() throws Exception {
         mockMvc.perform(get(String.format("/systems/%d/stars/8675309/planets/%d", systemId, planetId)).accept(FALLBACK))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -395,7 +395,7 @@ public class PlanetControllerIntegrationTest {
     public void GetSinglePlanet_ValidSystemId_InvalidStarId_XXXPlanetId_InvalidAcceptHeader() throws Exception {
         mockMvc.perform(get(String.format("/systems/%d/stars/8675309/planets/%d", systemId, planetId)).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
@@ -406,7 +406,7 @@ public class PlanetControllerIntegrationTest {
     public void GetSinglePlanet_ValidSystemId_InvalidStarId_XXXPlanetId_InvalidMethod() throws Exception {
         mockMvc.perform(put(String.format("/systems/%d/stars/8675309/planets/%d", systemId, planetId)).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
@@ -417,7 +417,7 @@ public class PlanetControllerIntegrationTest {
     public void GetSinglePlanet_InvalidSystemId_XXXStarId_XXXPlanetId_ValidAcceptHeader() throws Exception {
         mockMvc.perform(get(String.format("/systems/8675309/stars/%d/planets/%d", starId, planetId)).accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -428,7 +428,7 @@ public class PlanetControllerIntegrationTest {
     public void GetSinglePlanet_InvalidSystemId_XXXStarId_XXXPlanetId_FallbackAcceptHeader() throws Exception {
         mockMvc.perform(get(String.format("/systems/8675309/stars/%d/planets/%d", starId, planetId)).accept(FALLBACK))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -439,7 +439,7 @@ public class PlanetControllerIntegrationTest {
     public void GetSinglePlanet_InvalidSystemId_XXXStarId_XXXPlanetId_InvalidAcceptHeader() throws Exception {
         mockMvc.perform(get(String.format("/systems/8675309/stars/%d/planets/%d", starId, planetId)).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
@@ -450,7 +450,7 @@ public class PlanetControllerIntegrationTest {
     public void GetSinglePlanet_InvalidSystemId_XXXStarId_XXXPlanetId_InvalidMethod() throws Exception {
         mockMvc.perform(put(String.format("/systems/8675309/stars/%d/planets/%d", starId, planetId)).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))

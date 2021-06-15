@@ -27,7 +27,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.EMPTY_SET;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpStatus.*;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
+import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -181,7 +181,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 starId,
                 planetId)).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
@@ -196,7 +196,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 starId,
                 planetId)).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
@@ -210,7 +210,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 systemId,
                 starId)).accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -224,7 +224,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 systemId,
                 starId)).accept(FALLBACK))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -239,7 +239,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 starId,
                 planetId)).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
@@ -254,7 +254,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 starId,
                 planetId)).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
@@ -268,7 +268,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 systemId,
                 calendarId)).accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -282,7 +282,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 systemId,
                 calendarId)).accept(FALLBACK))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -297,7 +297,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 starId,
                 planetId)).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
@@ -312,7 +312,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 starId,
                 planetId)).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
@@ -326,7 +326,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 systemId,
                 calendarId)).accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -340,7 +340,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 systemId,
                 calendarId)).accept(FALLBACK))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -355,7 +355,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 starId,
                 planetId)).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
@@ -370,7 +370,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 starId,
                 planetId)).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
@@ -379,23 +379,19 @@ public class PlanetaryCalendarControllerIntegrationTest {
 
     @Test
     public void GetSingleCalendar_ValidSystemId_ValidStarId_ValidPlanetId_ValidCalendarId_ValidAcceptHeader() throws Exception {
-        mockMvc.perform(get(String.format(
+        String url = String.format(
                 "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                 systemId,
                 starId,
                 planetId,
-                calendarId)).accept(TRIDENT_API))
+                calendarId);
+        mockMvc.perform(get(url).accept(TRIDENT_API))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(TRIDENT_API))
                 .andExpect(content().string(matchesJsonSchema(CALENDAR_SCHEMA)))
                 .andExpect(jsonPath("$.id", is(calendarId)))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
-                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format(
-                        "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
-                        systemId,
-                        starId,
-                        planetId,
-                        calendarId))))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", url)))
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
                                 hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-trident-{rel}"),
@@ -410,23 +406,19 @@ public class PlanetaryCalendarControllerIntegrationTest {
 
     @Test
     public void GetSingleCalendar_ValidSystemId_ValidStarId_ValidPlanetId_ValidCalendarId_FallbackAcceptHeader() throws Exception {
-        mockMvc.perform(get(String.format(
+        String url = String.format(
                 "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
                 systemId,
                 starId,
                 planetId,
-                calendarId)).accept(FALLBACK))
+                calendarId);
+        mockMvc.perform(get(url).accept(FALLBACK))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(FALLBACK))
                 .andExpect(content().string(matchesJsonSchema(CALENDAR_SCHEMA)))
                 .andExpect(jsonPath("$.id", is(calendarId)))
                 .andExpect(jsonPath("$._links.index", hasEntry("href", "http://localhost:8080/")))
-                .andExpect(jsonPath("$._links.self", hasEntry("href", String.format(
-                        "http://localhost:8080/systems/%d/stars/%d/planets/%d/calendars/%d",
-                        systemId,
-                        starId,
-                        planetId,
-                        calendarId))))
+                .andExpect(jsonPath("$._links.self", hasEntry("href", url)))
                 .andExpect(jsonPath("$._links.curies", everyItem(
                         allOf(
                                 hasEntry("href", (Object) "http://localhost:8080/docs/reference.html#resources-trident-{rel}"),
@@ -448,7 +440,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 planetId,
                 calendarId)).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
@@ -464,7 +456,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 planetId,
                 calendarId)).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
@@ -480,7 +472,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 starId,
                 planetId)).accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -495,7 +487,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 starId,
                 planetId)).accept(FALLBACK))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -511,7 +503,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 planetId,
                 calendarId)).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
@@ -527,7 +519,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 planetId,
                 calendarId)).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
@@ -542,7 +534,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 starId,
                 calendarId)).accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -557,7 +549,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 starId,
                 calendarId)).accept(FALLBACK))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -573,7 +565,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 planetId,
                 calendarId)).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
@@ -589,7 +581,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 planetId,
                 calendarId)).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
@@ -604,7 +596,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 planetId,
                 calendarId)).accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -619,7 +611,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 planetId,
                 calendarId)).accept(FALLBACK))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -635,7 +627,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 planetId,
                 calendarId)).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
@@ -651,7 +643,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 planetId,
                 calendarId)).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
@@ -666,7 +658,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 planetId,
                 calendarId)).accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -681,7 +673,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 planetId,
                 calendarId)).accept(FALLBACK))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -697,7 +689,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 planetId,
                 calendarId)).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
@@ -713,7 +705,7 @@ public class PlanetaryCalendarControllerIntegrationTest {
                 planetId,
                 calendarId)).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))

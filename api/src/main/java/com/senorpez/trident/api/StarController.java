@@ -1,7 +1,8 @@
 package com.senorpez.trident.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,13 +12,18 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import static com.senorpez.trident.api.APIService.findSolarSystem;
+import static com.senorpez.trident.api.APIService.findStar;
+import static com.senorpez.trident.api.SupportedMediaTypes.FALLBACK_VALUE;
 import static com.senorpez.trident.api.SupportedMediaTypes.TRIDENT_API_VALUE;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
+import static org.springframework.hateoas.IanaLinkRelations.INDEX;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RequestMapping(
         value = "/systems/{solarSystemId}/stars",
         method = RequestMethod.GET,
-        produces = {TRIDENT_API_VALUE, APPLICATION_JSON_UTF8_VALUE}
+        produces = {TRIDENT_API_VALUE, FALLBACK_VALUE}
 )
 @RestController
 class StarController {
@@ -30,39 +36,35 @@ class StarController {
         this.solarSystems = Application.SOLAR_SYSTEMS;
     }
 
-    StarController(final APIService apiService, final Collection<SolarSystem> solarSystems) {
-        this.apiService = apiService;
-        this.solarSystems = solarSystems;
-    }
-
     @RequestMapping
-    ResponseEntity<EmbeddedStarResources> stars(@PathVariable final int solarSystemId) {
-        final SolarSystem solarSystem = apiService.findOne(
-                this.solarSystems,
-                findSolarSystem -> findSolarSystem.getId() == solarSystemId,
-                () -> new SolarSystemNotFoundException(solarSystemId));
+    ResponseEntity<CollectionModel<RepresentationModel<EmbeddedStarModel>>> stars(@PathVariable final int solarSystemId) {
+        final SolarSystem solarSystem = findSolarSystem(apiService, solarSystems, solarSystemId);
         final Collection<Star> stars = solarSystem.getStars();
-        final Collection<EmbeddedStarModel> starModels = stars.stream()
-                .map(EmbeddedStarModel::new)
+        final Collection<StarEntity> starEntities = stars
+                .stream()
+                .map(StarEntity::new)
                 .collect(Collectors.toList());
-        final Collection<Resource<EmbeddedStarModel>> starResources = starModels.stream()
-                .map(star -> star.toResource(solarSystemId))
+        final Collection<RepresentationModel<EmbeddedStarModel>> starModels = starEntities
+                .stream()
+                .map(entity -> EmbeddedStarModel.toModel(entity, solarSystemId))
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(new EmbeddedStarResources(starResources, solarSystemId));
+        return ResponseEntity.ok(CollectionModel.of(
+                starModels,
+                linkTo(methodOn(StarController.class).stars(solarSystemId)).withSelfRel(),
+                linkTo(methodOn(SolarSystemController.class).solarSystems(solarSystemId)).withRel("system"),
+                linkTo(methodOn(RootController.class).root()).withRel(INDEX)));
     }
 
     @RequestMapping("/{starId}")
-    ResponseEntity<StarResource> stars(@PathVariable final int solarSystemId, @PathVariable final int starId) {
-        final SolarSystem solarSystem = apiService.findOne(
-                this.solarSystems,
-                findSolarSystem -> findSolarSystem.getId() == solarSystemId,
-                () -> new SolarSystemNotFoundException(solarSystemId));
-        final Star star = apiService.findOne(
-                solarSystem.getStars(),
-                findStar -> findStar.getId() == starId,
-                () -> new StarNotFoundException(starId));
-        final StarModel starModel = new StarModel(star);
-        final StarResource starResource = starModel.toResource(solarSystemId);
-        return ResponseEntity.ok(starResource);
+    ResponseEntity<RepresentationModel<StarModel>> stars(@PathVariable final int solarSystemId, @PathVariable final int starId) {
+        final Star star = findStar(apiService, solarSystems, solarSystemId, starId);
+        final StarEntity starEntity = new StarEntity(star);
+        final RepresentationModel<StarModel> starModel = StarModel.toModel(starEntity, solarSystemId);
+        starModel.add(
+                linkTo(methodOn(PlanetController.class).planets(solarSystemId, starId)).withRel("planets"),
+                linkTo(methodOn(StarController.class).stars(solarSystemId)).withRel("stars"),
+                linkTo(methodOn(RootController.class).root()).withRel(INDEX)
+        );
+        return ResponseEntity.ok(starModel);
     }
 }

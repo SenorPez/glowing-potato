@@ -1,10 +1,10 @@
 buildscript {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.3'
+        classpath 'com.android.tools.build:gradle:4.1.1'
         classpath 'com.google.gms:google-services:4.2.0'
         classpath 'org.jacoco:org.jacoco.core:0.8.1'
     }
@@ -16,12 +16,12 @@ plugins {
 
 repositories {
     google()
-    jcenter()
+    mavenCentral()
 }
 
 apply plugin: 'com.android.application'
 apply from: 'jacoco.gradle'
-apply plugin: 'com.google.gms.google-services'
+//apply plugin: 'com.google.gms.google-services'
 
 idea {
     module {
@@ -52,6 +52,9 @@ android {
     compileOptions {
         targetCompatibility 1.8
         sourceCompatibility 1.8
+    }
+    lintOptions {
+        abortOnError false
     }
     sourceSets {
         main.java.srcDirs += '\\build\\generated\\not_namespaced_r_class_sources\\debug\\processDebugResources\\r'

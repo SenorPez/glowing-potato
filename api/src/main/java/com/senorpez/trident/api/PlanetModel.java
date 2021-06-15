@@ -1,82 +1,113 @@
 package com.senorpez.trident.api;
 
-import org.springframework.hateoas.Identifiable;
-import org.springframework.hateoas.core.Relation;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
+import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
+import org.springframework.lang.NonNull;
 
 @Relation(value = "planet", collectionRelation = "planet")
-class PlanetModel implements Identifiable<Integer> {
-    private final int id;
-    private final String name;
+class PlanetModel extends RepresentationModel<PlanetModel> {
+    @JsonProperty
+    private int id;
+    @JsonProperty
+    private String name;
+    @JsonProperty
+    private float mass;
+    @JsonProperty
+    private float radius;
 
-    private final float mass;
-    private final float radius;
+    @JsonProperty
+    private float semimajorAxis;
+    @JsonProperty
+    private float eccentricity;
+    @JsonProperty
+    private float inclination;
+    @JsonProperty
+    private float longitudeOfAscendingNode;
+    @JsonProperty
+    private float argumentOfPeriapsis;
+    @JsonProperty
+    private float trueAnomalyAtEpoch;
 
-    private final float semimajorAxis;
-    private final float eccentricity;
-    private final float inclination;
-    private final float longitudeOfAscendingNode;
-    private final float argumentOfPeriapsis;
-    private final float trueAnomalyAtEpoch;
-
-    PlanetModel(final Planet planet) {
-        this.id = planet.getId();
-        this.name = planet.getName();
-        this.mass = planet.getMass();
-        this.radius = planet.getRadius();
-        this.semimajorAxis = planet.getSemimajorAxis();
-        this.eccentricity = planet.getEccentricity();
-        this.inclination = planet.getInclination();
-        this.longitudeOfAscendingNode = planet.getLongitudeOfAscendingNode();
-        this.argumentOfPeriapsis = planet.getArgumentOfPeriapsis();
-        this.trueAnomalyAtEpoch = planet.getTrueAnomalyAtEpoch();
+    public PlanetModel setId(int id) {
+        this.id = id;
+        return this;
     }
 
-    PlanetResource toResource(final int solarSystemId, final int starId) {
-        final APIResourceAssembler<PlanetModel, PlanetResource> assembler = new APIResourceAssembler<>(
-                PlanetController.class,
-                PlanetResource.class,
-                () -> new PlanetResource(this, solarSystemId, starId));
-        return assembler.toResource(this, solarSystemId, starId);
+    public PlanetModel setName(String name) {
+        this.name = name;
+        return this;
     }
 
-    @Override
-    public Integer getId() {
-        return id;
+    public PlanetModel setMass(float mass) {
+        this.mass = mass;
+        return this;
     }
 
-    public String getName() {
-        return name;
+    public PlanetModel setRadius(float radius) {
+        this.radius = radius;
+        return this;
     }
 
-    public float getMass() {
-        return mass;
+    public PlanetModel setSemimajorAxis(float semimajorAxis) {
+        this.semimajorAxis = semimajorAxis;
+        return this;
     }
 
-    public float getRadius() {
-        return radius;
+    public PlanetModel setEccentricity(float eccentricity) {
+        this.eccentricity = eccentricity;
+        return this;
     }
 
-    public float getSemimajorAxis() {
-        return semimajorAxis;
+    public PlanetModel setInclination(float inclination) {
+        this.inclination = inclination;
+        return this;
     }
 
-    public float getEccentricity() {
-        return eccentricity;
+    public PlanetModel setLongitudeOfAscendingNode(float longitudeOfAscendingNode) {
+        this.longitudeOfAscendingNode = longitudeOfAscendingNode;
+        return this;
     }
 
-    public float getInclination() {
-        return inclination;
+    public PlanetModel setArgumentOfPeriapsis(float argumentOfPeriapsis) {
+        this.argumentOfPeriapsis = argumentOfPeriapsis;
+        return this;
     }
 
-    public float getLongitudeOfAscendingNode() {
-        return longitudeOfAscendingNode;
+    public PlanetModel setTrueAnomalyAtEpoch(float trueAnomalyAtEpoch) {
+        this.trueAnomalyAtEpoch = trueAnomalyAtEpoch;
+        return this;
     }
 
-    public float getArgumentOfPeriapsis() {
-        return argumentOfPeriapsis;
+    static RepresentationModel<PlanetModel> toModel(final PlanetEntity content, final int solarSystemId, final int starId) {
+        PlanetModelAssembler assembler = new PlanetModelAssembler();
+        return assembler.toModel(content, solarSystemId, starId);
     }
 
-    public float getTrueAnomalyAtEpoch() {
-        return trueAnomalyAtEpoch;
+    static class PlanetModelAssembler extends RepresentationModelAssemblerSupport<PlanetEntity, PlanetModel> {
+        public PlanetModelAssembler() {
+            super(PlanetController.class, PlanetModel.class);
+        }
+
+        @Override
+        @NonNull
+        public PlanetModel toModel(@NonNull PlanetEntity entity) {
+            throw new NotImplementedException();
+        }
+
+        public PlanetModel toModel(final PlanetEntity entity, final int solarSystemId, final int starId) {
+            return createModelWithId(entity.getId(), entity, solarSystemId, starId)
+                    .setId(entity.getId())
+                    .setName(entity.getName())
+                    .setMass(entity.getMass())
+                    .setRadius(entity.getRadius())
+                    .setSemimajorAxis(entity.getSemimajorAxis())
+                    .setEccentricity(entity.getEccentricity())
+                    .setInclination(entity.getInclination())
+                    .setLongitudeOfAscendingNode(entity.getLongitudeOfAscendingNode())
+                    .setArgumentOfPeriapsis(entity.getArgumentOfPeriapsis())
+                    .setTrueAnomalyAtEpoch(entity.getTrueAnomalyAtEpoch());
+        }
     }
 }

@@ -1,37 +1,37 @@
 package com.senorpez.trident.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.hateoas.Identifiable;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.core.Relation;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
+import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
+import org.springframework.lang.NonNull;
 
 @Relation(value = "constant", collectionRelation = "constant")
-class EmbeddedConstantModel implements Identifiable<String> {
-    private final String symbol;
+class EmbeddedConstantModel extends RepresentationModel<EmbeddedConstantModel> {
+    @JsonProperty
+    private String symbol;
 
-    EmbeddedConstantModel(final Constant constant) {
-        this.symbol = constant.getSymbol();
+    public EmbeddedConstantModel setSymbol(String symbol) {
+        this.symbol = symbol;
+        return this;
     }
 
-    Resource<EmbeddedConstantModel> toResource() {
-        final APIEmbeddedResourceAssembler<EmbeddedConstantModel, EmbeddedConstantResource> assembler =
-                new APIEmbeddedResourceAssembler<>(
-                        ConstantController.class,
-                        EmbeddedConstantResource.class,
-                        () -> new EmbeddedConstantResource(this));
-        return assembler.toResource(this);
+    static RepresentationModel<EmbeddedConstantModel> toModel(final ConstantEntity content) {
+        EmbeddedConstantModelAssembler assembler = new EmbeddedConstantModelAssembler();
+        return assembler.toModel(content);
     }
 
-    private class EmbeddedConstantResource extends Resource<EmbeddedConstantModel> {
-        private EmbeddedConstantResource(final EmbeddedConstantModel content, final Link... links) {
-            super(content, links);
+    static class EmbeddedConstantModelAssembler extends RepresentationModelAssemblerSupport<ConstantEntity, EmbeddedConstantModel> {
+        public EmbeddedConstantModelAssembler() {
+            super(ConstantController.class, EmbeddedConstantModel.class);
+        }
+
+        @Override
+        @NonNull
+        public EmbeddedConstantModel toModel(@NonNull ConstantEntity entity) {
+            return createModelWithId(entity.getId(), entity)
+                    .setSymbol(entity.getId());
         }
     }
 
-    @Override
-    @JsonProperty("symbol")
-    public String getId() {
-        return symbol;
-    }
 }

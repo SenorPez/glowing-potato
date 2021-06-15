@@ -26,7 +26,8 @@ import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
 import static org.springframework.http.MediaType.ALL;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
+import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON;
+import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
@@ -62,10 +63,11 @@ public class ConstantControllerTest {
         CONSTANT_COLLECTION_SCHEMA = CLASS_LOADER.getResourceAsStream("constants.schema.json");
         ERROR_SCHEMA = CLASS_LOADER.getResourceAsStream("error.schema.json");
         MockitoAnnotations.initMocks(this);
+        SupportedMediaTypes supportedMediaTypes = new SupportedMediaTypes();
 
         this.mockMvc = MockMvcBuilders
                 .standaloneSetup(new ConstantController(apiService))
-                .setMessageConverters(HALMessageConverter.getConverter(Collections.singletonList(ALL)))
+                .setMessageConverters(supportedMediaTypes.getConverter(Collections.singletonList(ALL)))
                 .setControllerAdvice(new APIExceptionHandler())
                 .apply(documentationConfiguration(this.restDocumentation))
                 .build();
@@ -124,7 +126,7 @@ public class ConstantControllerTest {
                                 subsectionWithPath("_embedded.trident-api:constant[]._links").ignored()),
                         commonLinks));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -167,7 +169,7 @@ public class ConstantControllerTest {
                                 hasEntry("name", (Object) "trident-api"),
                                 hasEntry("templated", (Object) true)))));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -176,13 +178,13 @@ public class ConstantControllerTest {
 
         mockMvc.perform(get("/constants").accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -191,13 +193,13 @@ public class ConstantControllerTest {
 
         mockMvc.perform(put("/constants").accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -273,13 +275,13 @@ public class ConstantControllerTest {
 
         mockMvc.perform(get(String.format("/constants/%s", G.getSymbol())).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -288,13 +290,13 @@ public class ConstantControllerTest {
 
         mockMvc.perform(put(String.format("/constants/%s", G.getSymbol())).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -355,13 +357,13 @@ public class ConstantControllerTest {
 
         mockMvc.perform(get(String.format("/constants/%s", Msol.getSymbol())).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -370,13 +372,13 @@ public class ConstantControllerTest {
 
         mockMvc.perform(put(String.format("/constants/%s", Msol.getSymbol())).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -437,13 +439,13 @@ public class ConstantControllerTest {
 
         mockMvc.perform(get(String.format("/constants/%s", Mpln.getSymbol())).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -452,13 +454,13 @@ public class ConstantControllerTest {
 
         mockMvc.perform(put(String.format("/constants/%s", Mpln.getSymbol())).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -519,13 +521,13 @@ public class ConstantControllerTest {
 
         mockMvc.perform(get(String.format("/constants/%s", Rpln.getSymbol())).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Accept header must be \"application/vnd.senorpez.trident.v1+json;charset=UTF-8\"")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 
     @Test
@@ -534,12 +536,12 @@ public class ConstantControllerTest {
 
         mockMvc.perform(put(String.format("/constants/%s", Rpln.getSymbol())).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
                 .andExpect(jsonPath("$.detail", is("Only GET methods allowed.")));
 
-        verifyZeroInteractions(apiService);
+        verifyNoInteractions(apiService);
     }
 }

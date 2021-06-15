@@ -26,7 +26,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.EMPTY_SET;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.http.HttpStatus.*;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8;
+import static org.springframework.http.MediaType.APPLICATION_PROBLEM_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -145,7 +145,7 @@ public class StarControllerIntegrationTest {
 
         mockMvc.perform(get(String.format("/systems/%d/stars/", systemId)).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
@@ -156,7 +156,7 @@ public class StarControllerIntegrationTest {
     public void GetAllStars_ValidSystemId_InvalidMethod() throws Exception {
         mockMvc.perform(put(String.format("/systems/%d/stars/", systemId)).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
@@ -167,7 +167,7 @@ public class StarControllerIntegrationTest {
     public void GetAllStars_InvalidSystemId_ValidAcceptHeader() throws Exception {
         mockMvc.perform(get("/systems/8675309/stars/").accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -178,7 +178,7 @@ public class StarControllerIntegrationTest {
     public void GetAllStars_InvalidSystemId_FallbackAcceptHeader() throws Exception {
         mockMvc.perform(get("/systems/8675309/stars/").accept(FALLBACK))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -189,7 +189,7 @@ public class StarControllerIntegrationTest {
     public void GetAllStars_InvalidSystemId_InvalidAcceptHeader() throws Exception {
         mockMvc.perform(get("/systems/8675309/stars/").accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
@@ -200,7 +200,7 @@ public class StarControllerIntegrationTest {
     public void GetAllStars_InvalidSystemId_InvalidMethod() throws Exception {
         mockMvc.perform(put("/systems/8675309/stars").accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
@@ -253,7 +253,7 @@ public class StarControllerIntegrationTest {
     public void GetSingleStar_ValidSystemId_ValidStarId_InvalidAcceptHeader() throws Exception {
         mockMvc.perform(get(String.format("/systems/%d/stars/%d", systemId, starId)).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
@@ -264,7 +264,7 @@ public class StarControllerIntegrationTest {
     public void GetSingleStar_ValidSystemId_ValidStarId_InvalidMethod() throws Exception {
         mockMvc.perform(put(String.format("/systems/%d/stars/%d", systemId, starId)).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
@@ -275,7 +275,7 @@ public class StarControllerIntegrationTest {
     public void GetSingleStar_ValidSystemId_InvalidStarId_ValidAcceptHeader() throws Exception {
         mockMvc.perform(get(String.format("/systems/%d/stars/8675309", systemId)).accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -286,7 +286,7 @@ public class StarControllerIntegrationTest {
     public void GetSingleStar_ValidSystemId_InvalidStarId_FallbackAcceptHeader() throws Exception {
         mockMvc.perform(get(String.format("/systems/%d/stars/8675309", systemId)).accept(FALLBACK))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -297,7 +297,7 @@ public class StarControllerIntegrationTest {
     public void GetSingleStar_ValidSystemId_InvalidStarId_InvalidAcceptHeader() throws Exception {
         mockMvc.perform(get(String.format("/systems/%d/stars/8675309", systemId)).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
@@ -308,7 +308,7 @@ public class StarControllerIntegrationTest {
     public void GetSingleStar_ValidSystemId_InvalidStarId_InvalidMethod() throws Exception {
         mockMvc.perform(put(String.format("/systems/%d/stars/8675309", systemId)).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))
@@ -319,7 +319,7 @@ public class StarControllerIntegrationTest {
     public void GetSingleStar_InvalidSystemId_XXXStarId_ValidAcceptHeader() throws Exception {
         mockMvc.perform(get(String.format("/systems/8675309/stars/%d", systemId)).accept(TRIDENT_API))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -330,7 +330,7 @@ public class StarControllerIntegrationTest {
     public void GetSingleStar_InvalidSystemId_XXXStarId_FallbackAcceptHeader() throws Exception {
         mockMvc.perform(get(String.format("/systems/8675309/stars/%d", systemId)).accept(FALLBACK))
                 .andExpect(status().isNotFound())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_FOUND.value())))
                 .andExpect(jsonPath("$.message", is(NOT_FOUND.getReasonPhrase())))
@@ -341,7 +341,7 @@ public class StarControllerIntegrationTest {
     public void GetSingleStar_InvalidSystemId_XXXStarId_InvalidAcceptHeader() throws Exception {
         mockMvc.perform(get(String.format("/systems/8675309/stars/%d", systemId)).accept(INVALID_MEDIA_TYPE))
                 .andExpect(status().isNotAcceptable())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(NOT_ACCEPTABLE.value())))
                 .andExpect(jsonPath("$.message", is(NOT_ACCEPTABLE.getReasonPhrase())))
@@ -352,7 +352,7 @@ public class StarControllerIntegrationTest {
     public void GetSingleStar_InvalidSystemId_XXXStarId_InvalidMethod() throws Exception {
         mockMvc.perform(put(String.format("/systems/8675309/stars/%d", systemId)).accept(TRIDENT_API))
                 .andExpect(status().isMethodNotAllowed())
-                .andExpect(content().contentType(APPLICATION_JSON_UTF8))
+                .andExpect(content().contentType(APPLICATION_PROBLEM_JSON))
                 .andExpect(content().string(matchesJsonSchema(ERROR_SCHEMA)))
                 .andExpect(jsonPath("$.code", is(METHOD_NOT_ALLOWED.value())))
                 .andExpect(jsonPath("$.message", is(METHOD_NOT_ALLOWED.getReasonPhrase())))

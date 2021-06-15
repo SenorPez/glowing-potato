@@ -1,7 +1,8 @@
 package com.senorpez.trident.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Resources;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,14 +12,18 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import static com.senorpez.trident.api.APIService.findSolarSystem;
 import static com.senorpez.trident.api.Application.SOLAR_SYSTEMS;
+import static com.senorpez.trident.api.SupportedMediaTypes.FALLBACK_VALUE;
 import static com.senorpez.trident.api.SupportedMediaTypes.TRIDENT_API_VALUE;
-import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
+import static org.springframework.hateoas.IanaLinkRelations.INDEX;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RequestMapping(
         value = "/systems",
         method = RequestMethod.GET,
-        produces = {TRIDENT_API_VALUE, APPLICATION_JSON_UTF8_VALUE}
+        produces = {TRIDENT_API_VALUE, FALLBACK_VALUE}
 )
 @RestController
 class SolarSystemController {
@@ -37,25 +42,32 @@ class SolarSystemController {
     }
 
     @RequestMapping
-    ResponseEntity<Resources<SolarSystemResource>> solarSystems() {
+    ResponseEntity<CollectionModel<RepresentationModel<SolarSystemModel>>> solarSystems() {
         final Collection<SolarSystem> solarSystems = apiService.findAll(this.solarSystems);
-        final Collection<SolarSystemModel> solarSystemModels = solarSystems.stream()
-                .map(SolarSystemModel::new)
+        final Collection<SolarSystemEntity> solarSystemEntities = solarSystems
+                .stream()
+                .map(SolarSystemEntity::new)
                 .collect(Collectors.toList());
-        final Collection<SolarSystemResource> solarSystemResources = solarSystemModels.stream()
-                .map(SolarSystemModel::toResource)
+        final Collection<RepresentationModel<SolarSystemModel>> solarSystemModels = solarSystemEntities
+                .stream()
+                .map(SolarSystemModel::toModel)
                 .collect(Collectors.toList());
-        return ResponseEntity.ok(SolarSystemResource.makeResources(solarSystemResources));
+        return ResponseEntity.ok(CollectionModel.of(
+                solarSystemModels,
+                linkTo(methodOn(SolarSystemController.class).solarSystems()).withSelfRel(),
+                linkTo(methodOn(RootController.class).root()).withRel(INDEX)));
     }
 
     @RequestMapping("/{solarSystemId}")
-    ResponseEntity<SolarSystemResource> solarSystems(@PathVariable final int solarSystemId) {
-        final SolarSystem solarSystem = apiService.findOne(
-                this.solarSystems,
-                findSolarSystem -> findSolarSystem.getId() == solarSystemId,
-                () -> new SolarSystemNotFoundException(solarSystemId));
-        final SolarSystemModel solarSystemModel = new SolarSystemModel(solarSystem);
-        final SolarSystemResource solarSystemResource = solarSystemModel.toResource();
-        return ResponseEntity.ok(solarSystemResource);
+    ResponseEntity<RepresentationModel<SolarSystemModel>> solarSystems(@PathVariable final int solarSystemId) {
+        final SolarSystem solarSystem = findSolarSystem(apiService, solarSystems, solarSystemId);
+        final SolarSystemEntity solarSystemEntity = new SolarSystemEntity(solarSystem);
+        final RepresentationModel<SolarSystemModel> solarSystemModel = SolarSystemModel.toModel(solarSystemEntity);
+        solarSystemModel.add(
+                linkTo(methodOn(StarController.class).stars(solarSystemId)).withRel("stars"),
+                linkTo(methodOn(SolarSystemController.class).solarSystems()).withRel("systems"),
+                linkTo(methodOn(RootController.class).root()).withRel(INDEX)
+        );
+        return ResponseEntity.ok(solarSystemModel);
     }
 }

@@ -1,39 +1,48 @@
 package com.senorpez.trident.api;
 
-import org.springframework.hateoas.Identifiable;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.core.Relation;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
+import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
+import org.springframework.lang.NonNull;
 
 @Relation(value = "star", collectionRelation = "star")
-class EmbeddedStarModel implements Identifiable<Integer> {
-    private final int id;
-    private final String name;
+class EmbeddedStarModel extends RepresentationModel<EmbeddedStarModel> {
+    @JsonProperty
+    private int id;
+    @JsonProperty
+    private String name;
 
-    EmbeddedStarModel(final Star star) {
-        this.id = star.getId();
-        this.name = star.getName();
+    public EmbeddedStarModel setId(int id) {
+        this.id = id;
+        return this;
     }
 
-    Resource<EmbeddedStarModel> toResource(final int solarSystemId) {
-        final APIEmbeddedResourceAssembler<EmbeddedStarModel, EmbeddedStarResource> assembler = new APIEmbeddedResourceAssembler<>(StarController.class, EmbeddedStarResource.class, () -> new EmbeddedStarResource(this, solarSystemId));
-        return assembler.toResource(this, solarSystemId);
+    public EmbeddedStarModel setName(String name) {
+        this.name = name;
+        return this;
     }
 
-    private class EmbeddedStarResource extends Resource<EmbeddedStarModel> {
-        private EmbeddedStarResource(final EmbeddedStarModel content, final int solarSystemId, final Link... links) {
-            super(content, links);
+    static RepresentationModel<EmbeddedStarModel> toModel(final StarEntity entity, final int solarSystemId) {
+        EmbeddedStarModelAssembler assembler = new EmbeddedStarModelAssembler();
+        return assembler.toModel(entity, solarSystemId);
+    }
+
+    static class EmbeddedStarModelAssembler extends RepresentationModelAssemblerSupport<StarEntity, EmbeddedStarModel> {
+        public EmbeddedStarModelAssembler() {
+            super(StarController.class, EmbeddedStarModel.class);
+        }
+
+        @Override
+        @NonNull
+        public EmbeddedStarModel toModel(@NonNull StarEntity entity) {
+            throw new NotImplementedException();
+        }
+
+        public EmbeddedStarModel toModel(StarEntity entity, final int solarSystemId) {
+            return createModelWithId(entity.getId(), entity, solarSystemId)
+                    .setId(entity.getId())
+                    .setName(entity.getName());
         }
     }
-
-    @Override
-    public Integer getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
 }
-
-
