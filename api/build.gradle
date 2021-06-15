@@ -1,32 +1,19 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath('org.asciidoctor:asciidoctor-gradle-plugin:1.5.9.2')
-    }
-}
-
 plugins {
     id 'java'
     id 'jacoco'
     id 'idea'
     id "org.springframework.boot" version "2.5.0"
-    id 'org.asciidoctor.convert' version '1.5.9.2'
+    id "org.asciidoctor.jvm.convert" version "2.4.0"
+}
+
+repositories {
+    mavenCentral()
 }
 
 group 'com.senorpez.trident'
 version '1.1.0'
 
 sourceCompatibility = 1.8
-
-repositories {
-    mavenCentral()
-}
-
-//springBoot {
-//    executable = true
-//}
 
 idea {
     module {
@@ -44,9 +31,9 @@ dependencies {
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.3.3'
     testImplementation group: 'org.springframework', name: 'spring-test', version: '5.2.5.RELEASE'
     testImplementation group: 'org.springframework.boot', name: 'spring-boot-test', version: '2.2.6.RELEASE'
-    testImplementation group: 'org.springframework.restdocs', name: 'spring-restdocs-core', version: '2.0.4.RELEASE'
-    testImplementation group: 'org.springframework.restdocs', name: 'spring-restdocs-mockmvc', version: '2.0.4.RELEASE'
-    asciidoctor group: 'org.springframework.restdocs', name: 'spring-restdocs-asciidoctor', version: '1.2.1.RELEASE'
+    testImplementation group: 'org.springframework.restdocs', name: 'spring-restdocs-core', version: '2.0.5.RELEASE'
+    testImplementation group: 'org.springframework.restdocs', name: 'spring-restdocs-mockmvc', version: '2.0.5.RELEASE'
+//    asciidoctor group: 'org.springframework.restdocs', name: 'spring-restdocs-asciidoctor', version: '2.0.5.RELEASE'
 }
 
 ext {
@@ -62,14 +49,6 @@ asciidoctor {
     dependsOn test
     attributes 'snippets': file('build/generated-snippets')
 }
-
-//sourceSets {
-//    main {
-//        java {
-//            srcDir project(':libraries').file('src/main/java')
-//        }
-//    }
-//}
 
 jar {
     dependsOn asciidoctor

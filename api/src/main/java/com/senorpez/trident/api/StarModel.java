@@ -5,10 +5,6 @@ import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.lang.NonNull;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Relation(value = "star", collectionRelation = "star")
 class StarModel extends RepresentationModel<StarModel> {

@@ -5,7 +5,6 @@ import org.springframework.hateoas.RepresentationModel;
 import org.springframework.hateoas.server.core.Relation;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.lang.NonNull;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 @Relation(value = "planet", collectionRelation = "planet")
 class EmbeddedPlanetModel extends RepresentationModel<EmbeddedPlanetModel> {
