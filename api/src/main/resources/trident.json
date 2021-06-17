@@ -115,6 +115,31 @@
           "trueAnomalyAtEpoch": 6.01675207
         }
       ]
+    },
+    {
+      "id": 1621827699,
+      "name": "Omega Hydri",
+      "stars": [
+        {
+          "id": -1826843336,
+          "name": "1 Omega Hydri",
+          "mass": 1.045,
+          "planets": [
+            {
+              "id": 2035226060,
+              "name": "1 Omega Hydri 1",
+              "mass": 0.027045919,
+              "radius": 0.339691139,
+              "semimajorAxis": 0.304731681,
+              "eccentricity": 0.115,
+              "inclination": 0.001120502,
+              "longitudeOfAscendingNode": 3.826163146,
+              "argumentOfPeriapsis": 1.926038897,
+              "trueAnomalyAtEpoch": 4.129414104
+            }
+          ]
+        }
+      ]
     }
   ]
 }
