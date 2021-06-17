@@ -30,7 +30,15 @@ def plot_orbits(planets):
         planet_colors: A list of colors for the orbiting objects
     """
     t0 = epoch_from_string(str(datetime.now()))
+
+    # Longitude zero (fall equinox)
+    #t0 = epoch_from_string("2020-09-22 00:00:00")
+
+    # Epoch
     #t0 = epoch_from_string("2000-01-01 00:00:00")
+
+    # Epoch Offset 1 Eta Veneris 3
+    #t0 = epoch(-73)
 
     system_x = list()
     system_y = list()
