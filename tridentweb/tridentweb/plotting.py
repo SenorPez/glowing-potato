@@ -53,12 +53,17 @@ def plot_orbits(planets):
         system_y.append(planet_y.tolist())
         system_z.append(planet_z.tolist())
         planet_positions.append(list((planet_x[0], planet_y[0], planet_z[0])))
-        if planet.id == -455609026:
+        #if planet.id == -455609026:
+            #planet_colors.append("green")
+        #elif planet.id == -1385166447:
+            #planet_colors.append("orange")
+        #else:
+            #planet_colors.append("gray")
+        if planet.inclination == 0 and planet.longitude_of_ascending_node == 0:
             planet_colors.append("green")
-        elif planet.id == -1385166447:
-            planet_colors.append("orange")
         else:
             planet_colors.append("gray")
+        
         planet_names.append(planet.name)
 
     earth = jpl_lp('earth')
