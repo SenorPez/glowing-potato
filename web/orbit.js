@@ -1,6 +1,6 @@
 $(document).ready(function() {
   $.get(
-    "http://senorpez.com:5001/innerorbits",
+    "https://www.senorpez.com/tw/innerorbits",
     function(data) {
       var plotData = [];
 
