@@ -14,11 +14,15 @@ from tridentweb.planet import Planet
 from tridentweb.star import Star
 
 APP = Flask(__name__)
-CORS(APP, resources={r"/*": {"origins": "http://senorpez.com"}})
+CORS(APP, resources={r"/*": {"origins": "https://senorpez.com"}})
 
 @APP.route("/epochoffset", methods=['GET'])
 def get_epoch_offset():
-    """Produces the epoch offset for 1 Eta Veneris 3."""
+    """Produces the epoch offset for the 1 Eta Veneris 3 Worker's Calendar.
+
+    The Worker's Calendar epoch is defined as the first summer equinox prior
+      to the position of 1 Eta Veneris 3 at the J2000 epoch.
+    """
     planet = Planet(1817514095, 1905216634, -455609026)
     summer = np.arctan2(-1, 0)
     offset, error = epoch_offset(planet.planet, summer)
@@ -56,6 +60,26 @@ def omegahydri():
         Planet(1621827699, -1826843336, 2035226060),
         Planet(1621827699, -1826843336, -154475081),
         Planet(1621827699, -1826843336, 159569841)]
+
+    system_x, system_y, system_z, planet_positions, planet_colors, planet_names \
+        = plot_orbits(planets)
+    return jsonify(
+        success=True,
+        x=system_x,
+        y=system_y,
+        z=system_z,
+        p=planet_positions,
+        c=planet_colors,
+        n=planet_names) if has_app_context() else planet_names
+
+@APP.route("/neworbits", methods=['GET'])
+def neworbits():
+    """Produces plot data for the inner planets of the 1 Eta Veneris system, with an Earth
+        orbit overlayed."""
+    planets = [
+        Planet(1, 1, 1),
+        Planet(1, 1, 2),
+        Planet(1, 1, 3)]
 
     system_x, system_y, system_z, planet_positions, planet_colors, planet_names \
         = plot_orbits(planets)
@@ -117,8 +141,7 @@ def transfer():
         min_delta_v=json_data['min_delta_v'])
 
 def main():
-    """Main execution."""
-    APP.run(host="0.0.0.0", port=5001, debug=True)
+    APP.run(host="0.0.0.0", port=5001, debug=True, ssl_context='adhoc')
 
 if __name__ == "__main__":
     main()
