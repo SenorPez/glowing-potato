@@ -48,6 +48,26 @@ def systemorbits():
         c=planet_colors,
         n=planet_names) if has_app_context() else planet_names
 
+@APP.route("/omegahydri", methods=['GET'])
+def omegahydri():
+    """Produces plot data for the inner orbits of the Omega Hydri system, with an Earth
+        orbit overlayed."""
+    planets = [
+        Planet(1621827699, -1826843336, 2035226060),
+        Planet(1621827699, -1826843336, -154475081),
+        Planet(1621827699, -1826843336, 159569841)]
+
+    system_x, system_y, system_z, planet_positions, planet_colors, planet_names \
+        = plot_orbits(planets)
+    return jsonify(
+        success=True,
+        x=system_x,
+        y=system_y,
+        z=system_z,
+        p=planet_positions,
+        c=planet_colors,
+        n=planet_names) if has_app_context() else planet_names
+
 @APP.route("/innerorbits", methods=['GET'])
 def innerorbits():
     """Produces plot data for the inner planets of the 1 Eta Veneris system, with an Earth
