@@ -1,6 +1,6 @@
 $(document).ready(function() {
     $.get(
-        "http://senorpez.com:5001/omegahydri",
+        "https://www.senorpez.com/tw/omegahydri",
         function(data) {
             var plotData = [];
 
