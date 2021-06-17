@@ -279,8 +279,8 @@
               "radius": 0.902209812,
               "semimajorAxis": 0.932478944,
               "eccentricity": 0.115,
-              "inclination": 0.041137248,
-              "longitudeOfAscendingNode": 3.510726300,
+              "inclination": 0,
+              "longitudeOfAscendingNode": 0,
               "argumentOfPeriapsis": 3.180972518,
               "trueAnomalyAtEpoch": 4.653676104
             }
