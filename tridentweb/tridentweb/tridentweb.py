@@ -16,6 +16,7 @@ from tridentweb.star import Star
 APP = Flask(__name__)
 CORS(APP, resources={r"/*": {"origins": "https://senorpez.com"}})
 
+
 @APP.route("/epochoffset", methods=['GET'])
 def get_epoch_offset():
     """Produces the epoch offset for the 1 Eta Veneris 3 Worker's Calendar.
@@ -27,6 +28,7 @@ def get_epoch_offset():
     summer = np.arctan2(-1, 0)
     offset, error = epoch_offset(planet.planet, summer)
     return jsonify(offset, error) if has_app_context() else (offset, error)
+
 
 @APP.route("/systemorbits", methods=['GET'])
 def systemorbits():
@@ -52,6 +54,7 @@ def systemorbits():
         c=planet_colors,
         n=planet_names) if has_app_context() else planet_names
 
+
 @APP.route("/omegahydri", methods=['GET'])
 def omegahydri():
     """Produces plot data for the inner orbits of the Omega Hydri system, with an Earth
@@ -72,6 +75,7 @@ def omegahydri():
         c=planet_colors,
         n=planet_names) if has_app_context() else planet_names
 
+
 @APP.route("/neworbits", methods=['GET'])
 def neworbits():
     """Produces plot data for the inner planets of the 1 Eta Veneris system, with an Earth
@@ -91,6 +95,7 @@ def neworbits():
         p=planet_positions,
         c=planet_colors,
         n=planet_names) if has_app_context() else planet_names
+
 
 @APP.route("/innerorbits", methods=['GET'])
 def innerorbits():
@@ -113,12 +118,14 @@ def innerorbits():
         c=planet_colors,
         n=planet_names) if has_app_context() else planet_names
 
+
 @APP.route("/plottransfer", methods=['POST'])
 def plottransfer():
     """Produces 1 3D and 3 2D plots of a specified transfer between 1 Eta Veneris 3 and 1 Eta
         Veneris 4."""
     plot_transfer(flask_request.values)
     return jsonify(success=True)
+
 
 @APP.route("/transfer", methods=['POST'])
 def transfer():
@@ -140,8 +147,10 @@ def transfer():
         flight_time=json_data['flight_time'],
         min_delta_v=json_data['min_delta_v'])
 
+
 def main():
     APP.run(host="0.0.0.0", port=5001, debug=True, ssl_context='adhoc')
+
 
 if __name__ == "__main__":
     main()
