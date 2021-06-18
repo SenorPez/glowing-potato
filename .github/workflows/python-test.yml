@@ -29,7 +29,6 @@ jobs:
         
     - name: Lint with pylint
       run: |
-        cd
         cd tridentweb
         python -m pylint --fail-under=10 `find -regextype egrep -regex '(.*.py)$'` |
         tee pylint.txt
@@ -42,6 +41,5 @@ jobs:
         
     - name: Test with pytest
       run: |
-        cd
         cd tridentweb
         python3 -m nose2 -c unittest.cfg --no-user-config
