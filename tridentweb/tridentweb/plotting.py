@@ -114,14 +114,14 @@ def plot_transfer(flask_values):
         color='green',
         legend=True,
         units=AU,
-        ax=orbit_ax)
+        axes=orbit_ax)
     plot_planet(
         target.planet,
         t0=t2,
         color='gray',
         legend=True,
         units=AU,
-        ax=orbit_ax)
+        axes=orbit_ax)
 
     o_x, o_y, o_z = tuple(x / AU for x in orbit_positions(origin.planet, t1))
     t_x, t_y, t_z = tuple(x / AU for x in orbit_positions(target.planet, t2))
@@ -172,7 +172,7 @@ def plot_transfer(flask_values):
             min_n = x
             min_delta_v = inj_delta_v + ins_delta_v
 
-    plot_lambert(lambert, color='purple', sol=min_n, legend=False, units=AU, ax=orbit_ax)
+    plot_lambert(lambert, color='purple', sol=min_n, legend=False, units=AU, axes=orbit_ax)
 
     l_x, l_y, l_z = tuple(x / AU for x in lambert_positions(lambert, sol=min_n))
 
