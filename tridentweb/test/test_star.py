@@ -10,6 +10,7 @@ from pykep.planet import keplerian
 from requests.exceptions import HTTPError
 from tridentweb.star import Star
 
+
 def mocked_requests_get(*args, **kwargs):
     """Defines a response suitable for mocking requests responses."""
     class MockResponse:
@@ -46,35 +47,36 @@ def mocked_requests_get(*args, **kwargs):
 
     return MockResponse(*args, **kwargs)
 
+
 class TestStar(unittest.TestCase):
     """Unit tests against the Star object."""
     api_traversal = [
-        mocked_requests_get(json_string=( \
+        mocked_requests_get(json_string=(
             "{\"_links\": {\"trident-api:systems\":"
-            "{\"href\": \"http://trident.senorpez.com/systems\"}}}")),
-        mocked_requests_get(json_string=( \
+            "{\"href\": \"https://www.trident.senorpez.com/systems\"}}}")),
+        mocked_requests_get(json_string=(
             "{\"_embedded\": {\"trident-api:system\":"
             "[{\"id\": 1,"
             "\"_links\": {\"self\":"
-            "{\"href\": \"http://trident.senorpez.com/systems/1\"}}}]}}")),
-        mocked_requests_get(json_string=( \
+            "{\"href\": \"https://www.trident.senorpez.com/systems/1\"}}}]}}")),
+        mocked_requests_get(json_string=(
             "{\"_links\": {\"trident-api:stars\":"
-            "{\"href\": \"http://trident.senorpez.com/stars\"}}}")),
-        mocked_requests_get(json_string=( \
+            "{\"href\": \"https://www.trident.senorpez.com/stars\"}}}")),
+        mocked_requests_get(json_string=(
             "{\"_embedded\": {\"trident-api:star\":"
             "[{\"id\": 1,"
             "\"_links\": {\"self\":"
-            "{\"href\": \"http://trident.senorpez.com/stars/1\"}}}]}}"))]
+            "{\"href\": \"https://www.trident.senorpez.com/stars/1\"}}}]}}"))]
 
     constant_api_traversal = [
-        mocked_requests_get(json_string=( \
+        mocked_requests_get(json_string=(
             "{\"_links\": {\"trident-api:constants\":"
-            "{\"href\": \"http://trident.senorpez.com/constants\"}}}")),
-        mocked_requests_get(json_string=( \
+            "{\"href\": \"https://www.trident.senorpez.com/constants\"}}}")),
+        mocked_requests_get(json_string=(
             "{\"_embedded\": {\"trident-api:constant\":"
             "[{\"symbol\": \"MC\","
             "\"_links\": {\"self\":"
-            "{\"href\": \"http://trident.senorpez.com/constants/MC\"}}}]}}"))]
+            "{\"href\": \"https://www.trident.senorpez.com/constants/MC\"}}}]}}"))]
 
     @mock.patch('requests.get')
     def test_init(self, mock_get):
@@ -357,6 +359,7 @@ class TestStar(unittest.TestCase):
         instance = Star(1, 1, mock_star)
         expected_result = keplerian
         self.assertIsInstance(instance.planet, expected_result)
+
 
 class IntegrationStar(unittest.TestCase):
     """Integration tests against reference implementation of Trident API."""

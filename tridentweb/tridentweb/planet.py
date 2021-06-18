@@ -9,6 +9,7 @@ from tridentweb.constant import Constant
 from tridentweb.star import Star
 from tridentweb.pykep_addons import mean_from_true
 
+
 class Planet:
     """Represents a planet.
 
@@ -16,14 +17,14 @@ class Planet:
     system_id - ID number denoting the solar system.
     star_id - ID number denoting the star.
     planet_id - ID number denoting the planet.
-    server_url - Trident API server URL. Defaults to http://trident.senorpez.com/
+    server_url - Trident API server URL. Defaults to https://www.trident.senorpez.com/
     """
     planet_mass = None
     planet_radius = None
     grav = None
     pykep_planet = None
 
-    def __init__(self, system_id, star_id, planet_id, server_url="http://trident.senorpez.com/"):
+    def __init__(self, system_id, star_id, planet_id, server_url="https://www.trident.senorpez.com/"):
         req = requests.get(server_url)
         req.raise_for_status()
         systems_url = req.json()['_links']['trident-api:systems']['href']

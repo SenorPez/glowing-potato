@@ -9,6 +9,7 @@ from unittest.mock import sentinel
 from requests.exceptions import HTTPError
 from tridentweb.constant import Constant
 
+
 def mocked_requests_get(*args, **kwargs):
     """Defines a response suitable for mocking requests responses."""
     class MockResponse:
@@ -39,14 +40,14 @@ def mocked_requests_get(*args, **kwargs):
 class TestConstant(unittest.TestCase):
     """Unit tests against the Constant object."""
     api_traversal = [
-        mocked_requests_get(json_string=( \
+        mocked_requests_get(json_string=(
             "{\"_links\": {\"trident-api:constants\":"
-            "{\"href\": \"http://trident.senorpez.com/constants\"}}}")),
-        mocked_requests_get(json_string=( \
+            "{\"href\": \"https://www.trident.senorpez.com/constants\"}}}")),
+        mocked_requests_get(json_string=(
             "{\"_embedded\": {\"trident-api:constant\":"
             "[{\"symbol\": \"MC\","
             "\"_links\": {\"self\":"
-            "{\"href\": \"http://trident.senorpez.com/constants/MC\"}}}]}}"))]
+            "{\"href\": \"https://www.trident.senorpez.com/constants/MC\"}}}]}}"))]
 
     @mock.patch('requests.get')
     def test_init(self, mock_get):
@@ -142,7 +143,7 @@ class TestConstant(unittest.TestCase):
 
 
 class IntegrationConstant(unittest.TestCase):
-    """Integration tests against reference implemenation of Trident API."""
+    """Integration tests against reference implementation of Trident API."""
     def test_init_G(self):
         """Test Constant init."""
         instance = Constant("G")

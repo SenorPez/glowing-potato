@@ -3,14 +3,15 @@
 """
 import requests
 
+
 class Constant:
     """Represents a constant.
 
     Arguments:
     constant_symbol - Symbol denoting the constant.
-    server_url - Trident API server URL. Defaults to http://trident.senorpez.com/
+    server_url - Trident API server URL. Defaults to https://www.trident.senorpez.com/
     """
-    def __init__(self, constant_symbol, server_url="http://trident.senorpez.com/"):
+    def __init__(self, constant_symbol, server_url="https://www.trident.senorpez.com/"):
         req = requests.get(server_url)
         req.raise_for_status()
         constants_url = req.json()['_links']['trident-api:constants']['href']

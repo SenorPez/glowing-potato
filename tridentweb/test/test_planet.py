@@ -10,6 +10,7 @@ from pykep.planet import keplerian
 from requests.exceptions import HTTPError
 from tridentweb.planet import Planet
 
+
 def mocked_requests_get(*args, **kwargs):
     """Defines a response suitable for mocking requests responses."""
     class MockResponse:
@@ -48,33 +49,34 @@ def mocked_requests_get(*args, **kwargs):
 
     return MockResponse(*args, **kwargs)
 
+
 class TestPlanet(unittest.TestCase):
     """Unit tests against the Planet object."""
     api_traversal = [
-        mocked_requests_get(json_string=( \
+        mocked_requests_get(json_string=(
             "{\"_links\": {\"trident-api:systems\":"
-            "{\"href\": \"http://trident.senorpez.com/systems\"}}}")),
-        mocked_requests_get(json_string=( \
+            "{\"href\": \"https://www.trident.senorpez.com/systems\"}}}")),
+        mocked_requests_get(json_string=(
             "{\"_embedded\": {\"trident-api:system\":"
             "[{\"id\": 1,"
             "\"_links\": {\"self\":"
-            "{\"href\": \"http://trident.senorpez.com/systems/1\"}}}]}}")),
-        mocked_requests_get(json_string=( \
+            "{\"href\": \"https://www.trident.senorpez.com/systems/1\"}}}]}}")),
+        mocked_requests_get(json_string=(
             "{\"_links\": {\"trident-api:stars\":"
-            "{\"href\": \"http://trident.senorpez.com/stars\"}}}")),
-        mocked_requests_get(json_string=( \
+            "{\"href\": \"https://www.trident.senorpez.com/stars\"}}}")),
+        mocked_requests_get(json_string=(
             "{\"_embedded\": {\"trident-api:star\":"
             "[{\"id\": 1,"
             "\"_links\": {\"self\":"
-            "{\"href\": \"http://trident.senorpez.com/stars/1\"}}}]}}")),
-        mocked_requests_get(json_string=( \
+            "{\"href\": \"https://www.trident.senorpez.com/stars/1\"}}}]}}")),
+        mocked_requests_get(json_string=(
             "{\"_links\": {\"trident-api:planets\":"
-            "{\"href\": \"http://trident.senorpez.com/planets\"}}}")),
-        mocked_requests_get(json_string=( \
+            "{\"href\": \"https://www.trident.senorpez.com/planets\"}}}")),
+        mocked_requests_get(json_string=(
             "{\"_embedded\": {\"trident-api:planet\":"
             "[{\"id\": 1,"
             "\"_links\": {\"self\":"
-            "{\"href\": \"http://trident.senorpez.com/planets/1\"}}}]}}"))]
+            "{\"href\": \"https://www.trident.senorpez.com/planets/1\"}}}]}}"))]
 
     @mock.patch('tridentweb.planet.Star')
     @mock.patch('requests.get')

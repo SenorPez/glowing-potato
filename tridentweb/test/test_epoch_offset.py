@@ -6,6 +6,7 @@ from unittest.mock import sentinel
 
 from tridentweb.epoch_offset import epoch_offset
 
+
 class TestEpochOffset(unittest.TestCase):
     """Tests for the epoch_offset function."""
     def test_epoch_offset_angle_overflow(self):
@@ -24,9 +25,14 @@ class TestEpochOffset(unittest.TestCase):
             epoch_offset(sentinel.planet, low_bound=1, high_bound=-1)
 
     def test_epoch_offset_bounds_identical(self):
-        """Test epcoh offset with identical bounds."""
+        """Test epoch offset with identical bounds."""
         with self.assertRaises(ValueError):
             epoch_offset(sentinel.planet, low_bound=42, high_bound=42)
+
+    def test_epoch_offset_zero_iterations(self):
+        """Test epoch offset with invalid iterations."""
+        with self.assertRaises(ValueError):
+            epoch_offset(sentinel.planet, iterations=0)
 
     @mock.patch('pykep.planet.keplerian')
     def test_epoch_offset_converge(self, mock_planet):

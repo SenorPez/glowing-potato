@@ -5,6 +5,7 @@ from math import pi
 from numpy import arctan2
 from pykep import epoch
 
+
 def epoch_offset(planet, target_angle=0, low_bound=-100, high_bound=100, iterations=1000):
     """Calculates the epoch offset for an orbiting element.
 
@@ -37,6 +38,9 @@ def epoch_offset(planet, target_angle=0, low_bound=-100, high_bound=100, iterati
     if low_bound >= high_bound:
         raise ValueError
 
+    if iterations < 1:
+        raise ValueError
+
     for _ in range(iterations):
         midpoint = (low_bound + high_bound) / 2
         r_a, _ = planet.eph(epoch(low_bound))
@@ -49,4 +53,5 @@ def epoch_offset(planet, target_angle=0, low_bound=-100, high_bound=100, iterati
             low_bound = midpoint
         else:
             high_bound = midpoint
-    return (midpoint, angle_c - target_angle)
+
+    return midpoint, angle_c - target_angle

@@ -6,14 +6,15 @@ from math import atan2, cos, pi, sin, sqrt
 from numpy import array, linspace
 from pykep import SEC2DAY, epoch, propagate_lagrangian
 
-def orbit_positions(planet, t0=0, N=60):
+
+def orbit_positions(planet, t0=0, divisions=60):
     """Provides the orbit positions for an orbiting element for one complete orbit.
 
     Parameters:
         planet: A PyKep object (pykep.planet._base) representing the orbiting object.
         t0: The current time. Can be a number or a PyKep object (pykep.epoch).
             Defaults to pykep.epoch(0) (MJD2000 0)
-        N: Number of divisions in the complete orbit. Increase for greater precision.
+        divisions: Number of divisions in the complete orbit. Increase for greater precision.
             Defaults to 60
 
     Returns:
@@ -30,11 +31,11 @@ def orbit_positions(planet, t0=0, N=60):
         t0 = epoch(t0)
 
     orbit_period = planet.compute_period(t0) * SEC2DAY
-    when = linspace(0, orbit_period, N)
+    when = linspace(0, orbit_period, divisions)
 
-    x = array([0.0] * N)
-    y = array([0.0] * N)
-    z = array([0.0] * N)
+    x = array([0.0] * divisions)
+    y = array([0.0] * divisions)
+    z = array([0.0] * divisions)
 
     for i, day in enumerate(when):
         r, _ = planet.eph(epoch(t0.mjd2000 + day))
@@ -44,7 +45,8 @@ def orbit_positions(planet, t0=0, N=60):
 
     return x, y, z
 
-def lambert_positions(lambert, sol=0, N=60):
+
+def lambert_positions(lambert, sol=0, divisions=60):
     """Provides the positions for an object from a Lambert problem solution.
 
     Parameters:
@@ -52,7 +54,7 @@ def lambert_positions(lambert, sol=0, N=60):
         sol: Solution number from lambert to use.
             Must be in the range of 0 <= sol <= lambert.Nmax*2
             Defaults to 0
-        N: Number of divisions in the position plt. Increase for greater precision.
+        divisions: Number of divisions in the position plt. Increase for greater precision.
             Defaults to 60
 
     Returns:
@@ -72,19 +74,20 @@ def lambert_positions(lambert, sol=0, N=60):
     v = lambert.get_v1()[sol]
     tof = lambert.get_tof()
     mu = lambert.get_mu()
-    dt = tof / (N - 1)
+    dt = tof / (divisions - 1)
 
-    x = array([0.0] * N)
-    y = array([0.0] * N)
-    z = array([0.0] * N)
+    x = array([0.0] * divisions)
+    y = array([0.0] * divisions)
+    z = array([0.0] * divisions)
 
-    for i in range(N):
+    for i in range(divisions):
         x[i] = r[0]
         y[i] = r[1]
         z[i] = r[2]
         r, v = propagate_lagrangian(r, v, dt, mu)
 
     return x, y, z
+
 
 def eccentric_from_true(e, f):
     """Provides the eccentric anomaly given the eccentricity of an orbit and the true anomaly of
@@ -100,12 +103,13 @@ def eccentric_from_true(e, f):
 
     return atan2(sqrt(1 - e ** 2) * sin(f), e + cos(f)) % (2 * pi)
 
+
 def mean_from_eccentric(e, E):
     """Provides the mean anomaly given the eccentricity of an orbit and the eccentric anomaly of
         an object in that orbit.
 
     Parameters:
-        e: Eccentricty of the orbit. Dimensionless
+        e: Eccentricity of the orbit. Dimensionless
         E: Eccentric anomaly of an object in the orbit. Radians
 
     Returns:
@@ -114,13 +118,14 @@ def mean_from_eccentric(e, E):
 
     return E - e * sin(E)
 
+
 def mean_from_true(e, f):
-    """Provides the mean anomaly given the eccentricty of an orbit and the true anomaly of an
+    """Provides the mean anomaly given the eccentricity of an orbit and the true anomaly of an
         object in that orbit.
 
     Parameters:
-        e: Eccentricty of the orbit. Dimensionless
-        f: True anomaly of an object in the oribt. Radians
+        e: Eccentricity of the orbit. Dimensionless
+        f: True anomaly of an object in the orbit. Radians
 
     Returns:
         M: The mean anomaly of the object in the orbit. Radians

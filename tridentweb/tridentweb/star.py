@@ -7,19 +7,20 @@ from pykep.planet import keplerian
 import requests
 from tridentweb.constant import Constant
 
+
 class Star:
     """Represents a star.
 
     Arguments:
     system_id - ID number denoting the solar system.
     star_id - ID number denoting the star.
-    server_url - Trident API server URL. Defaults to http://trident.senorpez.com/
+    server_url - Trident API server URL. Defaults to https://www.trident.senorpez.com/
     """
     solar_mass = None
     grav = None
     pykep_planet = None
 
-    def __init__(self, system_id, star_id, primary=None, server_url="http://trident.senorpez.com/"):
+    def __init__(self, system_id, star_id, primary=None, server_url="https://www.trident.senorpez.com/"):
         req = requests.get(server_url)
         req.raise_for_status()
         systems_url = req.json()['_links']['trident-api:systems']['href']
