@@ -114,14 +114,14 @@ def plot_transfer(flask_values):
         color='green',
         legend=True,
         units=AU,
-        ax=orbit_ax)
+        axes=orbit_ax)
     plot_planet(
         target.planet,
         t0=t2,
         color='gray',
         legend=True,
         units=AU,
-        ax=orbit_ax)
+        axes=orbit_ax)
 
     o_x, o_y, o_z = tuple(x / AU for x in orbit_positions(origin.planet, t1))
     t_x, t_y, t_z = tuple(x / AU for x in orbit_positions(target.planet, t2))
