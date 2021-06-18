@@ -24,7 +24,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install numpy pykep pylint pytest requests
+        pip install nose2 numpy pykep pylint pytest requests
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         
     - name: Lint with pylint
@@ -40,4 +40,4 @@ jobs:
         
     - name: Test with pytest
       run: |
-        pytest
+        python3 -m nose2 -c unittest.cfg --no-user-config
