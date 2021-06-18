@@ -38,7 +38,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: pylint report
-        path: pylint.txt
+        path: tridentweb/pylint.txt
         
     - name: Test with nose2
       run: |
