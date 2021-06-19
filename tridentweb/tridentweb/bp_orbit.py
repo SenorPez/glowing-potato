@@ -11,16 +11,16 @@ def orbit_position():
     """Returns position data for an orbiting object.
 
     Parameters (included in POST data):
-        system_id: Solar system ID, for use with the Trident API.
-        star_id: Star ID, for use with the Trident API.
-        planet_id: Planet ID, for use with the Trident API.
+        system_id: Solar system ID, for use with the Trident API
+        star_id: Star ID, for use with the Trident API
+        planet_id: Planet ID, for use with the Trident API
         t0: The current time in days since the J2000 epoch
-            (2000-Jan-01 00:00:00). Defaults to 0.
+            (2000-Jan-01 00:00:00); defaults to 0
 
     Returns:
-        position_x: x position of object in AU.
-        position_y: y position of object in AU.
-        position_z: z position of object in AU.
+        position_x: x position of object (AU)
+        position_y: y position of object (AU)
+        position_z: z position of object (AU)
 
         (0, 0, 0) is defined as the nominal center of the system primary star.
         (x, y, 0) is defined as the orbital plane of the system primary planet.

@@ -9,4 +9,7 @@ def create_app(app_config=None):
     else:
         app.config.update(app_config)
 
+    from tridentweb import bp_orbit
+    app.register_blueprint(bp_orbit.bp)
+
     return app
