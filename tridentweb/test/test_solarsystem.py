@@ -36,35 +36,47 @@ def mock_api_index():
     return mocked_requests_get(json_text=json_string)
 
 
-def mock_api_systems(idnum=0):
-    id_string = "\"id\": {0}".format(idnum)
-    json_string = ("{\"_embedded\":"
-                   "{\"trident-api:system\":"
-                   "[{" + id_string + ", \"_links\":"
-                   "{\"self\":"
-                   "{\"href\": \"https//api/systems/1\"}}}]}}")
+def mock_api_systems(systems=None):
+    if systems is None:
+        systems = [{"id": 0, "name": "Test System"}]
+
+    embed_strings = []
+    for system in systems:
+        embed_strings.append("{{\"id\": {id},"
+                             "\"name\": \"{name}\","
+                             "\"_links\": {{"
+                             "\"self\": {{"
+                             "\"href\": \"https://api/systems/{id}\"}} }} }}".format_map(system))
+    json_string = "{\"_embedded\": { \"trident-api:system\": [" \
+                  + ",".join(embed_strings) \
+                  + "] } }"
     return mocked_requests_get(json_text=json_string)
 
 
-def mock_api_system(idnum=0, name=""):
+def mock_api_system(systemid=0, name=""):
     json_string = ("{{\"id\": {0},"
-                   "\"name\": \"{1}\"}}").format(idnum, name)
+                   "\"name\": \"{1}\"}}").format(systemid, name)
     return mocked_requests_get(json_text=json_string)
 
 
 class TestSolarSystem(unittest.TestCase):
     """Unit tests against the Solar System object"""
+    mock_systems = [
+        {"id": id(sentinel.id1), "name": str(id(sentinel.name1))},
+        {"id": id(sentinel.id2), "name": str(id(sentinel.name2))}
+    ]
+
     api_traversal = [
         mock_api_index(),
-        mock_api_systems(idnum=id(sentinel.id)),
-        mock_api_system(idnum=id(sentinel.id), name=str(id(sentinel.name)))
+        mock_api_systems(systems=mock_systems),
+        mock_api_system(systemid=id(sentinel.id1), name=str(id(sentinel.name1)))
     ]
 
     @mock.patch('requests.get')
     def test_init(self, mock_get):
         """Test SolarSystem init"""
         mock_get.side_effect = self.api_traversal
-        instance = SolarSystem(id(sentinel.id), "http://api/")
+        instance = SolarSystem(id(sentinel.id1), "https://api/")
         expected_result = SolarSystem
         self.assertIsInstance(instance, expected_result)
 
@@ -72,16 +84,16 @@ class TestSolarSystem(unittest.TestCase):
     def test_property_id(self, mock_get):
         """Test ID property of Solar System"""
         mock_get.side_effect = self.api_traversal
-        instance = SolarSystem(id(sentinel.id), "http://api/")
-        expected_result = id(sentinel.id)
+        instance = SolarSystem(id(sentinel.id1), "https://api/")
+        expected_result = id(sentinel.id1)
         self.assertEqual(instance.id, expected_result)
 
     @mock.patch('requests.get')
     def test_property_name(self, mock_get):
         """Test name property of Solar System"""
         mock_get.side_effect = self.api_traversal
-        instance = SolarSystem(id(sentinel.id), "http://api/")
-        expected_result = str(id(sentinel.name))
+        instance = SolarSystem(id(sentinel.id1), "https://api/")
+        expected_result = str(id(sentinel.name1))
         self.assertEqual(instance.name, expected_result)
 
 
