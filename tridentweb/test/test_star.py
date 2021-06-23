@@ -32,10 +32,10 @@ def mocked_requests_get(*args, **kwargs):
     return MockResponse(*args, **kwargs)
 
 
-def mock_api_star(starid=0, name="", mass=None, semimajor_axis=None, eccentricity=None,
+def mock_api_star(star_id=0, name="", mass=None, semimajor_axis=None, eccentricity=None,
                   inclination=None, longitude_of_ascending_node=None,
                   argument_of_periapsis=None, true_anomaly_at_epoch=None):
-    return {"id": starid,
+    return {"id": star_id,
             "name": "{0}".format(name),
             "mass": mass,
             "semimajorAxis": semimajor_axis,
@@ -48,7 +48,6 @@ def mock_api_star(starid=0, name="", mass=None, semimajor_axis=None, eccentricit
 
 class TestStar(unittest.TestCase):
     """Unit tests against the Star object"""
-
     @mock.patch('tridentweb.star.get_star')
     def test_init_primary(self, mock_get):
         """Test Star init as primary"""

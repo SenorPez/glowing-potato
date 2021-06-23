@@ -6,6 +6,7 @@ from pykep.planet import keplerian
 
 from tridentweb.api import get_star
 from tridentweb.constant import Constant
+from tridentweb.pykep_addons import mean_from_true
 
 
 class Star:
@@ -59,7 +60,7 @@ class Star:
                     self.inclination,
                     self.longitude_of_ascending_node,
                     self.argument_of_periapsis,
-                    self.true_anomaly_at_epoch),
+                    mean_from_true(self.eccentricity, self.true_anomaly_at_epoch)),
                 self._primary_GM,
                 self.gm,
                 1000,

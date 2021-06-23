@@ -109,3 +109,32 @@ def is_primary(star):
         star.json()['argumentOfPeriapsis'],
         star.json()['trueAnomalyAtEpoch']
     ])
+
+
+def get_planet(system_id, star_id, planet_id, server_url="https://www.trident.senorpez.com/"):
+    """Gets a planet resource from the API
+
+    :param system_id: Solar system ID, for use with the Trident API
+    :param star_id: Star ID, for use with the Trident API
+    :param planet_id: Planet ID, for use with the Trident API
+    :param server_url: Trident API server URL; defaults to https://www.trident.senorpez.com/
+    :return: responses.Response containing the star resource
+    :return: System primary GM
+    """
+    constant_Msol = get_constant("Msol", server_url=server_url).json()['value']
+    constant_G = get_constant("G", server_url=server_url).json()['value']
+
+    star_response, _ = get_star(system_id, star_id, server_url)
+    planets_url = star_response.json()['_links']['trident-api:planets']['href']
+
+    planets_response = requests.get(planets_url)
+    planets_response.raise_for_status()
+    embedded_planet = next(x for x
+                           in planets_response.json()['_embedded']['trident-api:planet']
+                           if x['id'] == planet_id)
+    planet_url = embedded_planet['_links']['self']['href']
+
+    planet_response = requests.get(planet_url)
+    planet_response.raise_for_status()
+
+    return planet_response, star_response.json()['mass'] * constant_Msol * constant_G
