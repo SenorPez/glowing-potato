@@ -39,26 +39,26 @@ class TestSolarSystem(unittest.TestCase):
     @mock.patch('tridentweb.solarsystem.get_system')
     def test_init(self, _):
         """Test SolarSystem init"""
-        instance = SolarSystem(id(sentinel.id1), "https://api/")
+        instance = SolarSystem(id(sentinel.id), "https://api/")
         expected_result = SolarSystem
         self.assertIsInstance(instance, expected_result)
 
     @mock.patch('tridentweb.solarsystem.get_system')
     def test_property_id(self, mock_get):
         """Test ID property of Solar System"""
-        attrs = {'json.return_value': mock_api_system(systemid=id(sentinel.id1), name=str(id(sentinel.name1)))}
+        attrs = {'json.return_value': mock_api_system(systemid=id(sentinel.id), name=str(id(sentinel.name)))}
         mock_get.return_value = Mock(**attrs)
-        instance = SolarSystem(id(sentinel.id1), "https://api/")
-        expected_result = id(sentinel.id1)
+        instance = SolarSystem(id(sentinel.id), "https://api/")
+        expected_result = id(sentinel.id)
         self.assertEqual(instance.id, expected_result)
 
     @mock.patch('tridentweb.solarsystem.get_system')
     def test_property_name(self, mock_get):
         """Test name property of Solar System"""
-        attrs = {'json.return_value': mock_api_system(systemid=id(sentinel.id1), name=str(id(sentinel.name1)))}
+        attrs = {'json.return_value': mock_api_system(systemid=id(sentinel.id), name=str(id(sentinel.name)))}
         mock_get.return_value = Mock(**attrs)
-        instance = SolarSystem(id(sentinel.id1), "https://api/")
-        expected_result = str(id(sentinel.name1))
+        instance = SolarSystem(id(sentinel.id), "https://api/")
+        expected_result = str(id(sentinel.name))
         self.assertEqual(instance.name, expected_result)
 
 
