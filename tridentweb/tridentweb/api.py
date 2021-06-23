@@ -56,24 +56,56 @@ def get_system(system_id, server_url="https://www.trident.senorpez.com/"):
     return system_response
 
 
-def get_star(star_id, req):
-    """Gets the star object from the API
+def get_star(system_id, star_id, server_url="https://www.trident.senorpez.com/"):
+    """Gets a star resource from the API
 
-    Arguments:
-        star_id: Star ID, for use with the Trident API
-        system_url: Trident API server URL for the system object
-
-    Returns:
-        requests.Response containing the star object
+    :param system_id: Solar system ID, for use with the Trident API
+    :param star_id: Star ID, for use with the Trident API
+    :param server_url: Trident API server URL; defaults to https://www.trident.senorpez.com/
+    :return: responses.Response containing the star resource
+    :return: System primary GM; None if star is the primary
     """
-    stars_url = req.json()['_links']['trident-api:stars']['href']
+    system_response = get_system(system_id, server_url=server_url)
+    stars_url = system_response.json()['_links']['trident-api:stars']['href']
 
-    req = requests.get(stars_url)
-    req.raise_for_status()
-    star = next(x for x in req.json()['_embedded']['trident-api:star'] if x['id'] == star_id)
-    star_url = star['_links']['self']['href']
+    stars_response = requests.get(stars_url)
+    stars_response.raise_for_status()
+    embedded_star = next(x for x
+                         in stars_response.json()['_embedded']['trident-api:star']
+                         if x['id'] == star_id)
+    star_url = embedded_star['_links']['self']['href']
 
-    req = requests.get(star_url)
-    req.raise_for_status()
+    star_response = requests.get(star_url)
+    star_response.raise_for_status()
 
-    return req
+    if is_primary(star_response):
+        return star_response, None
+    else:
+        constant_Msol = get_constant("Msol", server_url=server_url).json()['value']
+        constant_G = get_constant("G", server_url=server_url).json()['value']
+        embedded_hrefs = [x['_links']['self']['href'] for x in stars_response.json()['_embedded']['trident-api:star']]
+        for href in embedded_hrefs:
+            star = requests.get(href)
+            star.raise_for_status()
+            if is_primary(star):
+                return star_response, star.json()['mass'] * constant_Msol * constant_G
+
+    # Oops, this system doesn't have a primary.
+    # TODO: Throw a better error.
+    return SystemError
+
+
+def is_primary(star):
+    """Determines if a star is the primary star.
+
+    :param star: responses.Response containing the star resource
+    :return: True if star is the primary star
+    """
+    return all(v is None for v in [
+        star.json()['semimajorAxis'],
+        star.json()['eccentricity'],
+        star.json()['inclination'],
+        star.json()['longitudeOfAscendingNode'],
+        star.json()['argumentOfPeriapsis'],
+        star.json()['trueAnomalyAtEpoch']
+    ])
