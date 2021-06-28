@@ -811,7 +811,7 @@ async function postData(system_id: number, star_id: number, planet_id: number, t
       'system_id': system_id,
       'star_id': star_id,
       'planet_id': planet_id,
-      t0: t0
+      't0': t0
     })
   })
   return response.json()
@@ -824,7 +824,7 @@ async function postEarth(t0: number) {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      t0: t0
+      't0': t0
     })
   })
   return response.json()

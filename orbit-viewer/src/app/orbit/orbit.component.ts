@@ -36,8 +36,9 @@ export class OrbitComponent implements OnInit {
       scene.add(sphere);
     }
 
+    const t0 = Date.now() / 1000;
     {
-      this.orbitDataService.getPosition(1621827699, -1826843336, 2035226060, 0)
+      this.orbitDataService.getPosition(1621827699, -1826843336, 2035226060, t0)
         .then(position => {
           const geometry = new THREE.SphereGeometry(0.1, 24, 24)
           const material = new THREE.MeshPhongMaterial({color: 0xff0000});
@@ -48,7 +49,7 @@ export class OrbitComponent implements OnInit {
     }
 
     {
-      this.orbitDataService.getPosition(1621827699, -1826843336, -154475081, 0)
+      this.orbitDataService.getPosition(1621827699, -1826843336, -154475081, t0)
         .then(position => {
           const geometry = new THREE.SphereGeometry(0.1, 24, 24)
           const material = new THREE.MeshPhongMaterial({color: 0xffff00});
@@ -59,7 +60,7 @@ export class OrbitComponent implements OnInit {
     }
 
     {
-      this.orbitDataService.getPosition(1621827699, -1826843336, 159569841, 0)
+      this.orbitDataService.getPosition(1621827699, -1826843336, 159569841, t0)
         .then(position => {
           const geometry = new THREE.SphereGeometry(0.1, 24, 24)
           const material = new THREE.MeshPhongMaterial({color: 0x00ff00});
@@ -70,7 +71,7 @@ export class OrbitComponent implements OnInit {
     }
 
     {
-      this.orbitDataService.getEarth(0)
+      this.orbitDataService.getEarth(t0)
         .then(position => {
           const geometry = new THREE.SphereGeometry(0.1, 24, 24)
           const material = new THREE.MeshPhongMaterial({color: 0x0000ff});
