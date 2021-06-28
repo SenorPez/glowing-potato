@@ -784,8 +784,12 @@ export class OrbitdataService {
 
   constructor() { }
 
-  getPosition(index: number): number[] {
-    return this.testData[index];
+  getPosition(system_id: number, star_id: number, planet_id: number, t0: number): Promise<any> {
+    return postData(system_id, star_id, planet_id, t0)
+  }
+
+  getEarth(t0: number): Promise<any> {
+    return postEarth(t0)
   }
 
   getOrbitPath(index: number): THREE.CatmullRomCurve3 {
@@ -795,4 +799,33 @@ export class OrbitdataService {
     }
     return new THREE.CatmullRomCurve3(data);
   }
+}
+
+async function postData(system_id: number, star_id: number, planet_id: number, t0: number) {
+  const response = await fetch('http://127.0.0.1:5000/orbit/position', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      'system_id': system_id,
+      'star_id': star_id,
+      'planet_id': planet_id,
+      t0: t0
+    })
+  })
+  return response.json()
+}
+
+async function postEarth(t0: number) {
+  const response = await fetch('http://127.0.0.1:5000/orbit/earth', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      t0: t0
+    })
+  })
+  return response.json()
 }
