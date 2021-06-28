@@ -18,24 +18,25 @@ def orbit_position():
             (2000-Jan-01 00:00:00); defaults to 0
 
     Returns:
-        position_x: x position of object (AU)
-        position_y: y position of object (AU)
-        position_z: z position of object (AU)
+        x: x position of object (AU)
+        y: y position of object (AU)
+        z: z position of object (AU)
 
         (0, 0, 0) is defined as the nominal center of the system primary star.
         (x, y, 0) is defined as the orbital plane of the system primary planet.
-        +x is defined as the direction of the vernal equinox of the system primary planet.
-        +y is defined as the direction of the summer solstice of the system primary planet.
+        +x is defined as the direction of the vernal equinox of the system
+            primary planet.
+        +y is defined as the direction of the summer solstice of the system
+            primary planet.
     """
     planet = Planet(
-        flask_request.form['system_id'],
-        flask_request.form['star_id'],
-        flask_request.form['planet_id'])
-    t0 = flask_request.form['t0']
+        int(flask_request.form['system_id']),
+        int(flask_request.form['star_id']),
+        int(flask_request.form['planet_id']))
+    t0 = int(flask_request.form['t0'])
 
     (x, y, z), _ = planet.planet.eph(epoch(t0))
     return jsonify(
-        success=True,
-        position_x=x,
-        position_y=y,
-        position_z=z) if has_app_context() else x, y, z
+        x=x,
+        y=y,
+        z=z) if has_app_context() else (x, y, z)
