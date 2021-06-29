@@ -6,7 +6,24 @@ import {Vector3} from 'three';
 })
 export class OrbitdataService {
 
+  private planet_cache: {[planet_id: number]: string} = {}
+
   constructor() { }
+
+  getCachedPlanetPosition(planet_id: number, t0: number): Promise<Vector3> {
+    return fetch('http://127.0.0.1:5000/orbit/position', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        'planet_json': this.planet_cache[planet_id],
+        't0': t0
+      })
+    })
+      .then(response => response.json())
+      .then(data => new Vector3(data.x, data.y, data.z))
+  }
 
   getPosition(system_id: number, star_id: number, planet_id: number, t0: number): Promise<Vector3> {
     return fetch('http://127.0.0.1:5000/orbit/position', {
@@ -15,6 +32,7 @@ export class OrbitdataService {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
+        'planet_json': null,
         'system_id': system_id,
         'star_id': star_id,
         'planet_id': planet_id,
@@ -22,7 +40,11 @@ export class OrbitdataService {
       })
     })
       .then(response => response.json())
-      .then(data => new Vector3(data.x, data.y, data.z))
+      .then(data => {
+        const position = new Vector3(data.x, data.y, data.z);
+        this.planet_cache[planet_id] = data.planet_json;
+        return position;
+      })
   }
 
   getPath(system_id: number, star_id: number, planet_id: number, t0: number): Promise<Vector3[]> {

@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import Blueprint, request as flask_request, has_app_context, jsonify, session
+from flask import Blueprint, request as flask_request, has_app_context, jsonify
 from flask_cors import cross_origin
 from numpy import linspace, array
 from pykep import epoch_from_string, SEC2DAY, epoch
@@ -108,6 +108,7 @@ def orbit_position():
     """Returns position data for an orbiting object.
 
     Parameters (included in POST body, as JSON):
+        planet_json: Cached planet JSON data, created with Planet.to_json()
         system_id: Solar system ID, for use with the Trident API
         star_id: Star ID, for use with the Trident API
         planet_id: Planet ID, for use with the Trident API
@@ -125,21 +126,21 @@ def orbit_position():
         +y is defined as the direction of the winter solstice of the system
             primary planet.
     """
-    if int(flask_request.json['planet_id']) in session:
-        planet = Planet.from_json(session[int(flask_request.json['planet_id'])])
-    else:
+    if flask_request.json['planet_json'] is None:
         planet = Planet(
             int(flask_request.json['system_id']),
             int(flask_request.json['star_id']),
             int(flask_request.json['planet_id']))
+    else:
+        planet = Planet.from_json(flask_request.json['planet_json'])
+
     t0 = epoch_from_string("{:%Y-%m-%d %H:%M:%S}".format(
         datetime.fromtimestamp(flask_request.json['t0'])))
 
     (x, y, z), _ = planet.planet.eph(t0)
 
-    session[int(flask_request.json['planet_id'])] = planet.to_json()
-
     return jsonify(
         x=x,
         y=y,
-        z=z) if has_app_context() else (x, y, z)
+        z=z,
+        planet_json=planet.to_json()) if has_app_context() else (x, y, z, planet.to_json())
