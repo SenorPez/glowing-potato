@@ -23,18 +23,14 @@ setup(
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
+        'License :: OSI Approved :: MIT License'
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3 :: Only',
     ],
     keywords='trident',
     packages=find_packages(exclude=['test']),
-    python_requires='~=3.3',
-    install_requires=['flask>=0.2', 'flask_cors', 'matplotlib', 'numpy', 'pykep', 'requests'],
+    python_requires='~=3.7',
+    install_requires=['flask', 'flask_cors', 'matplotlib', 'numpy', 'pykep', 'requests'],
     extras_require={
         'dev': [],
         'test': []
