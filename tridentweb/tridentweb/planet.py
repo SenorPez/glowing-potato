@@ -1,6 +1,7 @@
 """Provides a Planet class for using planets from the Trident API.
 
 """
+import jsonpickle
 from pykep import epoch, AU
 from pykep.planet import keplerian
 
@@ -36,6 +37,17 @@ class Planet:
         self._planet_radius = None
         self._grav = None
         self._pykep_planet = None
+
+    def to_json(self):
+        # Make sure planet has been defined (to get all API calls settled),
+        # then clear planet since it can't be serialized.
+        _ = self.planet
+        self._pykep_planet = None
+        return jsonpickle.encode(self)
+
+    @staticmethod
+    def from_json(pickled):
+        return jsonpickle.decode(pickled)
 
     @property
     def gm(self):

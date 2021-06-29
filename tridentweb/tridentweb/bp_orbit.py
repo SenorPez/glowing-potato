@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import Blueprint, request as flask_request, has_app_context, jsonify
+from flask import Blueprint, request as flask_request, has_app_context, jsonify, session
 from flask_cors import cross_origin
 from numpy import linspace, array
 from pykep import epoch_from_string, SEC2DAY, epoch
@@ -9,6 +9,7 @@ from pykep.planet import jpl_lp
 from tridentweb.planet import Planet
 
 bp = Blueprint("orbit", __name__, url_prefix="/orbit")
+bp.secret_key = b'\xe6\xd8y\xfdOX\x94\xa7\r\x9dO4\xcf\xaf\xda\x93'
 
 
 @bp.route("/earthposition", methods=['POST'])
@@ -124,14 +125,20 @@ def orbit_position():
         +y is defined as the direction of the winter solstice of the system
             primary planet.
     """
-    planet = Planet(
-        int(flask_request.json['system_id']),
-        int(flask_request.json['star_id']),
-        int(flask_request.json['planet_id']))
+    if int(flask_request.json['planet_id']) in session:
+        planet = Planet.from_json(session[int(flask_request.json['planet_id'])])
+    else:
+        planet = Planet(
+            int(flask_request.json['system_id']),
+            int(flask_request.json['star_id']),
+            int(flask_request.json['planet_id']))
     t0 = epoch_from_string("{:%Y-%m-%d %H:%M:%S}".format(
         datetime.fromtimestamp(flask_request.json['t0'])))
 
     (x, y, z), _ = planet.planet.eph(t0)
+
+    session[int(flask_request.json['planet_id'])] = planet.to_json()
+
     return jsonify(
         x=x,
         y=y,
