@@ -13,16 +13,19 @@ export class OrbitComponent implements OnInit {
   _AU: number = 149598000000;
 
   private solarRadius: number = 800240.666; // Solar radius in km. 1 Solar Radius = 1 axis unit.
+  // TODO: Add solar radius to API?
   private zScale: number = 20; // z Scale
+  private planetScale: number = 1000;
 
-  constructor(private orbitDataService : OrbitdataService) { }
+  constructor(private orbitDataService: OrbitdataService) {
+  }
 
   ngOnInit(): void {
     const canvas = <HTMLCanvasElement>document.getElementById('orbitplot');
     const renderer = new THREE.WebGLRenderer({canvas})
 
     const camera = new THREE.PerspectiveCamera();
-    camera.position.z = 400;
+    camera.position.z = 500;
 
     const scene = new THREE.Scene();
 
@@ -33,23 +36,36 @@ export class OrbitComponent implements OnInit {
 
     {
       const geometry = new THREE.SphereGeometry(1, 24, 24)
-      const material = new THREE.MeshPhongMaterial({color: 0xFFFFFF})
+      const material = new THREE.MeshBasicMaterial({color: 0xFFFFFF})
       const sphere = new THREE.Mesh(geometry, material);
       sphere.position.set(0, 0, 0);
       scene.add(sphere);
     }
 
     const t0 = Date.now() / 1000;
+
+    // TODO: Pull planet radius from API.
     {
       this.orbitDataService.getPosition(1621827699, -1826843336, 2035226060, t0)
         .then(position => {
           position.z *= this.zScale;
           position.divideScalar(this.solarRadius * 1000);
-          const geometry = new THREE.SphereGeometry(1, 24, 24)
-          const material = new THREE.MeshPhongMaterial({color: 0xFF0000});
+          const planet_radius = 2164.0
+          const geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius, 24, 24);
+          const material = new THREE.MeshBasicMaterial({color: 0xFF0000});
           const sphere = new THREE.Mesh(geometry, material);
-          sphere.position.set(position.x, position.y, position.z)
-          scene.add(sphere)
+          sphere.position.set(position.x, position.y, position.z);
+          scene.add(sphere);
+
+          const transparent_geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius * this.planetScale, 24, 24);
+          const transparent_material = new THREE.MeshStandardMaterial({
+            color: 0xFF0000,
+            transparent: true,
+            opacity: 0.25
+          });
+          const transparent_sphere = new THREE.Mesh(transparent_geometry, transparent_material);
+          transparent_sphere.position.set(position.x, position.y, position.z);
+          scene.add(transparent_sphere);
         })
     }
 
@@ -58,11 +74,22 @@ export class OrbitComponent implements OnInit {
         .then(position => {
           position.divideScalar(this.solarRadius * 1000);
           position.z *= this.zScale;
-          const geometry = new THREE.SphereGeometry(1, 24, 24)
-          const material = new THREE.MeshPhongMaterial({color: 0xFFFF00});
+          const planet_radius = 4590.0
+          const geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius, 24, 24);
+          const material = new THREE.MeshBasicMaterial({color: 0xFFFF00});
           const sphere = new THREE.Mesh(geometry, material);
           sphere.position.set(position.x, position.y, position.z)
           scene.add(sphere)
+
+          const transparent_geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius * this.planetScale, 24, 24);
+          const transparent_material = new THREE.MeshStandardMaterial({
+            color: 0xFFFF00,
+            transparent: true,
+            opacity: 0.25
+          });
+          const transparent_sphere = new THREE.Mesh(transparent_geometry, transparent_material);
+          transparent_sphere.position.set(position.x, position.y, position.z);
+          scene.add(transparent_sphere);
         })
     }
 
@@ -71,11 +98,22 @@ export class OrbitComponent implements OnInit {
         .then(position => {
           position.divideScalar(this.solarRadius * 1000);
           position.z *= this.zScale;
-          const geometry = new THREE.SphereGeometry(1, 24, 24)
-          const material = new THREE.MeshPhongMaterial({color: 0x00FF00});
+          const planet_radius = 5747.0
+          const geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius, 24, 24);
+          const material = new THREE.MeshBasicMaterial({color: 0x00FF00});
           const sphere = new THREE.Mesh(geometry, material);
           sphere.position.set(position.x, position.y, position.z)
           scene.add(sphere)
+
+          const transparent_geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius * this.planetScale, 24, 24);
+          const transparent_material = new THREE.MeshStandardMaterial({
+            color: 0x00FF00,
+            transparent: true,
+            opacity: 0.25
+          });
+          const transparent_sphere = new THREE.Mesh(transparent_geometry, transparent_material);
+          transparent_sphere.position.set(position.x, position.y, position.z);
+          scene.add(transparent_sphere);
         })
     }
 
@@ -84,11 +122,22 @@ export class OrbitComponent implements OnInit {
         .then(position => {
           position.divideScalar(this.solarRadius * 1000);
           position.z *= this.zScale;
-          const geometry = new THREE.SphereGeometry(1, 24, 24)
-          const material = new THREE.MeshPhongMaterial({color: 0x0000FF});
+          const planet_radius = 6378.0
+          const geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius, 24, 24);
+          const material = new THREE.MeshBasicMaterial({color: 0x0000FF});
           const sphere = new THREE.Mesh(geometry, material);
           sphere.position.set(position.x, position.y, position.z)
           scene.add(sphere)
+
+          const transparent_geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius * this.planetScale, 24, 24);
+          const transparent_material = new THREE.MeshStandardMaterial({
+            color: 0x0000FF,
+            transparent: true,
+            opacity: 0.25
+          });
+          const transparent_sphere = new THREE.Mesh(transparent_geometry, transparent_material);
+          transparent_sphere.position.set(position.x, position.y, position.z);
+          scene.add(transparent_sphere);
         })
     }
 
@@ -149,7 +198,7 @@ export class OrbitComponent implements OnInit {
     }
 
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.maxDistance = 400;
+    controls.maxDistance = 500;
     controls.minDistance = 1;
     controls.rotateSpeed = 2;
     controls.minAzimuthAngle = 0;
