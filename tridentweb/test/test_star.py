@@ -172,7 +172,7 @@ class TestStar(unittest.TestCase):
         mock_get.return_value = (Mock(**attrs), None)
         instance = Star(id(sentinel.systemid), id(sentinel.starid), "https://api/")
         expected_result = id(sentinel.mass) * 6.67408e-11 * 1.9884e+30
-        self.assertAlmostEqual(instance.gm, expected_result, delta=1.0e+17)
+        self.assertAlmostEqual(instance.gm, expected_result, delta=1.0e+20)
 
     @mock.patch('tridentweb.star.get_star')
     def test_property_planet_primary(self, mock_get):
@@ -382,7 +382,7 @@ class TestStar(unittest.TestCase):
         mock_get.return_value = (Mock(**attrs), id(sentinel.primarymass))
         instance = Star(id(sentinel.systemid), id(sentinel.starid), "https://api/")
         expected_result = id(sentinel.mass) * 6.67408e-11 * 1.9884e+30
-        self.assertAlmostEqual(instance.gm, expected_result, delta=1.0e+17)
+        self.assertAlmostEqual(instance.gm, expected_result, delta=1.0e+20)
 
     @mock.patch('tridentweb.star.get_star')
     def test_property_planet_secondary(self, mock_get):
