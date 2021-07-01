@@ -10,6 +10,10 @@ export class OrbitdataService {
 
   constructor() { }
 
+  inCache(planet_id: number): boolean {
+    return planet_id in this.planet_cache;
+  }
+
   getCachedPlanetPosition(planet_id: number, t0: number): Promise<Vector3> {
     return fetch('http://127.0.0.1:5000/orbit/position', {
       method: 'POST',
