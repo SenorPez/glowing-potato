@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import * as THREE from 'three';
 import {OrbitdataService} from "../orbitdata.service";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
+import {Planet} from "../planet";
+import {Vector3} from "three";
 
 @Component({
   selector: 'app-orbit',
@@ -11,7 +13,6 @@ import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 export class OrbitComponent implements OnInit {
 
   _AU: number = 149598000000;
-
 
   private solarRadius: number = 800240.666; // Solar radius in km. 1 Solar Radius = 1 axis unit.
   // TODO: Add solar radius to API?
@@ -53,63 +54,115 @@ export class OrbitComponent implements OnInit {
       this.scene.add(sphere);
     }
 
-    const t0 = Date.now() / 1000;
+    const testPlanet: Planet = {
+      name: "1 Omega Hydri 1",
+      mass: 0.027045919,
+      radius: 0.33969113,
+      semimajorAxis: 0.30473167,
+      eccentricity: 0.115,
+      inclination: 0.001120502,
+      longitudeOfAscendingNode: 3.826163,
+      argumentOfPeriapsis: 1.9260389,
+      trueAnomalyAtEpoch: 4.129414,
 
-    // TODO: Pull planet radius from API.
-    Promise.all([
-        this.orbitDataService.getPosition(1621827699, -1826843336, 2035226060, 0)
-          .then(position => {
-            const planet_radius = 2164.0
-            const transparent_geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius * this.planetScale, 24, 24);
-            const transparent_material = new THREE.MeshStandardMaterial({
-              color: 0xFF0000,
-              transparent: true,
-              opacity: 0.25
-            });
-            const transparent_sphere = new THREE.Mesh(transparent_geometry, transparent_material);
-            transparent_sphere.name = "1 Omega Hydri 1";
+      starMass: 1.045
+    };
 
-            position.z *= this.zScale;
-            position.divideScalar(this.solarRadius * 1000);
-            transparent_sphere.position.set(position.x, position.y, position.z);
-            this.scene.add(transparent_sphere)
-          }),
-        this.orbitDataService.getPosition(1621827699, -1826843336, -154475081, 0)
-          .then(position => {
-            const planet_radius = 4590.0
-            const transparent_geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius * this.planetScale, 24, 24);
-            const transparent_material = new THREE.MeshStandardMaterial({
-              color: 0xFFFF00,
-              transparent: true,
-              opacity: 0.25
-            });
-            const transparent_sphere = new THREE.Mesh(transparent_geometry, transparent_material);
-            transparent_sphere.name = "1 Omega Hydri 2";
+    {
+      const planet_radius = 2164.0
+      const geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius * this.planetScale, 24, 24);
+      const material = new THREE.MeshStandardMaterial({
+        color: 0xFF0000,
+        transparent: true,
+        opacity: 0.25
+      });
+      const sphere = new THREE.Mesh(geometry, material);
+      const ephemeris = this.orbitDataService.ephemeris(testPlanet, 0);
+      let position = new Vector3(ephemeris[0][0], ephemeris[0][1], ephemeris[0][2]);
 
-            position.z *= this.zScale;
-            position.divideScalar(this.solarRadius * 1000);
-            transparent_sphere.position.set(position.x, position.y, position.z);
-            this.scene.add(transparent_sphere)
-          }),
-        this.orbitDataService.getPosition(1621827699, -1826843336, 159569841, 0)
-          .then(position => {
-            const planet_radius = 5747.0
-            const transparent_geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius * this.planetScale, 24, 24);
-            const transparent_material = new THREE.MeshStandardMaterial({
-              color: 0x00FF00,
-              transparent: true,
-              opacity: 0.25
-            });
-            const transparent_sphere = new THREE.Mesh(transparent_geometry, transparent_material);
-            transparent_sphere.name = "1 Omega Hydri 3";
+      position.multiplyScalar(this._AU / (this.solarRadius * 1000));
+      sphere.position.set(position.x, position.y, position.z);
+      this.scene.add(sphere);
+    }
 
-            position.z *= this.zScale;
-            position.divideScalar(this.solarRadius * 1000);
-            transparent_sphere.position.set(position.x, position.y, position.z);
-            this.scene.add(transparent_sphere)
-          })
-      ]
-    ).then(() => requestAnimationFrame(render));
+    const render = (time: number) => {
+      time *= 0.001 * 604800;
+
+      const pixelRatio = window.devicePixelRatio;
+      const width = canvas.clientWidth * pixelRatio | 0;
+      const height = canvas.clientHeight * pixelRatio | 0;
+      if (canvas.width !== width || canvas.height !== height) {
+        renderer.setSize(width, height, false);
+        camera.aspect = canvas.clientWidth / canvas.clientHeight;
+        camera.updateProjectionMatrix();
+      }
+
+      renderer.render(this.scene, camera);
+      requestAnimationFrame(render);
+      controls.update();
+    }
+
+    requestAnimationFrame(render);
+
+
+
+    // const t0 = Date.now() / 1000;
+    //
+    // // TODO: Pull planet radius from API.
+    // Promise.all([
+    //     this.orbitDataService.getPosition(1621827699, -1826843336, 2035226060, 0)
+    //       .then(position => {
+    //         const planet_radius = 2164.0
+    //         const transparent_geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius * this.planetScale, 24, 24);
+    //         const transparent_material = new THREE.MeshStandardMaterial({
+    //           color: 0xFF0000,
+    //           transparent: true,
+    //           opacity: 0.25
+    //         });
+    //         const transparent_sphere = new THREE.Mesh(transparent_geometry, transparent_material);
+    //         transparent_sphere.name = "1 Omega Hydri 1";
+    //
+    //         position.z *= this.zScale;
+    //         position.divideScalar(this.solarRadius * 1000);
+    //         transparent_sphere.position.set(position.x, position.y, position.z);
+    //         this.scene.add(transparent_sphere)
+    //       }),
+    //     this.orbitDataService.getPosition(1621827699, -1826843336, -154475081, 0)
+    //       .then(position => {
+    //         const planet_radius = 4590.0
+    //         const transparent_geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius * this.planetScale, 24, 24);
+    //         const transparent_material = new THREE.MeshStandardMaterial({
+    //           color: 0xFFFF00,
+    //           transparent: true,
+    //           opacity: 0.25
+    //         });
+    //         const transparent_sphere = new THREE.Mesh(transparent_geometry, transparent_material);
+    //         transparent_sphere.name = "1 Omega Hydri 2";
+    //
+    //         position.z *= this.zScale;
+    //         position.divideScalar(this.solarRadius * 1000);
+    //         transparent_sphere.position.set(position.x, position.y, position.z);
+    //         this.scene.add(transparent_sphere)
+    //       }),
+    //     this.orbitDataService.getPosition(1621827699, -1826843336, 159569841, 0)
+    //       .then(position => {
+    //         const planet_radius = 5747.0
+    //         const transparent_geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius * this.planetScale, 24, 24);
+    //         const transparent_material = new THREE.MeshStandardMaterial({
+    //           color: 0x00FF00,
+    //           transparent: true,
+    //           opacity: 0.25
+    //         });
+    //         const transparent_sphere = new THREE.Mesh(transparent_geometry, transparent_material);
+    //         transparent_sphere.name = "1 Omega Hydri 3";
+    //
+    //         position.z *= this.zScale;
+    //         position.divideScalar(this.solarRadius * 1000);
+    //         transparent_sphere.position.set(position.x, position.y, position.z);
+    //         this.scene.add(transparent_sphere)
+    //       })
+    //   ]
+    // ).then(() => requestAnimationFrame(render));
 
     // {
     //   this.orbitDataService.getEarthPosition(t0)
@@ -191,53 +244,53 @@ export class OrbitComponent implements OnInit {
     //     })
     // }
 
-    const render = (time: number) => {
-      time *= 0.001 * 604800;
-
-      console.log(time);
-      const pixelRatio = window.devicePixelRatio;
-      const width = canvas.clientWidth * pixelRatio | 0;
-      const height = canvas.clientHeight * pixelRatio | 0;
-      if (canvas.width !== width || canvas.height !== height) {
-        renderer.setSize(width, height, false);
-        camera.aspect = canvas.clientWidth / canvas.clientHeight;
-        camera.updateProjectionMatrix();
-      }
-
-      if (this.orbitDataService.inCache(2035226060)) {
-        this.orbitDataService.getCachedPlanetPosition(2035226060, time)
-          .then(position => {
-            position.z *= this.zScale;
-            position.divideScalar(this.solarRadius * 1000);
-            const object = this.scene.getObjectByName("1 Omega Hydri 1");
-            object?.position.set(position.x, position.y, position.z);
-          });
-      }
-
-      if (this.orbitDataService.inCache(-154475081)) {
-        this.orbitDataService.getCachedPlanetPosition(-154475081, time)
-          .then(position => {
-            position.z *= this.zScale;
-            position.divideScalar(this.solarRadius * 1000);
-            const object = this.scene.getObjectByName("1 Omega Hydri 2");
-            object?.position.set(position.x, position.y, position.z);
-          });
-      }
-
-      if (this.orbitDataService.inCache(159569841)) {
-        this.orbitDataService.getCachedPlanetPosition(159569841, time)
-          .then(position => {
-            position.z *= this.zScale;
-            position.divideScalar(this.solarRadius * 1000);
-            const object = this.scene.getObjectByName("1 Omega Hydri 3");
-            object?.position.set(position.x, position.y, position.z);
-          });
-      }
-
-      renderer.render(this.scene, camera);
-      requestAnimationFrame(render);
-      controls.update();
-    }
+    // const render = (time: number) => {
+    //   time *= 0.001 * 604800;
+    //
+    //   console.log(time);
+    //   const pixelRatio = window.devicePixelRatio;
+    //   const width = canvas.clientWidth * pixelRatio | 0;
+    //   const height = canvas.clientHeight * pixelRatio | 0;
+    //   if (canvas.width !== width || canvas.height !== height) {
+    //     renderer.setSize(width, height, false);
+    //     camera.aspect = canvas.clientWidth / canvas.clientHeight;
+    //     camera.updateProjectionMatrix();
+    //   }
+    //
+    //   if (this.orbitDataService.inCache(2035226060)) {
+    //     this.orbitDataService.getCachedPlanetPosition(2035226060, time)
+    //       .then(position => {
+    //         position.z *= this.zScale;
+    //         position.divideScalar(this.solarRadius * 1000);
+    //         const object = this.scene.getObjectByName("1 Omega Hydri 1");
+    //         object?.position.set(position.x, position.y, position.z);
+    //       });
+    //   }
+    //
+    //   if (this.orbitDataService.inCache(-154475081)) {
+    //     this.orbitDataService.getCachedPlanetPosition(-154475081, time)
+    //       .then(position => {
+    //         position.z *= this.zScale;
+    //         position.divideScalar(this.solarRadius * 1000);
+    //         const object = this.scene.getObjectByName("1 Omega Hydri 2");
+    //         object?.position.set(position.x, position.y, position.z);
+    //       });
+    //   }
+    //
+    //   if (this.orbitDataService.inCache(159569841)) {
+    //     this.orbitDataService.getCachedPlanetPosition(159569841, time)
+    //       .then(position => {
+    //         position.z *= this.zScale;
+    //         position.divideScalar(this.solarRadius * 1000);
+    //         const object = this.scene.getObjectByName("1 Omega Hydri 3");
+    //         object?.position.set(position.x, position.y, position.z);
+    //       });
+    //   }
+    //
+    //   renderer.render(this.scene, camera);
+    //   requestAnimationFrame(render);
+    //   controls.update();
+    // }
   }
 }
 

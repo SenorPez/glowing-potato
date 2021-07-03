@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Vector3} from 'three';
+import {Planet} from "./planet";
 
 @Injectable({
   providedIn: 'root'
@@ -102,5 +103,94 @@ export class OrbitdataService {
           return new Vector3(element, data.y[index], data.z[index]);
         });
       })
+  }
+
+  getMeanMotion(planet: Planet): number {
+    return Math.sqrt(this.getStarMu(planet.starMass) / Math.pow(planet.semimajorAxis, 3));
+  }
+
+  getStarMu(starMass: number) {
+    const G = 6.67408e-11;
+    const Msol = 1.9884e+30;
+    return G * Msol * starMass;
+  }
+
+  trueToEccentric(trueAnomaly: number, eccentricity: number): number {
+    return Math.atan2(
+      Math.sqrt(1 - Math.pow(eccentricity, 2)) * Math.sin(trueAnomaly),
+      eccentricity + Math.cos(trueAnomaly)
+    ) % (2 * Math.PI);
+  }
+
+  eccentricToMean(eccentricAnomaly: number, eccentricity: number): number {
+    return eccentricAnomaly - eccentricity * Math.sin(eccentricAnomaly);
+  }
+
+  trueToMean(trueAnomaly: number, eccentricity: number): number {
+    return this.eccentricToMean(this.trueToEccentric(trueAnomaly, eccentricity), eccentricity);
+  }
+
+  meanToEccentric(meanAnomaly: number, eccentricity: number): number {
+    const maxIterations: number = 30;
+    const delta = Math.pow(10, -10);
+
+    let E = meanAnomaly;
+    let F = E - eccentricity * Math.sin(meanAnomaly) - meanAnomaly;
+    let i = 0;
+    while ((Math.abs(F) > delta) && (i < maxIterations)) {
+      i += 1;
+      E = E - F / (1 - eccentricity * Math.cos(E));
+      F = E - eccentricity * Math.sin(E) - meanAnomaly;
+    }
+
+    E = E % (2 * Math.PI);
+    return E;
+  }
+
+  ephemeris(planet: Planet, time: number): [number[], number[]] {
+    const dt: number = time * 86400.0;
+    const meanMotion = this.getMeanMotion(planet);
+    const meanAnomaly = this.trueToMean(planet.trueAnomalyAtEpoch, planet.eccentricity) + meanMotion * dt;
+    const eccentricAnomaly = this.meanToEccentric(meanAnomaly, planet.eccentricity);
+
+    const semiminorAxis = planet.semimajorAxis * Math.sqrt(1 - planet.eccentricity * planet.eccentricity);
+
+    const xPer = planet.semimajorAxis * (Math.cos(eccentricAnomaly) - planet.eccentricity);
+    const yPer = semiminorAxis * Math.sin(eccentricAnomaly);
+    const xDotPer = -(planet.semimajorAxis * meanMotion * Math.sin(eccentricAnomaly)) / (1 - planet.eccentricity * Math.cos(eccentricAnomaly));
+    const yDotPer = (semiminorAxis * meanMotion * Math.cos(eccentricAnomaly)) / (1 - planet.eccentricity * Math.cos(eccentricAnomaly));
+
+    const cosLoAN = Math.cos(planet.longitudeOfAscendingNode);
+    const cosAoP = Math.cos(planet.argumentOfPeriapsis);
+    const cosInc = Math.cos(planet.inclination);
+    const sinLoAN = Math.sin(planet.longitudeOfAscendingNode);
+    const sinAoP = Math.sin(planet.argumentOfPeriapsis);
+    const sinInc = Math.sin(planet.inclination);
+
+    const rotationMatrix: number[][] = [[], [], []];
+    rotationMatrix[0][0] = cosLoAN * cosAoP - sinLoAN * sinAoP * cosInc;
+    rotationMatrix[0][1] = -cosLoAN * sinAoP - sinLoAN * cosAoP * cosInc;
+    rotationMatrix[0][2] = sinLoAN * sinInc;
+    rotationMatrix[1][0] = sinLoAN * cosAoP + cosLoAN * sinAoP * cosInc;
+    rotationMatrix[1][1] = -sinLoAN * sinAoP + cosLoAN * cosAoP * cosInc;
+    rotationMatrix[1][2] = -cosLoAN * sinInc;
+    rotationMatrix[2][0] = sinAoP * sinInc;
+    rotationMatrix[2][1] = cosAoP * sinInc;
+    rotationMatrix[2][2] = cosInc;
+
+    const peri1: number[] = [xPer, yPer, 0.0];
+    const peri2: number[] = [xDotPer, yDotPer, 0.0];
+    const r: number[] = [];
+    const v: number[] = [];
+
+    for (var j = 0; j < 3; j++) {
+      r[j] = 0.0;
+      v[j] = 0.0;
+      for (var k = 0; k < 3; k++) {
+        r[j] += rotationMatrix[j][k] * peri1[k];
+        v[j] += rotationMatrix[j][k] * peri2[k];
+      }
+    }
+    return [r, v];
   }
 }
