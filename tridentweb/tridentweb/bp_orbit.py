@@ -144,3 +144,27 @@ def orbit_position():
         y=y,
         z=z,
         planet_json=planet.to_json()) if has_app_context() else (x, y, z, planet.to_json())
+
+@bp.route("/planet", methods=['POST'])
+@cross_origin()
+def get_planet():
+    planet = Planet(
+        int(flask_request.json['system_id']),
+        int(flask_request.json['star_id']),
+        int(flask_request.json['planet_id']))
+
+    print(planet)
+
+    return jsonify(
+        name=planet.name,
+        mass=planet.mass,
+        radius=planet.radius,
+        semimajorAxis=planet.semimajor_axis,
+        eccentricity=planet.eccentricity,
+        inclination=planet.inclination,
+        longitudeOfAscendingNode=planet.longitude_of_ascending_node,
+        argumentOfPeriapsis=planet.argument_of_periapsis,
+        trueAnomalyAtEpoch=planet.true_anomaly_at_epoch,
+
+        starGM=planet.star_gm,
+        GM=planet.gm) if has_app_context() else planet

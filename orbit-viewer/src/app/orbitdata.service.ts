@@ -11,6 +11,38 @@ export class OrbitdataService {
 
   constructor() { }
 
+  getPlanet(system_id: number, star_id: number, planet_id:number): Promise<Planet> {
+    return fetch("http://127.0.0.1:5000/orbit/planet", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        'system_id': system_id,
+        'star_id': star_id,
+        'planet_id': planet_id
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        const planet: Planet = {
+          name: data['json'],
+          mass: data['mass'],
+          radius: data['radius'],
+          semimajorAxis: data['semimajorAxis'],
+          eccentricity: data['eccentricity'],
+          inclination: data['inclination'],
+          longitudeOfAscendingNode: data['longitudeOfAscendingNode'],
+          argumentOfPeriapsis: data['argumentOfPeriapsis'],
+          trueAnomalyAtEpoch: data['trueAnomalyAtEpoch'],
+          starGM: data['starGM'],
+          GM: data['GM']
+        };
+        return planet;
+      }
+    )
+  }
+
   inCache(planet_id: number): boolean {
     return planet_id in this.planet_cache;
   }
@@ -106,13 +138,7 @@ export class OrbitdataService {
   }
 
   getMeanMotion(planet: Planet): number {
-    return Math.sqrt(this.getStarMu(planet.starMass) / Math.pow(planet.semimajorAxis, 3));
-  }
-
-  getStarMu(starMass: number) {
-    const G = 6.67408e-11;
-    const Msol = 1.9884e+30;
-    return G * Msol * starMass;
+    return Math.sqrt((planet.starGM + planet.GM) / Math.pow(planet.semimajorAxis, 3));
   }
 
   trueToEccentric(trueAnomaly: number, eccentricity: number): number {
@@ -147,8 +173,8 @@ export class OrbitdataService {
     return E;
   }
 
-  ephemeris(planet: Planet, time: number): [number[], number[]] {
-    const dt: number = time * 86400.0;
+  ephemeris(planet: Planet, time: number): [Vector3, Vector3] {
+    const dt: number = time;
     const meanMotion = this.getMeanMotion(planet);
     const meanAnomaly = this.trueToMean(planet.trueAnomalyAtEpoch, planet.eccentricity) + meanMotion * dt;
     const eccentricAnomaly = this.meanToEccentric(meanAnomaly, planet.eccentricity);
@@ -191,6 +217,8 @@ export class OrbitdataService {
         v[j] += rotationMatrix[j][k] * peri2[k];
       }
     }
-    return [r, v];
+    const position: Vector3 = new Vector3(r[0], r[1], r[2]);
+    const velocity: Vector3 = new Vector3(v[0], v[1], v[2]);
+    return [position, velocity];
   }
 }

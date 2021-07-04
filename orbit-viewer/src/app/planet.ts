@@ -9,5 +9,6 @@ export interface Planet {
   argumentOfPeriapsis: number;
   trueAnomalyAtEpoch: number;
 
-  starMass: number;
+  starGM: number
+  GM: number
 }

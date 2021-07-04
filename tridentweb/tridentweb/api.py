@@ -121,9 +121,6 @@ def get_planet(system_id, star_id, planet_id, server_url="https://www.trident.se
     :return: responses.Response containing the star resource
     :return: System primary GM
     """
-    constant_Msol = get_constant("Msol", server_url=server_url).json()['value']
-    constant_G = get_constant("G", server_url=server_url).json()['value']
-
     star_response, _ = get_star(system_id, star_id, server_url)
     planets_url = star_response.json()['_links']['trident-api:planets']['href']
 
@@ -137,4 +134,4 @@ def get_planet(system_id, star_id, planet_id, server_url="https://www.trident.se
     planet_response = requests.get(planet_url)
     planet_response.raise_for_status()
 
-    return planet_response, star_response.json()['mass'] * constant_Msol * constant_G
+    return planet_response, star_response.json()['mass']

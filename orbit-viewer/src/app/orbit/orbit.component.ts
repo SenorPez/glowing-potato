@@ -1,9 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import * as THREE from 'three';
+import {Vector3} from 'three';
 import {OrbitdataService} from "../orbitdata.service";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
-import {Planet} from "../planet";
-import {Vector3} from "three";
 
 @Component({
   selector: 'app-orbit',
@@ -14,7 +13,7 @@ export class OrbitComponent implements OnInit {
 
   _AU: number = 149598000000;
 
-  private solarRadius: number = 800240.666; // Solar radius in km. 1 Solar Radius = 1 axis unit.
+  private solarRadius: number = 800240666; // Solar radius in m. 1 Solar Radius = 1 axis unit.
   // TODO: Add solar radius to API?
   private zScale: number = 20; // z Scale
   private planetScale: number = 1000;
@@ -54,36 +53,74 @@ export class OrbitComponent implements OnInit {
       this.scene.add(sphere);
     }
 
-    const testPlanet: Planet = {
-      name: "1 Omega Hydri 1",
-      mass: 0.027045919,
-      radius: 0.33969113,
-      semimajorAxis: 0.30473167,
-      eccentricity: 0.115,
-      inclination: 0.001120502,
-      longitudeOfAscendingNode: 3.826163,
-      argumentOfPeriapsis: 1.9260389,
-      trueAnomalyAtEpoch: 4.129414,
+    // const testPlanet: Planet = {
+    //   name: "1 Omega Hydri 1",
+    //   mass: 0.027045919,
+    //   radius: 0.33969113,
+    //   semimajorAxis: 0.30473167,
+    //   eccentricity: 0.115,
+    //   inclination: 0.001120502,
+    //   longitudeOfAscendingNode: 3.826163,
+    //   argumentOfPeriapsis: 1.9260389,
+    //   trueAnomalyAtEpoch: 4.129414,
+    //
+    //   starMass: 1.045
+    // };
 
-      starMass: 1.045
-    };
 
     {
-      const planet_radius = 2164.0
-      const geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius * this.planetScale, 24, 24);
-      const material = new THREE.MeshStandardMaterial({
-        color: 0xFF0000,
-        transparent: true,
-        opacity: 0.25
-      });
-      const sphere = new THREE.Mesh(geometry, material);
-      const ephemeris = this.orbitDataService.ephemeris(testPlanet, 0);
-      let position = new Vector3(ephemeris[0][0], ephemeris[0][1], ephemeris[0][2]);
+      // TODO: Pull Rpln from API.
+      const Rpln: number = 6378136.6;
+      this.orbitDataService.getPlanet(1621827699, -1826843336, 2035226060)
+        .then(planet => {
+          const planet_radius = planet.radius * Rpln;
+          const geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius * this.planetScale, 24, 24);
+          const material = new THREE.MeshStandardMaterial({
+            color: 0xFF0000,
+            transparent: true,
+            opacity: 0.25
+          });
 
-      position.multiplyScalar(this._AU / (this.solarRadius * 1000));
-      sphere.position.set(position.x, position.y, position.z);
-      this.scene.add(sphere);
+          const sphere = new THREE.Mesh(geometry, material);
+          const eph: [Vector3, Vector3] = this.orbitDataService.ephemeris(planet, 0);
+          const position: Vector3 = eph[0];
+          position.multiplyScalar(this._AU / this.solarRadius);
+          sphere.position.set(position.x, position.y, position.z);
+          this.scene.add(sphere);
+        });
+    //       const planet_radius = planet.radius * Rpln;
+    //       const geometry = new THREE.SphereGeometry(planet_radius, this.solarRadius * this.planetScale, 24, 24);
+    //       const material = new THREE.MeshStandardMaterial({
+    //         color: 0xFF0000,
+    //         transparent: true,
+    //         opacity: 0.25
+    //       });
+    //
+    //       const sphere = new THREE.Mesh(geometry, material);
+    //       const eph: [Vector3, Vector3] = this.orbitDataService.ephemeris(planet, 0);
+    //       const position: Vector3 = eph[0];
+    //       position.multiplyScalar(this._AU / (this.solarRadius * 1000));
+    //       sphere.position.set(position.x, position.y, position.z);
+    //       this.scene.add(sphere);
+    //     })
     }
+
+    // {
+    //   const planet_radius = 2164.0
+    //   const geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius * this.planetScale, 24, 24);
+    //   const material = new THREE.MeshStandardMaterial({
+    //     color: 0xFF0000,
+    //     transparent: true,
+    //     opacity: 0.25
+    //   });
+    //   const sphere = new THREE.Mesh(geometry, material);
+    //   const ephemeris = this.orbitDataService.ephemeris(testPlanet, 0);
+    //   let position = new Vector3(ephemeris[0][0], ephemeris[0][1], ephemeris[0][2]);
+    //
+    //   position.multiplyScalar(this._AU / (this.solarRadius * 1000));
+    //   sphere.position.set(position.x, position.y, position.z);
+    //   this.scene.add(sphere);
+    // }
 
     const render = (time: number) => {
       time *= 0.001 * 604800;

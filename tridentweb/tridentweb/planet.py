@@ -20,7 +20,7 @@ class Planet:
     server_url - Trident API server URL. Defaults to https://www.trident.senorpez.com/
     """
     def __init__(self, system_id, star_id, planet_id, server_url="https://www.trident.senorpez.com/"):
-        planet_response, self._star_gm = get_planet(system_id, star_id, planet_id, server_url)
+        planet_response, self._star_mass = get_planet(system_id, star_id, planet_id, server_url)
         self.id = planet_response.json()['id']
         self.name = planet_response.json()['name']
         self.mass = planet_response.json()['mass']
@@ -33,9 +33,10 @@ class Planet:
         self.argument_of_periapsis = planet_response.json()['argumentOfPeriapsis']
         self.true_anomaly_at_epoch = planet_response.json()['trueAnomalyAtEpoch']
 
-        self._planet_mass = None
-        self._planet_radius = None
-        self._grav = None
+        self._const_Mpln = None
+        self._const_Rpln = None
+        self._const_Msol = None
+        self._const_G = None
         self._pykep_planet = None
 
     def to_json(self):
@@ -52,22 +53,34 @@ class Planet:
     @property
     def gm(self):
         """Standard gravitational parameter of the Planet."""
-        if self._planet_mass is None:
+        if self._const_Mpln is None:
             planet_mass_constant = Constant("Mpln")
-            self._planet_mass = planet_mass_constant.value
-        if self._grav is None:
+            self._const_Mpln = planet_mass_constant.value
+        if self._const_G is None:
             grav_constant = Constant("G")
-            self._grav = grav_constant.value
+            self._const_G = grav_constant.value
 
-        return self.mass * self._planet_mass * self._grav
+        return self.mass * self._const_Mpln * self._const_G
+
+    @property
+    def star_gm(self):
+        """Standard graviational parameter of the star."""
+        if self._const_Msol is None:
+            star_mass_constant = Constant("Msol")
+            self._const_Msol = star_mass_constant.value
+        if self._const_G is None:
+            grav_constant = Constant("G")
+            self._const_G = grav_constant.value
+
+        return self._star_mass * self._const_Msol * self._const_G
 
     @property
     def planet(self):
         """PyKep object (pykep.planet.keplerian) representation of Planet."""
         if self._pykep_planet is None:
-            if self._planet_radius is None:
+            if self._const_Rpln is None:
                 planet_radius_constant = Constant("Rpln")
-                self._planet_radius = planet_radius_constant.value
+                self._const_Rpln = planet_radius_constant.value
 
             self._pykep_planet = keplerian(
                 epoch(0),
@@ -78,9 +91,9 @@ class Planet:
                     self.longitude_of_ascending_node,
                     self.argument_of_periapsis,
                     mean_from_true(self.eccentricity, self.true_anomaly_at_epoch)),
-                self._star_gm,
+                self.star_gm,
                 self.gm,
-                self.radius * self._planet_radius,
-                self.radius * self._planet_radius,
+                self.radius * self._const_Rpln,
+                self.radius * self._const_Rpln,
                 self.name)
         return self._pykep_planet
