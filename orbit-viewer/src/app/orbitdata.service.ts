@@ -149,7 +149,8 @@ export class OrbitdataService {
   }
 
   getMeanMotion(planet: Planet): number {
-    return Math.sqrt((planet.starGM + planet.GM) / Math.pow(planet.semimajorAxis, 3));
+    const AU: number = 149598000000;
+    return Math.sqrt((planet.starGM + planet.GM) / Math.pow(planet.semimajorAxis * AU, 3));
   }
 
   trueToEccentric(trueAnomaly: number, eccentricity: number): number {
@@ -186,8 +187,14 @@ export class OrbitdataService {
 
   ephemeris(planet: Planet, time: number): [Vector3, Vector3] {
     const dt: number = time;
+
+
+
     const meanMotion = this.getMeanMotion(planet);
     const meanAnomaly = this.trueToMean(planet.trueAnomalyAtEpoch, planet.eccentricity) + meanMotion * dt;
+
+    // console.log(dt, meanMotion, meanAnomaly);
+
     const eccentricAnomaly = this.meanToEccentric(meanAnomaly, planet.eccentricity);
 
     const semiminorAxis = planet.semimajorAxis * Math.sqrt(1 - planet.eccentricity * planet.eccentricity);

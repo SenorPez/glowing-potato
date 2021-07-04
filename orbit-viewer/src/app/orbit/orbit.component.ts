@@ -67,7 +67,7 @@ export class OrbitComponent implements OnInit {
           const material = new THREE.MeshStandardMaterial({
             color: 0xFF0000,
             transparent: true,
-            opacity: 0.25
+            opacity: .99
           });
 
           const sphere = new THREE.Mesh(geometry, material);
@@ -75,8 +75,39 @@ export class OrbitComponent implements OnInit {
           const position: Vector3 = eph[0];
           position.multiplyScalar(this._AU / this.solarRadius);
           sphere.position.set(position.x, position.y, position.z);
+          sphere.name = "1 Omega Hydri 3";
           this.scene.add(sphere);
-        });
+
+          return planet;
+        })
+        .then(planet => {
+          let animationStart: number;
+
+          const render = (time: number) => {
+            if (animationStart === undefined) animationStart = time;
+            const elapsed = (time - animationStart) * 0.001 * 86400 * 7;
+
+            const [position, velocity]: [Vector3, Vector3] = this.orbitDataService.ephemeris(planet, elapsed);
+            position.multiplyScalar(this._AU / this.solarRadius);
+            const sphere = this.scene.getObjectByName("1 Omega Hydri 3");
+            sphere?.position.set(position.x, position.y, position.z);
+
+            const pixelRatio = window.devicePixelRatio;
+            const width = canvas.clientWidth * pixelRatio | 0;
+            const height = canvas.clientHeight * pixelRatio | 0;
+            if (canvas.width !== width || canvas.height !== height) {
+              renderer.setSize(width, height, false);
+              camera.aspect = canvas.clientWidth / canvas.clientHeight;
+              camera.updateProjectionMatrix();
+            }
+
+            renderer.render(this.scene, camera);
+            requestAnimationFrame(render);
+            controls.update();
+          }
+
+          requestAnimationFrame(render);
+        })
 
     //       const planet_radius = planet.radius * Rpln;
     //       const geometry = new THREE.SphereGeometry(planet_radius, this.solarRadius * this.planetScale, 24, 24);
@@ -112,24 +143,6 @@ export class OrbitComponent implements OnInit {
     //   this.scene.add(sphere);
     // }
 
-    const render = (time: number) => {
-      time *= 0.001 * 604800;
-
-      const pixelRatio = window.devicePixelRatio;
-      const width = canvas.clientWidth * pixelRatio | 0;
-      const height = canvas.clientHeight * pixelRatio | 0;
-      if (canvas.width !== width || canvas.height !== height) {
-        renderer.setSize(width, height, false);
-        camera.aspect = canvas.clientWidth / canvas.clientHeight;
-        camera.updateProjectionMatrix();
-      }
-
-      renderer.render(this.scene, camera);
-      requestAnimationFrame(render);
-      controls.update();
-    }
-
-    requestAnimationFrame(render);
 
 
 
