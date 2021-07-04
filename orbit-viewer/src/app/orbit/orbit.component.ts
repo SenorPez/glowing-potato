@@ -53,26 +53,15 @@ export class OrbitComponent implements OnInit {
       this.scene.add(sphere);
     }
 
-    // const testPlanet: Planet = {
-    //   name: "1 Omega Hydri 1",
-    //   mass: 0.027045919,
-    //   radius: 0.33969113,
-    //   semimajorAxis: 0.30473167,
-    //   eccentricity: 0.115,
-    //   inclination: 0.001120502,
-    //   longitudeOfAscendingNode: 3.826163,
-    //   argumentOfPeriapsis: 1.9260389,
-    //   trueAnomalyAtEpoch: 4.129414,
-    //
-    //   starMass: 1.045
-    // };
-
-
     {
-      // TODO: Pull Rpln from API.
-      const Rpln: number = 6378136.6;
-      this.orbitDataService.getPlanet(1621827699, -1826843336, 2035226060)
-        .then(planet => {
+      Promise.all([
+        this.orbitDataService.getPlanet(1621827699, -1826843336, 2035226060),
+        this.orbitDataService.getRpln()
+      ])
+        .then(promises => {
+          const planet = promises[0];
+          const Rpln = promises[1];
+
           const planet_radius = planet.radius * Rpln;
           const geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius * this.planetScale, 24, 24);
           const material = new THREE.MeshStandardMaterial({
@@ -88,6 +77,7 @@ export class OrbitComponent implements OnInit {
           sphere.position.set(position.x, position.y, position.z);
           this.scene.add(sphere);
         });
+
     //       const planet_radius = planet.radius * Rpln;
     //       const geometry = new THREE.SphereGeometry(planet_radius, this.solarRadius * this.planetScale, 24, 24);
     //       const material = new THREE.MeshStandardMaterial({

@@ -6,6 +6,7 @@ from numpy import linspace, array
 from pykep import epoch_from_string, SEC2DAY, epoch
 from pykep.planet import jpl_lp
 
+from tridentweb.constant import Constant
 from tridentweb.planet import Planet
 
 bp = Blueprint("orbit", __name__, url_prefix="/orbit")
@@ -153,8 +154,6 @@ def get_planet():
         int(flask_request.json['star_id']),
         int(flask_request.json['planet_id']))
 
-    print(planet)
-
     return jsonify(
         name=planet.name,
         mass=planet.mass,
@@ -168,3 +167,12 @@ def get_planet():
 
         starGM=planet.star_gm,
         GM=planet.gm) if has_app_context() else planet
+
+
+@bp.route("/Rpln", methods=['GET'])
+@cross_origin()
+def get_Rpln():
+    planet_radius = Constant("Rpln")
+    return jsonify(
+        Rpln=planet_radius.value
+    ) if has_app_context() else planet_radius

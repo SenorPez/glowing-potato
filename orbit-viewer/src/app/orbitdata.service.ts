@@ -62,6 +62,17 @@ export class OrbitdataService {
       .then(data => new Vector3(data.x, data.y, data.z))
   }
 
+  getRpln(): Promise<number> {
+    return fetch('http://127.0.0.1:5000/orbit/Rpln', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(response => response.json())
+      .then(data => data.Rpln);
+  }
+
   getPosition(system_id: number, star_id: number, planet_id: number, t0: number): Promise<Vector3> {
     return fetch('http://127.0.0.1:5000/orbit/position', {
       method: 'POST',
