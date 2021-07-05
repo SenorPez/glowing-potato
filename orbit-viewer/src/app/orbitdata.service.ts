@@ -7,10 +7,14 @@ import {Planet} from "./planet";
 })
 export class OrbitdataService {
 
-  constructor() { }
+  private flaskApp: string;
+
+  constructor() {
+    this.flaskApp = 'https://www.senorpez.com/tw';
+  }
 
   getPath(system_id: number, star_id: number, planet_id: number): Promise<Vector3[]> {
-    return fetch('http://127.0.0.1:5000/orbit/path', {
+    return fetch(this.flaskApp + '/orbit/path', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -30,7 +34,7 @@ export class OrbitdataService {
   }
 
   getPlanet(system_id: number, star_id: number, planet_id:number): Promise<Planet> {
-    return fetch("http://127.0.0.1:5000/orbit/planet", {
+    return fetch(this.flaskApp + '/orbit/planet', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -62,7 +66,7 @@ export class OrbitdataService {
   }
 
   getRpln(): Promise<number> {
-    return fetch('http://127.0.0.1:5000/orbit/Rpln', {
+    return fetch(this.flaskApp + '/orbit/Rpln', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
@@ -73,7 +77,7 @@ export class OrbitdataService {
   }
 
   getEarthPosition(t0: number): Promise<Vector3> {
-    return fetch('http://127.0.0.1:5000/orbit/earthposition', {
+    return fetch(this.flaskApp + '/orbit/earthposition', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -87,7 +91,7 @@ export class OrbitdataService {
   }
 
   getEarthPath(t0: number): Promise<Vector3[]> {
-    return fetch('http://127.0.0.1:5000/orbit/earthpath', {
+    return fetch(this.flaskApp + '/orbit/earthpath', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
