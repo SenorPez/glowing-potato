@@ -2,10 +2,11 @@
   <button mat-mini-fab color="primary">
     <mat-icon>skip_previous</mat-icon>
   </button>
-  <button mat-mini-fab color="primary">
-    <mat-icon>play_arrow</mat-icon>
+  <button mat-mini-fab color="primary" (click)="clickPlay()">
+    <mat-icon *ngIf="animating">pause</mat-icon>
+    <mat-icon *ngIf="!animating">play_arrow</mat-icon>
   </button>
-  <button mat-mini-fab color="primary" (click)="clickNext()">
+  <button mat-mini-fab color="primary">
     <mat-icon>skip_next</mat-icon>
   </button>
 </div>

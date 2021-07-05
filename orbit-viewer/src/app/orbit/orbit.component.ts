@@ -22,6 +22,8 @@ export class OrbitComponent implements OnInit {
   private planetScale: number = 1000;
   scene !: THREE.Scene;
 
+  private animating: boolean = false;
+
   constructor(private orbitDataService: OrbitdataService) {
     this.scene = new THREE.Scene();
   }
@@ -107,34 +109,46 @@ export class OrbitComponent implements OnInit {
       })
       .then(planets => {
         let animationStart: number;
+        let elapsed: number = 0;
+        let lastStop: number = 0;
 
         const render = (time: number) => {
-          if (animationStart === undefined) animationStart = time;
-          const elapsed = (time - animationStart) * 0.001 * 86400 * 7;
+          if (this.animating || animationStart === undefined) {
+            if (animationStart === undefined) animationStart = time;
+            elapsed = (time - (animationStart + lastStop));
+            const frameTime = (elapsed / 1000) * 60 * 60 * 24 * 7;
 
-          planets.forEach(planet => {
-            const [position]: [Vector3, Vector3] = this.orbitDataService.ephemeris(planet, elapsed);
-            position.z *= this.zScale;
-            position.multiplyScalar(this._AU / this.solarRadius);
-            const sphere = this.scene.getObjectByName(planet.name);
-            sphere?.position.set(position.x, position.y, position.z);
-          })
+            planets.forEach(planet => {
+              const [position]: [Vector3, Vector3] = this.orbitDataService.ephemeris(planet, frameTime);
+              position.z *= this.zScale;
+              position.multiplyScalar(this._AU / this.solarRadius);
+              const sphere = this.scene.getObjectByName(planet.name);
+              sphere?.position.set(position.x, position.y, position.z);
+            })
+          } else {
+            lastStop = (time - animationStart - elapsed);
+          }
 
           const pixelRatio = window.devicePixelRatio;
           const width = canvas.clientWidth * pixelRatio | 0;
           const height = canvas.clientHeight * pixelRatio | 0;
+
           if (canvas.width !== width || canvas.height !== height) {
             renderer.setSize(width, height, false);
             camera.aspect = canvas.clientWidth / canvas.clientHeight;
             camera.updateProjectionMatrix();
           }
 
+          controls.update();
           renderer.render(this.scene, camera);
           requestAnimationFrame(render);
-          controls.update();
         }
 
         requestAnimationFrame(render);
       });
+  }
+
+  handlePlayEvent(): void {
+    this.animating = !this.animating;
   }
 }
