@@ -26,7 +26,7 @@ export class OrbitdataService {
       .then(response => response.json())
       .then(data => {
         const planet: Planet = {
-          name: data['json'],
+          name: data['name'],
           mass: data['mass'],
           radius: data['radius'],
           semimajorAxis: data['semimajorAxis'],
@@ -188,13 +188,8 @@ export class OrbitdataService {
   ephemeris(planet: Planet, time: number): [Vector3, Vector3] {
     const dt: number = time;
 
-
-
     const meanMotion = this.getMeanMotion(planet);
     const meanAnomaly = this.trueToMean(planet.trueAnomalyAtEpoch, planet.eccentricity) + meanMotion * dt;
-
-    // console.log(dt, meanMotion, meanAnomaly);
-
     const eccentricAnomaly = this.meanToEccentric(meanAnomaly, planet.eccentricity);
 
     const semiminorAxis = planet.semimajorAxis * Math.sqrt(1 - planet.eccentricity * planet.eccentricity);
