@@ -22,27 +22,27 @@ export class TimeComponent implements OnInit {
   }
 
   clickNext() {
-    const t0 = Date.now() / 1000;
-    this.orbitDataService.getCachedPlanetPosition(2035226060, t0)
-      .then(position => {
-        position.z *= this.zScale;
-        position.divideScalar(this.solarRadius * 1000);
-        const planet_radius = 2164.0
-        const geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius, 24, 24);
-        const material = new THREE.MeshBasicMaterial({color: 0xFF0000});
-        const sphere = new THREE.Mesh(geometry, material);
-        sphere.position.set(position.x, position.y, position.z);
-        this.scene.add(sphere);
-
-        const transparent_geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius * this.planetScale, 24, 24);
-        const transparent_material = new THREE.MeshStandardMaterial({
-          color: 0xFF0000,
-          transparent: true,
-          opacity: 0.25
-        });
-        const transparent_sphere = new THREE.Mesh(transparent_geometry, transparent_material);
-        transparent_sphere.position.set(position.x, position.y, position.z);
-        this.scene.add(transparent_sphere);
-      })
+    // const t0 = Date.now() / 1000;
+    // this.orbitDataService.getCachedPlanetPosition(2035226060, t0)
+    //   .then(position => {
+    //     position.z *= this.zScale;
+    //     position.divideScalar(this.solarRadius * 1000);
+    //     const planet_radius = 2164.0
+    //     const geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius, 24, 24);
+    //     const material = new THREE.MeshBasicMaterial({color: 0xFF0000});
+    //     const sphere = new THREE.Mesh(geometry, material);
+    //     sphere.position.set(position.x, position.y, position.z);
+    //     this.scene.add(sphere);
+    //
+    //     const transparent_geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius * this.planetScale, 24, 24);
+    //     const transparent_material = new THREE.MeshStandardMaterial({
+    //       color: 0xFF0000,
+    //       transparent: true,
+    //       opacity: 0.25
+    //     });
+    //     const transparent_sphere = new THREE.Mesh(transparent_geometry, transparent_material);
+    //     transparent_sphere.position.set(position.x, position.y, position.z);
+    //     this.scene.add(transparent_sphere);
+    //   })
   }
 }

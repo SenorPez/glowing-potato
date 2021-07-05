@@ -56,147 +56,85 @@ export class OrbitComponent implements OnInit {
       this.scene.add(sphere);
     }
 
-    {
-      Promise.all([
-        this.orbitDataService.getRpln(),
-        this.orbitDataService.getPlanet(1621827699, -1826843336, 2035226060),
-        this.orbitDataService.getPlanet(1621827699, -1826843336, -154475081),
-        this.orbitDataService.getPlanet(1621827699, -1826843336, 159569841)
-      ])
-        .then((promises: [Rpln: number, ...rest: Planet[]]) => {
-          const colors: number[] = [0xFF0000, 0xFFFF00, 0x00FF00];
-          const [Rpln, ...planets] = promises;
+    Promise.all([
+      this.orbitDataService.getPath(1621827699, -1826843336, 2035226060),
+      this.orbitDataService.getPath(1621827699, -1826843336, -154475081),
+      this.orbitDataService.getPath(1621827699, -1826843336, 159569841)
+    ])
+      .then((paths: Vector3[][]) => {
+        const colors: number[] = [0xFFB3B3, 0xFFFFB3, 0xB3FFB3];
+        paths.forEach((path, index) => {
+          path.forEach(position => {
+            position.z *= this.zScale;
+            position.divideScalar(this.solarRadius);
+          });
 
-          planets.forEach((planet, index) => {
-            const planet_radius = planet.radius * Rpln;
-            const geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius * this.planetScale, 24, 24);
-            const material = new THREE.MeshStandardMaterial({
-              color: colors[index],
-              transparent: true,
-              opacity: .99
-            });
-            const sphere = new THREE.Mesh(geometry, material);
-            const [position]: [Vector3, Vector3] = this.orbitDataService.ephemeris(planet, 0);
+          const geometry = new THREE.BufferGeometry().setFromPoints(path);
+          const material = new THREE.LineBasicMaterial({color: colors[index]});
+          const line = new THREE.Line(geometry, material);
+          this.scene.add(line);
+        });
+      });
+
+    Promise.all([
+      this.orbitDataService.getRpln(),
+      this.orbitDataService.getPlanet(1621827699, -1826843336, 2035226060),
+      this.orbitDataService.getPlanet(1621827699, -1826843336, -154475081),
+      this.orbitDataService.getPlanet(1621827699, -1826843336, 159569841)
+    ])
+      .then((promises: [Rpln: number, ...rest: Planet[]]) => {
+        const colors: number[] = [0xFF0000, 0xFFFF00, 0x00FF00];
+        const [Rpln, ...planets] = promises;
+
+        planets.forEach((planet, index) => {
+          const planet_radius = planet.radius * Rpln;
+          const geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius * this.planetScale, 24, 24);
+          const material = new THREE.MeshStandardMaterial({
+            color: colors[index],
+            transparent: true,
+            opacity: .99
+          });
+          const sphere = new THREE.Mesh(geometry, material);
+          const [position]: [Vector3, Vector3] = this.orbitDataService.ephemeris(planet, 0);
+          position.z *= this.zScale;
+          position.multiplyScalar(this._AU / this.solarRadius);
+          sphere.position.set(position.x, position.y, position.z);
+          sphere.name = planet.name;
+          this.scene.add(sphere);
+        })
+
+        return planets;
+      })
+      .then(planets => {
+        let animationStart: number;
+
+        const render = (time: number) => {
+          if (animationStart === undefined) animationStart = time;
+          const elapsed = (time - animationStart) * 0.001 * 86400 * 7;
+
+          planets.forEach(planet => {
+            const [position]: [Vector3, Vector3] = this.orbitDataService.ephemeris(planet, elapsed);
             position.z *= this.zScale;
             position.multiplyScalar(this._AU / this.solarRadius);
-            sphere.position.set(position.x, position.y, position.z);
-            sphere.name = planet.name;
-            this.scene.add(sphere);
+            const sphere = this.scene.getObjectByName(planet.name);
+            sphere?.position.set(position.x, position.y, position.z);
           })
 
-          return planets;
-        })
-        .then(planets => {
-          let animationStart: number;
-
-          const render = (time: number) => {
-            if (animationStart === undefined) animationStart = time;
-            const elapsed = (time - animationStart) * 0.001 * 86400 * 7;
-
-            planets.forEach(planet => {
-              const [position]: [Vector3, Vector3] = this.orbitDataService.ephemeris(planet, elapsed);
-              position.z *= this.zScale;
-              position.multiplyScalar(this._AU / this.solarRadius);
-              const sphere = this.scene.getObjectByName(planet.name);
-              sphere?.position.set(position.x, position.y, position.z);
-            })
-
-            const pixelRatio = window.devicePixelRatio;
-            const width = canvas.clientWidth * pixelRatio | 0;
-            const height = canvas.clientHeight * pixelRatio | 0;
-            if (canvas.width !== width || canvas.height !== height) {
-              renderer.setSize(width, height, false);
-              camera.aspect = canvas.clientWidth / canvas.clientHeight;
-              camera.updateProjectionMatrix();
-            }
-
-            renderer.render(this.scene, camera);
-            requestAnimationFrame(render);
-            controls.update();
+          const pixelRatio = window.devicePixelRatio;
+          const width = canvas.clientWidth * pixelRatio | 0;
+          const height = canvas.clientHeight * pixelRatio | 0;
+          if (canvas.width !== width || canvas.height !== height) {
+            renderer.setSize(width, height, false);
+            camera.aspect = canvas.clientWidth / canvas.clientHeight;
+            camera.updateProjectionMatrix();
           }
 
+          renderer.render(this.scene, camera);
           requestAnimationFrame(render);
-        });
-    }
+          controls.update();
+        }
 
-    // {
-    //   this.orbitDataService.getEarthPosition(t0)
-    //     .then(position => {
-    //       position.divideScalar(this.solarRadius * 1000);
-    //       position.z *= this.zScale;
-    //       const planet_radius = 6378.0
-    //       const geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius, 24, 24);
-    //       const material = new THREE.MeshBasicMaterial({color: 0x0000FF});
-    //       const sphere = new THREE.Mesh(geometry, material);
-    //       sphere.position.set(position.x, position.y, position.z)
-    //       this.scene.add(sphere)
-    //
-    //       const transparent_geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius * this.planetScale, 24, 24);
-    //       const transparent_material = new THREE.MeshStandardMaterial({
-    //         color: 0x0000FF,
-    //         transparent: true,
-    //         opacity: 0.25
-    //       });
-    //       const transparent_sphere = new THREE.Mesh(transparent_geometry, transparent_material);
-    //       transparent_sphere.position.set(position.x, position.y, position.z);
-    //       this.scene.add(transparent_sphere);
-    //     })
-    // }
-    //
-    // {
-    //   this.orbitDataService.getPath(1621827699, -1826843336, 2035226060, t0)
-    //     .then(positions => {
-    //       positions.forEach(position => {
-    //         position.divideScalar(this.solarRadius * 1000);
-    //         position.z *= this.zScale;
-    //       })
-    //       const geometry = new THREE.BufferGeometry().setFromPoints(positions)
-    //       const material = new THREE.LineBasicMaterial({color: 0xFFB3B3});
-    //       const line = new THREE.Line(geometry, material);
-    //       this.scene.add(line);
-    //     })
-    // }
-    //
-    // {
-    //   this.orbitDataService.getPath(1621827699, -1826843336, -154475081, t0)
-    //     .then(positions => {
-    //       positions.forEach(position => {
-    //         position.divideScalar(this.solarRadius * 1000);
-    //         position.z *= this.zScale;
-    //       })
-    //       const geometry = new THREE.BufferGeometry().setFromPoints(positions)
-    //       const material = new THREE.LineBasicMaterial({color: 0xFFFFB3});
-    //       const line = new THREE.Line(geometry, material);
-    //       this.scene.add(line);
-    //     })
-    // }
-    //
-    // {
-    //   this.orbitDataService.getPath(1621827699, -1826843336, 159569841, t0)
-    //     .then(positions => {
-    //       positions.forEach(position => {
-    //         position.divideScalar(this.solarRadius * 1000);
-    //         position.z *= this.zScale;
-    //       })
-    //       const geometry = new THREE.BufferGeometry().setFromPoints(positions)
-    //       const material = new THREE.LineBasicMaterial({color: 0xB3FFB3});
-    //       const line = new THREE.Line(geometry, material);
-    //       this.scene.add(line);
-    //     })
-    // }
-    //
-    // {
-    //   this.orbitDataService.getEarthPath(t0)
-    //     .then(positions => {
-    //       positions.forEach(position => {
-    //         position.divideScalar(this.solarRadius * 1000);
-    //         position.z *= this.zScale;
-    //       })
-    //       const geometry = new THREE.BufferGeometry().setFromPoints(positions)
-    //       const material = new THREE.LineBasicMaterial({color: 0xB3B3FF});
-    //       const line = new THREE.Line(geometry, material);
-    //       this.scene.add(line);
-    //     })
-    // }
+        requestAnimationFrame(render);
+      });
   }
 }
