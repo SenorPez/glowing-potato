@@ -13,21 +13,20 @@ import {MatSliderChange} from "@angular/material/slider";
 })
 export class OrbitComponent implements OnInit {
   // TODO: Add AU to API
-  _AU: number = 149598000000;
-
+  private _AU: number = 149598000000;
   // TODO: Add solar radius to API?
   private solarRadius: number = 800240666; // Solar radius in m. 1 Solar Radius = 1 axis unit.
 
-  private zScale: number = 20; // z Scale
-  private planetScale: number = 1000;
+  private frameScale: number = 7; // Default: 1 second = 7 days
+  private planetScale: number = 1000; // Default: Planet locators are 1000x bigger than planet
+  private zScale: number = 20; // Default: z Values are 20x larger
+
   scene !: THREE.Scene;
 
-  private animating: boolean = false;
-  private frameScale: number = 7; // Default: 1 second = 7 days
   elapsedTime: number = 0;
+  private animating: boolean = false;
 
   private orbitsGroupName: string = "grp_orbits";
-
   private planetLocators: Mesh[] = [];
 
   constructor(private orbitDataService: OrbitdataService) {
@@ -64,7 +63,7 @@ export class OrbitComponent implements OnInit {
       this.scene.add(sphere);
     }
 
-    this.orbitDataService.getLambert(true, 1621827699, -1826843336, 159569841, 2035226060)
+    this.orbitDataService.getLambert(true, this.getEpochDate(), 1621827699, -1826843336, 159569841, 2035226060)
       .then((path: Vector3[]) => {
         path.forEach(position => {
           position.z *= this.zScale;
@@ -77,7 +76,7 @@ export class OrbitComponent implements OnInit {
         this.scene.add(line);
       });
 
-    this.orbitDataService.getLambert(false, 1621827699, -1826843336, 159569841, 2035226060)
+    this.orbitDataService.getLambert(false, this.getEpochDate(), 1621827699, -1826843336, 159569841, 2035226060)
       .then((path: Vector3[]) => {
         path.forEach(position => {
           position.z *= this.zScale;
@@ -224,5 +223,18 @@ export class OrbitComponent implements OnInit {
 
   handlePlanetLocatorsEvent(showPlanetLocators: boolean) {
     this.planetLocators.forEach(planetLocator => planetLocator.visible = showPlanetLocators);
+  }
+
+  getEpochDate(): string {
+    const epochDate = new Date(2000, 0, 1);
+    epochDate.setDate(epochDate.getDate() + Math.floor(this.elapsedTime / 86400));
+
+    const returnDate = [
+      epochDate.getFullYear().toString(),
+      (epochDate.getMonth() + 1).toString().padStart(2, "0"),
+      epochDate.getDate().toString().padStart(2, "0")
+    ]
+
+    return returnDate.join("-") + " 00:00:00";
   }
 }
