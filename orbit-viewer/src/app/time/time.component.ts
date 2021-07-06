@@ -14,6 +14,7 @@ export class TimeComponent implements OnInit {
   @Output() playEvent = new EventEmitter<boolean>();
   @Output() seekEvent = new EventEmitter<boolean>();
   @Output() sliderChangeEvent = new EventEmitter<MatSliderChange>();
+  @Output() lambertEvent = new EventEmitter<boolean>();
 
   animating: boolean = false;
 
@@ -52,5 +53,13 @@ export class TimeComponent implements OnInit {
       "ST(" + String(Math.floor(this.elapsedTime / 86400 / 14) + 1) + ")"
     ];
     return returnDate.join(" ");
+  }
+
+  clickDvLambert() {
+    this.lambertEvent.emit(true);
+  }
+
+  clickFtLambert() {
+    this.lambertEvent.emit(false);
   }
 }

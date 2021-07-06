@@ -13,4 +13,11 @@
   <mat-slider min="1" max="35" value="7" (change)="newSliderChange($event)"></mat-slider>
   <br/>
   {{getDate()}}
+  <br/>
+  <button mat-raised-button color="primary" [disabled]="animating" (click)="clickDvLambert()">
+    dV
+  </button>
+  <button mat-raised-button color="accent" [disabled]="animating" (click)="clickFtLambert()">
+    FT
+  </button>
 </div>
