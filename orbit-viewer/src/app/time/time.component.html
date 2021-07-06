@@ -1,18 +1,16 @@
 <div id="timecontrols" xmlns="http://www.w3.org/1999/html">
-  <button mat-mini-fab color="primary">
+  <button mat-mini-fab color="primary" [disabled]="animating" (click)="clickBack()">
     <mat-icon>skip_previous</mat-icon>
   </button>
   <button mat-mini-fab color="primary" (click)="clickPlay()">
     <mat-icon *ngIf="animating">pause</mat-icon>
     <mat-icon *ngIf="!animating">play_arrow</mat-icon>
   </button>
-  <button mat-mini-fab color="primary">
+  <button mat-mini-fab color="primary" [disabled]="animating" (click)="clickForward()">
     <mat-icon>skip_next</mat-icon>
   </button>
   <br/>
   <mat-slider min="1" max="35" value="7" (change)="newSliderChange($event)"></mat-slider>
   <br/>
-  <span style="color: white">
-  {{getDate()}}
-        </span>
+  <span style="color: white">{{getDate()}}</span>
 </div>

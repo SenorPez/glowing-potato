@@ -12,7 +12,6 @@ import {MatSliderChange} from "@angular/material/slider";
   styleUrls: ['./orbit.component.css']
 })
 export class OrbitComponent implements OnInit {
-
   // TODO: Add AU to API
   _AU: number = 149598000000;
 
@@ -125,9 +124,8 @@ export class OrbitComponent implements OnInit {
           if (this.animating) {
             const sinceLastFrame = ((time - lastFrame) / 1000) * 86400 * this.frameScale;
             this.elapsedTime += sinceLastFrame;
-
-            planets.forEach(planet => drawPlanet(planet, this.elapsedTime));
           }
+          planets.forEach(planet => drawPlanet(planet, this.elapsedTime));
           lastFrame = time;
 
           const pixelRatio = window.devicePixelRatio;
@@ -144,8 +142,6 @@ export class OrbitComponent implements OnInit {
           renderer.render(this.scene, camera);
           requestAnimationFrame(render);
         }
-
-        planets.forEach(planet => drawPlanet(planet, 0));
         let lastFrame: number;
 
         requestAnimationFrame(render);
@@ -158,5 +154,20 @@ export class OrbitComponent implements OnInit {
 
   handleSliderChange(event: MatSliderChange) {
     if (event.value != null) this.frameScale = event.value;
+  }
+
+  handleSeekEvent(forward: boolean) {
+    const currentST = Math.floor(this.elapsedTime / 86400 / 14) + 1;
+    if (forward) {
+      this.elapsedTime = currentST * 14 * 86400;
+    } else {
+      const targetET = (currentST - 1) * 14 * 86400;
+      if (this.elapsedTime - targetET < 200) {
+        this.elapsedTime = (currentST - 2) * 14 * 86400;
+      } else {
+        this.elapsedTime = (currentST - 1) * 14 * 86400;
+      }
+      this.elapsedTime = Math.max(0, this.elapsedTime);
+    }
   }
 }

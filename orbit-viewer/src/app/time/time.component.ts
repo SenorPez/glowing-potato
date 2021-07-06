@@ -10,7 +10,9 @@ import {MatSliderChange} from "@angular/material/slider";
 export class TimeComponent implements OnInit {
   @Input() scene !: THREE.Scene;
   @Input() elapsedTime: number = 0;
+
   @Output() playEvent = new EventEmitter<boolean>();
+  @Output() seekEvent = new EventEmitter<boolean>();
   @Output() sliderChangeEvent = new EventEmitter<MatSliderChange>();
 
   animating: boolean = false;
@@ -19,6 +21,14 @@ export class TimeComponent implements OnInit {
   }
 
   ngOnInit(): void {
+  }
+
+  clickBack() {
+    this.seekEvent.emit(false);
+  }
+
+  clickForward() {
+    this.seekEvent.emit(true);
   }
 
   clickPlay() {

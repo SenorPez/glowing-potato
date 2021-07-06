@@ -1,3 +1,8 @@
-<app-time [scene]="scene" [elapsedTime]="elapsedTime" (playEvent)="handlePlayEvent()" (sliderChangeEvent)="handleSliderChange($event)"></app-time>
+<app-time
+  [scene]="scene"
+  [elapsedTime]="elapsedTime"
+  (playEvent)="handlePlayEvent()"
+  (sliderChangeEvent)="handleSliderChange($event)"
+  (seekEvent)="handleSeekEvent($event)"></app-time>
 
 <canvas id="orbitplot"></canvas>
