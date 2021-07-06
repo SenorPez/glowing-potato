@@ -25,6 +25,7 @@ export class OrbitComponent implements OnInit {
 
   private animating: boolean = false;
   private frameScale: number = 7; // Default: 1 second = 7 days
+  elapsedTime: number = 0;
 
   constructor(private orbitDataService: OrbitdataService) {
     this.scene = new THREE.Scene();
@@ -123,9 +124,9 @@ export class OrbitComponent implements OnInit {
 
           if (this.animating) {
             const sinceLastFrame = ((time - lastFrame) / 1000) * 86400 * this.frameScale;
-            elapsedTime += sinceLastFrame;
+            this.elapsedTime += sinceLastFrame;
 
-            planets.forEach(planet => drawPlanet(planet, elapsedTime));
+            planets.forEach(planet => drawPlanet(planet, this.elapsedTime));
           }
           lastFrame = time;
 
@@ -145,7 +146,6 @@ export class OrbitComponent implements OnInit {
         }
 
         planets.forEach(planet => drawPlanet(planet, 0));
-        let elapsedTime = 0;
         let lastFrame: number;
 
         requestAnimationFrame(render);
