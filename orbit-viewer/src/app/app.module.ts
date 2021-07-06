@@ -8,20 +8,24 @@ import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
 import {MatSliderModule} from "@angular/material/slider";
 import {FormsModule} from "@angular/forms";
+import { DisplayComponent } from './display/display.component';
+import {MatCheckboxModule} from "@angular/material/checkbox";
 
 @NgModule({
   declarations: [
     AppComponent,
     OrbitComponent,
-    TimeComponent
+    TimeComponent,
+    DisplayComponent
   ],
-  imports: [
-    BrowserModule,
-    MatIconModule,
-    MatButtonModule,
-    MatSliderModule,
-    FormsModule
-  ],
+    imports: [
+        BrowserModule,
+        MatIconModule,
+        MatButtonModule,
+        MatSliderModule,
+        FormsModule,
+        MatCheckboxModule
+    ],
   providers: [],
   bootstrap: [AppComponent]
 })

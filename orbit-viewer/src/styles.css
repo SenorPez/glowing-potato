@@ -26,6 +26,15 @@ app-root {
   position: absolute;
   top: 25px;
   left: 25px;
+  color: white;
+}
+
+#displaycontrols {
+  display: inline-block;
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  color: white;
 }
 
 .mat-slider-min-value .mat-slider-thumb {

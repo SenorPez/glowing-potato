@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import * as THREE from 'three';
-import {Vector3} from 'three';
+import {Group, Vector3} from 'three';
 import {OrbitdataService} from "../orbitdata.service";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {Planet} from "../planet";
@@ -25,6 +25,8 @@ export class OrbitComponent implements OnInit {
   private animating: boolean = false;
   private frameScale: number = 7; // Default: 1 second = 7 days
   elapsedTime: number = 0;
+
+  private orbitsGroupName: string = "grp_orbits"
 
   constructor(private orbitDataService: OrbitdataService) {
     this.scene = new THREE.Scene();
@@ -67,6 +69,9 @@ export class OrbitComponent implements OnInit {
     ])
       .then((paths: Vector3[][]) => {
         const colors: number[] = [0xFFB3B3, 0xFFFFB3, 0xB3FFB3];
+        const orbitsGroup: Group = new THREE.Group();
+        orbitsGroup.name = this.orbitsGroupName;
+
         paths.forEach((path, index) => {
           path.forEach(position => {
             position.z *= this.zScale;
@@ -76,8 +81,9 @@ export class OrbitComponent implements OnInit {
           const geometry = new THREE.BufferGeometry().setFromPoints(path);
           const material = new THREE.LineBasicMaterial({color: colors[index]});
           const line = new THREE.Line(geometry, material);
-          this.scene.add(line);
+          orbitsGroup.add(line);
         });
+        this.scene.add(orbitsGroup);
       });
 
     Promise.all([
@@ -169,5 +175,10 @@ export class OrbitComponent implements OnInit {
       }
       this.elapsedTime = Math.max(0, this.elapsedTime);
     }
+  }
+
+  handleOrbitsEvent(showOrbits: boolean) {
+    const orbitsGroup = this.scene.getObjectByName(this.orbitsGroupName);
+    if (orbitsGroup !== undefined) orbitsGroup.visible = showOrbits;
   }
 }
