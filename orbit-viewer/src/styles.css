@@ -27,3 +27,8 @@ app-root {
   top: 25px;
   left: 25px;
 }
+
+.mat-slider-min-value .mat-slider-thumb {
+  background-color: #AAAAAA !important;
+  border-color: #AAAAAA !important;
+}

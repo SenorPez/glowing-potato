@@ -6,6 +6,8 @@ import { OrbitComponent } from './orbit/orbit.component';
 import { TimeComponent } from './time/time.component';
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
+import {MatSliderModule} from "@angular/material/slider";
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
@@ -16,7 +18,9 @@ import {MatButtonModule} from "@angular/material/button";
   imports: [
     BrowserModule,
     MatIconModule,
-    MatButtonModule
+    MatButtonModule,
+    MatSliderModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

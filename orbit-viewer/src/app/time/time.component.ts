@@ -1,5 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import * as THREE from "three";
+import {MatSliderChange} from "@angular/material/slider";
 
 @Component({
   selector: 'app-time',
@@ -9,6 +10,7 @@ import * as THREE from "three";
 export class TimeComponent implements OnInit {
   @Input() scene !: THREE.Scene;
   @Output() playEvent = new EventEmitter<boolean>();
+  @Output() sliderChangeEvent = new EventEmitter<MatSliderChange>();
 
   animating: boolean = false;
 
@@ -21,5 +23,9 @@ export class TimeComponent implements OnInit {
   clickPlay() {
     this.animating = !this.animating;
     this.playEvent.emit();
+  }
+
+  newSliderChange($event: MatSliderChange) {
+    this.sliderChangeEvent.emit($event);
   }
 }

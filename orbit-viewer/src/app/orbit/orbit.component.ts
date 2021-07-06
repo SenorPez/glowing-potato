@@ -4,6 +4,7 @@ import {Vector3} from 'three';
 import {OrbitdataService} from "../orbitdata.service";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {Planet} from "../planet";
+import {MatSliderChange} from "@angular/material/slider";
 
 @Component({
   selector: 'app-orbit',
@@ -23,6 +24,7 @@ export class OrbitComponent implements OnInit {
   scene !: THREE.Scene;
 
   private animating: boolean = false;
+  private frameScale: number = 7; // Default: 1 second = 7 days
 
   constructor(private orbitDataService: OrbitdataService) {
     this.scene = new THREE.Scene();
@@ -108,26 +110,24 @@ export class OrbitComponent implements OnInit {
         return planets;
       })
       .then(planets => {
-        let animationStart: number;
-        let elapsed: number = 0;
-        let lastStop: number = 0;
+        const drawPlanet = (planet: Planet, elapsedTime: number) => {
+          const [position]: [Vector3, Vector3] = this.orbitDataService.ephemeris(planet, elapsedTime);
+          position.z *= this.zScale;
+          position.multiplyScalar(this._AU / this.solarRadius);
+          const sphere = this.scene.getObjectByName(planet.name);
+          sphere?.position.set(position.x, position.y, position.z);
+        }
 
         const render = (time: number) => {
-          if (this.animating || animationStart === undefined) {
-            if (animationStart === undefined) animationStart = time;
-            elapsed = (time - (animationStart + lastStop));
-            const frameTime = (elapsed / 1000) * 60 * 60 * 24 * 7;
+          if (lastFrame === undefined) lastFrame = time;
 
-            planets.forEach(planet => {
-              const [position]: [Vector3, Vector3] = this.orbitDataService.ephemeris(planet, frameTime);
-              position.z *= this.zScale;
-              position.multiplyScalar(this._AU / this.solarRadius);
-              const sphere = this.scene.getObjectByName(planet.name);
-              sphere?.position.set(position.x, position.y, position.z);
-            })
-          } else {
-            lastStop = (time - animationStart - elapsed);
+          if (this.animating) {
+            const sinceLastFrame = ((time - lastFrame) / 1000) * 86400 * this.frameScale;
+            elapsedTime += sinceLastFrame;
+
+            planets.forEach(planet => drawPlanet(planet, elapsedTime));
           }
+          lastFrame = time;
 
           const pixelRatio = window.devicePixelRatio;
           const width = canvas.clientWidth * pixelRatio | 0;
@@ -144,11 +144,19 @@ export class OrbitComponent implements OnInit {
           requestAnimationFrame(render);
         }
 
+        planets.forEach(planet => drawPlanet(planet, 0));
+        let elapsedTime = 0;
+        let lastFrame: number;
+
         requestAnimationFrame(render);
       });
   }
 
   handlePlayEvent(): void {
     this.animating = !this.animating;
+  }
+
+  handleSliderChange(event: MatSliderChange) {
+    if (event.value != null) this.frameScale = event.value;
   }
 }
