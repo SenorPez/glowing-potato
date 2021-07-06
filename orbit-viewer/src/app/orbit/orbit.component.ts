@@ -64,6 +64,19 @@ export class OrbitComponent implements OnInit {
       this.scene.add(sphere);
     }
 
+    this.orbitDataService.getLambert(1621827699, -1826843336, 159569841, 2035226060)
+      .then((path: Vector3[]) => {
+        path.forEach(position => {
+          position.z *= this.zScale;
+          position.divideScalar(this.solarRadius);
+        });
+
+        const geometry = new THREE.BufferGeometry().setFromPoints(path);
+        const material = new THREE.LineBasicMaterial({color: 0xFF00FF})
+        const line = new THREE.Line(geometry, material);
+        this.scene.add(line);
+      });
+
     Promise.all([
       this.orbitDataService.getPath(1621827699, -1826843336, 2035226060),
       this.orbitDataService.getPath(1621827699, -1826843336, -154475081),

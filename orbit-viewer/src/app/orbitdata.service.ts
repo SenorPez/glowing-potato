@@ -10,7 +10,30 @@ export class OrbitdataService {
   private flaskApp: string;
 
   constructor() {
-    this.flaskApp = 'https://www.senorpez.com/tw';
+    // this.flaskApp = 'https://www.senorpez.com/tw';
+    this.flaskApp = 'http://127.0.0.1:5000'
+  }
+
+  getLambert(system_id: number, star_id: number, origin_planet_id: number, target_planet_id: number): Promise<Vector3[]> {
+    return fetch(this.flaskApp + '/orbit/lambert', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        'system_id': system_id,
+        'star_id': star_id,
+        'origin_planet_id': origin_planet_id,
+        'target_planet_id': target_planet_id,
+        'launch_date': "2000-01-01 00:00:00"
+      })
+    })
+      .then(response => response.json())
+      .then(data => {
+        return data.x.map(function (element: number, index: number) {
+          return new Vector3(element, data.y[index], data.z[index]);
+        });
+      });
   }
 
   getPath(system_id: number, star_id: number, planet_id: number): Promise<Vector3[]> {

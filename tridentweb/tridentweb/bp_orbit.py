@@ -3,11 +3,13 @@ from datetime import datetime
 from flask import Blueprint, request as flask_request, has_app_context, jsonify
 from flask_cors import cross_origin
 from numpy import linspace, array
-from pykep import epoch_from_string, SEC2DAY, epoch
+from pykep import epoch_from_string, SEC2DAY, epoch, DAY2SEC, lambert_problem
 from pykep.planet import jpl_lp
 
 from tridentweb.constant import Constant
 from tridentweb.planet import Planet
+from tridentweb.pykep_addons import lambert_positions
+from tridentweb.star import Star
 
 bp = Blueprint("orbit", __name__, url_prefix="/orbit")
 
@@ -64,6 +66,43 @@ def earth_path():
         x[i] = r[0]
         y[i] = r[1]
         z[i] = r[2]
+
+    return jsonify(
+        x=x.tolist(),
+        y=y.tolist(),
+        z=z.tolist()) if has_app_context() else (x, y, z)
+
+
+@bp.route("/lambert", methods=['POST'])
+@cross_origin()
+def lambert_transfer():
+    star = Star(
+        int(flask_request.json['system_id']),
+        int(flask_request.json['star_id']))
+    origin = Planet(
+        int(flask_request.json['system_id']),
+        int(flask_request.json['star_id']),
+        int(flask_request.json['origin_planet_id']))
+    target = Planet(
+        int(flask_request.json['system_id']),
+        int(flask_request.json['star_id']),
+        int(flask_request.json['target_planet_id']))
+
+    # TODO: Customizable orbits
+    origin_orbit_radius = origin.planet.radius + 200000
+    target_orbit_radius = target.planet.radius + 200000
+
+    # TODO: Customizable flight time
+    flight_time = 60
+    t1 = epoch_from_string(flask_request.json['launch_date'])
+    t2 = epoch(int(t1.mjd2000) + flight_time)
+    dt = (t2.mjd - t1.mjd) * DAY2SEC
+
+    r1, v1 = origin.planet.eph(t1)
+    r2, v2 = target.planet.eph(t2)
+    lambert = lambert_problem(list(r1), list(r2), dt, star.gm)
+
+    x, y, z = lambert_positions(lambert)
 
     return jsonify(
         x=x.tolist(),
