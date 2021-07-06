@@ -26,7 +26,8 @@ export class OrbitComponent implements OnInit {
   private frameScale: number = 7; // Default: 1 second = 7 days
   elapsedTime: number = 0;
 
-  private orbitsGroupName: string = "grp_orbits"
+  private orbitsGroupName: string = "grp_orbits";
+  private planetLocatorsGroupName: string = "grp_planetLocators";
 
   constructor(private orbitDataService: OrbitdataService) {
     this.scene = new THREE.Scene();
@@ -96,6 +97,9 @@ export class OrbitComponent implements OnInit {
         const colors: number[] = [0xFF0000, 0xFFFF00, 0x00FF00];
         const [Rpln, ...planets] = promises;
 
+        const planetLocatorsGroup: Group = new THREE.Group();
+        planetLocatorsGroup.name = this.planetLocatorsGroupName;
+
         planets.forEach((planet, index) => {
           const planet_radius = planet.radius * Rpln;
           const geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius * this.planetScale, 24, 24);
@@ -110,8 +114,9 @@ export class OrbitComponent implements OnInit {
           position.multiplyScalar(this._AU / this.solarRadius);
           sphere.position.set(position.x, position.y, position.z);
           sphere.name = planet.name;
-          this.scene.add(sphere);
-        })
+          planetLocatorsGroup.add(sphere);
+        });
+        this.scene.add(planetLocatorsGroup);
 
         return planets;
       })
@@ -120,7 +125,7 @@ export class OrbitComponent implements OnInit {
           const [position]: [Vector3, Vector3] = this.orbitDataService.ephemeris(planet, elapsedTime);
           position.z *= this.zScale;
           position.multiplyScalar(this._AU / this.solarRadius);
-          const sphere = this.scene.getObjectByName(planet.name);
+          const sphere = this.scene.getObjectByName(this.planetLocatorsGroupName)?.getObjectByName(planet.name);
           sphere?.position.set(position.x, position.y, position.z);
         }
 
@@ -180,5 +185,10 @@ export class OrbitComponent implements OnInit {
   handleOrbitsEvent(showOrbits: boolean) {
     const orbitsGroup = this.scene.getObjectByName(this.orbitsGroupName);
     if (orbitsGroup !== undefined) orbitsGroup.visible = showOrbits;
+  }
+
+  handlePlanetLocatorsEvent(showPlanetLocators: boolean) {
+    const planetLocatorsGroup = this.scene.getObjectByName(this.planetLocatorsGroupName);
+    if (planetLocatorsGroup !== undefined) planetLocatorsGroup.visible = showPlanetLocators;
   }
 }

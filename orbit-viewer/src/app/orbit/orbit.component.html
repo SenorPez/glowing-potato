@@ -6,6 +6,7 @@
   (seekEvent)="handleSeekEvent($event)"></app-time>
 
 <app-display
-(orbitsEvent)="handleOrbitsEvent($event)"></app-display>
+  (orbitsEvent)="handleOrbitsEvent($event)"
+  (planetLocatorsEvent)="handlePlanetLocatorsEvent($event)"></app-display>
 
 <canvas id="orbitplot"></canvas>

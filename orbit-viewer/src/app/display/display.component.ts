@@ -8,10 +8,15 @@ import {MatCheckboxChange} from "@angular/material/checkbox";
 })
 export class DisplayComponent {
   @Output() orbitsEvent = new EventEmitter<boolean>();
+  @Output() planetLocatorsEvent = new EventEmitter<boolean>();
 
   constructor() { }
 
   changeOrbits($event: MatCheckboxChange) {
     this.orbitsEvent.emit($event.checked);
+  }
+
+  changePlanetLocators($event: MatCheckboxChange) {
+    this.planetLocatorsEvent.emit($event.checked);
   }
 }
