@@ -14,8 +14,10 @@ export class OrbitdataService {
     this.flaskApp = 'http://127.0.0.1:5000'
   }
 
-  getLambert(system_id: number, star_id: number, origin_planet_id: number, target_planet_id: number): Promise<Vector3[]> {
-    return fetch(this.flaskApp + '/orbit/lambert', {
+  getLambert(min_delta_v: boolean, system_id: number, star_id: number, origin_planet_id: number, target_planet_id: number): Promise<Vector3[]> {
+    const transfer_type = min_delta_v ? '/orbit/dvlambert' : '/orbit/ftlambert';
+
+    return fetch(this.flaskApp + transfer_type, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

@@ -3,8 +3,32 @@
 """
 
 from math import atan2, cos, pi, sin, sqrt
+
 from numpy import array, linspace
+from numpy.linalg import norm
 from pykep import SEC2DAY, epoch, propagate_lagrangian
+
+
+def transfer_delta_v(vp_input, vs_input, mu, orbit_radius):
+    """Calculates the delta-v requirement for an injection or insertion maneuver.
+
+    Parameters:
+        vp_input: [x, y, z] components of planetary velocity.
+            Typically created by pykep.planet.eph(t)
+        vs_input: [x, y, z] components of spacecraft velocity.
+            Typically created by the solution to a Lambert problem.
+        mu: Gravitational parameter for planet.
+        orbit_radius: Circular orbit radius around planet.
+
+    Returns:
+        delta_v: Delta-v requirement for the maneuver.
+    """
+    vp_vec = array(vp_input)
+    vs_vec = array(vs_input)
+    vsp_vec = vs_vec - vp_vec
+    vsp = norm(vsp_vec)
+    vo = sqrt(vsp * vsp + 2 * mu / orbit_radius)
+    return vo - sqrt(mu / orbit_radius)
 
 
 def orbit_positions(planet, t0=0, divisions=60):

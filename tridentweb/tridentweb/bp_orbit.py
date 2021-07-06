@@ -2,13 +2,12 @@ from datetime import datetime
 
 from flask import Blueprint, request as flask_request, has_app_context, jsonify
 from flask_cors import cross_origin
-from numpy import linspace, array
-from pykep import epoch_from_string, SEC2DAY, epoch, DAY2SEC, lambert_problem
+from pykep import epoch_from_string, epoch, DAY2SEC, lambert_problem
 from pykep.planet import jpl_lp
 
 from tridentweb.constant import Constant
 from tridentweb.planet import Planet
-from tridentweb.pykep_addons import lambert_positions
+from tridentweb.pykep_addons import orbit_positions, transfer_delta_v, lambert_positions
 from tridentweb.star import Star
 
 bp = Blueprint("orbit", __name__, url_prefix="/orbit")
@@ -49,23 +48,7 @@ def earth_position():
 @bp.route("/earthpath", methods=['POST'])
 @cross_origin()
 def earth_path():
-    earth = jpl_lp('earth')
-    t0 = epoch_from_string("{:%Y-%m-%d %H:%M:%S}".format(
-        datetime.fromtimestamp(flask_request.json['t0'])))
-
-    divisions = 60
-    orbit_period = earth.compute_period(t0) * SEC2DAY
-    when = linspace(0, orbit_period, divisions)
-
-    x = array([0.0] * divisions)
-    y = array([0.0] * divisions)
-    z = array([0.0] * divisions)
-
-    for i, day in enumerate(when):
-        r, _ = earth.eph(epoch(t0.mjd2000 + day))
-        x[i] = r[0]
-        y[i] = r[1]
-        z[i] = r[2]
+    x, y, z = orbit_positions(jpl_lp('earth'))
 
     return jsonify(
         x=x.tolist(),
@@ -73,41 +56,101 @@ def earth_path():
         z=z.tolist()) if has_app_context() else (x, y, z)
 
 
-@bp.route("/lambert", methods=['POST'])
-@cross_origin()
-def lambert_transfer():
+def lambert_transfer(request_data):
     star = Star(
-        int(flask_request.json['system_id']),
-        int(flask_request.json['star_id']))
+        int(request_data.json['system_id']),
+        int(request_data.json['star_id']))
     origin = Planet(
-        int(flask_request.json['system_id']),
-        int(flask_request.json['star_id']),
-        int(flask_request.json['origin_planet_id']))
+        int(request_data.json['system_id']),
+        int(request_data.json['star_id']),
+        int(request_data.json['origin_planet_id']))
     target = Planet(
-        int(flask_request.json['system_id']),
-        int(flask_request.json['star_id']),
-        int(flask_request.json['target_planet_id']))
+        int(request_data.json['system_id']),
+        int(request_data.json['star_id']),
+        int(request_data.json['target_planet_id']))
 
     # TODO: Customizable orbits
     origin_orbit_radius = origin.planet.radius + 200000
     target_orbit_radius = target.planet.radius + 200000
 
-    # TODO: Customizable flight time
-    flight_time = 60
-    t1 = epoch_from_string(flask_request.json['launch_date'])
-    t2 = epoch(int(t1.mjd2000) + flight_time)
-    dt = (t2.mjd - t1.mjd) * DAY2SEC
+    # TODO: Customizable max flight time
+    MAX_FLIGHT_TIME = 147  # 75% of 28 week endurance
 
-    r1, v1 = origin.planet.eph(t1)
-    r2, v2 = target.planet.eph(t2)
-    lambert = lambert_problem(list(r1), list(r2), dt, star.gm)
+    lambert_dvs = list()
 
-    x, y, z = lambert_positions(lambert)
+    t1 = epoch_from_string(request_data.json['launch_date'])
+
+    for flight_time in range(1, MAX_FLIGHT_TIME + 1):
+        t2 = epoch(int(t1.mjd2000) + flight_time)
+        dt = (t2.mjd - t1.mjd) * DAY2SEC
+
+        r1, v1 = origin.planet.eph(t1)
+        r2, v2 = target.planet.eph(t2)
+        lambert = lambert_problem(list(r1), list(r2), dt, star.gm)
+
+        lambert_dvs.append(
+            {'flight_time': flight_time,
+             'dv':
+                 transfer_delta_v(
+                     v1,
+                     lambert.get_v1()[0],
+                     origin.planet.mu_self,
+                     origin_orbit_radius
+                 )
+                 + transfer_delta_v(
+                     v2,
+                     lambert.get_v2()[0],
+                     target.planet.mu_self,
+                     target_orbit_radius
+                 ),
+             'lambert': lambert
+             }
+        )
+
+    return sorted(lambert_dvs, key=lambda item: item['flight_time'])
+
+
+@bp.route("/dvlambert", methods=['POST'])
+@cross_origin()
+def dv_lambert_transfer():
+    sorted_solutions = lambert_transfer(flask_request)
+
+    min_delta_v = min([x['dv'] for x in sorted_solutions])
+    result = next(filter(lambda x: x['dv'] == min_delta_v, sorted_solutions))
+
+    x, y, z = lambert_positions(result['lambert'])
+    dv = result['dv']
+    flight_time = result['flight_time']
 
     return jsonify(
         x=x.tolist(),
         y=y.tolist(),
-        z=z.tolist()) if has_app_context() else (x, y, z)
+        z=z.tolist(),
+        dv=dv,
+        flight_time=flight_time) if has_app_context() else ()
+
+
+@bp.route("/ftlambert", methods=['POST'])
+@cross_origin()
+def ft_lambert_transfer():
+    sorted_solutions = lambert_transfer(flask_request)
+
+    # TODO: Customizable max dV
+    MAX_DV = 71250  # 75% of 95 km/sec
+
+    min_ft = min([x['flight_time'] for x in sorted_solutions if x['dv'] <= MAX_DV])
+    result = next(filter(lambda x: x['flight_time'] == min_ft, sorted_solutions))
+
+    x, y, z = lambert_positions(result['lambert'])
+    dv = result['dv']
+    flight_time = result['flight_time']
+
+    return jsonify(
+        x=x.tolist(),
+        y=y.tolist(),
+        z=z.tolist(),
+        dv=dv,
+        flight_time=flight_time) if has_app_context() else ()
 
 
 @bp.route("/path", methods=['POST'])
@@ -118,19 +161,7 @@ def orbit_path():
         int(flask_request.json['star_id']),
         int(flask_request.json['planet_id']))
 
-    divisions = 60
-    orbit_period = planet.planet.compute_period(epoch(0)) * SEC2DAY
-    when = linspace(0, orbit_period, divisions)
-
-    x = array([0.0] * divisions)
-    y = array([0.0] * divisions)
-    z = array([0.0] * divisions)
-
-    for i, day in enumerate(when):
-        r, _ = planet.planet.eph(epoch(day))
-        x[i] = r[0]
-        y[i] = r[1]
-        z[i] = r[2]
+    x, y, z = orbit_positions(planet.planet)
 
     return jsonify(
         x=x.tolist(),
