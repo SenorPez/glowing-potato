@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import * as THREE from 'three';
-import {Group, Vector3} from 'three';
+import {Group, Mesh, Vector3} from 'three';
 import {OrbitdataService} from "../orbitdata.service";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {Planet} from "../planet";
@@ -27,7 +27,8 @@ export class OrbitComponent implements OnInit {
   elapsedTime: number = 0;
 
   private orbitsGroupName: string = "grp_orbits";
-  private planetLocatorsGroupName: string = "grp_planetLocators";
+
+  private planetLocators: Mesh[] = [];
 
   constructor(private orbitDataService: OrbitdataService) {
     this.scene = new THREE.Scene();
@@ -97,26 +98,35 @@ export class OrbitComponent implements OnInit {
         const colors: number[] = [0xFF0000, 0xFFFF00, 0x00FF00];
         const [Rpln, ...planets] = promises;
 
-        const planetLocatorsGroup: Group = new THREE.Group();
-        planetLocatorsGroup.name = this.planetLocatorsGroupName;
-
         planets.forEach((planet, index) => {
           const planet_radius = planet.radius * Rpln;
-          const geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius * this.planetScale, 24, 24);
-          const material = new THREE.MeshStandardMaterial({
+
+          const planet_geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius, 24, 24);
+          const locator_geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius * this.planetScale, 24, 24);
+
+          const planet_material = new THREE.MeshStandardMaterial({
+            color: colors[index]
+          });
+          const locator_material = new THREE.MeshStandardMaterial({
             color: colors[index],
             transparent: true,
-            opacity: .99
+            opacity: 0.50
           });
-          const sphere = new THREE.Mesh(geometry, material);
+
+          const planet_sphere = new THREE.Mesh(planet_geometry, planet_material);
+          const locator_sphere = new THREE.Mesh(locator_geometry, locator_material);
+
+          planet_sphere.name = planet.name;
+          planet_sphere.add(locator_sphere);
+
           const [position]: [Vector3, Vector3] = this.orbitDataService.ephemeris(planet, 0);
           position.z *= this.zScale;
           position.multiplyScalar(this._AU / this.solarRadius);
-          sphere.position.set(position.x, position.y, position.z);
-          sphere.name = planet.name;
-          planetLocatorsGroup.add(sphere);
+          planet_sphere.position.set(position.x, position.y, position.z);
+
+          this.planetLocators.push(locator_sphere);
+          this.scene.add(planet_sphere);
         });
-        this.scene.add(planetLocatorsGroup);
 
         return planets;
       })
@@ -125,8 +135,7 @@ export class OrbitComponent implements OnInit {
           const [position]: [Vector3, Vector3] = this.orbitDataService.ephemeris(planet, elapsedTime);
           position.z *= this.zScale;
           position.multiplyScalar(this._AU / this.solarRadius);
-          const sphere = this.scene.getObjectByName(this.planetLocatorsGroupName)?.getObjectByName(planet.name);
-          sphere?.position.set(position.x, position.y, position.z);
+          this.scene.getObjectByName(planet.name)?.position.set(position.x, position.y, position.z);
         }
 
         const render = (time: number) => {
@@ -188,7 +197,6 @@ export class OrbitComponent implements OnInit {
   }
 
   handlePlanetLocatorsEvent(showPlanetLocators: boolean) {
-    const planetLocatorsGroup = this.scene.getObjectByName(this.planetLocatorsGroupName);
-    if (planetLocatorsGroup !== undefined) planetLocatorsGroup.visible = showPlanetLocators;
+    this.planetLocators.forEach(planetLocator => planetLocator.visible = showPlanetLocators);
   }
 }
