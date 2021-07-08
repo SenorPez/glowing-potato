@@ -25,6 +25,7 @@ export class OrbitComponent implements OnInit {
 
   elapsedTime: number = 0;
   private animating: boolean = false;
+  working: boolean = true;
 
   private orbitsGroupName: string = "grp_orbits";
   private planetLocators: Mesh[] = [];
@@ -162,6 +163,7 @@ export class OrbitComponent implements OnInit {
           requestAnimationFrame(render);
         }
         let lastFrame: number;
+        this.working = false;
 
         requestAnimationFrame(render);
       });
@@ -214,6 +216,7 @@ export class OrbitComponent implements OnInit {
 
   handleLambertEvent(min_delta_v: boolean) {
     const color = min_delta_v ? 0xFF00FF : 0x00FFFF;
+    this.working = true;
 
     this.orbitDataService.getLambert(min_delta_v, this.getEpochDate(), 1621827699, -1826843336, 159569841, 2035226060)
       .then((path: Vector3[]) => {
@@ -226,6 +229,7 @@ export class OrbitComponent implements OnInit {
         const material = new THREE.LineBasicMaterial({color: color})
         const line = new THREE.Line(geometry, material);
         this.scene.add(line);
-      });
+      })
+      .finally(() => this.working = false);
   }
 }

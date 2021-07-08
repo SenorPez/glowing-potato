@@ -37,6 +37,16 @@ app-root {
   color: white;
 }
 
+#progress {
+  padding: 40px;
+  display: inline-block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background-color: crimson;
+  color: white;
+}
+
 .mat-slider-min-value .mat-slider-thumb {
   background-color: #AAAAAA !important;
   border-color: #AAAAAA !important;

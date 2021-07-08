@@ -1,23 +1,23 @@
 <div id="timecontrols" xmlns="http://www.w3.org/1999/html">
-  <button mat-mini-fab color="primary" [disabled]="animating" (click)="clickBack()">
+  <button mat-mini-fab color="primary" [disabled]="animating || working" (click)="clickBack()">
     <mat-icon>skip_previous</mat-icon>
   </button>
-  <button mat-mini-fab color="primary" (click)="clickPlay()">
+  <button mat-mini-fab color="primary" (click)="clickPlay()" [disabled]="working">
     <mat-icon *ngIf="animating">pause</mat-icon>
     <mat-icon *ngIf="!animating">play_arrow</mat-icon>
   </button>
-  <button mat-mini-fab color="primary" [disabled]="animating" (click)="clickForward()">
+  <button mat-mini-fab color="primary" [disabled]="animating || working" (click)="clickForward()">
     <mat-icon>skip_next</mat-icon>
   </button>
   <br/>
-  <mat-slider min="1" max="35" value="7" (change)="newSliderChange($event)"></mat-slider>
+  <mat-slider min="1" max="35" value="7" (change)="newSliderChange($event)" [disabled]="working"></mat-slider>
   <br/>
-  {{getDate()}}
+  <span [hidden]="working"> {{getDate()}} </span>
   <br/>
-  <button mat-raised-button color="primary" [disabled]="animating" (click)="clickDvLambert()">
+  <button mat-raised-button color="primary" [disabled]="animating || working" (click)="clickDvLambert()">
     dV
   </button>
-  <button mat-raised-button color="accent" [disabled]="animating" (click)="clickFtLambert()">
+  <button mat-raised-button color="accent" [disabled]="animating || working" (click)="clickFtLambert()">
     FT
   </button>
 </div>

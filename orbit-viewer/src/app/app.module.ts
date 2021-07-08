@@ -10,13 +10,16 @@ import {MatSliderModule} from "@angular/material/slider";
 import {FormsModule} from "@angular/forms";
 import { DisplayComponent } from './display/display.component';
 import {MatCheckboxModule} from "@angular/material/checkbox";
+import { ProgressComponent } from './progress/progress.component';
+import {MatProgressBarModule} from "@angular/material/progress-bar";
 
 @NgModule({
   declarations: [
     AppComponent,
     OrbitComponent,
     TimeComponent,
-    DisplayComponent
+    DisplayComponent,
+    ProgressComponent
   ],
     imports: [
         BrowserModule,
@@ -24,7 +27,8 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
         MatButtonModule,
         MatSliderModule,
         FormsModule,
-        MatCheckboxModule
+        MatCheckboxModule,
+        MatProgressBarModule
     ],
   providers: [],
   bootstrap: [AppComponent]
