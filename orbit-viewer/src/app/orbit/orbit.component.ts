@@ -146,7 +146,6 @@ export class OrbitComponent implements OnInit {
           const [position]: [Vector3, Vector3] = this.orbitDataService.propagate(transfer, transferTime);
           position.z *= this.zScale;
           position.divideScalar(this.solarRadius);
-
           this.scene.getObjectByName(transfer.name)?.position.set(position.x, position.y, position.z);
         }
 
@@ -158,7 +157,23 @@ export class OrbitComponent implements OnInit {
             this.elapsedTime += sinceLastFrame;
           }
           planets.forEach(planet => drawPlanet(planet, this.elapsedTime));
-          this.transfers.forEach(transfer => drawTransfer(transfer, this.elapsedTime));
+          this.transfers.forEach((transfer, index) => {
+            const transferSphere = this.scene.getObjectByName(transfer.name);
+            if (transferSphere !== undefined) {
+              const target = new Vector3(transfer.target.x, transfer.target.y, transfer.target.z);
+              target.z *= this.zScale;
+              target.divideScalar(this.solarRadius);
+              console.log(transferSphere.position.distanceTo(target));
+              if (transferSphere.position.distanceTo(target) < 0.5) {
+                this.transfers.splice(index, 1);
+                const transferPath = this.scene.getObjectByName(this.orbitsGroupName)?.getObjectByName(transfer.name + "-Path");
+                if (transferPath !== undefined) this.scene.getObjectByName(this.orbitsGroupName)?.remove(transferPath);
+                this.scene.remove(transferSphere);
+              } else {
+                drawTransfer(transfer, this.elapsedTime);
+              }
+            }
+          });
 
           lastFrame = time;
 
@@ -233,7 +248,7 @@ export class OrbitComponent implements OnInit {
     this.working = true;
 
     this.orbitDataService.getLambert(min_delta_v, this.getEpochDate(), 1621827699, -1826843336, 159569841, 2035226060)
-      .then(([path, r1, v1, mu]) => {
+      .then(([path, r1, r2, v1, mu]) => {
 
         path.forEach(position => {
           position.z *= this.zScale;
@@ -244,6 +259,7 @@ export class OrbitComponent implements OnInit {
           mu: mu,
           name: min_delta_v ? "MinDV" : "MinFT",
           position: r1,
+          target: r2,
           velocity: v1,
           startTime: this.elapsedTime
         }

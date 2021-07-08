@@ -120,6 +120,7 @@ def dv_lambert_transfer():
 
     x, y, z = lambert_positions(result['lambert'])
     r1 = result['lambert'].get_r1()
+    r2 = result['lambert'].get_r2()
     v1 = result['lambert'].get_v1()[0]
 
     dv = result['dv']
@@ -130,6 +131,7 @@ def dv_lambert_transfer():
         y=y.tolist(),
         z=z.tolist(),
         r1=r1,
+        r2=r2,
         v1=v1,
         mu=mu,
         dv=dv,
@@ -149,6 +151,7 @@ def ft_lambert_transfer():
 
     x, y, z = lambert_positions(result['lambert'])
     r1 = result['lambert'].get_r1()
+    r2 = result['lambert'].get_r2()
     v1 = result['lambert'].get_v1()[0]
 
     dv = result['dv']
@@ -159,6 +162,7 @@ def ft_lambert_transfer():
         y=y.tolist(),
         z=z.tolist(),
         r1=r1,
+        r2=r2,
         v1=v1,
         mu=mu,
         dv=dv,

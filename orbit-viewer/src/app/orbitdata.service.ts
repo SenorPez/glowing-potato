@@ -16,7 +16,7 @@ export class OrbitdataService {
     this.flaskApp = 'http://127.0.0.1:5000'
   }
 
-  getLambert(min_delta_v: boolean, date: string, system_id: number, star_id: number, origin_planet_id: number, target_planet_id: number): Promise<[Vector3[], Vector3, Vector3, number]> {
+  getLambert(min_delta_v: boolean, date: string, system_id: number, star_id: number, origin_planet_id: number, target_planet_id: number): Promise<[Vector3[], Vector3, Vector3, Vector3, number]> {
     const transfer_type = min_delta_v ? '/orbit/dvlambert' : '/orbit/ftlambert';
 
     return fetch(this.flaskApp + transfer_type, {
@@ -38,8 +38,9 @@ export class OrbitdataService {
           return new Vector3(element, data.y[index], data.z[index]);
         });
         const r1: Vector3 = new Vector3(data.r1[0], data.r1[1], data.r1[2]);
+        const r2: Vector3 = new Vector3(data.r2[0], data.r2[1], data.r2[2])
         const v1: Vector3 = new Vector3(data.v1[0], data.v1[1], data.v1[2]);
-        return [pathData, r1, v1, data.mu];
+        return [pathData, r1, r2, v1, data.mu];
       });
   }
 
