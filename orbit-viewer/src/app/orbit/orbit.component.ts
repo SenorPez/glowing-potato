@@ -5,6 +5,7 @@ import {OrbitdataService} from "../orbitdata.service";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {Planet} from "../planet";
 import {MatSliderChange} from "@angular/material/slider";
+import {Transfer} from "../transfer.js";
 
 @Component({
   selector: 'app-orbit',
@@ -29,6 +30,8 @@ export class OrbitComponent implements OnInit {
 
   private orbitsGroupName: string = "grp_orbits";
   private planetLocators: Mesh[] = [];
+
+  private transfers: Transfer[] = [];
 
   constructor(private orbitDataService: OrbitdataService) {
     this.scene = new THREE.Scene();
@@ -138,6 +141,15 @@ export class OrbitComponent implements OnInit {
           this.scene.getObjectByName(planet.name)?.position.set(position.x, position.y, position.z);
         }
 
+        const drawTransfer = (transfer: Transfer, elapsedTime: number) => {
+          const transferTime: number = elapsedTime - transfer.startTime;
+          const [position]: [Vector3, Vector3] = this.orbitDataService.propagate(transfer, transferTime);
+          position.z *= this.zScale;
+          position.divideScalar(this.solarRadius);
+
+          this.scene.getObjectByName(transfer.name)?.position.set(position.x, position.y, position.z);
+        }
+
         const render = (time: number) => {
           if (lastFrame === undefined) lastFrame = time;
 
@@ -146,6 +158,8 @@ export class OrbitComponent implements OnInit {
             this.elapsedTime += sinceLastFrame;
           }
           planets.forEach(planet => drawPlanet(planet, this.elapsedTime));
+          this.transfers.forEach(transfer => drawTransfer(transfer, this.elapsedTime));
+
           lastFrame = time;
 
           const pixelRatio = window.devicePixelRatio;
@@ -219,16 +233,52 @@ export class OrbitComponent implements OnInit {
     this.working = true;
 
     this.orbitDataService.getLambert(min_delta_v, this.getEpochDate(), 1621827699, -1826843336, 159569841, 2035226060)
-      .then((path: Vector3[]) => {
+      .then(([path, r1, v1, mu]) => {
+
         path.forEach(position => {
           position.z *= this.zScale;
           position.divideScalar(this.solarRadius);
         });
 
-        const geometry = new THREE.BufferGeometry().setFromPoints(path);
-        const material = new THREE.LineBasicMaterial({color: color})
-        const line = new THREE.Line(geometry, material);
-        this.scene.add(line);
+        const transfer: Transfer = {
+          mu: mu,
+          name: min_delta_v ? "MinDV" : "MinFT",
+          position: r1,
+          velocity: v1,
+          startTime: this.elapsedTime
+        }
+        this.transfers.forEach((item, index) => {
+          if (item.name === transfer.name) {
+            this.transfers.splice(index, 1);
+
+            const transferPath = this.scene.getObjectByName(this.orbitsGroupName)?.getObjectByName(transfer.name + "-Path");
+            if (transferPath !== undefined) this.scene.getObjectByName(this.orbitsGroupName)?.remove(transferPath);
+
+            const transferSphere = this.scene.getObjectByName(transfer.name);
+            if (transferSphere !== undefined) this.scene.remove(transferSphere);
+          }
+        });
+
+        this.transfers.push(transfer);
+        {
+          const geometry = new THREE.BufferGeometry().setFromPoints(path);
+          const material = new THREE.LineBasicMaterial({color: color});
+          const line = new THREE.Line(geometry, material);
+          line.name = transfer.name + "-Path";
+          this.scene.getObjectByName(this.orbitsGroupName)?.add(line);
+        }
+
+        {
+          const geometry = new THREE.SphereGeometry(2, 24, 24);
+          const material = new THREE.MeshBasicMaterial({color: color});
+          const mesh = new THREE.Mesh(geometry, material);
+          const position = new Vector3(transfer.position.x, transfer.position.y, transfer.position.z);
+          position.z *= this.zScale;
+          position.divideScalar(this.solarRadius);
+          mesh.position.set(position.x, position.y, position.z);
+          mesh.name = transfer.name;
+          this.scene.add(mesh);
+        }
       })
       .finally(() => this.working = false);
   }

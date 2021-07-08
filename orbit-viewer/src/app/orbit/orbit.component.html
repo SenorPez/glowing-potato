@@ -1,3 +1,6 @@
+<app-progress
+  [hidden]="!working"></app-progress>
+
 <app-time
   [scene]="scene"
   [elapsedTime]="elapsedTime"
@@ -10,9 +13,5 @@
 <app-display
   (orbitsEvent)="handleOrbitsEvent($event)"
   (planetLocatorsEvent)="handlePlanetLocatorsEvent($event)"></app-display>
-
-<app-progress [hidden]="!working">
-  [working]="working"
-</app-progress>
 
 <canvas id="orbitplot"></canvas>

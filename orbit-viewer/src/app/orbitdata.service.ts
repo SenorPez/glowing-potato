@@ -1,6 +1,8 @@
 import {Injectable} from '@angular/core';
 import {Vector3} from 'three';
 import {Planet} from "./planet";
+import {throwError} from "rxjs";
+import {Transfer} from "./transfer";
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +16,7 @@ export class OrbitdataService {
     this.flaskApp = 'http://127.0.0.1:5000'
   }
 
-  getLambert(min_delta_v: boolean, date: string, system_id: number, star_id: number, origin_planet_id: number, target_planet_id: number): Promise<Vector3[]> {
+  getLambert(min_delta_v: boolean, date: string, system_id: number, star_id: number, origin_planet_id: number, target_planet_id: number): Promise<[Vector3[], Vector3, Vector3, number]> {
     const transfer_type = min_delta_v ? '/orbit/dvlambert' : '/orbit/ftlambert';
 
     return fetch(this.flaskApp + transfer_type, {
@@ -32,9 +34,12 @@ export class OrbitdataService {
     })
       .then(response => response.json())
       .then(data => {
-        return data.x.map(function (element: number, index: number) {
+        const pathData: [Vector3, Vector3, Vector3] = data.x.map(function (element: number, index: number) {
           return new Vector3(element, data.y[index], data.z[index]);
         });
+        const r1: Vector3 = new Vector3(data.r1[0], data.r1[1], data.r1[2]);
+        const v1: Vector3 = new Vector3(data.v1[0], data.v1[1], data.v1[2]);
+        return [pathData, r1, v1, data.mu];
       });
   }
 
@@ -171,10 +176,8 @@ export class OrbitdataService {
   }
 
   ephemeris(planet: Planet, time: number): [Vector3, Vector3] {
-    const dt: number = time;
-
     const meanMotion = OrbitdataService.getMeanMotion(planet);
-    const meanAnomaly = OrbitdataService.trueToMean(planet.trueAnomalyAtEpoch, planet.eccentricity) + meanMotion * dt;
+    const meanAnomaly = OrbitdataService.trueToMean(planet.trueAnomalyAtEpoch, planet.eccentricity) + meanMotion * time;
     const eccentricAnomaly = OrbitdataService.meanToEccentric(meanAnomaly, planet.eccentricity);
 
     const semiminorAxis = planet.semimajorAxis * Math.sqrt(1 - planet.eccentricity * planet.eccentricity);
@@ -218,5 +221,66 @@ export class OrbitdataService {
     const position: Vector3 = new Vector3(r[0], r[1], r[2]);
     const velocity: Vector3 = new Vector3(v[0], v[1], v[2]);
     return [position, velocity];
+  }
+
+  propagate(transfer: Transfer, time: number): [Vector3, Vector3] {
+    const position: Vector3 = transfer.position;
+    const velocity: Vector3 = transfer.velocity;
+    const mu: number = transfer.mu;
+
+    const R: number = Math.sqrt(position.x * position.x + position.y * position.y + position.z * position.z);
+    const V: number = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
+    const energy: number = (V * V / 2 - mu / R);
+    const a: number = -mu / 2.0 / energy;
+
+    const sigma0: number = (position.x * velocity.x + position.y * velocity.y + position.z * velocity.z) / Math.sqrt(mu);
+
+    let F: number = 1;
+    let G: number = 1;
+    let Ft: number = 1;
+    let Gt: number = 1;
+
+    if (a > 0) {
+      const DM: number = Math.sqrt(mu / Math.pow(a, 3)) * time;
+      let DE = DM;
+
+      let iter: number = 0;
+      let err: number = 1.0;
+      let j: number = 0;
+      let k: number = 2 * Math.PI;
+      let l: number = (j + k) / 2;
+
+      while (err > 1e-9 && iter < 100) {
+        let trial: number = -DM + l + sigma0 / Math.sqrt(a) * (1 - Math.cos(l)) - (1 - R / a) * Math.sin(l);
+        if (trial > 0) k = l; else j = l;
+        l = (j + k) / 2;
+        err = Math.abs(trial);
+        iter++;
+        DE = l;
+      }
+
+      const r: number = a + (R - a) * Math.cos(DE) + sigma0 * Math.sqrt(a) * Math.sin(DE);
+
+      F = 1 - a / R * (1 - Math.cos(DE));
+      G = a * sigma0 / Math.sqrt(mu) * (1 - Math.cos(DE)) + R * Math.sqrt(a / mu) * Math.sin(DE);
+      Ft = -Math.sqrt(mu * a) / (r * R) * Math.sin(DE);
+      Gt = 1 - a / r * (1 - Math.cos(DE));
+
+    } else {
+      throwError(new Error("Not implemented"));
+    }
+
+    const newPosition: Vector3 = new Vector3(
+      F * position.x + G * velocity.x,
+      F * position.y + G * velocity.y,
+      F * position.z + G * velocity.z
+    );
+    const newVelocity: Vector3 = new Vector3(
+      Ft * position.x + Gt * velocity.x,
+      Ft * position.y + Gt * velocity.y,
+      Ft * position.z + Gt * velocity.z
+    );
+
+    return [newPosition, newVelocity]
   }
 }

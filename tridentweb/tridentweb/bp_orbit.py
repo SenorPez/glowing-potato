@@ -107,18 +107,21 @@ def lambert_transfer(request_data):
              }
         )
 
-    return sorted(lambert_dvs, key=lambda item: item['flight_time'])
+    return sorted(lambert_dvs, key=lambda item: item['flight_time']), star.gm
 
 
 @bp.route("/dvlambert", methods=['POST'])
 @cross_origin()
 def dv_lambert_transfer():
-    sorted_solutions = lambert_transfer(flask_request)
+    sorted_solutions, mu = lambert_transfer(flask_request)
 
     min_delta_v = min([x['dv'] for x in sorted_solutions])
     result = next(filter(lambda x: x['dv'] == min_delta_v, sorted_solutions))
 
     x, y, z = lambert_positions(result['lambert'])
+    r1 = result['lambert'].get_r1()
+    v1 = result['lambert'].get_v1()[0]
+
     dv = result['dv']
     flight_time = result['flight_time']
 
@@ -126,6 +129,9 @@ def dv_lambert_transfer():
         x=x.tolist(),
         y=y.tolist(),
         z=z.tolist(),
+        r1=r1,
+        v1=v1,
+        mu=mu,
         dv=dv,
         flight_time=flight_time) if has_app_context() else ()
 
@@ -133,7 +139,7 @@ def dv_lambert_transfer():
 @bp.route("/ftlambert", methods=['POST'])
 @cross_origin()
 def ft_lambert_transfer():
-    sorted_solutions = lambert_transfer(flask_request)
+    sorted_solutions, mu = lambert_transfer(flask_request)
 
     # TODO: Customizable max dV
     MAX_DV = 71250  # 75% of 95 km/sec
@@ -142,6 +148,9 @@ def ft_lambert_transfer():
     result = next(filter(lambda x: x['flight_time'] == min_ft, sorted_solutions))
 
     x, y, z = lambert_positions(result['lambert'])
+    r1 = result['lambert'].get_r1()
+    v1 = result['lambert'].get_v1()[0]
+
     dv = result['dv']
     flight_time = result['flight_time']
 
@@ -149,6 +158,9 @@ def ft_lambert_transfer():
         x=x.tolist(),
         y=y.tolist(),
         z=z.tolist(),
+        r1=r1,
+        v1=v1,
+        mu=mu,
         dv=dv,
         flight_time=flight_time) if has_app_context() else ()
 

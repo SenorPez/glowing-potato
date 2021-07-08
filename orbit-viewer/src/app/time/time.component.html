@@ -10,14 +10,14 @@
     <mat-icon>skip_next</mat-icon>
   </button>
   <br/>
-  <mat-slider min="1" max="35" value="7" (change)="newSliderChange($event)" [disabled]="working"></mat-slider>
+  <mat-slider min="1" max="35" value="7" color="primary" (change)="newSliderChange($event)" [disabled]="working"></mat-slider>
   <br/>
   <span [hidden]="working"> {{getDate()}} </span>
   <br/>
   <button mat-raised-button color="primary" [disabled]="animating || working" (click)="clickDvLambert()">
     dV
   </button>
-  <button mat-raised-button color="accent" [disabled]="animating || working" (click)="clickFtLambert()">
+  <button mat-raised-button color="primary" [disabled]="animating || working" (click)="clickFtLambert()">
     FT
   </button>
 </div>
