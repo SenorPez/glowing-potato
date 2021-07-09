@@ -74,27 +74,28 @@ export class OrbitComponent implements OnInit {
     }
 
     this.apiService.getPlanets(this.system_id, this.star_id)
-      .then((planets: EmbeddedPlanet[]) =>
-        Promise.all(planets.map((planet: EmbeddedPlanet) =>
-          this.orbitDataService.getPath(this.system_id, this.star_id, planet.id))))
-      .then((paths: Vector3[][]) => {
-        const colors: number[] = [0xFFB3B3, 0xFFFFB3, 0xB3FFB3];
-        const orbitsGroup: Group = new THREE.Group();
-        orbitsGroup.name = this.orbitsGroupName;
+      .subscribe(planets =>
+        Promise.all(planets._embedded["trident-api:planet"].map((planet: EmbeddedPlanet) =>
+          this.orbitDataService.getPath(this.system_id, this.star_id, planet.id)))
+          .then((paths: Vector3[][]) => {
+            const colors: number[] = [0xFFB3B3, 0xFFFFB3, 0xB3FFB3];
+            const orbitsGroup: Group = new THREE.Group();
+            orbitsGroup.name = this.orbitsGroupName;
 
-        paths.forEach((path, index) => {
-          path.forEach(position => {
-            position.z *= this.zScale;
-            position.divideScalar(this.solarRadius);
-          });
+            paths.forEach((path, index) => {
+              path.forEach(position => {
+                position.z *= this.zScale;
+                position.divideScalar(this.solarRadius);
+              });
 
-          const geometry = new THREE.BufferGeometry().setFromPoints(path);
-          const material = new THREE.LineBasicMaterial({color: colors[index]});
-          const line = new THREE.Line(geometry, material);
-          orbitsGroup.add(line);
-        });
-        this.scene.add(orbitsGroup);
-      });
+              const geometry = new THREE.BufferGeometry().setFromPoints(path);
+              const material = new THREE.LineBasicMaterial({color: colors[index]});
+              const line = new THREE.Line(geometry, material);
+              orbitsGroup.add(line);
+            });
+            this.scene.add(orbitsGroup);
+          })
+      );
 
     Promise.all([
       this.orbitDataService.getRpln(),

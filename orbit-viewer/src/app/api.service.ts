@@ -1,117 +1,162 @@
 import {Injectable} from '@angular/core';
+import {HttpClient} from "@angular/common/http";
+
+import {switchMap} from 'rxjs/operators'
+import {Observable} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
 
-  private api: string;
+  private readonly api: string;
 
-  constructor() {
+  constructor(private http: HttpClient) {
     this.api = "https://www.trident.senorpez.com/"
   }
 
-  private apiRoot() {
-    return fetch(this.api, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json'
-      }
-    })
-      .then(response => response.json());
+  private getRoot(): Observable<Root> {
+    return this.http.get<Root>(this.api);
   }
 
-  private apiSystems() {
-    return this.apiRoot()
-      .then(data => data._links["trident-api:systems"].href)
-      .then(systemsURI => {
-        return fetch(systemsURI, {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json'
-          }
-        });
-      })
-      .then(response => response.json());
+  private getSystems(): Observable<SolarSystems> {
+    return this.getRoot()
+      .pipe(switchMap(value => this.http.get<SolarSystems>(value._links["trident-api:systems"].href)));
   }
 
-  private apiSystem(system_id: number) {
-    return this.apiSystems()
-      .then(data => {
-        const embeddedSystem = data._embedded["trident-api:system"].find((item: any) => item.id === system_id);
-        return embeddedSystem._links.self.href;
-      })
-      .then(systemURI => {
-        return fetch(systemURI, {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json'
-          }
-        });
-      })
-      .then(response => response.json());
+  private getSystem(system_id: number): Observable<SolarSystem> {
+    return this.getSystems()
+      .pipe(switchMap(value => {
+        let system = value._embedded["trident-api:system"].find(system => system.id === system_id);
+        return this.http.get<SolarSystem>(<string>system?._links.self.href);
+      }));
   }
 
-  private apiStars(system_id: number) {
-    return this.apiSystem(system_id)
-      .then(data => data._links["trident-api:stars"].href)
-      .then(starsURI => {
-        return fetch(starsURI, {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json'
-          }
-        });
-      })
-      .then(response => response.json());
+  private getStars(system_id: number): Observable<Stars> {
+    return this.getSystem(system_id)
+      .pipe(switchMap(value => this.http.get<Stars>(value._links["trident-api:stars"].href)));
   }
 
-  private apiStar(system_id: number, star_id: number) {
-    return this.apiStars(system_id)
-      .then(data => {
-        const embeddedStar = data._embedded["trident-api:star"].find((item: any) => item.id === star_id);
-        return embeddedStar._links.self.href;
-      })
-      .then(starURI => {
-        return fetch(starURI, {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json'
-          }
-        });
-      })
-      .then(response => response.json());
+  private getStar(system_id: number, star_id: number) {
+    return this.getStars(system_id)
+      .pipe(switchMap(value => {
+        let star = value._embedded["trident-api:star"].find(star => star.id === star_id);
+        return this.http.get<Star>(<string>star?._links.self.href);
+      }));
   }
 
-  private apiPlanets(system_id: number, star_id: number) {
-    return this.apiStar(system_id, star_id)
-      .then(data => data._links["trident-api:planets"].href)
-      .then(planetsURI => {
-        return fetch(planetsURI, {
-          method: 'GET',
-          headers: {
-            'Accept': 'application/json'
-          }
-        });
-      })
-      .then(response => response.json());
+  getPlanets(system_id: number, star_id: number) {
+    return this.getStar(system_id, star_id)
+      .pipe(switchMap(value => this.http.get<Planets>(value._links["trident-api:planets"].href)));
   }
+}
 
-  getPlanets(system_id: number, star_id: number): Promise<EmbeddedPlanet[]> {
-    return this.apiPlanets(system_id, star_id)
-      .then(planets => {
-        return planets._embedded["trident-api:planet"].map((planet: any) => {
-          const returnValue: EmbeddedPlanet = {
-            id: planet.id,
-            name: planet.name
-          }
-          return returnValue;
-        });
-      });
+export interface Root {
+  _links: {
+    self: Link;
+    index: Link;
+    "trident-api:constants": Link;
+    "trident-api:systems": Link;
+    curies: Curie[];
+  }
+}
+
+export interface SolarSystems {
+  _embedded: {
+    "trident-api:system": EmbeddedSolarSystem[];
+  };
+  _links: {
+    self: Link;
+    index: Link;
+    curies: Curie[];
+  }
+}
+
+export interface SolarSystem {
+  id: number;
+  name: string;
+  _links: {
+    self: Link;
+    "trident-api:stars": Link;
+    "trident-api:systems": Link;
+    index: Link;
+    curies: Curie[];
+  }
+}
+
+export interface Stars {
+  _embedded: {
+    "trident-api:star": EmbeddedStar[];
+  };
+  _links: {
+    self: Link;
+    "trident-api:system": Link;
+    index: Link;
+    curies: Curie[];
+  }
+}
+
+export interface Star {
+  id: number,
+  name: string,
+  mass: number,
+  semimajorAxis: number | null,
+  eccentricity: number | null,
+  inclination: number | null,
+  longitudeOfAscendingNode: number | null,
+  argumentOfPeriapsis: number | null,
+  trueAnomalyAtEpoch: number | null,
+  _links: {
+    self: Link;
+    "trident-api:planets": Link;
+    "trident-api:stars": Link;
+    index: Link;
+    curies: Curie[];
+  }
+}
+
+export interface Planets {
+  _embedded: {
+    "trident-api:planet": EmbeddedPlanet[];
+  };
+  _links: {
+    self: Link;
+    "trident-api:star": Link;
+    index: Link;
+    curies: Curie[];
+  }
+}
+
+export interface EmbeddedSolarSystem {
+  id: number;
+  name: string;
+  _links: {
+    self: Link;
+  }
+}
+
+export interface EmbeddedStar {
+  id: number;
+  name: string;
+  _links: {
+    self: Link;
   }
 }
 
 export interface EmbeddedPlanet {
   id: number;
   name: string;
+  _links: {
+    self: Link;
+  }
+}
+
+export interface Link {
+  href: string;
+}
+
+export interface Curie {
+  href: string;
+  name: string;
+  templated: boolean;
 }
