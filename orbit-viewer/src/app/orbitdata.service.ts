@@ -10,10 +10,24 @@ import {Transfer} from "./transfer";
 export class OrbitdataService {
 
   private flaskApp: string;
+  private api: string;
 
   constructor() {
     // this.flaskApp = 'https://www.senorpez.com/tw';
     this.flaskApp = 'http://127.0.0.1:5000'
+    this.api = "https://www.trident.senorpez.com/"
+  }
+
+  getPlanetIds(system_id: number, star_id: number) {
+    return fetch(this.api + `/systems/${system_id}/stars/${star_id}/planets`, {
+      method: 'GET',
+      mode: "no-cors",
+      headers: {
+        'Accept': 'application/json'
+      }
+    })
+      .then(response => response.json())
+      .then(data => data._embedded["trident-api:planet"].map((item: any) => item.planet_id));
   }
 
   getLambert(min_delta_v: boolean, date: string, system_id: number, star_id: number, origin_planet_id: number, target_planet_id: number): Promise<[Vector3[], Vector3, Vector3, Vector3, number]> {

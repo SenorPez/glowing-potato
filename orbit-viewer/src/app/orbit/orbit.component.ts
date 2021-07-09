@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import * as THREE from 'three';
 import {Group, Mesh, Vector3} from 'three';
 import {OrbitdataService} from "../orbitdata.service";
+import {ApiService, EmbeddedPlanet} from "../api.service";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {Planet} from "../planet";
 import {MatSliderChange} from "@angular/material/slider";
@@ -18,6 +19,11 @@ export class OrbitComponent implements OnInit {
   // TODO: Add solar radius to API?
   private solarRadius: number = 800240666; // Solar radius in m. 1 Solar Radius = 1 axis unit.
 
+  // TODO: Selectable system
+  private system_id: number = 1621827699;
+  // TODO: Selectable star (or multiple stars within a system)
+  private star_id: number = -1826843336;
+
   private frameScale: number = 7; // Default: 1 second = 7 days
   private planetScale: number = 1000; // Default: Planet locators are 1000x bigger than planet
   private zScale: number = 20; // Default: z Values are 20x larger
@@ -33,7 +39,7 @@ export class OrbitComponent implements OnInit {
 
   private transfers: Transfer[] = [];
 
-  constructor(private orbitDataService: OrbitdataService) {
+  constructor(private orbitDataService: OrbitdataService, private apiService: ApiService) {
     this.scene = new THREE.Scene();
   }
 
@@ -67,11 +73,10 @@ export class OrbitComponent implements OnInit {
       this.scene.add(sphere);
     }
 
-    Promise.all([
-      this.orbitDataService.getPath(1621827699, -1826843336, 2035226060),
-      this.orbitDataService.getPath(1621827699, -1826843336, -154475081),
-      this.orbitDataService.getPath(1621827699, -1826843336, 159569841)
-    ])
+    this.apiService.getPlanets(this.system_id, this.star_id)
+      .then((planets: EmbeddedPlanet[]) =>
+        Promise.all(planets.map((planet: EmbeddedPlanet) =>
+          this.orbitDataService.getPath(this.system_id, this.star_id, planet.id))))
       .then((paths: Vector3[][]) => {
         const colors: number[] = [0xFFB3B3, 0xFFFFB3, 0xB3FFB3];
         const orbitsGroup: Group = new THREE.Group();
