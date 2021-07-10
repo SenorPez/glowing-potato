@@ -65,7 +65,7 @@ export class ApiService {
       );
   }
 
-  getPlanets(system_id: number, star_id: number): Observable<Planets> {
+  private getPlanets(system_id: number, star_id: number): Observable<Planets> {
     return this.getStar(system_id, star_id)
       .pipe(switchMap(value => this.http.get<Planets>(value._links["trident-api:planets"].href)));
   }

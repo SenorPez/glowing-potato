@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import * as THREE from 'three';
-import {Group, Mesh, Scene, Vector3} from 'three';
+import {Group, Mesh, Object3D, Scene, Vector3} from 'three';
 import {OrbitdataService} from "../orbitdata.service";
-import {ApiService} from "../api.service";
+import {ApiService, Planet} from "../api.service";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {MatSliderChange} from "@angular/material/slider";
 import {Transfer} from "../transfer.js";
@@ -50,6 +50,7 @@ export class OrbitComponent implements OnInit {
 
   scene: Scene = new THREE.Scene();
   private orbitsGroup: Group = new THREE.Group();
+  private planetsGroup: Group = new THREE.Group();
   // private orbitsGroupName: string = "grp_orbits";
   private planetLocators: Mesh[] = [];
 
@@ -124,15 +125,13 @@ export class OrbitComponent implements OnInit {
             const locator_sphere = new THREE.Mesh(locator_geometry, locator_material);
 
             planet_sphere.name = planet.name;
+            planet_sphere.userData.planet = planet;
             planet_sphere.add(locator_sphere);
-
-            const [position] = this.orbitDataService.ephemeris(planet, 0);
-            position.z *= this.zScale;
-            position.multiplyScalar(this.AU / this.solarRadius);
-            planet_sphere.position.set(position.x, position.y, position.z);
+            this.updatePlanetPosition(planet_sphere, 0);
 
             this.planetLocators.push(locator_sphere);
-            this.scene.add(planet_sphere);
+            this.planetsGroup.add(planet_sphere);
+            this.scene.add(this.planetsGroup);
           }
 
           {
@@ -159,12 +158,14 @@ export class OrbitComponent implements OnInit {
           requestAnimationFrame(render);
         });
 
-    const render = (time: number) => {
+    const render: (time: number) => void = (time: number) => {
       if (this.lastFrame === undefined) this.lastFrame = time;
 
       if (this.animating) {
-        const sinceLastFrame = ((time - this.lastFrame / 1000) * 86400 * this.frameScale);
+        const sinceLastFrame = ((time - this.lastFrame) / 1000) * 86400 * this.frameScale;
         this.elapsedTime += sinceLastFrame;
+
+        this.planetsGroup.children.forEach(obj => this.updatePlanetPosition(obj, this.elapsedTime));
       }
 
       this.lastFrame = time;
@@ -185,6 +186,13 @@ export class OrbitComponent implements OnInit {
     };
   }
 
+  updatePlanetPosition(object: Object3D, elapsedTime: number) {
+    const planet: Planet = object.userData.planet;
+    const [position] = this.orbitDataService.ephemeris(planet, elapsedTime);
+    position.z *= this.zScale;
+    position.multiplyScalar(this.AU / this.solarRadius);
+    object.position.set(position.x, position.y, position.z);
+  }
 
 
 
@@ -193,7 +201,9 @@ export class OrbitComponent implements OnInit {
 
 
 
-    // this.apiService.getPlanets(this.system_id, this.star_id)
+
+
+  // this.apiService.getPlanets(this.system_id, this.star_id)
     //   .subscribe(planets =>
     //     Promise.all(planets._embedded["trident-api:planet"].map((planet: EmbeddedPlanet) =>
     //       this.orbitDataService.getPath(this.system_id, this.star_id, planet.id)))
