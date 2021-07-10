@@ -1,13 +1,16 @@
 import {Injectable} from '@angular/core';
 import {Vector3} from 'three';
-import {Planet} from "./planet";
+
 import {throwError} from "rxjs";
 import {Transfer} from "./transfer";
+import {Planet} from "./api.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrbitdataService {
+  // TODO: Add AU to API
+  private AU: number = 149597870700;
 
   private flaskApp: string;
   private api: string;
@@ -16,6 +19,10 @@ export class OrbitdataService {
     // this.flaskApp = 'https://www.senorpez.com/tw';
     this.flaskApp = 'http://127.0.0.1:5000'
     this.api = "https://www.trident.senorpez.com/"
+  }
+
+  orbitalPeriod(planet: Planet) {
+    return 2 * Math.PI * Math.sqrt(Math.pow(planet.semimajorAxis * this.AU, 3) / (planet.starGM + planet.GM));
   }
 
   getPlanetIds(system_id: number, star_id: number) {
@@ -78,37 +85,37 @@ export class OrbitdataService {
       })
   }
 
-  getPlanet(system_id: number, star_id: number, planet_id:number): Promise<Planet> {
-    return fetch(this.flaskApp + '/orbit/planet', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        'system_id': system_id,
-        'star_id': star_id,
-        'planet_id': planet_id
-      })
-    })
-      .then(response => response.json())
-      .then(data => {
-        const planet: Planet = {
-          name: data['name'],
-          mass: data['mass'],
-          radius: data['radius'],
-          semimajorAxis: data['semimajorAxis'],
-          eccentricity: data['eccentricity'],
-          inclination: data['inclination'],
-          longitudeOfAscendingNode: data['longitudeOfAscendingNode'],
-          argumentOfPeriapsis: data['argumentOfPeriapsis'],
-          trueAnomalyAtEpoch: data['trueAnomalyAtEpoch'],
-          starGM: data['starGM'],
-          GM: data['GM']
-        };
-        return planet;
-      }
-    )
-  }
+  // getPlanet(system_id: number, star_id: number, planet_id:number): Promise<Planet> {
+  //   return fetch(this.flaskApp + '/orbit/planet', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json'
+  //     },
+  //     body: JSON.stringify({
+  //       'system_id': system_id,
+  //       'star_id': star_id,
+  //       'planet_id': planet_id
+  //     })
+  //   })
+  //     .then(response => response.json())
+  //     .then(data => {
+  //       const planet: Planet = {
+  //         name: data['name'],
+  //         mass: data['mass'],
+  //         radius: data['radius'],
+  //         semimajorAxis: data['semimajorAxis'],
+  //         eccentricity: data['eccentricity'],
+  //         inclination: data['inclination'],
+  //         longitudeOfAscendingNode: data['longitudeOfAscendingNode'],
+  //         argumentOfPeriapsis: data['argumentOfPeriapsis'],
+  //         trueAnomalyAtEpoch: data['trueAnomalyAtEpoch'],
+  //         starGM: data['starGM'],
+  //         GM: data['GM']
+  //       };
+  //       return planet;
+  //     }
+  //   )
+  // }
 
   getRpln(): Promise<number> {
     return fetch(this.flaskApp + '/orbit/Rpln', {

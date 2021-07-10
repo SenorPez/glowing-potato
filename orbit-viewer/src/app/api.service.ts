@@ -1,8 +1,9 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 
-import {switchMap} from 'rxjs/operators'
+import {filter, first, switchMap} from 'rxjs/operators'
 import {Observable} from "rxjs";
+import {flatMap} from "rxjs/internal/operators";
 
 @Injectable({
   providedIn: 'root'
@@ -19,35 +20,71 @@ export class ApiService {
     return this.http.get<Root>(this.api);
   }
 
+  private getConstants() {
+    return this.getRoot()
+      .pipe(flatMap(value => this.http.get<Constants>(value._links["trident-api:constants"].href)));
+  }
+
+  getConstant(constant_symbol: string) {
+    return this.getConstants()
+      .pipe(
+        flatMap(constants => constants._embedded["trident-api:constant"]),
+        filter(constant => constant.symbol === constant_symbol),
+        first(),
+        flatMap(constant => this.http.get<Constant>(constant._links.self.href))
+      );
+  }
+
   private getSystems(): Observable<SolarSystems> {
     return this.getRoot()
-      .pipe(switchMap(value => this.http.get<SolarSystems>(value._links["trident-api:systems"].href)));
+      .pipe(flatMap(value => this.http.get<SolarSystems>(value._links["trident-api:systems"].href)));
   }
 
   private getSystem(system_id: number): Observable<SolarSystem> {
     return this.getSystems()
-      .pipe(switchMap(value => {
-        let system = value._embedded["trident-api:system"].find(system => system.id === system_id);
-        return this.http.get<SolarSystem>(<string>system?._links.self.href);
-      }));
+      .pipe(
+        flatMap(systems => systems._embedded["trident-api:system"]),
+        filter(system => system.id === system_id),
+        first(),
+        flatMap(system => this.http.get<SolarSystem>(system._links.self.href))
+      );
   }
 
   private getStars(system_id: number): Observable<Stars> {
     return this.getSystem(system_id)
-      .pipe(switchMap(value => this.http.get<Stars>(value._links["trident-api:stars"].href)));
+      .pipe(flatMap(value => this.http.get<Stars>(value._links["trident-api:stars"].href)));
   }
 
-  private getStar(system_id: number, star_id: number) {
+  getStar(system_id: number, star_id: number): Observable<Star> {
     return this.getStars(system_id)
-      .pipe(switchMap(value => {
-        let star = value._embedded["trident-api:star"].find(star => star.id === star_id);
-        return this.http.get<Star>(<string>star?._links.self.href);
-      }));
+      .pipe(
+        flatMap(stars => stars._embedded["trident-api:star"]),
+        filter(star => star.id === star_id),
+        first(),
+        flatMap(star => this.http.get<Star>(star._links.self.href))
+      );
   }
 
-  getPlanets(system_id: number, star_id: number) {
+  getPlanets(system_id: number, star_id: number): Observable<Planets> {
     return this.getStar(system_id, star_id)
       .pipe(switchMap(value => this.http.get<Planets>(value._links["trident-api:planets"].href)));
+  }
+
+  getAllPlanets(system_id: number, star_id: number): Observable<Planet> {
+    return this.getPlanets(system_id, star_id)
+      .pipe(flatMap(planets => planets._embedded["trident-api:planet"]),
+        flatMap(planet => this.http.get<Planet>(planet._links.self.href))
+      );
+  }
+
+  getPlanet(system_id: number, star_id: number, planet_id: number): Observable<Planet> {
+    return this.getPlanets(system_id, star_id)
+      .pipe(
+        flatMap(planets => planets._embedded["trident-api:planet"]),
+        filter(planet => planet.id === planet_id),
+        first(),
+        flatMap(planet => this.http.get<Planet>(planet._links.self.href))
+      );
   }
 }
 
@@ -59,6 +96,30 @@ export interface Root {
     "trident-api:systems": Link;
     curies: Curie[];
   }
+}
+
+export interface Constants {
+  _embedded: {
+    "trident-api:constant": EmbeddedConstant[];
+  };
+  _links: {
+    self: Link;
+    index: Link;
+    curies: Curie[];
+  };
+}
+
+export interface Constant {
+  name: string;
+  symbol: string;
+  value: number;
+  units: string;
+  _links: {
+    self: Link;
+    "trident-api:constants": Link;
+    index: Link;
+    curies: Curie[];
+  };
 }
 
 export interface SolarSystems {
@@ -124,6 +185,37 @@ export interface Planets {
     "trident-api:star": Link;
     index: Link;
     curies: Curie[];
+  }
+}
+
+export interface Planet {
+  id: number;
+  name: string;
+  mass: number;
+  radius: number;
+  semimajorAxis: number;
+  eccentricity: number;
+  inclination: number;
+  longitudeOfAscendingNode: number;
+  argumentOfPeriapsis: number;
+  trueAnomalyAtEpoch: number;
+
+  GM: number;
+  starGM: number;
+
+  _links: {
+    self: Link;
+    "trident-api:calendars": Link;
+    "trident-api:planets": Link;
+    index: Link;
+    curies: Curie[];
+  };
+}
+
+export interface EmbeddedConstant {
+  symbol: string;
+  _links: {
+    self: Link;
   }
 }
 
