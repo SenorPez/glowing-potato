@@ -1,12 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import * as THREE from 'three';
-import {Group, Mesh, Object3D, Scene} from 'three';
+import {Group, Mesh, Object3D, Scene, Vector3} from 'three';
 import {OrbitdataService} from "../orbitdata.service";
 import {ApiService, Planet} from "../api.service";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {MatSliderChange} from "@angular/material/slider";
 import {Transfer} from "../transfer.js";
-import {map} from "rxjs/operators";
+import {filter, map, toArray} from "rxjs/operators";
 import {combineLatest, range} from "rxjs";
 
 @Component({
@@ -201,6 +201,24 @@ export class OrbitComponent implements OnInit {
     object.position.set(position.x, position.y, position.z);
   }
 
+  drawTransfer(r1: Vector3, v1: Vector3, mu: number, tof: number) {
+    const times: number[] = Array(this.divisions + 1).fill(0).map((val, index) => index / this.divisions * tof);
+    const positions: Vector3[] = times.map(time => {
+      const [position] = this.orbitDataService.propagate(r1, v1, mu, time);
+      return position;
+    });
+
+    positions.forEach(position => {
+      position.z *= this.zScale;
+      position.divideScalar(this.solarRadius);
+    });
+
+    const geometry = new THREE.BufferGeometry().setFromPoints(positions);
+    const material = new THREE.LineBasicMaterial({color: 0x0000FF});
+    const line = new THREE.Line(geometry, material);
+    this.scene.add(line);
+  }
+
 
 
 
@@ -390,34 +408,48 @@ export class OrbitComponent implements OnInit {
     const origin: Planet = this.planetsGroup.getObjectByName("1 Omega Hydri 3")?.userData.planet;
     const target: Planet = this.planetsGroup.getObjectByName("1 Omega Hydri 1")?.userData.planet;
 
-    const originOrbitRadius = origin.radius + this.originOrbitHeight;
-    const targetOrbitRadius = origin.radius + this.targetOrbitHeight;
+    const originOrbitRadius = 5954417.346258679;
+    const targetOrbitRadius = 2366596.4289483577;
 
     const t1: number = 0;
 
-    range(1, this.maxFT)
+    const transfers = range(1, this.maxFT)
       .pipe(
         map(tof => {
+          tof *= 86400;
           const t2 = t1 + tof;
 
           const [r1, v1] = this.orbitDataService.ephemeris(origin, t1);
           const [r2, v2] = this.orbitDataService.ephemeris(target, t2);
           const [tv1, tv2] = this.orbitDataService.lambertSolver(r1, r2, tof, origin.starGM);
 
-          // v1.multiplyScalar(this.AU);
-
-          // console.log(r1, v1, r2, v2, tv1, tv2);
 
           const dv: number = this.orbitDataService.transferDeltaV(v1, tv1, origin.GM, originOrbitRadius)
             + this.orbitDataService.transferDeltaV(v2, tv2, target.GM, targetOrbitRadius);
 
           return {
             'flight_time': tof,
-            'dv': dv
+            'dv': dv,
+            'r1': r1,
+            'v1': tv1,
+            'mu': origin.starGM
           };
-        })
-      )
-      .subscribe();
+        }),
+        filter(result => result.dv <= this.maxDV && (result.flight_time / 86400) <= this.maxFT),
+        toArray()
+      );
+
+    transfers.subscribe(transfers => {
+      if (min_delta_v) {
+        transfers.sort((e1, e2) => e1.dv - e2.dv);
+      } else {
+        transfers.sort((e1, e2) => e1.flight_time - e2.flight_time);
+      }
+      const selectedTransfer = transfers[0];
+
+      this.drawTransfer(selectedTransfer.r1, selectedTransfer.v1, selectedTransfer.mu, selectedTransfer.flight_time);
+    });
+
 
 
 

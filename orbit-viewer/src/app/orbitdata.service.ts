@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {Vector3} from 'three';
 
 import {throwError} from "rxjs";
-import {Transfer} from "./transfer";
 import {Planet} from "./api.service";
 
 @Injectable({
@@ -37,7 +36,7 @@ export class OrbitdataService {
       .then(data => data._embedded["trident-api:planet"].map((item: any) => item.planet_id));
   }
 
-  getLambert(min_delta_v: boolean, date: string, system_id: number, star_id: number, origin_planet_id: number, target_planet_id: number): Promise<[Vector3[], Vector3, Vector3, Vector3, number]> {
+  getLambert(min_delta_v: boolean, date: string, system_id: number, star_id: number, origin_planet_id: number, target_planet_id: number): Promise<[Vector3[], Vector3, Vector3, Vector3, number, number, number]> {
     const transfer_type = min_delta_v ? '/orbit/dvlambert' : '/orbit/ftlambert';
 
     return fetch(this.flaskApp + transfer_type, {
@@ -61,7 +60,7 @@ export class OrbitdataService {
         const r1: Vector3 = new Vector3(data.r1[0], data.r1[1], data.r1[2]);
         const r2: Vector3 = new Vector3(data.r2[0], data.r2[1], data.r2[2])
         const v1: Vector3 = new Vector3(data.v1[0], data.v1[1], data.v1[2]);
-        return [pathData, r1, r2, v1, data.mu];
+        return [pathData, r1, r2, v1, data.mu, data.flight_time, data.dv];
       });
   }
 
@@ -245,9 +244,6 @@ export class OrbitdataService {
   }
 
   lambertSolver(r1: Vector3, r2: Vector3, tof: number, mu: number) {
-    r1.multiplyScalar(this.AU);
-    r2.multiplyScalar(this.AU);
-
     const m_r1: number = r1.length();
     const m_r2: number = r2.length();
 
