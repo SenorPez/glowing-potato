@@ -89,6 +89,9 @@ export class OrbitComponent implements OnInit {
       const sphere = new THREE.Mesh(geometry, material);
       sphere.position.set(0, 0, 0);
       this.scene.add(sphere);
+
+      const light = new THREE.PointLight();
+      sphere.add(light);
     }
 
     combineLatest([
@@ -355,6 +358,7 @@ export class OrbitComponent implements OnInit {
       }
       this.elapsedTime = Math.max(0, this.elapsedTime);
     }
+    this.planetsGroup.children.forEach(obj => this.updatePlanetPosition(obj, this.elapsedTime));
   }
 
   handleOrbitsEvent(showOrbits: boolean) {
@@ -379,58 +383,88 @@ export class OrbitComponent implements OnInit {
   }
 
   handleLambertEvent(min_delta_v: boolean) {
-    const color = min_delta_v ? 0xFF00FF : 0x00FFFF;
-    this.working = true;
+    const tof = 30 * 86400;
+    const origin = this.planetsGroup.getObjectByName("1 Omega Hydri 3")?.userData.planet;
+    const target = this.planetsGroup.getObjectByName("1 Omega Hydri 1")?.userData.planet;
 
-    this.orbitDataService.getLambert(min_delta_v, this.getEpochDate(), 1621827699, -1826843336, 159569841, 2035226060)
-      .then(([path, r1, r2, v1, mu]) => {
+    const [r1] = this.orbitDataService.ephemeris(origin, 0);
+    const [r2] = this.orbitDataService.ephemeris(target, tof);
 
-        path.forEach(position => {
-          position.z *= this.zScale;
-          position.divideScalar(this.solarRadius);
-        });
+    const [v1] = this.orbitDataService.lambertSolver(r1, r2, tof, origin.starGM);
 
-        const transfer: Transfer = {
-          mu: mu,
-          name: min_delta_v ? "MinDV" : "MinFT",
-          position: r1,
-          target: r2,
-          velocity: v1,
-          startTime: this.elapsedTime
-        }
-        this.transfers.forEach((item, index) => {
-          if (item.name === transfer.name) {
-            this.transfers.splice(index, 1);
+    {
+      const times: number[] = Array(this.divisions + 1).fill(0).map((val, index) => index / this.divisions * tof);
+      const positions: Vector3[] = times.map(time => {
+        const [position] = this.orbitDataService.propagate(r1, v1, origin.starGM, time);
+        return position;
+      });
 
-            const transferPath = this.orbitsGroup.getObjectByName(transfer.name + "-Path");
-            if (transferPath !== undefined) this.orbitsGroup.remove(transferPath);
-
-            const transferSphere = this.scene.getObjectByName(transfer.name);
-            if (transferSphere !== undefined) this.scene.remove(transferSphere);
-          }
-        });
-
-        this.transfers.push(transfer);
-        {
-          const geometry = new THREE.BufferGeometry().setFromPoints(path);
-          const material = new THREE.LineBasicMaterial({color: color});
-          const line = new THREE.Line(geometry, material);
-          line.name = transfer.name + "-Path";
-          this.orbitsGroup.add(line);
-        }
-
-        {
-          const geometry = new THREE.SphereGeometry(2, 24, 24);
-          const material = new THREE.MeshBasicMaterial({color: color});
-          const mesh = new THREE.Mesh(geometry, material);
-          const position = new Vector3(transfer.position.x, transfer.position.y, transfer.position.z);
-          position.z *= this.zScale;
-          position.divideScalar(this.solarRadius);
-          mesh.position.set(position.x, position.y, position.z);
-          mesh.name = transfer.name;
-          this.scene.add(mesh);
-        }
+      positions.forEach(position => {
+        position.divideScalar(this.solarRadius);
+        position.z *= this.zScale;
       })
-      .finally(() => this.working = false);
+
+      const geometry = new THREE.BufferGeometry().setFromPoints(positions);
+      const material = new THREE.LineBasicMaterial({color: 0x0000FF});
+      const line = new THREE.Line(geometry, material);
+      this.scene.add(line);
+    }
+
+
+
+
+    // const color = min_delta_v ? 0xFF00FF : 0x00FFFF;
+    // this.working = true;
+    //
+    // this.orbitDataService.getLambert(min_delta_v, this.getEpochDate(), 1621827699, -1826843336, 159569841, 2035226060)
+    //   .then(([path, r1, r2, v1, mu]) => {
+    //
+    //     path.forEach(position => {
+    //       position.z *= this.zScale;
+    //       position.divideScalar(this.solarRadius);
+    //     });
+    //
+    //     const transfer: Transfer = {
+    //       mu: mu,
+    //       name: min_delta_v ? "MinDV" : "MinFT",
+    //       position: r1,
+    //       target: r2,
+    //       velocity: v1,
+    //       startTime: this.elapsedTime
+    //     }
+    //     this.transfers.forEach((item, index) => {
+    //       if (item.name === transfer.name) {
+    //         this.transfers.splice(index, 1);
+    //
+    //         const transferPath = this.orbitsGroup.getObjectByName(transfer.name + "-Path");
+    //         if (transferPath !== undefined) this.orbitsGroup.remove(transferPath);
+    //
+    //         const transferSphere = this.scene.getObjectByName(transfer.name);
+    //         if (transferSphere !== undefined) this.scene.remove(transferSphere);
+    //       }
+    //     });
+    //
+    //     this.transfers.push(transfer);
+    //     {
+    //       const geometry = new THREE.BufferGeometry().setFromPoints(path);
+    //       const material = new THREE.LineBasicMaterial({color: color});
+    //       const line = new THREE.Line(geometry, material);
+    //       line.name = transfer.name + "-Path";
+    //       this.orbitsGroup.add(line);
+    //     }
+    //
+    //     {
+    //       const geometry = new THREE.SphereGeometry(2, 24, 24);
+    //       const material = new THREE.MeshBasicMaterial({color: color});
+    //       const mesh = new THREE.Mesh(geometry, material);
+    //       const position = new Vector3(transfer.position.x, transfer.position.y, transfer.position.z);
+    //       position.z *= this.zScale;
+    //       position.divideScalar(this.solarRadius);
+    //       mesh.position.set(position.x, position.y, position.z);
+    //       mesh.name = transfer.name;
+    //       this.scene.add(mesh);
+    //     }
+    //   })
+    //   .finally(() => this.working = false);
   }
 }

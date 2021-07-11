@@ -245,10 +245,82 @@ export class OrbitdataService {
     return [position, velocity];
   }
 
-  propagate(transfer: Transfer, time: number): [Vector3, Vector3] {
-    const position: Vector3 = transfer.position;
-    const velocity: Vector3 = transfer.velocity;
-    const mu: number = transfer.mu;
+  lambertSolver(r1: Vector3, r2: Vector3, tof: number, mu: number) {
+    r1.multiplyScalar(this.AU);
+    r2.multiplyScalar(this.AU);
+
+    const m_r1: number = r1.length();
+    const m_r2: number = r2.length();
+
+    let angularMomentum: Vector3 = new Vector3();
+    angularMomentum.crossVectors(r1, r2);
+
+    const cosDeltaTheta: number = r1.dot(r2) / (m_r1 * m_r2);
+    const deltaTheta: number = angularMomentum.z >= 0 ?
+      Math.acos(cosDeltaTheta) :
+      2 * Math.PI - Math.acos(cosDeltaTheta);
+
+    const k: number = m_r1 * m_r2 * (1 - cosDeltaTheta);
+    const l: number = m_r1 + m_r2;
+    const m: number = m_r1 * m_r2 * (1 + cosDeltaTheta);
+
+    const pMin: number = k / (l + Math.sqrt(2 * m));
+    const pMax: number = k / (l - Math.sqrt(2 * m));
+
+    const pvals: number[] = new Array(100);
+    const evals: number[] = new Array(100);
+
+    const tofSolver = (p: number) => {
+      const a: number = m * k * p / ((2 * m - l * l) * p * p + 2 * k * l * p - k * k);
+      const f: number = 1 - m_r2 / p * (1 - cosDeltaTheta);
+      const g: number = m_r1 * m_r2 * Math.sin(deltaTheta) / Math.sqrt(p * mu);
+      const dotf: number = Math.sqrt(mu / p) * ((1 - cosDeltaTheta) / p - 1 / m_r1 - 1 / m_r2) * Math.tan(deltaTheta / 2);
+      const dotg: number = 1 - m_r1 / p * (1 - cosDeltaTheta);
+      const cosDeltaE: number = 1 - m_r1 / a * (1 - f);
+      const sinDeltaE: number = -m_r1 * m_r2 * dotf / Math.sqrt(mu * a);
+      let deltaE: number = Math.atan2(sinDeltaE, cosDeltaE);
+      while (deltaE < 0) deltaE += 2 * Math.PI;
+      const trialToF: number = (g + Math.sqrt(Math.pow(a, 3) / mu) * (deltaE - sinDeltaE));
+      const err: number = trialToF - tof;
+      return [p, err, f, g, dotf, dotg];
+    }
+
+    // Populate initial two trials.
+    [pvals[0], evals[0]] = tofSolver(0.7 * pMin + 0.3 * pMax);
+    [pvals[1], evals[1]] = tofSolver(0.3 * pMin + 0.7 * pMax);
+
+    // Solve for ToF
+    let iter: number = 1;
+    let p: number = 0;
+    let e: number = 0;
+    let f: number = 0;
+    let g: number = 0;
+    let dotf: number = 0;
+    let dotg: number = 0;
+    while (Math.abs(evals[iter]) > 1e-5 && iter < 100) {
+      [p, e, f, g, dotf, dotg] = tofSolver(pvals[iter] - evals[iter] * (pvals[iter] - pvals[iter - 1]) / (evals[iter] - evals[iter - 1]));
+      iter++;
+      pvals[iter] = p;
+      evals[iter] = e;
+    }
+
+    const v1: Vector3 = new Vector3(
+      (r2.x - f * r1.x) / g,
+      (r2.y - f * r1.y) / g,
+      (r2.z - f * r1.z) / g);
+    const v2: Vector3 = new Vector3(
+      dotf * r1.x + dotg * (r2.x - f * r1.x) / g,
+      dotf * r1.y + dotg * (r2.y - f * r1.y) / g,
+      dotf * r1.z + dotg * (r2.z - f * r1.z) / g);
+    return [v1, v2];
+  }
+
+  propagate(position: Vector3, velocity: Vector3, mu: number, time: number): [Vector3, Vector3] {
+    // const position: Vector3 = transfer.position;
+    // const velocity: Vector3 = transfer.velocity;
+    // const mu: number = transfer.mu;
+
+
 
     const R: number = Math.sqrt(position.x * position.x + position.y * position.y + position.z * position.z);
     const V: number = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
