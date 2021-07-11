@@ -1,13 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 import * as THREE from 'three';
-import {Group, Mesh, Object3D, Scene, Vector3} from 'three';
+import {Group, Mesh, Object3D, Scene} from 'three';
 import {OrbitdataService} from "../orbitdata.service";
 import {ApiService, Planet} from "../api.service";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {MatSliderChange} from "@angular/material/slider";
 import {Transfer} from "../transfer.js";
 import {map} from "rxjs/operators";
-import {combineLatest} from "rxjs";
+import {combineLatest, range} from "rxjs";
 
 @Component({
   selector: 'app-orbit',
@@ -19,6 +19,14 @@ export class OrbitComponent implements OnInit {
   private AU: number = 149597870700;
   // TODO: Add solar radius to API?
   private solarRadius: number = 800240666; // Solar radius in m. 1 Solar Radius = 1 axis unit.
+
+  // TODO: Customizable ship performance.
+  private maxDV = 71250; // 75% of 95 km / sec
+  private maxFT = 147; // 75% of 28 week endurance
+
+  // TODO: Customizable orbits
+  private originOrbitHeight = 200000; // Default 200 km circular orbit.
+  private targetOrbitHeight = 200000;
 
   // TODO: Figure out a better way to do colors.
   private planetColors: number[] = [
@@ -144,10 +152,7 @@ export class OrbitComponent implements OnInit {
               const [position] = this.orbitDataService.ephemeris(planet, time)
               return position;
             });
-            positions.forEach(position => {
-              position.z *= this.zScale;
-              position.multiplyScalar(this.AU / this.solarRadius);
-            })
+            positions.forEach(position => position.divideScalar(this.solarRadius));
 
             const geometry = new THREE.BufferGeometry().setFromPoints(positions);
             const material = new THREE.LineBasicMaterial({color: this.pathColors[planet_number]});
@@ -192,8 +197,7 @@ export class OrbitComponent implements OnInit {
   updatePlanetPosition(object: Object3D, elapsedTime: number) {
     const planet: Planet = object.userData.planet;
     const [position] = this.orbitDataService.ephemeris(planet, elapsedTime);
-    position.z *= this.zScale;
-    position.multiplyScalar(this.AU / this.solarRadius);
+    position.divideScalar(this.solarRadius);
     object.position.set(position.x, position.y, position.z);
   }
 
@@ -383,32 +387,66 @@ export class OrbitComponent implements OnInit {
   }
 
   handleLambertEvent(min_delta_v: boolean) {
-    const tof = 30 * 86400;
-    const origin = this.planetsGroup.getObjectByName("1 Omega Hydri 3")?.userData.planet;
-    const target = this.planetsGroup.getObjectByName("1 Omega Hydri 1")?.userData.planet;
+    const origin: Planet = this.planetsGroup.getObjectByName("1 Omega Hydri 3")?.userData.planet;
+    const target: Planet = this.planetsGroup.getObjectByName("1 Omega Hydri 1")?.userData.planet;
 
-    const [r1] = this.orbitDataService.ephemeris(origin, 0);
-    const [r2] = this.orbitDataService.ephemeris(target, tof);
+    const originOrbitRadius = origin.radius + this.originOrbitHeight;
+    const targetOrbitRadius = origin.radius + this.targetOrbitHeight;
 
-    const [v1] = this.orbitDataService.lambertSolver(r1, r2, tof, origin.starGM);
+    const t1: number = 0;
 
-    {
-      const times: number[] = Array(this.divisions + 1).fill(0).map((val, index) => index / this.divisions * tof);
-      const positions: Vector3[] = times.map(time => {
-        const [position] = this.orbitDataService.propagate(r1, v1, origin.starGM, time);
-        return position;
-      });
+    range(1, this.maxFT)
+      .pipe(
+        map(tof => {
+          const t2 = t1 + tof;
 
-      positions.forEach(position => {
-        position.divideScalar(this.solarRadius);
-        position.z *= this.zScale;
-      })
+          const [r1, v1] = this.orbitDataService.ephemeris(origin, t1);
+          const [r2, v2] = this.orbitDataService.ephemeris(target, t2);
+          const [tv1, tv2] = this.orbitDataService.lambertSolver(r1, r2, tof, origin.starGM);
 
-      const geometry = new THREE.BufferGeometry().setFromPoints(positions);
-      const material = new THREE.LineBasicMaterial({color: 0x0000FF});
-      const line = new THREE.Line(geometry, material);
-      this.scene.add(line);
-    }
+          // v1.multiplyScalar(this.AU);
+
+          // console.log(r1, v1, r2, v2, tv1, tv2);
+
+          const dv: number = this.orbitDataService.transferDeltaV(v1, tv1, origin.GM, originOrbitRadius)
+            + this.orbitDataService.transferDeltaV(v2, tv2, target.GM, targetOrbitRadius);
+
+          return {
+            'flight_time': tof,
+            'dv': dv
+          };
+        })
+      )
+      .subscribe();
+
+
+
+    // const tof = 30 * 86400;
+    // const origin = this.planetsGroup.getObjectByName("1 Omega Hydri 3")?.userData.planet;
+    // const target = this.planetsGroup.getObjectByName("1 Omega Hydri 1")?.userData.planet;
+    //
+    // const [r1] = this.orbitDataService.ephemeris(origin, 0);
+    // const [r2] = this.orbitDataService.ephemeris(target, tof);
+    //
+    // const [v1] = this.orbitDataService.lambertSolver(r1, r2, tof, origin.starGM);
+    //
+    // {
+    //   const times: number[] = Array(this.divisions + 1).fill(0).map((val, index) => index / this.divisions * tof);
+    //   const positions: Vector3[] = times.map(time => {
+    //     const [position] = this.orbitDataService.propagate(r1, v1, origin.starGM, time);
+    //     return position;
+    //   });
+    //
+    //   positions.forEach(position => {
+    //     position.divideScalar(this.solarRadius);
+    //     position.z *= this.zScale;
+    //   })
+    //
+    //   const geometry = new THREE.BufferGeometry().setFromPoints(positions);
+    //   const material = new THREE.LineBasicMaterial({color: 0x0000FF});
+    //   const line = new THREE.Line(geometry, material);
+    //   this.scene.add(line);
+    // }
 
 
 

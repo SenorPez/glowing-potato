@@ -160,9 +160,8 @@ export class OrbitdataService {
       })
   }
 
-  private static getMeanMotion(planet: Planet): number {
-    const AU: number = 149598000000;
-    return Math.sqrt((planet.starGM + planet.GM) / Math.pow(planet.semimajorAxis * AU, 3));
+  private getMeanMotion(planet: Planet): number {
+    return Math.sqrt((planet.starGM + planet.GM) / Math.pow(planet.semimajorAxis * this.AU, 3));
   }
 
   private static trueToEccentric(trueAnomaly: number, eccentricity: number): number {
@@ -198,15 +197,15 @@ export class OrbitdataService {
   }
 
   ephemeris(planet: Planet, time: number): [Vector3, Vector3] {
-    const meanMotion = OrbitdataService.getMeanMotion(planet);
+    const meanMotion = this.getMeanMotion(planet);
     const meanAnomaly = OrbitdataService.trueToMean(planet.trueAnomalyAtEpoch, planet.eccentricity) + meanMotion * time;
     const eccentricAnomaly = OrbitdataService.meanToEccentric(meanAnomaly, planet.eccentricity);
 
-    const semiminorAxis = planet.semimajorAxis * Math.sqrt(1 - planet.eccentricity * planet.eccentricity);
+    const semiminorAxis = planet.semimajorAxis * this.AU * Math.sqrt(1 - planet.eccentricity * planet.eccentricity);
 
-    const xPer = planet.semimajorAxis * (Math.cos(eccentricAnomaly) - planet.eccentricity);
+    const xPer = planet.semimajorAxis * this.AU * (Math.cos(eccentricAnomaly) - planet.eccentricity);
     const yPer = semiminorAxis * Math.sin(eccentricAnomaly);
-    const xDotPer = -(planet.semimajorAxis * meanMotion * Math.sin(eccentricAnomaly)) / (1 - planet.eccentricity * Math.cos(eccentricAnomaly));
+    const xDotPer = -(planet.semimajorAxis * this.AU * meanMotion * Math.sin(eccentricAnomaly)) / (1 - planet.eccentricity * Math.cos(eccentricAnomaly));
     const yDotPer = (semiminorAxis * meanMotion * Math.cos(eccentricAnomaly)) / (1 - planet.eccentricity * Math.cos(eccentricAnomaly));
 
     const cosLoAN = Math.cos(planet.longitudeOfAscendingNode);
@@ -316,12 +315,6 @@ export class OrbitdataService {
   }
 
   propagate(position: Vector3, velocity: Vector3, mu: number, time: number): [Vector3, Vector3] {
-    // const position: Vector3 = transfer.position;
-    // const velocity: Vector3 = transfer.velocity;
-    // const mu: number = transfer.mu;
-
-
-
     const R: number = Math.sqrt(position.x * position.x + position.y * position.y + position.z * position.z);
     const V: number = Math.sqrt(velocity.x * velocity.x + velocity.y * velocity.y + velocity.z * velocity.z);
     const energy: number = (V * V / 2 - mu / R);
@@ -376,5 +369,13 @@ export class OrbitdataService {
     );
 
     return [newPosition, newVelocity]
+  }
+
+  transferDeltaV(vp: Vector3, vs: Vector3, mu: number, orbit_radius: number) {
+    const vsp: Vector3 = new Vector3();
+    vsp.subVectors(vs, vp);
+    const vsp_length: number = vsp.length();
+    const vo = Math.sqrt(vsp_length * vsp_length + 2 * mu / orbit_radius);
+    return vo - Math.sqrt(mu / orbit_radius);
   }
 }
