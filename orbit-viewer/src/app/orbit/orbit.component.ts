@@ -213,6 +213,8 @@ export class OrbitComponent implements OnInit {
       position.divideScalar(this.solarRadius);
     });
 
+    console.log(positions);
+
     const geometry = new THREE.BufferGeometry().setFromPoints(positions);
     const material = new THREE.LineBasicMaterial({color: 0x0000FF});
     const line = new THREE.Line(geometry, material);
@@ -411,7 +413,7 @@ export class OrbitComponent implements OnInit {
     const originOrbitRadius = 5954417.346258679;
     const targetOrbitRadius = 2366596.4289483577;
 
-    const t1: number = 0;
+    const t1: number = this.elapsedTime;
 
     const transfers = range(1, this.maxFT)
       .pipe(
@@ -422,7 +424,6 @@ export class OrbitComponent implements OnInit {
           const [r1, v1] = this.orbitDataService.ephemeris(origin, t1);
           const [r2, v2] = this.orbitDataService.ephemeris(target, t2);
           const [tv1, tv2] = this.orbitDataService.lambertSolver(r1, r2, tof, origin.starGM);
-
 
           const dv: number = this.orbitDataService.transferDeltaV(v1, tv1, origin.GM, originOrbitRadius)
             + this.orbitDataService.transferDeltaV(v2, tv2, target.GM, targetOrbitRadius);
@@ -446,6 +447,17 @@ export class OrbitComponent implements OnInit {
         transfers.sort((e1, e2) => e1.flight_time - e2.flight_time);
       }
       const selectedTransfer = transfers[0];
+
+      this.orbitDataService.getLambert(min_delta_v, this.getEpochDate(), 1621827699, -1826843336, 159569841, 2035226060)
+        .then(([path, r1, r2, v1, mu, dv, flight_time]) => {
+          path.forEach(vector => vector.divideScalar(this.solarRadius));
+          console.log(path);
+
+          const geometry = new THREE.BufferGeometry().setFromPoints(path);
+          const material = new THREE.LineBasicMaterial({color: 0xFF00FF});
+          const line = new THREE.Line(geometry, material);
+          this.scene.add(line);
+        });
 
       this.drawTransfer(selectedTransfer.r1, selectedTransfer.v1, selectedTransfer.mu, selectedTransfer.flight_time);
     });

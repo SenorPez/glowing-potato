@@ -243,7 +243,13 @@ export class OrbitdataService {
     return [position, velocity];
   }
 
-  lambertSolver(r1: Vector3, r2: Vector3, tof: number, mu: number) {
+  lambertSolver(or1: Vector3, or2: Vector3, otof: number, omu: number) {
+
+    const r1 = new Vector3(0.473265, -0.899215);
+    const r2 = new Vector3(0.066842, 1.561256, 0.030948);
+    const mu = 3.964016e-14
+    const tof = 207
+
     const m_r1: number = r1.length();
     const m_r2: number = r2.length();
 
@@ -254,6 +260,7 @@ export class OrbitdataService {
     const deltaTheta: number = angularMomentum.z >= 0 ?
       Math.acos(cosDeltaTheta) :
       2 * Math.PI - Math.acos(cosDeltaTheta);
+    // const deltaTheta: number = 2 * Math.PI - Math.acos(cosDeltaTheta);
 
     const k: number = m_r1 * m_r2 * (1 - cosDeltaTheta);
     const l: number = m_r1 + m_r2;
@@ -263,6 +270,7 @@ export class OrbitdataService {
     const pMax: number = k / (l - Math.sqrt(2 * m));
 
     const pvals: number[] = new Array(100);
+    const tvals: number[] = new Array(100);
     const evals: number[] = new Array(100);
 
     const tofSolver = (p: number) => {
@@ -275,29 +283,40 @@ export class OrbitdataService {
       const sinDeltaE: number = -m_r1 * m_r2 * dotf / Math.sqrt(mu * a);
       let deltaE: number = Math.atan2(sinDeltaE, cosDeltaE);
       while (deltaE < 0) deltaE += 2 * Math.PI;
-      const trialToF: number = (g + Math.sqrt(Math.pow(a, 3) / mu) * (deltaE - sinDeltaE));
-      const err: number = trialToF - tof;
-      return [p, err, f, g, dotf, dotg];
+      const t: number = ((g + Math.sqrt(Math.pow(a, 3) / mu) * (deltaE - sinDeltaE))) / 86400;
+      const e: number = t - tof;
+      return [p, e, t, f, g, dotf, dotg];
     }
 
     // Populate initial two trials.
-    [pvals[0], evals[0]] = tofSolver(0.7 * pMin + 0.3 * pMax);
-    [pvals[1], evals[1]] = tofSolver(0.3 * pMin + 0.7 * pMax);
+    // [pvals[0], evals[0], tvals[0]] = tofSolver(0.7 * pMin + 0.3 * pMax);
+    [pvals[0], evals[0], tvals[0]] = tofSolver(1.2);
+    // [pvals[1], evals[1], tvals[1]] = tofSolver(0.3 * pMin + 0.3 * pMax);
+    [pvals[1], evals[1], tvals[1]] = tofSolver(1.3);
 
     // Solve for ToF
     let iter: number = 1;
     let p: number = 0;
     let e: number = 0;
+    let t: number = 0;
     let f: number = 0;
     let g: number = 0;
     let dotf: number = 0;
     let dotg: number = 0;
+
+    // console.log(pvals[iter], tof, tvals[iter], pvals[iter], pvals[iter - 1], tvals[iter], tvals[iter - 1]);
+    // console.log(pvals[iter] + ((tof - tvals[iter]) * (pvals[iter] - pvals[iter - 1])) / (tvals[iter] - tvals[iter - 1]));
+
     while (Math.abs(evals[iter]) > 1e-5 && iter < 100) {
-      [p, e, f, g, dotf, dotg] = tofSolver(pvals[iter] - evals[iter] * (pvals[iter] - pvals[iter - 1]) / (evals[iter] - evals[iter - 1]));
+      [p, e, t, f, g, dotf, dotg] = tofSolver(pvals[iter] + ((tof - tvals[iter]) * (pvals[iter] - pvals[iter - 1])) / (tvals[iter] - tvals[iter - 1]));
+      // = tofSolver(pvals[iter] - tvals[iter] * (pvals[iter] - pvals[iter - 1]) / (evals[iter] - evals[iter - 1]));
       iter++;
       pvals[iter] = p;
       evals[iter] = e;
+      tvals[iter] = t;
     }
+
+    console.log(pvals, evals, tvals);
 
     const v1: Vector3 = new Vector3(
       (r2.x - f * r1.x) / g,
