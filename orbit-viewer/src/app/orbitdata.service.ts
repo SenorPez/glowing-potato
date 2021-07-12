@@ -117,16 +117,16 @@ export class OrbitdataService {
 
       let t;
 
-      // if (a >= 0) { // Ellipse
+      if (a >= 0) { // Ellipse
         const cosDeltaE = 1 - m_r1 / a * (1 - f);
         const sinDeltaE = -m_r1 * m_r2 * fdot / Math.sqrt(mu * a);
         const deltaE = Math.atan2(sinDeltaE, cosDeltaE);
         t = g + Math.sqrt(Math.pow(a, 3) / mu) * (deltaE - sinDeltaE);
-      // } else { // Hyperbola
-      //   const coshDeltaF = 1 - (m_r1 / a) * (1 - f);
-      //   const deltaF = Math.acosh(coshDeltaF);
-      //   t = g + Math.sqrt(Math.pow(-a, 3) / mu) * (Math.sinh(deltaF) - deltaF);
-      // }
+      } else { // Hyperbola
+        const coshDeltaF = 1 - (m_r1 / a) * (1 - f);
+        const deltaF = Math.acosh(coshDeltaF);
+        t = g + Math.sqrt(Math.pow(-a, 3) / mu) * (Math.sinh(deltaF) - deltaF);
+      }
 
       const e = t - tof;
       return {
