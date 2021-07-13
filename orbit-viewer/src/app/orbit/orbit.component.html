@@ -1,6 +1,10 @@
+<app-progress
+  [hidden]="!working"></app-progress>
+
 <app-time
   [scene]="scene"
   [elapsedTime]="elapsedTime"
+  [working]="working"
   (playEvent)="handlePlayEvent()"
   (sliderChangeEvent)="handleSliderChange($event)"
   (seekEvent)="handleSeekEvent($event)"
