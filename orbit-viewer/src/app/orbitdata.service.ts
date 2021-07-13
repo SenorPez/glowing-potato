@@ -83,7 +83,7 @@ export class OrbitdataService {
 
     const chord = Math.sqrt((r2.x - r1.x) ** 2 + (r2.y - r1.y) ** 2 + (r2.z - r1.z) ** 2);
     const semiperimeter = (chord + m_r1 + m_r2) / 2.0;
-    const lambda = Math.sqrt(1 - chord / semiperimeter);
+    const lambda = ((h.z < 1) ? -1 : 1) * Math.sqrt(1 - chord / semiperimeter);
     const ndToF = tof * Math.sqrt(2 * mu / Math.pow(semiperimeter, 3));
     console.log(chord, semiperimeter, lambda, ndToF);
 
@@ -91,6 +91,8 @@ export class OrbitdataService {
     let deltaNu = Math.acos(cosDeltaNu);
     if (h.z < 1) deltaNu = 2 * Math.PI - deltaNu;
     let DM = Math.PI - deltaNu < 0 ? -1 : 1;
+
+    // console.log(deltaNu, h.z);
 
     const A = DM * Math.sqrt(m_r1 * m_r2 * (1 + cosDeltaNu));
 
@@ -185,6 +187,8 @@ export class OrbitdataService {
       const y = getY(z, C, S);
       const x = Math.sqrt(y / C);
 
+      console.log(z, C, S, y, x);
+
       const t = (Math.pow(x, 3) * S + A * Math.sqrt(y)) / Math.sqrt(mu);
 
       const dC = expansionDC(z);
@@ -207,6 +211,10 @@ export class OrbitdataService {
       iter++;
       prevZ = z;
       z = z + (tof - t) / dtdz;
+
+      if (!isFinite(z)) {
+        iter = 100;
+      }
 
       // console.log(prevZ, z, getY(z, expansionC(z), expansionS(z)));
 
@@ -233,6 +241,10 @@ export class OrbitdataService {
         relaxed_iters++;
         prevZ = z;
         z = z + (tof - t) * 0.25 / dtdz;
+
+        if (!isFinite(z)) {
+          relaxed_iters = 400;
+        }
 
         let i = 0.50;
         while (getY(z, expansionC(z), expansionS(z)) < 0 && i < 1) {
