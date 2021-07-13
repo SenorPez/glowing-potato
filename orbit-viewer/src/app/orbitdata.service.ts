@@ -65,6 +65,10 @@ export class OrbitdataService {
     return [position, velocity];
   }
 
+  orbitalPeriod(planet: Planet) {
+    return 2 * Math.PI * Math.sqrt(Math.pow(planet.semimajorAxis * this.AU, 3) / (planet.starGM + planet.GM));
+  }
+
   transfer(r1: Vector3, r2: Vector3, tof: number, mu: number) {
     const m_r1 = r1.length();
     const m_r2 = r2.length();
@@ -211,19 +215,8 @@ export class OrbitdataService {
     return [v1, v2];
   }
 
-  private static trueToEccentric(trueAnomaly: number, eccentricity: number): number {
-    return Math.atan2(
-      Math.sqrt(1 - Math.pow(eccentricity, 2)) * Math.sin(trueAnomaly),
-      eccentricity + Math.cos(trueAnomaly)
-    ) % (2 * Math.PI);
-  }
-
   private static eccentricToMean(eccentricAnomaly: number, eccentricity: number): number {
     return eccentricAnomaly - eccentricity * Math.sin(eccentricAnomaly);
-  }
-
-  private static trueToMean(trueAnomaly: number, eccentricity: number): number {
-    return OrbitdataService.eccentricToMean(OrbitdataService.trueToEccentric(trueAnomaly, eccentricity), eccentricity);
   }
 
   private static meanToEccentric(meanAnomaly: number, eccentricity: number): number {
@@ -243,6 +236,19 @@ export class OrbitdataService {
     return E;
   }
 
+  private static trueToEccentric(trueAnomaly: number, eccentricity: number): number {
+    return Math.atan2(
+      Math.sqrt(1 - Math.pow(eccentricity, 2)) * Math.sin(trueAnomaly),
+      eccentricity + Math.cos(trueAnomaly)
+    ) % (2 * Math.PI);
+  }
+
+
+  private static trueToMean(trueAnomaly: number, eccentricity: number): number {
+    return OrbitdataService.eccentricToMean(OrbitdataService.trueToEccentric(trueAnomaly, eccentricity), eccentricity);
+  }
+
+
 
   // // TODO: Add AU to API
   // private AU: number = 149597870700;
@@ -256,9 +262,6 @@ export class OrbitdataService {
   //   this.api = "https://www.trident.senorpez.com/"
   // }
   //
-  // orbitalPeriod(planet: Planet) {
-  //   return 2 * Math.PI * Math.sqrt(Math.pow(planet.semimajorAxis * this.AU, 3) / (planet.starGM + planet.GM));
-  // }
   //
   // getPlanetIds(system_id: number, star_id: number) {
   //   return fetch(this.api + `/systems/${system_id}/stars/${star_id}/planets`, {
