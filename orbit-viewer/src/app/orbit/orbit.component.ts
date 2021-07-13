@@ -98,7 +98,7 @@ export class OrbitComponent implements OnInit {
               const [v1, v2] = this.orbitDataService.transfer_new(r1, r2, index * 86400, origin.starGM);
               const pykep_v1 = new Vector3(this.trans[index - 1][0], this.trans[index - 1][1], this.trans[index - 1][2]);
               diffs.push({"tof": index, "diff": Math.abs(pykep_v1.length() - v1.length())});
-              // console.log(v1, v2);
+              console.log(v1, v2);
             }
 
             console.log(diffs.length);

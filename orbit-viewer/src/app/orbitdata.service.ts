@@ -85,7 +85,7 @@ export class OrbitdataService {
     const semiperimeter = (chord + m_r1 + m_r2) / 2.0;
     const lambda = Math.sqrt(1 - chord / semiperimeter);
     const ndToF = tof * Math.sqrt(2 * mu / Math.pow(semiperimeter, 3));
-    console.log(chord, semiperimeter, lambda, ndToF);
+    // console.log(chord, semiperimeter, lambda, ndToF);
 
     const cosDeltaNu = r1.dot(r2) / (m_r1 * m_r2);
     let deltaNu = Math.acos(cosDeltaNu);
@@ -108,10 +108,13 @@ export class OrbitdataService {
     }
 
     const expansionC = (z: number) => {
+      // return z === 0 ? 1 / factorial(2) : (1 - Math.cos(Math.sqrt(z))) / z;
       let sum = 1 / factorial(2);
       for (let i = 1; i < 101; i++) {
         const sign = i % 2 ? -1 : 1;
-        sum += sign * Math.pow(z, i) / factorial(2 + i * 2);
+        const next = sign * Math.pow(z, i) / factorial(2 + i * 2);
+        if (isNaN(sum + next)) return sum;
+        sum += next;
       }
       return sum;
     }
@@ -129,10 +132,13 @@ export class OrbitdataService {
     }
 
     const expansionS: (z: number) => number = (z: number) => {
+      // return z === 0 ? 1 / factorial(3) : (Math.sqrt(z) - Math.sin(Math.sqrt(z))) / Math.sqrt(Math.pow(z, 3));
       let sum = 1 / factorial(3);
       for (let i = 1; i < 101; i++) {
         const sign = i % 2 ? -1 : 1;
-        sum += sign * Math.pow(z, i) / factorial(3 + i * 2);
+        const next = sign * Math.pow(z, i) / factorial(3 + i * 2);
+        if (isNaN(sum + next)) return sum;
+        sum += next;
       }
       return sum;
     }
@@ -174,22 +180,22 @@ export class OrbitdataService {
     // console.log(Math.sqrt(2.87869), tof);
     let [t, dtdz, y] = calc(z);
     let prevZ = 0;
-    console.log(z, t, dtdz, y);
+    // console.log(z, t, dtdz, y);
     while (Math.abs(t - tof) > 10e-4) {
       prevZ = z;
       z = z + (tof - t) / dtdz;
 
-      console.log(prevZ, z, getY(z, expansionC(z), expansionS(z)));
+      // console.log(prevZ, z, getY(z, expansionC(z), expansionS(z)));
 
       let i = 0.50;
       while (getY(z, expansionC(z), expansionS(z)) < 0) {
-        console.log(i);
+        // console.log(i);
         z = prevZ === 0 ? 0.01 : prevZ * i;
         i += 0.01;
       }
 
       [t, dtdz, y] = calc(z);
-      console.log(z, t, dtdz, y);
+      // console.log(z, t, dtdz, y);
     }
 
     const f = 1 - y / m_r1;
