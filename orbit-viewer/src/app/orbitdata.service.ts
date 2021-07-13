@@ -85,7 +85,7 @@ export class OrbitdataService {
     const semiperimeter = (chord + m_r1 + m_r2) / 2.0;
     const lambda = Math.sqrt(1 - chord / semiperimeter);
     const ndToF = tof * Math.sqrt(2 * mu / Math.pow(semiperimeter, 3));
-    // console.log(chord, semiperimeter, lambda, ndToF);
+    console.log(chord, semiperimeter, lambda, ndToF);
 
     const cosDeltaNu = r1.dot(r2) / (m_r1 * m_r2);
     let deltaNu = Math.acos(cosDeltaNu);
@@ -108,15 +108,25 @@ export class OrbitdataService {
     }
 
     const expansionC = (z: number) => {
-      // return z === 0 ? 1 / factorial(2) : (1 - Math.cos(Math.sqrt(z))) / z;
-      let sum = 1 / factorial(2);
-      for (let i = 1; i < 101; i++) {
-        const sign = i % 2 ? -1 : 1;
-        const next = sign * Math.pow(z, i) / factorial(2 + i * 2);
-        if (isNaN(sum + next)) return sum;
-        sum += next;
+      if (z === 0) {
+        return 1 / factorial(2);
+      } else if (z > 0) {
+        return (1 - Math.cos(Math.sqrt(z))) / z;
+      } else {
+        return (1 - Math.cosh(Math.sqrt(-z))) / z;
       }
-      return sum;
+      // console.log((1 - Math.cos(Math.sqrt(z))) / z);
+      // return z === 0 ? 1 / factorial(2) : (1 - Math.cosh(Math.sqrt(z))) / z;
+      // return z === 0 ? 1 / factorial(2) : (1 - Math.cos(Math.sqrt(z))) / z;
+      // let sum = 1 / factorial(2);
+      // for (let i = 1; i < 101; i++) {
+      //   const sign = i % 2 ? -1 : 1;
+      //   const next = sign * Math.pow(z, i) / factorial(2 + i * 2);
+      //   if (isNaN(sum + next)) return sum;
+      //   // if (sum + next < 0) console.log("ERR", next, z, i);
+      //   sum += next;
+      // }
+      // return sum;
     }
 
     const expansionDC = (z: number) => {
@@ -132,15 +142,22 @@ export class OrbitdataService {
     }
 
     const expansionS: (z: number) => number = (z: number) => {
-      // return z === 0 ? 1 / factorial(3) : (Math.sqrt(z) - Math.sin(Math.sqrt(z))) / Math.sqrt(Math.pow(z, 3));
-      let sum = 1 / factorial(3);
-      for (let i = 1; i < 101; i++) {
-        const sign = i % 2 ? -1 : 1;
-        const next = sign * Math.pow(z, i) / factorial(3 + i * 2);
-        if (isNaN(sum + next)) return sum;
-        sum += next;
+      if (z === 0) {
+        return 1 / factorial(3);
+      } else if (z > 0) {
+        return (Math.sqrt(z) - Math.sin(Math.sqrt(z))) / Math.sqrt(Math.pow(z, 3));
+      } else {
+        return (Math.sinh(Math.sqrt(-z)) - Math.sqrt(-z)) / Math.sqrt(Math.pow(-z, 3));
       }
-      return sum;
+      // return z === 0 ? 1 / factorial(3) : (Math.sqrt(z) - Math.sin(Math.sqrt(z))) / Math.sqrt(Math.pow(z, 3));
+      // let sum = 1 / factorial(3);
+      // for (let i = 1; i < 101; i++) {
+      //   const sign = i % 2 ? -1 : 1;
+      //   const next = sign * Math.pow(z, i) / factorial(3 + i * 2);
+      //   if (isNaN(sum + next)) return sum;
+      //   sum += next;
+      // }
+      // return sum;
     }
 
     const expansionDS = (z: number) => {
@@ -172,6 +189,8 @@ export class OrbitdataService {
       const dC = expansionDC(z);
       const dS = expansionDS(z);
 
+      // console.log("ASDF", z, t, C, S, y, x)
+
       const dtdz = (x ** 3 * (dS - ((3 * S * dC) / (2 * C))) + (A / 8) * (((3 * S * Math.sqrt(y)) / C) + (A / x))) / Math.sqrt(mu);
 
       return [t, dtdz, y];
@@ -181,7 +200,9 @@ export class OrbitdataService {
     let [t, dtdz, y] = calc(z);
     let prevZ = 0;
     // console.log(z, t, dtdz, y);
-    while (Math.abs(t - tof) > 10e-4) {
+    let iter = 0;
+    while (Math.abs(t - tof) > 10e-4 && iter < 100) {
+      iter++;
       prevZ = z;
       z = z + (tof - t) / dtdz;
 
