@@ -1,14 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import * as THREE from 'three';
-import {AnimationUtils, Group, Mesh, Object3D, Scene, Vector3} from 'three';
+import {AnimationUtils, Group, Line, Mesh, Object3D, Scene, Vector3} from 'three';
 import {OrbitdataService} from "../orbitdata.service";
 import {ApiService, Planet} from "../api.service";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {MatSliderChange} from "@angular/material/slider";
-import {Transfer} from "../transfer.js";
-import {filter, map, toArray} from "rxjs/operators";
+import {filter, map, tap, toArray} from "rxjs/operators";
 import {combineLatest, range} from "rxjs";
-import sortedArray = AnimationUtils.sortedArray;
 
 @Component({
   selector: 'app-orbit',
@@ -62,8 +60,8 @@ export class OrbitComponent implements OnInit {
   private planetsGroup: Group = new THREE.Group();
   private planetLocators: Mesh[] = [];
 
-  private minDVTransfer: Mesh = new THREE.Mesh();
-  private minFTTransfer: Mesh = new THREE.Mesh();
+  private minDVTransfer: Line = new THREE.Line();
+  private minFTTransfer: Line = new THREE.Line();
 
   constructor(private orbitDataService: OrbitdataService, private apiService: ApiService) {
   }
@@ -199,6 +197,25 @@ export class OrbitComponent implements OnInit {
     };
   }
 
+  drawPath(r1: Vector3, v1: Vector3, mu: number, tof: number) {
+    const times: number[] = Array(this.divisions + 1).fill(0).map((val, index) => index / this.divisions * tof);
+    const positions: Vector3[] = times.map(time => {
+      const [position] = this.orbitDataService.propagate(r1, v1, mu, time);
+      return position;
+    });
+
+    positions.forEach(position => {
+      position.z *= this.zScale;
+      position.divideScalar(this.solarRadius);
+    });
+
+    {
+      const geometry = new THREE.BufferGeometry().setFromPoints(positions);
+      const material = new THREE.LineBasicMaterial({color: 0x0000FF});
+      return new THREE.Line(geometry, material);
+    }
+  }
+
   updatePlanetPosition(object: Object3D, elapsedTime: number) {
     const planet: Planet = object.userData.planet;
     const [position] = this.orbitDataService.ephemerides(planet, elapsedTime);
@@ -241,18 +258,21 @@ export class OrbitComponent implements OnInit {
         toArray()
       );
 
+
     transfers.subscribe(transfers => {
       if (min_delta_v) {
         transfers.sort((a, b) => a.dv - b.dv);
+        const selectedTransfer = transfers[0];
+        this.minDVTransfer = this.drawPath(selectedTransfer.r1, selectedTransfer.v1, selectedTransfer.mu, selectedTransfer.flight_time);
+        this.scene.add(this.minDVTransfer);
       } else {
         transfers.sort((a, b) => a.flight_time - b.flight_time);
+        const selectedTransfer = transfers[0];
+        this.minFTTransfer = this.drawPath(selectedTransfer.r1, selectedTransfer.v1, selectedTransfer.mu, selectedTransfer.flight_time);
+        this.scene.add(this.minFTTransfer);
       }
-      const selectedTransfer = transfers[0];
-      selectedTransfer.flight_time = selectedTransfer.flight_time / 86400;
-      console.log(selectedTransfer);
     });
   }
-
 
   handleOrbitsEvent(showOrbits: boolean) {
     this.orbitsGroup.visible = showOrbits;
@@ -284,25 +304,5 @@ export class OrbitComponent implements OnInit {
 
   handleSliderEvent(event: MatSliderChange) {
     if (event.value != null) this.frameScale = event.value;
-  }
-
-
-
-  drawTransfer(r1: Vector3, v1: Vector3, mu: number, tof: number) {
-    // const times: number[] = Array(this.divisions + 1).fill(0).map((val, index) => index / this.divisions * tof);
-    // const positions: Vector3[] = times.map(time => {
-    //   const [position] = this.orbitDataService.propagate(r1, v1, mu, time);
-    //   return position;
-    // });
-    //
-    // positions.forEach(position => {
-    //   position.z *= this.zScale;
-    //   position.divideScalar(this.solarRadius);
-    // });
-    //
-    // const geometry = new THREE.BufferGeometry().setFromPoints(positions);
-    // const material = new THREE.LineBasicMaterial({color: 0x0000FF});
-    // const line = new THREE.Line(geometry, material);
-    // this.scene.add(line);
   }
 }
