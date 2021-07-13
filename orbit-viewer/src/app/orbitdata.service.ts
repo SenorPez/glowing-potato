@@ -215,6 +215,14 @@ export class OrbitdataService {
     return [v1, v2];
   }
 
+  transferDeltaV(vp: Vector3, vs: Vector3, mu: number, orbit_radius: number) {
+    const vsp: Vector3 = new Vector3();
+    vsp.subVectors(vs, vp);
+    const vsp_length: number = vsp.length();
+    const vo = Math.sqrt(vsp_length * vsp_length + 2 * mu / orbit_radius);
+    return vo - Math.sqrt(mu / orbit_radius);
+  }
+
   private static eccentricToMean(eccentricAnomaly: number, eccentricity: number): number {
     return eccentricAnomaly - eccentricity * Math.sin(eccentricAnomaly);
   }
@@ -469,11 +477,5 @@ export class OrbitdataService {
   //   return [newPosition, newVelocity]
   // }
   //
-  // transferDeltaV(vp: Vector3, vs: Vector3, mu: number, orbit_radius: number) {
-  //   const vsp: Vector3 = new Vector3();
-  //   vsp.subVectors(vs, vp);
-  //   const vsp_length: number = vsp.length();
-  //   const vo = Math.sqrt(vsp_length * vsp_length + 2 * mu / orbit_radius);
-  //   return vo - Math.sqrt(mu / orbit_radius);
-  // }
+
 }
