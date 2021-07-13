@@ -178,6 +178,7 @@ export class OrbitdataService {
     }
 
     const calc = (z: number) => {
+      // console.log(z);
       const C = expansionC(z);
       const S = expansionS(z);
 
@@ -202,6 +203,7 @@ export class OrbitdataService {
     // console.log(z, t, dtdz, y);
     let iter = 0;
     while (Math.abs(t - tof) > 10e-4 && iter < 100) {
+      // console.log("First:", iter);
       iter++;
       prevZ = z;
       z = z + (tof - t) / dtdz;
@@ -209,7 +211,7 @@ export class OrbitdataService {
       // console.log(prevZ, z, getY(z, expansionC(z), expansionS(z)));
 
       let i = 0.50;
-      while (getY(z, expansionC(z), expansionS(z)) < 0) {
+      while (getY(z, expansionC(z), expansionS(z)) < 0 && i < 1) {
         // console.log(i);
         z = prevZ === 0 ? 0.01 : prevZ * i;
         i += 0.01;
@@ -218,6 +220,31 @@ export class OrbitdataService {
       [t, dtdz, y] = calc(z);
       // console.log(z, t, dtdz, y);
     }
+
+    // No match found, so let's relax progression.
+    if (iter === 100) {
+      z = 0;
+      [t, dtdz, y] = calc(z);
+      let prevZ = 0
+      let iter = 0;
+      while (Math.abs(t - tof) > 10e-4 && iter < 400) {
+        // console.log("Relaxed:", iter);
+        iter++
+        prevZ = z;
+        z = z + (tof - t) * 0.25 / dtdz;
+
+        let i = 0.50;
+        while (getY(z, expansionC(z), expansionS(z)) < 0 && i < 1) {
+          z = prevZ === 0 ? 0.01 : prevZ * i;
+          i += 0.01;
+        }
+
+        [t, dtdz, y] = calc(z);
+      }
+      console.log("Relaxed Iters", iter);
+    }
+
+    console.log("Iters", iter);
 
     const f = 1 - y / m_r1;
     const g = A * Math.sqrt(y / mu);
