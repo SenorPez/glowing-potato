@@ -85,7 +85,7 @@ export class OrbitdataService {
     const semiperimeter = (chord + m_r1 + m_r2) / 2.0;
     const lambda = Math.sqrt(1 - chord / semiperimeter);
     const ndToF = tof * Math.sqrt(2 * mu / Math.pow(semiperimeter, 3));
-    // console.log(chord, semiperimeter, lambda, ndToF);
+    console.log(chord, semiperimeter, lambda, ndToF);
 
     const cosDeltaNu = r1.dot(r2) / (m_r1 * m_r2);
     let deltaNu = Math.acos(cosDeltaNu);
@@ -150,11 +150,15 @@ export class OrbitdataService {
       // return sum;
     }
 
+    const getY = (z: number, C: number, S: number) => {
+      return m_r1 + m_r2 - A * ((1 - z * S) / Math.sqrt(C));
+    }
+
     const calc = (z: number) => {
       const C = expansionC(z);
       const S = expansionS(z);
 
-      const y = m_r1 + m_r2 - A * ((1 - z * S) / Math.sqrt(C));
+      const y = getY(z, C, S);
       const x = Math.sqrt(y / C);
 
       const t = (Math.pow(x, 3) * S + A * Math.sqrt(y)) / Math.sqrt(mu);
@@ -169,9 +173,23 @@ export class OrbitdataService {
 
     // console.log(Math.sqrt(2.87869), tof);
     let [t, dtdz, y] = calc(z);
+    let prevZ = 0;
+    console.log(z, t, dtdz, y);
     while (Math.abs(t - tof) > 10e-4) {
+      prevZ = z;
       z = z + (tof - t) / dtdz;
+
+      console.log(prevZ, z, getY(z, expansionC(z), expansionS(z)));
+
+      let i = 0.50;
+      while (getY(z, expansionC(z), expansionS(z)) < 0) {
+        console.log(i);
+        z = prevZ === 0 ? 0.01 : prevZ * i;
+        i += 0.01;
+      }
+
       [t, dtdz, y] = calc(z);
+      console.log(z, t, dtdz, y);
     }
 
     const f = 1 - y / m_r1;
