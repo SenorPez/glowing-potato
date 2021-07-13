@@ -1,17 +1,13 @@
 import {Injectable} from '@angular/core';
 import {Vector3} from 'three';
-
-import {throwError} from "rxjs";
 import {Planet} from "./api.service";
-import {min} from "rxjs/operators";
-import {mixinDisabled} from "@angular/material/core";
 
 @Injectable({
   providedIn: 'root'
 })
 export class OrbitdataService {
   // TODO: Add AU to API
-  private AU: number = 149597870691;
+  private AU: number = 149597870700;
 
   ephemerides(planet: Planet, time: number) {
     const semimajorAxis = planet.semimajorAxis * this.AU;
@@ -69,30 +65,23 @@ export class OrbitdataService {
     return [position, velocity];
   }
 
-  transfer_new(r1: Vector3, r2: Vector3, tof: number, mu: number) {
-    // r1 = new Vector3(0.5, 0.6, 0.7);
-    // r2 = new Vector3(0, 1.0, 0.0);
-    // tof = 0.9667663
-    // mu = 1;
-
+  transfer(r1: Vector3, r2: Vector3, tof: number, mu: number) {
     const m_r1 = r1.length();
     const m_r2 = r2.length();
 
     const h = new Vector3();
     h.crossVectors(r1, r2);
 
-    const chord = Math.sqrt((r2.x - r1.x) ** 2 + (r2.y - r1.y) ** 2 + (r2.z - r1.z) ** 2);
-    const semiperimeter = (chord + m_r1 + m_r2) / 2.0;
-    const lambda = ((h.z < 1) ? -1 : 1) * Math.sqrt(1 - chord / semiperimeter);
-    const ndToF = tof * Math.sqrt(2 * mu / Math.pow(semiperimeter, 3));
-    // console.log(chord, semiperimeter, lambda, ndToF);
+    // Useful for debugging.
+    // const chord = Math.sqrt((r2.x - r1.x) ** 2 + (r2.y - r1.y) ** 2 + (r2.z - r1.z) ** 2);
+    // const semiperimeter = (chord + m_r1 + m_r2) / 2.0;
+    // const lambda = ((h.z < 1) ? -1 : 1) * Math.sqrt(1 - chord / semiperimeter);
+    // const ndToF = tof * Math.sqrt(2 * mu / Math.pow(semiperimeter, 3));
 
     const cosDeltaNu = r1.dot(r2) / (m_r1 * m_r2);
     let deltaNu = Math.acos(cosDeltaNu);
     if (h.z < 1) deltaNu = 2 * Math.PI - deltaNu;
     let DM = Math.PI - deltaNu < 0 ? -1 : 1;
-
-    // console.log(deltaNu, h.z);
 
     const A = DM * Math.sqrt(m_r1 * m_r2 * (1 + cosDeltaNu));
 
@@ -114,18 +103,6 @@ export class OrbitdataService {
       } else {
         return (1 - Math.cosh(Math.sqrt(-z))) / z;
       }
-      // console.log((1 - Math.cos(Math.sqrt(z))) / z);
-      // return z === 0 ? 1 / factorial(2) : (1 - Math.cosh(Math.sqrt(z))) / z;
-      // return z === 0 ? 1 / factorial(2) : (1 - Math.cos(Math.sqrt(z))) / z;
-      // let sum = 1 / factorial(2);
-      // for (let i = 1; i < 101; i++) {
-      //   const sign = i % 2 ? -1 : 1;
-      //   const next = sign * Math.pow(z, i) / factorial(2 + i * 2);
-      //   if (isNaN(sum + next)) return sum;
-      //   // if (sum + next < 0) console.log("ERR", next, z, i);
-      //   sum += next;
-      // }
-      // return sum;
     }
 
     const expansionDC = (z: number) => {
@@ -148,15 +125,6 @@ export class OrbitdataService {
       } else {
         return (Math.sinh(Math.sqrt(-z)) - Math.sqrt(-z)) / Math.sqrt(Math.pow(-z, 3));
       }
-      // return z === 0 ? 1 / factorial(3) : (Math.sqrt(z) - Math.sin(Math.sqrt(z))) / Math.sqrt(Math.pow(z, 3));
-      // let sum = 1 / factorial(3);
-      // for (let i = 1; i < 101; i++) {
-      //   const sign = i % 2 ? -1 : 1;
-      //   const next = sign * Math.pow(z, i) / factorial(3 + i * 2);
-      //   if (isNaN(sum + next)) return sum;
-      //   sum += next;
-      // }
-      // return sum;
     }
 
     const expansionDS = (z: number) => {
@@ -177,21 +145,15 @@ export class OrbitdataService {
     }
 
     const calc = (z: number) => {
-      // console.log(z);
       const C = expansionC(z);
       const S = expansionS(z);
+      const dC = expansionDC(z);
+      const dS = expansionDS(z);
 
       const y = getY(z, C, S);
       const x = Math.sqrt(y / C);
 
-      console.log(z, C, S, y, x);
-
       const t = (Math.pow(x, 3) * S + A * Math.sqrt(y)) / Math.sqrt(mu);
-
-      const dC = expansionDC(z);
-      const dS = expansionDS(z);
-
-      // console.log("ASDF", z, t, C, S, y, x)
 
       const dtdz = (x ** 3 * (dS - ((3 * S * dC) / (2 * C))) + (A / 8) * (((3 * S * Math.sqrt(y)) / C) + (A / x))) / Math.sqrt(mu);
 
@@ -249,122 +211,38 @@ export class OrbitdataService {
     return [v1, v2];
   }
 
-  transfer(r1: Vector3, r2: Vector3, tof: number, mu: number) {
-    const m_r1 = r1.length();
-    const m_r2 = r2.length();
-
-    const chord = Math.sqrt((r2.x - r1.x) ** 2 + (r2.y - r1.y) ** 2 + (r2.z - r1.z) ** 2);
-    const semiperimeter = (chord + m_r1 + m_r2) / 2.0;
-    const lambda = Math.sqrt(1 - chord / semiperimeter);
-    const ndToF = tof * Math.sqrt(2 * mu / Math.pow(semiperimeter, 3));
-
-    console.log(mu, r1, r2, tof, chord, semiperimeter, lambda, ndToF);
-
-    const cosDeltaNu = r1.dot(r2) / (m_r1 * m_r2);
-    let deltaNu = Math.acos(cosDeltaNu);
-
-    const k = m_r1 * m_r2 * (1 - cosDeltaNu);
-    const l = m_r1 + m_r2
-    const m = m_r1 * m_r2 * (1 + cosDeltaNu);
-
-    const pMin = k / (l + Math.sqrt(2 * m));
-    const pMax = k / (l - Math.sqrt(2 * m));
-
-    // const pMin = 40700000000
-    // const pMax = 40800000000
-
-    const tofSolver = (p: number) => {
-      const a = m * k * p / ((2 * m - l * l) * p * p + 2 * k * l * p - k * k);
-      // const a = 110702928630.34;
-      // p = (-k * Math.sqrt(m) * Math.sqrt(8 * a * a - 4 * a * l + m) + 2 * a * k * l - k * m) / (2 * (a * l * l - 2 * a * m));
-      const f = 1 - m_r2 / p * (1 - cosDeltaNu);
-      const g = m_r1 * m_r2 * Math.sin(deltaNu) / Math.sqrt(mu * p);
-      const fdot = Math.sqrt(mu / p) * Math.tan(deltaNu / 2) * ((1 - cosDeltaNu) / p - 1 / m_r1 - 1 / m_r2);
-      const gdot = 1 - m_r1 / p * (1 - cosDeltaNu);
-
-      let t;
-      if (a >= 0) { // Ellipse
-        const cosDeltaE = 1 - m_r1 / a * (1 - f);
-        let sinDeltaE = -m_r1 * m_r2 * fdot / Math.sqrt(mu * a);
-        let deltaE = Math.atan2(sinDeltaE, cosDeltaE);
-
-        t = g + Math.sqrt(Math.pow(a, 3) / mu) * (deltaE - sinDeltaE);
-        console.log(deltaE, Math.abs(deltaE - 2.87869));
-        // console.log(tof / (g + Math.sqrt(Math.pow(a, 3) / mu)));
-        // console.log(pMax > p, deltaE, Math.abs(tof - t), "de");
-      } else { // Hyperbola
-        const coshDeltaF = 1 - (m_r1 / a) * (1 - f);
-        let deltaF = Math.acosh(coshDeltaF);
-        t = g + Math.sqrt(Math.pow(-a, 3) / mu) * (Math.sinh(deltaF) - deltaF);
-        // console.log(pMax > p, deltaF, Math.abs(tof - t), "df");
-      }
-
-      const e = t - tof;
-      return {
-        p: p,
-        e: e,
-        t: t,
-        f: f,
-        g: g,
-        fdot: fdot,
-        gdot: gdot,
-        a: a
-      };
-    };
-
-    const pvals: number[] = [];
-    const evals: number[] = [];
-    const tvals: number[] = [];
-
-    // Initial two trials.
-    const first = tofSolver(0.7 * pMin + 0.3 * pMax);
-    [pvals[0], evals[0], tvals[0]] = [first.p, first.e, first.t];
-    const second = tofSolver(0.3 * pMin + 0.7 * pMax);
-    [pvals[1], evals[1], tvals[1]] = [second.p, second.e, second.t];
-
-    let iter: number = 1;
-    let result;
-
-    // while (Math.abs(evals[iter]) > 1e-5 && iter < 100) {
-    //   let pNext = pvals[iter] + ((tof - tvals[iter]) * (pvals[iter] - pvals[iter - 1])) / (tvals[iter] - tvals[iter - 1]);
-    //   result = tofSolver(pNext);
-    //
-    //   iter++;
-    //   pvals[iter] = result.p;
-    //   evals[iter] = result.e;
-    //   tvals[iter] = result.t;
-    // }
-    //
-    // for (let b = pMin; b < pMax; b = b + ((pMax - pMin) / 100)) {
-    //   let t = tofSolver(b).t;
-    //   console.log(b, tof, t, Math.abs(tof - t));
-    // }
-    const target = 40734602439;
-    let q = tofSolver(target).t;
-    // console.log(target, tof, q, Math.abs(tof - q));
-
-    result = tofSolver(target);
-
-    if (result !== undefined) {
-      const {f, g, fdot, gdot} = result;
-      const v1 = new Vector3(
-        (r2.x - f * r1.x) / g,
-        (r2.y - f * r1.y) / g,
-        (r2.z - f * r1.z) / g
-      );
-      const v2 = new Vector3(
-        fdot * r1.x + gdot * v1.x,
-        fdot * r1.y + gdot * v1.y,
-        fdot * r1.z + gdot * v1.z
-      );
-
-      console.log(v1, v2);
-
-      return [v1, v2];
-    }
-    console.log("ERROR");
-    return [new Vector3(), new Vector3()];
+  private static trueToEccentric(trueAnomaly: number, eccentricity: number): number {
+    return Math.atan2(
+      Math.sqrt(1 - Math.pow(eccentricity, 2)) * Math.sin(trueAnomaly),
+      eccentricity + Math.cos(trueAnomaly)
+    ) % (2 * Math.PI);
   }
+
+  private static eccentricToMean(eccentricAnomaly: number, eccentricity: number): number {
+    return eccentricAnomaly - eccentricity * Math.sin(eccentricAnomaly);
+  }
+
+  private static trueToMean(trueAnomaly: number, eccentricity: number): number {
+    return OrbitdataService.eccentricToMean(OrbitdataService.trueToEccentric(trueAnomaly, eccentricity), eccentricity);
+  }
+
+  private static meanToEccentric(meanAnomaly: number, eccentricity: number): number {
+    const maxIterations: number = 30;
+    const delta = Math.pow(10, -10);
+
+    let E = meanAnomaly;
+    let F = E - eccentricity * Math.sin(meanAnomaly) - meanAnomaly;
+    let i = 0;
+    while ((Math.abs(F) > delta) && (i < maxIterations)) {
+      i += 1;
+      E = E - F / (1 - eccentricity * Math.cos(E));
+      F = E - eccentricity * Math.sin(E) - meanAnomaly;
+    }
+
+    E = E % (2 * Math.PI);
+    return E;
+  }
+
 
   // // TODO: Add AU to API
   // private AU: number = 149597870700;
@@ -474,16 +352,6 @@ export class OrbitdataService {
   // //   )
   // // }
   //
-  // getRpln(): Promise<number> {
-  //   return fetch(this.flaskApp + '/orbit/Rpln', {
-  //     method: 'GET',
-  //     headers: {
-  //       'Content-Type': 'application/json'
-  //     }
-  //   })
-  //     .then(response => response.json())
-  //     .then(data => data.Rpln);
-  // }
   //
   // getEarthPosition(t0: number): Promise<Vector3> {
   //   return fetch(this.flaskApp + '/orbit/earthposition', {
@@ -521,172 +389,8 @@ export class OrbitdataService {
   //   return Math.sqrt((planet.starGM + planet.GM) / Math.pow(planet.semimajorAxis * this.AU, 3));
   // }
   //
-  private static trueToEccentric(trueAnomaly: number, eccentricity: number): number {
-    return Math.atan2(
-      Math.sqrt(1 - Math.pow(eccentricity, 2)) * Math.sin(trueAnomaly),
-      eccentricity + Math.cos(trueAnomaly)
-    ) % (2 * Math.PI);
-  }
-
-  private static eccentricToMean(eccentricAnomaly: number, eccentricity: number): number {
-    return eccentricAnomaly - eccentricity * Math.sin(eccentricAnomaly);
-  }
-
-  private static trueToMean(trueAnomaly: number, eccentricity: number): number {
-    return OrbitdataService.eccentricToMean(OrbitdataService.trueToEccentric(trueAnomaly, eccentricity), eccentricity);
-  }
-
-  private static meanToEccentric(meanAnomaly: number, eccentricity: number): number {
-    const maxIterations: number = 30;
-    const delta = Math.pow(10, -10);
-
-    let E = meanAnomaly;
-    let F = E - eccentricity * Math.sin(meanAnomaly) - meanAnomaly;
-    let i = 0;
-    while ((Math.abs(F) > delta) && (i < maxIterations)) {
-      i += 1;
-      E = E - F / (1 - eccentricity * Math.cos(E));
-      F = E - eccentricity * Math.sin(E) - meanAnomaly;
-    }
-
-    E = E % (2 * Math.PI);
-    return E;
-  }
   //
-  // ephemeris(planet: Planet, time: number): [Vector3, Vector3] {
-  //   const meanMotion = this.getMeanMotion(planet);
-  //   const meanAnomaly = OrbitdataService.trueToMean(planet.trueAnomalyAtEpoch, planet.eccentricity) + meanMotion * time;
-  //   const eccentricAnomaly = OrbitdataService.meanToEccentric(meanAnomaly, planet.eccentricity);
   //
-  //   const semiminorAxis = planet.semimajorAxis * this.AU * Math.sqrt(1 - planet.eccentricity * planet.eccentricity);
-  //
-  //   const xPer = planet.semimajorAxis * this.AU * (Math.cos(eccentricAnomaly) - planet.eccentricity);
-  //   const yPer = semiminorAxis * Math.sin(eccentricAnomaly);
-  //   const xDotPer = -(planet.semimajorAxis * this.AU * meanMotion * Math.sin(eccentricAnomaly)) / (1 - planet.eccentricity * Math.cos(eccentricAnomaly));
-  //   const yDotPer = (semiminorAxis * meanMotion * Math.cos(eccentricAnomaly)) / (1 - planet.eccentricity * Math.cos(eccentricAnomaly));
-  //
-  //   const cosLoAN = Math.cos(planet.longitudeOfAscendingNode);
-  //   const cosAoP = Math.cos(planet.argumentOfPeriapsis);
-  //   const cosInc = Math.cos(planet.inclination);
-  //   const sinLoAN = Math.sin(planet.longitudeOfAscendingNode);
-  //   const sinAoP = Math.sin(planet.argumentOfPeriapsis);
-  //   const sinInc = Math.sin(planet.inclination);
-  //
-  //   const rotationMatrix: number[][] = [[], [], []];
-  //   rotationMatrix[0][0] = cosLoAN * cosAoP - sinLoAN * sinAoP * cosInc;
-  //   rotationMatrix[0][1] = -cosLoAN * sinAoP - sinLoAN * cosAoP * cosInc;
-  //   rotationMatrix[0][2] = sinLoAN * sinInc;
-  //   rotationMatrix[1][0] = sinLoAN * cosAoP + cosLoAN * sinAoP * cosInc;
-  //   rotationMatrix[1][1] = -sinLoAN * sinAoP + cosLoAN * cosAoP * cosInc;
-  //   rotationMatrix[1][2] = -cosLoAN * sinInc;
-  //   rotationMatrix[2][0] = sinAoP * sinInc;
-  //   rotationMatrix[2][1] = cosAoP * sinInc;
-  //   rotationMatrix[2][2] = cosInc;
-  //
-  //   const peri1: number[] = [xPer, yPer, 0.0];
-  //   const peri2: number[] = [xDotPer, yDotPer, 0.0];
-  //   const r: number[] = [];
-  //   const v: number[] = [];
-  //
-  //   for (var j = 0; j < 3; j++) {
-  //     r[j] = 0.0;
-  //     v[j] = 0.0;
-  //     for (var k = 0; k < 3; k++) {
-  //       r[j] += rotationMatrix[j][k] * peri1[k];
-  //       v[j] += rotationMatrix[j][k] * peri2[k];
-  //     }
-  //   }
-  //   const position: Vector3 = new Vector3(r[0], r[1], r[2]);
-  //   const velocity: Vector3 = new Vector3(v[0], v[1], v[2]);
-  //   return [position, velocity];
-  // }
-  //
-  // lambertSolver(r1: Vector3, r2: Vector3, tof: number, mu: number) {
-  //   //
-  //   // const r1 = new Vector3(0.473265, -0.899215);
-  //   // const r2 = new Vector3(0.066842, 1.561256, 0.030948);
-  //   // const mu = 3.964016e-14
-  //   // const tof = 207
-  //
-  //   const m_r1: number = r1.length();
-  //   const m_r2: number = r2.length();
-  //
-  //   let angularMomentum: Vector3 = new Vector3();
-  //   angularMomentum.crossVectors(r1, r2);
-  //
-  //   const cosDeltaNu: number = r1.dot(r2) / (m_r1 * m_r2);
-  //   const deltaNu: number = angularMomentum.z >= 0 ?
-  //     Math.acos(cosDeltaNu) :
-  //     2 * Math.PI - Math.acos(cosDeltaNu);
-  //   // const deltaNu: number = 2 * Math.PI - Math.acos(cosDeltaNu);
-  //
-  //   const k: number = m_r1 * m_r2 * (1 - cosDeltaNu);
-  //   const l: number = m_r1 + m_r2;
-  //   const m: number = m_r1 * m_r2 * (1 + cosDeltaNu);
-  //
-  //   const pMin: number = k / (l + Math.sqrt(2 * m));
-  //   const pMax: number = k / (l - Math.sqrt(2 * m));
-  //
-  //   const pvals: number[] = new Array(100);
-  //   const tvals: number[] = new Array(100);
-  //   const evals: number[] = new Array(100);
-  //
-  //   const tofSolver = (p: number) => {
-  //     const a: number = m * k * p / ((2 * m - l * l) * p * p + 2 * k * l * p - k * k);
-  //     const f: number = 1 - m_r2 / p * (1 - cosDeltaNu);
-  //     const g: number = m_r1 * m_r2 * Math.sin(deltaNu) / Math.sqrt(p * mu);
-  //     const dotf: number = Math.sqrt(mu / p) * ((1 - cosDeltaNu) / p - 1 / m_r1 - 1 / m_r2) * Math.tan(deltaNu / 2);
-  //     const dotg: number = 1 - m_r1 / p * (1 - cosDeltaNu);
-  //     const cosDeltaE: number = 1 - m_r1 / a * (1 - f);
-  //     const sinDeltaE: number = -m_r1 * m_r2 * dotf / Math.sqrt(mu * a);
-  //     let deltaE: number = Math.atan2(sinDeltaE, cosDeltaE);
-  //     while (deltaE < 0) deltaE += 2 * Math.PI;
-  //     const t: number = ((g + Math.sqrt(Math.pow(a, 3) / mu) * (deltaE - sinDeltaE)));
-  //     const e: number = t - tof;
-  //     return [p, e, t, f, g, dotf, dotg];
-  //   }
-  //
-  //   // Populate initial two trials.
-  //   [pvals[0], evals[0], tvals[0]] = tofSolver(0.7 * pMin + 0.3 * pMax);
-  //   // [pvals[0], evals[0], tvals[0]] = tofSolver(1.2);
-  //   [pvals[1], evals[1], tvals[1]] = tofSolver(0.3 * pMin + 0.7 * pMax);
-  //   // [pvals[1], evals[1], tvals[1]] = tofSolver(1.3);
-  //
-  //   // Solve for ToF
-  //   let iter: number = 1;
-  //   let p: number = 0;
-  //   let e: number = 0;
-  //   let t: number = 0;
-  //   let f: number = 0;
-  //   let g: number = 0;
-  //   let dotf: number = 0;
-  //   let dotg: number = 0;
-  //
-  //   // console.log(pvals[iter], tof, tvals[iter], pvals[iter], pvals[iter - 1], tvals[iter], tvals[iter - 1]);
-  //   // console.log(pvals[iter] + ((tof - tvals[iter]) * (pvals[iter] - pvals[iter - 1])) / (tvals[iter] - tvals[iter - 1]));
-  //
-  //   while (Math.abs(evals[iter]) > 1e-5 && iter < 100) {
-  //     [p, e, t, f, g, dotf, dotg] = tofSolver(pvals[iter] + ((tof - tvals[iter]) * (pvals[iter] - pvals[iter - 1])) / (tvals[iter] - tvals[iter - 1]));
-  //     // = tofSolver(pvals[iter] - tvals[iter] * (pvals[iter] - pvals[iter - 1]) / (evals[iter] - evals[iter - 1]));
-  //     iter++;
-  //     pvals[iter] = p;
-  //     evals[iter] = e;
-  //     tvals[iter] = t;
-  //   }
-  //
-  //   const v1: Vector3 = new Vector3(
-  //     (r2.x - f * r1.x) / g,
-  //     (r2.y - f * r1.y) / g,
-  //     (r2.z - f * r1.z) / g);
-  //   const v2: Vector3 = new Vector3(
-  //     dotf * r1.x + dotg * (r2.x - f * r1.x) / g,
-  //     dotf * r1.y + dotg * (r2.y - f * r1.y) / g,
-  //     dotf * r1.z + dotg * (r2.z - f * r1.z) / g);
-  //
-  //   // console.log(tof);
-  //
-  //   return [v1, v2];
-  // }
   //
   // propagate(position: Vector3, velocity: Vector3, mu: number, time: number): [Vector3, Vector3] {
   //   // const R: number = Math.sqrt(position.x * position.x + position.y * position.y + position.z * position.z);
