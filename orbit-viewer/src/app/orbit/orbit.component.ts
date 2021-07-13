@@ -94,12 +94,12 @@ export class OrbitComponent implements OnInit {
             const diffs: { tof: number, diff: number }[] = [];
             for (let index = 1; index < 200; index++) {
               const [r2] = this.orbitDataService.ephemerides(target, index * 86400);
-              const [v1, v2] = this.orbitDataService.transfer(r1, r2, index * 86400, origin.starGM);
-
+              // const [v1, v2] = this.orbitDataService.transfer(r1, r2, index * 86400, origin.starGM);
+              const [v1, v2] = this.orbitDataService.transfer_new(r1, r2, index * 86400, origin.starGM);
               const pykep_v1 = new Vector3(this.trans[index - 1][0], this.trans[index - 1][1], this.trans[index - 1][2]);
-
               diffs.push({"tof": index, "diff": Math.abs(pykep_v1.length() - v1.length())});
             }
+
             console.log(diffs.length);
             const fdiffs = diffs.filter(obj => !isNaN(obj.diff)).sort((a, b) => b.diff - a.diff);
             const average = fdiffs.map(obj => obj.diff).reduce((a, b) => a + b) / fdiffs.length;
