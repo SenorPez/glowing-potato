@@ -85,7 +85,7 @@ export class OrbitdataService {
     const semiperimeter = (chord + m_r1 + m_r2) / 2.0;
     const lambda = ((h.z < 1) ? -1 : 1) * Math.sqrt(1 - chord / semiperimeter);
     const ndToF = tof * Math.sqrt(2 * mu / Math.pow(semiperimeter, 3));
-    console.log(chord, semiperimeter, lambda, ndToF);
+    // console.log(chord, semiperimeter, lambda, ndToF);
 
     const cosDeltaNu = r1.dot(r2) / (m_r1 * m_r2);
     let deltaNu = Math.acos(cosDeltaNu);
@@ -95,9 +95,6 @@ export class OrbitdataService {
     // console.log(deltaNu, h.z);
 
     const A = DM * Math.sqrt(m_r1 * m_r2 * (1 + cosDeltaNu));
-
-    // Initial Guess
-    let z = 0
 
     const factorial: (n: number) => (number) = (n: number) => {
       if (n < 0) {
@@ -201,49 +198,21 @@ export class OrbitdataService {
       return [t, dtdz, y];
     };
 
-    // console.log(Math.sqrt(2.87869), tof);
-    let [t, dtdz, y] = calc(z);
-    let prevZ = 0;
-    // console.log(z, t, dtdz, y);
-    let iter = 0;
-    while (Math.abs(t - tof) > 10e-4 && iter < 100) {
-      // console.log("First:", iter);
-      iter++;
-      prevZ = z;
-      z = z + (tof - t) / dtdz;
+    const findSolution: (maxIterations: number) => (number) = (maxIterations: number) => {
+      let z = 0
+      let [t, dtdz, y] = calc(z);
+      let prevZ = 0;
 
-      if (!isFinite(z)) {
-        iter = 100;
-      }
+      let iter = 0;
+      const step = 100 / maxIterations;
 
-      // console.log(prevZ, z, getY(z, expansionC(z), expansionS(z)));
-
-      let i = 0.50;
-      while (getY(z, expansionC(z), expansionS(z)) < 0 && i < 1) {
-        // console.log(i);
-        z = prevZ === 0 ? 0.01 : prevZ * i;
-        i += 0.01;
-      }
-
-      [t, dtdz, y] = calc(z);
-      // console.log(z, t, dtdz, y);
-    }
-
-    // No match found, so let's relax progression.
-    let relaxed_iters: number = 0;
-
-    if (iter === 100) {
-      z = 0;
-      [t, dtdz, y] = calc(z);
-      let prevZ = 0
-      while (Math.abs(t - tof) > 10e-4 && relaxed_iters < 400) {
-        // console.log("Relaxed:", iter);
-        relaxed_iters++;
+      while (Math.abs(t - tof) > 10e-4 && iter < maxIterations) {
+        iter++;
         prevZ = z;
-        z = z + (tof - t) * 0.25 / dtdz;
+        z = z + (tof - t) * step / dtdz;
 
         if (!isFinite(z)) {
-          relaxed_iters = 400;
+          iter = maxIterations;
         }
 
         let i = 0.50;
@@ -254,33 +223,13 @@ export class OrbitdataService {
 
         [t, dtdz, y] = calc(z);
       }
+
+      if (maxIterations >= 1600) {
+        return y;
+      } else return iter === maxIterations ? findSolution(maxIterations * 4) : y;
     }
 
-    let more_relaxed_iters: number = 0;
-
-    if (relaxed_iters === 400) {
-      z = 0;
-      [t, dtdz, y] = calc(z);
-      let prevZ = 0
-      while (Math.abs(t - tof) > 10e-4 && more_relaxed_iters < 1600) {
-        // console.log("Relaxed:", iter);
-        more_relaxed_iters++;
-        prevZ = z;
-        z = z + (tof - t) * 0.0625 / dtdz;
-
-        let i = 0.50;
-        while (getY(z, expansionC(z), expansionS(z)) < 0 && i < 1) {
-          z = prevZ === 0 ? 0.01 : prevZ * i;
-          i += 0.01;
-        }
-
-        [t, dtdz, y] = calc(z);
-      }
-    }
-
-    console.log("Iters", iter);
-    console.log("Relaxed Iters", relaxed_iters);
-    console.log("More Relaxed Iters", more_relaxed_iters);
+    const y = findSolution(100);
 
     const f = 1 - y / m_r1;
     const g = A * Math.sqrt(y / mu);
