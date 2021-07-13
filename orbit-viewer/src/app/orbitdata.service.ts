@@ -222,14 +222,15 @@ export class OrbitdataService {
     }
 
     // No match found, so let's relax progression.
+    let relaxed_iters: number = 0;
+
     if (iter === 100) {
       z = 0;
       [t, dtdz, y] = calc(z);
       let prevZ = 0
-      let iter = 0;
-      while (Math.abs(t - tof) > 10e-4 && iter < 400) {
+      while (Math.abs(t - tof) > 10e-4 && relaxed_iters < 400) {
         // console.log("Relaxed:", iter);
-        iter++
+        relaxed_iters++;
         prevZ = z;
         z = z + (tof - t) * 0.25 / dtdz;
 
@@ -241,10 +242,33 @@ export class OrbitdataService {
 
         [t, dtdz, y] = calc(z);
       }
-      console.log("Relaxed Iters", iter);
+    }
+
+    let more_relaxed_iters: number = 0;
+
+    if (relaxed_iters === 400) {
+      z = 0;
+      [t, dtdz, y] = calc(z);
+      let prevZ = 0
+      while (Math.abs(t - tof) > 10e-4 && more_relaxed_iters < 1600) {
+        // console.log("Relaxed:", iter);
+        more_relaxed_iters++;
+        prevZ = z;
+        z = z + (tof - t) * 0.0625 / dtdz;
+
+        let i = 0.50;
+        while (getY(z, expansionC(z), expansionS(z)) < 0 && i < 1) {
+          z = prevZ === 0 ? 0.01 : prevZ * i;
+          i += 0.01;
+        }
+
+        [t, dtdz, y] = calc(z);
+      }
     }
 
     console.log("Iters", iter);
+    console.log("Relaxed Iters", relaxed_iters);
+    console.log("More Relaxed Iters", more_relaxed_iters);
 
     const f = 1 - y / m_r1;
     const g = A * Math.sqrt(y / mu);
