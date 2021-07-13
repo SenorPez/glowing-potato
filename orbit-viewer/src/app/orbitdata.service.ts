@@ -78,6 +78,9 @@ export class OrbitdataService {
     const m_r1 = r1.length();
     const m_r2 = r2.length();
 
+    const h = new Vector3();
+    h.crossVectors(r1, r2);
+
     const chord = Math.sqrt((r2.x - r1.x) ** 2 + (r2.y - r1.y) ** 2 + (r2.z - r1.z) ** 2);
     const semiperimeter = (chord + m_r1 + m_r2) / 2.0;
     const lambda = Math.sqrt(1 - chord / semiperimeter);
@@ -86,7 +89,7 @@ export class OrbitdataService {
 
     const cosDeltaNu = r1.dot(r2) / (m_r1 * m_r2);
     let deltaNu = Math.acos(cosDeltaNu);
-    // deltaNu = 2 * Math.PI - deltaNu;
+    if (h.z < 1) deltaNu = 2 * Math.PI - deltaNu;
     let DM = Math.PI - deltaNu < 0 ? -1 : 1;
 
     const A = DM * Math.sqrt(m_r1 * m_r2 * (1 + cosDeltaNu));
