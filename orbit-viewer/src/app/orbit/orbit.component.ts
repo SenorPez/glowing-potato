@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import * as THREE from 'three';
-import {Group, Line, Mesh, Object3D, Scene, Sphere, Vector3} from 'three';
+import {Group, Mesh, Object3D, Scene, Vector3} from 'three';
 import {OrbitdataService} from "../orbitdata.service";
 import {ApiService, Planet} from "../api.service";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
@@ -14,8 +14,6 @@ import {combineLatest, range} from "rxjs";
   styleUrls: ['./orbit.component.css']
 })
 export class OrbitComponent implements OnInit {
-  // TODO: Add AU to API
-  private AU: number = 149597870700;
   // TODO: Add solar radius to API?
   private solarRadius: number = 800240666; // Solar radius in m. 1 Solar Radius = 1 axis unit.
 
@@ -54,6 +52,7 @@ export class OrbitComponent implements OnInit {
   scene: Scene = new THREE.Scene();
   private orbitsGroup: Group = new THREE.Group();
   private planetsGroup: Group = new THREE.Group();
+  private transfersGroup: Group = new THREE.Group();
   private planetLocators: Mesh[] = [];
 
   private colorDV = {color: 0x0000FF};
@@ -76,6 +75,7 @@ export class OrbitComponent implements OnInit {
   ngOnInit(): void {
     this.scene.add(this.orbitsGroup);
     this.scene.add(this.planetsGroup);
+    this.scene.add(this.transfersGroup);
 
     const canvas = <HTMLCanvasElement>document.getElementById('orbitplot');
     const renderer = new THREE.WebGLRenderer({canvas})
@@ -184,6 +184,7 @@ export class OrbitComponent implements OnInit {
         this.elapsedTime += sinceLastFrame;
 
         this.planetsGroup.children.forEach(obj => this.updatePlanetPosition(obj, this.elapsedTime));
+        this.transfersGroup.children.forEach(obj => this.updateTransferPosition(obj, this.elapsedTime));
       }
 
       this.lastFrame = time;
@@ -229,10 +230,16 @@ export class OrbitComponent implements OnInit {
 
   updateTransferPosition(object: Object3D, elapsedTime: number) {
     const transfer = object.userData.transfer;
-    const [position] = this.orbitDataService.propagate(transfer.r, transfer.v, transfer.mu, elapsedTime);
-    position.z *= this.zScale;
-    position.divideScalar(this.solarRadius);
-    object.position.set(position.x, position.y, position.z);
+
+    if (elapsedTime - transfer.start_time > transfer.flight_time) {
+      object.visible = false;
+    } else {
+      object.visible = true;
+      const [position] = this.orbitDataService.propagate(transfer.r, transfer.v, transfer.mu, elapsedTime - transfer.start_time);
+      position.z *= this.zScale;
+      position.divideScalar(this.solarRadius);
+      object.position.set(position.x, position.y, position.z);
+    }
   }
 
   handleTransferEvent(min_delta_v: boolean) {
@@ -279,11 +286,31 @@ export class OrbitComponent implements OnInit {
         const selectedTransfer = transfers[0];
         this.minDVTransferPath.geometry = this.drawPath(selectedTransfer.r1, selectedTransfer.v1, selectedTransfer.mu, selectedTransfer.flight_time);
         this.scene.add(this.minDVTransferPath);
+
+        this.minDVTransferObj.userData.transfer = {
+          "r": selectedTransfer.r1,
+          "v": selectedTransfer.v1,
+          "mu": selectedTransfer.mu,
+          "start_time": this.elapsedTime,
+          "flight_time": selectedTransfer.flight_time
+        };
+        this.updateTransferPosition(this.minDVTransferObj, this.elapsedTime);
+        this.transfersGroup.add(this.minDVTransferObj);
       } else {
         transfers.sort((a, b) => a.flight_time - b.flight_time);
         const selectedTransfer = transfers[0];
         this.minFTTransferPath.geometry = this.drawPath(selectedTransfer.r1, selectedTransfer.v1, selectedTransfer.mu, selectedTransfer.flight_time);
         this.scene.add(this.minFTTransferPath);
+
+        this.minFTTransferObj.userData.transfer = {
+          "r": selectedTransfer.r1,
+          "v": selectedTransfer.v1,
+          "mu": selectedTransfer.mu,
+          "start_time": this.elapsedTime,
+          "flight_time": selectedTransfer.flight_time
+        };
+        this.updateTransferPosition(this.minFTTransferObj, this.elapsedTime);
+        this.transfersGroup.add(this.minFTTransferObj);
       }
     });
   }
