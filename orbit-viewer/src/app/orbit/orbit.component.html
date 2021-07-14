@@ -6,9 +6,9 @@
   [elapsedTime]="elapsedTime"
   [working]="working"
   (playEvent)="handlePlayEvent()"
-  (sliderChangeEvent)="handleSliderChange($event)"
+  (sliderChangeEvent)="handleSliderEvent($event)"
   (seekEvent)="handleSeekEvent($event)"
-  (lambertEvent)="handleLambertEvent($event)"></app-time>
+  (lambertEvent)="handleTransferEvent($event)"></app-time>
 
 <app-display
   (orbitsEvent)="handleOrbitsEvent($event)"
