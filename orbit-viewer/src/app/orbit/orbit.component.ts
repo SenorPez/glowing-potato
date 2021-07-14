@@ -1,11 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import * as THREE from 'three';
-import {AnimationUtils, Group, Line, Mesh, Object3D, Scene, Vector3} from 'three';
+import {Group, Line, Mesh, Object3D, Scene, Vector3} from 'three';
 import {OrbitdataService} from "../orbitdata.service";
 import {ApiService, Planet} from "../api.service";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {MatSliderChange} from "@angular/material/slider";
-import {filter, map, tap, toArray} from "rxjs/operators";
+import {filter, map, toArray} from "rxjs/operators";
 import {combineLatest, range} from "rxjs";
 
 @Component({
@@ -22,10 +22,6 @@ export class OrbitComponent implements OnInit {
   // TODO: Customizable ship performance.
   private maxDV = 71250; // 75% of 95 km / sec
   private maxFT = 147; // 75% of 28 week endurance
-
-  // TODO: Customizable orbits
-  private originOrbitHeight = 200000; // Default 200 km circular orbit.
-  private targetOrbitHeight = 200000;
 
   // TODO: Figure out a better way to do colors.
   private planetColors: number[] = [
@@ -198,7 +194,7 @@ export class OrbitComponent implements OnInit {
   }
 
   drawPath(r1: Vector3, v1: Vector3, mu: number, tof: number) {
-    const times: number[] = Array(this.divisions + 1).fill(0).map((val, index) => index / this.divisions * tof);
+    const times: number[] = Array(this.divisions).fill(0).map((val, index) => index / (this.divisions - 1) * tof);
     const positions: Vector3[] = times.map(time => {
       const [position] = this.orbitDataService.propagate(r1, v1, mu, time);
       return position;
@@ -233,7 +229,7 @@ export class OrbitComponent implements OnInit {
 
     const t1: number = this.elapsedTime;
 
-    const transfers = range(t1 / 86400, this.maxFT)
+    const transfers = range(1, this.maxFT)
       .pipe(
         map(tof => {
           tof *= 86400;
@@ -250,14 +246,17 @@ export class OrbitComponent implements OnInit {
             'flight_time': tof,
             'dv': dv,
             'r1': r1,
+            'pv1': v1,
+            'r2': r2,
+            'pv2': v2,
             'v1': tv1,
+            'v2': tv2,
             'mu': origin.starGM
           };
         }),
         filter(result => result.dv <= this.maxDV && (result.flight_time / 86400) <= this.maxFT),
         toArray()
       );
-
 
     transfers.subscribe(transfers => {
       if (min_delta_v) {

@@ -69,57 +69,97 @@ export class OrbitdataService {
     return 2 * Math.PI * Math.sqrt(Math.pow(planet.semimajorAxis * this.AU, 3) / (planet.starGM + planet.GM));
   }
 
-  propagate(position: Vector3, velocity: Vector3, mu: number, time: number): [Vector3, Vector3] {
-    const R: number = position.length();
-    const V: number = velocity.length();
-    const energy: number = V * V / 2 - mu / R;
-    const a: number = -mu / 2.0 / energy;
+  propagate(r0: Vector3, v0: Vector3, mu: number, time: number) {
+    const m_r0 = r0.length();
+    const m_v0 = v0.length();
+    const energy = m_v0 * m_v0 / 2 - mu / m_r0;
+    const a = -mu / (2 * energy);
     const h: Vector3 = new Vector3();
-    h.crossVectors(position, velocity);
-    const p: number = Math.pow(h.length(), 2) / mu;
-    const e: number = Math.sqrt(1 - p / a);
+    h.crossVectors(r0, v0);
+    const p = Math.pow(h.length(), 2) / mu;
+    const e = Math.sqrt(1 - p / a);
 
-    const sigma0: number = position.dot(velocity) / Math.sqrt(mu);
+    const calc = (x: number) => {
+      const z = x * x / a;
+      const t = ((r0.dot(v0) / Math.sqrt(mu)) * x * x * OrbitdataService.expansionC(z)
+        + (1 - m_r0 / a) * Math.pow(x, 3) * OrbitdataService.expansionS(z)
+        + m_r0 * x) / Math.sqrt(mu);
+      const dtdx = (x * x * OrbitdataService.expansionC(z)
+        + (r0.dot(v0) / Math.sqrt(mu)) * x * (1 - z * OrbitdataService.expansionS(z))
+        + m_r0 * (1 - z * OrbitdataService.expansionC(z))) / Math.sqrt(mu);
 
-    let F: number = 1;
-    let G: number = 1;
-    let Ft: number = 1;
-    let Gt: number = 1;
-
-    if (a > 0) {
-      const DM: number = Math.sqrt(mu / Math.pow(a, 3)) * time;
-      const DE: number = OrbitdataService.meanToEccentric(DM, e);
-      const r: number = a + (R - a) * Math.cos(DE) + sigma0 * Math.sqrt(a) * Math.sin(DE);
-
-      F = 1 - a / R * (1 - Math.cos(DE));
-      G = a * sigma0 / Math.sqrt(mu) * (1 - Math.cos(DE)) + R * Math.sqrt(a / mu) * Math.sin(DE);
-      Ft = -Math.sqrt(mu * a) / (r * R) * Math.sin(DE);
-      Gt = 1 - a / r * (1 - Math.cos(DE));
-    } else {
-      const DN: number = Math.sqrt(-mu / Math.pow(a, 3)) * time;
-      const DH: number = OrbitdataService.meanToEccentric(DN, e);
-      const r: number = a + (R - a) * Math.cosh(DH) + sigma0 + Math.sqrt(-a) * Math.sinh(DH);
-
-      F = 1 - a / R * (1 - Math.cosh(DH));
-      G = a * sigma0 / Math.sqrt(mu) * (1 - Math.cosh(DH)) + R * Math.sqrt(-a / mu) * Math.sinh(DH);
-      Ft = -Math.sqrt(-mu * a) / (r * R) * Math.sinh(DH)
-      Gt = 1 - a / r * (1 - Math.cosh(DH));
+      return [t, dtdx];
     }
 
-    const newPosition: Vector3 = new Vector3(
-      F * position.x + G * velocity.x,
-      F * position.y + G * velocity.y,
-      F * position.z + G * velocity.z
-    );
-    const newVelocity: Vector3 = new Vector3(
-      Ft * position.x + Gt * velocity.x,
-      Ft * position.y + Gt * velocity.y,
-      Ft * position.z + Gt * velocity.z
+    const findSolution: (maxIterations: number) => [number, number] = (maxIterations: number) => {
+      let x = Math.sqrt(mu) * time / a;
+      let [t, dtdx] = calc(x);
+      let prevX = 0;
+      let iter = 0;
+      const step = 100 / maxIterations;
+
+      while (Math.abs(t - time) > 1e-5 && iter < maxIterations) {
+        iter++
+        prevX = x;
+        x = x + (time - t) * step / dtdx;
+        [t, dtdx] = calc(x);
+      }
+
+      return [x, t];
+    }
+
+    let [x, t] = findSolution(100);
+    const z = x * x / a;
+
+    const f = 1 - (x * x / m_r0) * OrbitdataService.expansionC(z);
+    const g = t - (x * x * x / Math.sqrt(mu)) * OrbitdataService.expansionS(z);
+    const r = new Vector3(
+      f * r0.x + g * v0.x,
+      f * r0.y + g * v0.y,
+      f * r0.z + g * v0.z
     );
 
-    return [newPosition, newVelocity]
+    const m_r = r.length();
+    const fdot = (Math.sqrt(mu) / (m_r0 * m_r)) * x * (z * OrbitdataService.expansionS(z) - 1);
+    const gdot = 1 - (x * x / m_r) * OrbitdataService.expansionC(z);
+    const v = new Vector3(
+      fdot * r0.x + gdot * v0.x,
+      fdot * r0.y + gdot * v0.y,
+      fdot * r0.z + gdot * v0.z,
+    )
+
+    return [r, v];
   }
 
+  private static expansionC(z: number) {
+    if (z === 0) {
+      return 1 / this.factorial(2);
+    } else if (z > 0) {
+      return (1 - Math.cos(Math.sqrt(z))) / z;
+    } else {
+      return (1 - Math.cosh(Math.sqrt(-z))) / z;
+    }
+  }
+
+  private static expansionS(z: number) {
+    if (z === 0) {
+      return 1 / OrbitdataService.factorial(3);
+    } else if (z > 0) {
+      return (Math.sqrt(z) - Math.sin(Math.sqrt(z))) / Math.sqrt(Math.pow(z, 3));
+    } else {
+      return (Math.sinh(Math.sqrt(-z)) - Math.sqrt(-z)) / Math.sqrt(Math.pow(-z, 3));
+    }
+  }
+
+  private static factorial(n: number): number {
+    if (n < 0) {
+      return -1;
+    } else if (n == 0) {
+      return 1;
+    } else {
+      return n * this.factorial(n - 1);
+    }
+  }
 
   transfer(r1: Vector3, r2: Vector3, tof: number, mu: number) {
     const m_r1 = r1.length();
@@ -141,28 +181,8 @@ export class OrbitdataService {
 
     const A = DM * Math.sqrt(m_r1 * m_r2 * (1 + cosDeltaNu));
 
-    const factorial: (n: number) => (number) = (n: number) => {
-      if (n < 0) {
-        return -1;
-      } else if (n == 0) {
-        return 1;
-      } else {
-        return n * factorial(n - 1);
-      }
-    }
-
-    const expansionC = (z: number) => {
-      if (z === 0) {
-        return 1 / factorial(2);
-      } else if (z > 0) {
-        return (1 - Math.cos(Math.sqrt(z))) / z;
-      } else {
-        return (1 - Math.cosh(Math.sqrt(-z))) / z;
-      }
-    }
-
     const expansionDC = (z: number) => {
-      return z === 0 ? 1 / factorial(4) : (1 / (2 * z)) * (1 - z * expansionS(z) - 2 * expansionC(z));
+      return z === 0 ? 1 / OrbitdataService.factorial(4) : (1 / (2 * z)) * (1 - z * OrbitdataService.expansionS(z) - 2 * OrbitdataService.expansionC(z));
 
       // TODO: Figure out what I'm doing wrong.
       // let sum = 1 / factorial(4);
@@ -173,18 +193,8 @@ export class OrbitdataService {
       // return sum;
     }
 
-    const expansionS: (z: number) => number = (z: number) => {
-      if (z === 0) {
-        return 1 / factorial(3);
-      } else if (z > 0) {
-        return (Math.sqrt(z) - Math.sin(Math.sqrt(z))) / Math.sqrt(Math.pow(z, 3));
-      } else {
-        return (Math.sinh(Math.sqrt(-z)) - Math.sqrt(-z)) / Math.sqrt(Math.pow(-z, 3));
-      }
-    }
-
     const expansionDS = (z: number) => {
-      return z === 0 ? 1 / factorial(5) : (1 / (2 * z)) * (expansionC(z) - 3 * expansionS(z));
+      return z === 0 ? 1 / OrbitdataService.factorial(5) : (1 / (2 * z)) * (OrbitdataService.expansionC(z) - 3 * OrbitdataService.expansionS(z));
 
       // TODO: Figure out what I'm doing wrong.
       // let sum = 1 / factorial(5);
@@ -201,8 +211,8 @@ export class OrbitdataService {
     }
 
     const calc = (z: number) => {
-      const C = expansionC(z);
-      const S = expansionS(z);
+      const C = OrbitdataService.expansionC(z);
+      const S = OrbitdataService.expansionS(z);
       const dC = expansionDC(z);
       const dS = expansionDS(z);
 
@@ -234,7 +244,7 @@ export class OrbitdataService {
         }
 
         let i = 0.50;
-        while (getY(z, expansionC(z), expansionS(z)) < 0 && i < 1) {
+        while (getY(z, OrbitdataService.expansionC(z), OrbitdataService.expansionS(z)) < 0 && i < 1) {
           z = prevZ === 0 ? 0.01 : prevZ * i;
           i += 0.01;
         }
@@ -303,11 +313,7 @@ export class OrbitdataService {
     ) % (2 * Math.PI);
   }
 
-
   private static trueToMean(trueAnomaly: number, eccentricity: number): number {
     return OrbitdataService.eccentricToMean(OrbitdataService.trueToEccentric(trueAnomaly, eccentricity), eccentricity);
   }
-
-
-
 }
