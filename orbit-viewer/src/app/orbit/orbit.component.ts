@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import * as THREE from 'three';
-import {Group, Line, Mesh, Object3D, Scene, Vector3} from 'three';
+import {Group, Line, Mesh, Object3D, Scene, Sphere, Vector3} from 'three';
 import {OrbitdataService} from "../orbitdata.service";
 import {ApiService, Planet} from "../api.service";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
@@ -56,8 +56,19 @@ export class OrbitComponent implements OnInit {
   private planetsGroup: Group = new THREE.Group();
   private planetLocators: Mesh[] = [];
 
-  private minDVTransfer: Line = new THREE.Line();
-  private minFTTransfer: Line = new THREE.Line();
+  private colorDV = {color: 0x0000FF};
+  private colorFT = {color: 0xFF00FF};
+
+  private minDVTransferPath = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial(this.colorDV));
+  private minFTTransferPath = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial(this.colorFT));
+  private minDVTransferObj = new THREE.Mesh(
+    new THREE.SphereGeometry(3),
+    new THREE.MeshBasicMaterial(this.colorDV)
+  );
+  private minFTTransferObj = new THREE.Mesh(
+    new THREE.SphereGeometry(3),
+    new THREE.MeshBasicMaterial(this.colorFT)
+  );
 
   constructor(private orbitDataService: OrbitdataService, private apiService: ApiService) {
   }
@@ -205,16 +216,20 @@ export class OrbitComponent implements OnInit {
       position.divideScalar(this.solarRadius);
     });
 
-    {
-      const geometry = new THREE.BufferGeometry().setFromPoints(positions);
-      const material = new THREE.LineBasicMaterial({color: 0x0000FF});
-      return new THREE.Line(geometry, material);
-    }
+    return new THREE.BufferGeometry().setFromPoints(positions);
   }
 
   updatePlanetPosition(object: Object3D, elapsedTime: number) {
     const planet: Planet = object.userData.planet;
     const [position] = this.orbitDataService.ephemerides(planet, elapsedTime);
+    position.z *= this.zScale;
+    position.divideScalar(this.solarRadius);
+    object.position.set(position.x, position.y, position.z);
+  }
+
+  updateTransferPosition(object: Object3D, elapsedTime: number) {
+    const transfer = object.userData.transfer;
+    const [position] = this.orbitDataService.propagate(transfer.r, transfer.v, transfer.mu, elapsedTime);
     position.z *= this.zScale;
     position.divideScalar(this.solarRadius);
     object.position.set(position.x, position.y, position.z);
@@ -262,13 +277,13 @@ export class OrbitComponent implements OnInit {
       if (min_delta_v) {
         transfers.sort((a, b) => a.dv - b.dv);
         const selectedTransfer = transfers[0];
-        this.minDVTransfer = this.drawPath(selectedTransfer.r1, selectedTransfer.v1, selectedTransfer.mu, selectedTransfer.flight_time);
-        this.scene.add(this.minDVTransfer);
+        this.minDVTransferPath.geometry = this.drawPath(selectedTransfer.r1, selectedTransfer.v1, selectedTransfer.mu, selectedTransfer.flight_time);
+        this.scene.add(this.minDVTransferPath);
       } else {
         transfers.sort((a, b) => a.flight_time - b.flight_time);
         const selectedTransfer = transfers[0];
-        this.minFTTransfer = this.drawPath(selectedTransfer.r1, selectedTransfer.v1, selectedTransfer.mu, selectedTransfer.flight_time);
-        this.scene.add(this.minFTTransfer);
+        this.minFTTransferPath.geometry = this.drawPath(selectedTransfer.r1, selectedTransfer.v1, selectedTransfer.mu, selectedTransfer.flight_time);
+        this.scene.add(this.minFTTransferPath);
       }
     });
   }
