@@ -54,6 +54,7 @@ export class OrbitComponent implements OnInit {
 
   private animating: boolean = false;
   working: boolean = true;
+  private showTransfers: boolean = true;
 
   scene: Scene = new THREE.Scene();
   private orbitsGroup: Group = new THREE.Group();
@@ -237,15 +238,50 @@ export class OrbitComponent implements OnInit {
   updateTransferPosition(object: Object3D, elapsedTime: number) {
     const transfer = object.userData.transfer;
 
-    if (elapsedTime - transfer.start_time > transfer.flight_time) {
+    if (elapsedTime - transfer.start_time > transfer.flight_time || elapsedTime - transfer.start_time < 0) {
       object.visible = false;
+      object.userData.path.visible = false;
     } else {
-      object.visible = true;
+      object.visible = this.showTransfers;
+      object.userData.path.visible = this.showTransfers;
       const [position] = this.orbitDataService.propagate(transfer.r, transfer.v, transfer.mu, elapsedTime - transfer.start_time);
       position.z *= this.zScale;
       position.divideScalar(this.solarRadius);
       object.position.set(position.x, position.y, position.z);
     }
+  }
+
+  handleOrbitsEvent(showOrbits: boolean) {
+    this.orbitsGroup.visible = showOrbits;
+  }
+
+  handlePlanetLocatorsEvent(showPlanetLocators: boolean) {
+    this.planetLocators.forEach(planetLocator => planetLocator.visible = showPlanetLocators);
+  }
+
+  handlePlayEvent(): void {
+    this.animating = !this.animating;
+  }
+
+  handleSeekEvent(forward: boolean) {
+    const currentST = Math.floor(this.elapsedTime / 86400 / 14) + 1;
+    if (forward) {
+      this.elapsedTime = currentST * 14 * 86400;
+    } else {
+      const targetET = (currentST - 1) * 14 * 86400;
+      if (this.elapsedTime - targetET < 200) {
+        this.elapsedTime = (currentST - 2) * 14 * 86400;
+      } else {
+        this.elapsedTime = (currentST - 1) * 14 * 86400;
+      }
+      this.elapsedTime = Math.max(0, this.elapsedTime);
+    }
+    this.planetsGroup.children.forEach(obj => this.updatePlanetPosition(obj, this.elapsedTime));
+    this.transfersGroup.children.forEach(obj => this.updateTransferPosition(obj, this.elapsedTime));
+  }
+
+  handleSliderEvent(event: MatSliderChange) {
+    if (event.value != null) this.frameScale = event.value;
   }
 
   handleTransferEvent(min_delta_v: boolean) {
@@ -300,6 +336,7 @@ export class OrbitComponent implements OnInit {
           "start_time": this.elapsedTime,
           "flight_time": selectedTransfer.flight_time
         };
+        this.minDVTransferObj.userData.path = this.minDVTransferPath;
         this.updateTransferPosition(this.minDVTransferObj, this.elapsedTime);
         this.transfersGroup.add(this.minDVTransferObj);
       } else {
@@ -315,41 +352,17 @@ export class OrbitComponent implements OnInit {
           "start_time": this.elapsedTime,
           "flight_time": selectedTransfer.flight_time
         };
+        this.minFTTransferObj.userData.path = this.minFTTransferPath;
         this.updateTransferPosition(this.minFTTransferObj, this.elapsedTime);
         this.transfersGroup.add(this.minFTTransferObj);
       }
     });
   }
 
-  handleOrbitsEvent(showOrbits: boolean) {
-    this.orbitsGroup.visible = showOrbits;
-  }
-
-  handlePlanetLocatorsEvent(showPlanetLocators: boolean) {
-    this.planetLocators.forEach(planetLocator => planetLocator.visible = showPlanetLocators);
-  }
-
-  handlePlayEvent(): void {
-    this.animating = !this.animating;
-  }
-
-  handleSeekEvent(forward: boolean) {
-    const currentST = Math.floor(this.elapsedTime / 86400 / 14) + 1;
-    if (forward) {
-      this.elapsedTime = currentST * 14 * 86400;
-    } else {
-      const targetET = (currentST - 1) * 14 * 86400;
-      if (this.elapsedTime - targetET < 200) {
-        this.elapsedTime = (currentST - 2) * 14 * 86400;
-      } else {
-        this.elapsedTime = (currentST - 1) * 14 * 86400;
-      }
-      this.elapsedTime = Math.max(0, this.elapsedTime);
+  handleTransfersEvent(showTransfers: boolean) {
+    this.showTransfers = showTransfers;
+    if (!this.animating) {
+      this.transfersGroup.children.forEach(obj => this.updateTransferPosition(obj, this.elapsedTime));
     }
-    this.planetsGroup.children.forEach(obj => this.updatePlanetPosition(obj, this.elapsedTime));
-  }
-
-  handleSliderEvent(event: MatSliderChange) {
-    if (event.value != null) this.frameScale = event.value;
   }
 }
