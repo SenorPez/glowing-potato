@@ -21,16 +21,22 @@ export class OrbitComponent implements OnInit {
   private maxDV = 71250; // 75% of 95 km / sec
   private maxFT = 147; // 75% of 28 week endurance
 
-  // TODO: Figure out a better way to do colors.
+  // TODO: Figure out a way to tie colors to specific planets.
   private planetColors: number[] = [
     0xFF0000,
     0xFFFF00,
-    0x00FF00
+    0x00FF00,
+    0x00FFFF,
+    0x0000FF,
+    0xFF00FF
   ]
   private pathColors: number[] = [
     0xFFB3B3,
     0xFFFFB3,
-    0xB3FFB3
+    0xB3FFB3,
+    0xB3FFFF,
+    0xB3B3FF,
+    0xFFB3FF
   ]
 
   // TODO: Selectable system
@@ -125,7 +131,7 @@ export class OrbitComponent implements OnInit {
         }))
       .subscribe(value => {
           const planet = value.planet;
-          const planet_number = parseInt(planet.name[planet.name.length - 1]) - 1;
+          const color_index = (parseInt(planet.name[planet.name.length - 1]) - 1) % this.planetColors.length;
 
           {
             const planet_radius = planet.radius * value.Rpln.value;
@@ -133,9 +139,9 @@ export class OrbitComponent implements OnInit {
             const planet_geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius);
             const locator_geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius * this.planetScale);
 
-            const planet_material = new THREE.MeshStandardMaterial({color: this.planetColors[planet_number]});
+            const planet_material = new THREE.MeshStandardMaterial({color: this.planetColors[color_index]});
             const locator_material = new THREE.MeshStandardMaterial({
-              color: this.planetColors[planet_number],
+              color: this.planetColors[color_index],
               transparent: true,
               opacity: 0.50
             });
@@ -165,7 +171,7 @@ export class OrbitComponent implements OnInit {
             });
 
             const geometry = new THREE.BufferGeometry().setFromPoints(positions);
-            const material = new THREE.LineBasicMaterial({color: this.pathColors[planet_number]});
+            const material = new THREE.LineBasicMaterial({color: this.pathColors[color_index]});
             const line = new THREE.Line(geometry, material);
             this.orbitsGroup.add(line);
           }
