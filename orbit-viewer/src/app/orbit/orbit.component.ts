@@ -76,6 +76,8 @@ export class OrbitComponent implements OnInit {
     new THREE.MeshBasicMaterial(this.colorFT)
   );
 
+  planets: Planet[] = [];
+
   constructor(private orbitDataService: OrbitdataService, private apiService: ApiService) {
   }
 
@@ -131,6 +133,7 @@ export class OrbitComponent implements OnInit {
           return {planet, Rpln};
         }))
       .subscribe(value => {
+          this.planets.push(value.planet);
           const planet = value.planet;
           const color_index = (parseInt(planet.name[planet.name.length - 1]) - 1) % this.planetColors.length;
 
@@ -179,6 +182,7 @@ export class OrbitComponent implements OnInit {
         },
         () => console.log("error"),
         () => {
+          this.planets.sort((a, b) => parseInt(a.name[a.name.length - 1]) - parseInt(b.name[b.name.length - 1]));
           this.working = false;
           requestAnimationFrame(render);
         });

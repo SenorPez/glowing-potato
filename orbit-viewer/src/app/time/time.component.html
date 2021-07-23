@@ -14,6 +14,24 @@
   <br/>
   <span [hidden]="working"> {{getDate()}} </span>
   <br/>
+  <mat-form-field>
+    <mat-label>Origin</mat-label>
+    <mat-select [(value)]="originPlanet">
+      <mat-option *ngFor="let planet of planets" [value]="planet.id">
+        {{planet.name}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <br/>
+  <mat-form-field>
+    <mat-label>Target</mat-label>
+    <mat-select [(value)]="targetPlanet">
+      <mat-option *ngFor="let planet of planets" [value]="planet.id">
+        {{planet.name}}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <br/>
   <button mat-raised-button color="primary" [disabled]="animating || working" (click)="clickDvLambert()">
     dV
   </button>

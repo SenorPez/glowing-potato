@@ -1,6 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import * as THREE from "three";
 import {MatSliderChange} from "@angular/material/slider";
+import {Planet} from "../api.service";
 
 @Component({
   selector: 'app-time',
@@ -11,6 +12,7 @@ export class TimeComponent implements OnInit {
   @Input() scene !: THREE.Scene;
   @Input() elapsedTime: number = 0;
   @Input() working: boolean = false;
+  @Input() planets: Planet[] = [];
 
   @Output() playEvent = new EventEmitter<boolean>();
   @Output() seekEvent = new EventEmitter<boolean>();
@@ -18,6 +20,9 @@ export class TimeComponent implements OnInit {
   @Output() lambertEvent = new EventEmitter<boolean>();
 
   animating: boolean = false;
+
+  originPlanet: number = 0;
+  targetPlanet: number = 0;
 
   constructor() {
   }
