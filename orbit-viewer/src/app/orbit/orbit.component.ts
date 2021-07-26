@@ -77,6 +77,8 @@ export class OrbitComponent implements OnInit {
   );
 
   planets: Planet[] = [];
+  private origin: number | null = null;
+  private target: number | null = null;
 
   constructor(private orbitDataService: OrbitdataService, private apiService: ApiService) {
   }
@@ -368,5 +370,10 @@ export class OrbitComponent implements OnInit {
     if (!this.animating) {
       this.transfersGroup.children.forEach(obj => this.updateTransferPosition(obj, this.elapsedTime));
     }
+  }
+
+  handlePlanetsChangeEvent(planets: (number | null)[]) {
+    this.origin = planets[0];
+    this.target = planets[1];
   }
 }

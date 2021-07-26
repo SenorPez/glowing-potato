@@ -16,7 +16,7 @@
   <br/>
   <mat-form-field>
     <mat-label>Origin</mat-label>
-    <mat-select [(value)]="originPlanet">
+    <mat-select [(value)]="originPlanet" (valueChange)="changeOrigin($event)">
       <mat-option *ngFor="let planet of planets" [value]="planet.id">
         {{planet.name}}
       </mat-option>
@@ -32,10 +32,10 @@
     </mat-select>
   </mat-form-field>
   <br/>
-  <button mat-raised-button color="primary" [disabled]="animating || working" (click)="clickDvLambert()">
+  <button mat-raised-button color="primary" [disabled]="animating || working || invalidTransfer" (click)="clickDvLambert()">
     dV
   </button>
-  <button mat-raised-button color="primary" [disabled]="animating || working" (click)="clickFtLambert()">
+  <button mat-raised-button color="primary" [disabled]="animating || working || invalidTransfer" (click)="clickFtLambert()">
     FT
   </button>
 </div>

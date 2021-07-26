@@ -59,3 +59,11 @@ app-root {
   background-color: #AAAAAA !important;
   border-color: #AAAAAA !important;
 }
+
+.mat-form-field-label {
+  color: white !important;
+}
+
+.mat-select-value-text {
+  color: white !important;
+}

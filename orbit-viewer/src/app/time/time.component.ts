@@ -2,6 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import * as THREE from "three";
 import {MatSliderChange} from "@angular/material/slider";
 import {Planet} from "../api.service";
+import {MatSelectChange} from "@angular/material/select";
 
 @Component({
   selector: 'app-time',
@@ -18,11 +19,13 @@ export class TimeComponent implements OnInit {
   @Output() seekEvent = new EventEmitter<boolean>();
   @Output() sliderChangeEvent = new EventEmitter<MatSliderChange>();
   @Output() lambertEvent = new EventEmitter<boolean>();
+  @Output() planetsChange = new EventEmitter<(number | null)[]>();
 
   animating: boolean = false;
 
-  originPlanet: number = 0;
-  targetPlanet: number = 0;
+  originPlanet: number | null = null;
+  targetPlanet: number | null = null;
+  invalidTransfer: boolean = true;
 
   constructor() {
   }
@@ -67,5 +70,23 @@ export class TimeComponent implements OnInit {
 
   clickFtLambert() {
     this.lambertEvent.emit(false);
+  }
+
+  changeOrigin($event: MatSelectChange) {
+    this.originPlanet = $event.value;
+    this.invalidTransfer = !(
+      this.originPlanet !== null
+      && this.targetPlanet !== null
+      && this.originPlanet !== this.targetPlanet);
+    this.planetsChange.emit([this.originPlanet, this.targetPlanet])
+  }
+
+  changeTarget($event: MatSelectChange) {
+    this.targetPlanet = $event.value;
+    this.invalidTransfer = !(
+      this.originPlanet !== null
+      && this.targetPlanet !== null
+      && this.originPlanet !== this.targetPlanet);
+    this.planetsChange.emit([this.originPlanet, this.targetPlanet])
   }
 }
