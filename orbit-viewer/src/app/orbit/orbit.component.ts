@@ -373,8 +373,11 @@ export class OrbitComponent implements OnInit {
   }
 
   handlePlanetsChangeEvent(planets: (number | null)[]) {
-    console.log(planets);
     this.origin = planets[0];
     this.target = planets[1];
+
+    // Clear existing transfers on change.
+    this.scene.remove(this.minFTTransferPath, this.minDVTransferPath);
+    this.transfersGroup.remove(this.minFTTransferObj, this.minDVTransferObj);
   }
 }
