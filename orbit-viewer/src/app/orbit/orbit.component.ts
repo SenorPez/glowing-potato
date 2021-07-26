@@ -291,8 +291,8 @@ export class OrbitComponent implements OnInit {
   }
 
   handleTransferEvent(min_delta_v: boolean) {
-    const origin: Planet = this.planetsGroup.getObjectByName("1 Omega Hydri 3")?.userData.planet;
-    const target: Planet = this.planetsGroup.getObjectByName("1 Omega Hydri 1")?.userData.planet;
+    const origin: Planet = this.planetsGroup.children.find(obj => obj.userData.planet.id === this.origin)?.userData.planet;
+    const target: Planet = this.planetsGroup.children.find(obj => obj.userData.planet.id === this.target)?.userData.planet;
 
     const originOrbitRadius: number = 5954417.346258679;
     const targetOrbitRadius: number = 2366596.4289483577;
@@ -373,6 +373,7 @@ export class OrbitComponent implements OnInit {
   }
 
   handlePlanetsChangeEvent(planets: (number | null)[]) {
+    console.log(planets);
     this.origin = planets[0];
     this.target = planets[1];
   }

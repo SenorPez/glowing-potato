@@ -16,7 +16,7 @@
   <br/>
   <mat-form-field>
     <mat-label>Origin</mat-label>
-    <mat-select [(value)]="originPlanet" (valueChange)="changeOrigin($event)">
+    <mat-select [(value)]="originPlanet" (selectionChange)="changeOrigin($event)">
       <mat-option *ngFor="let planet of planets" [value]="planet.id">
         {{planet.name}}
       </mat-option>
@@ -25,7 +25,7 @@
   <br/>
   <mat-form-field>
     <mat-label>Target</mat-label>
-    <mat-select [(value)]="targetPlanet">
+    <mat-select [(value)]="targetPlanet" (selectionChange)="changeTarget($event)">
       <mat-option *ngFor="let planet of planets" [value]="planet.id">
         {{planet.name}}
       </mat-option>
