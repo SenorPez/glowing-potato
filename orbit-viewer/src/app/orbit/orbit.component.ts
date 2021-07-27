@@ -67,6 +67,7 @@ export class OrbitComponent implements OnInit {
 
   private minDVTransferPath = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial(this.colorDV));
   private minFTTransferPath = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial(this.colorFT));
+
   private minDVTransferObj = new THREE.Mesh(
     new THREE.SphereGeometry(3),
     new THREE.MeshBasicMaterial(this.colorDV)
@@ -75,6 +76,9 @@ export class OrbitComponent implements OnInit {
     new THREE.SphereGeometry(3),
     new THREE.MeshBasicMaterial(this.colorFT)
   );
+
+  minDVTransferData: [number, number] | null = null;
+  minFTTransferData: [number, number] | null = null;
 
   planets: Planet[] = [];
   private origin: number | null = null;
@@ -95,7 +99,7 @@ export class OrbitComponent implements OnInit {
     camera.position.z = 500;
 
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.maxDistance = 500;
+    controls.maxDistance = 1000;
     controls.minDistance = 1;
     controls.rotateSpeed = 2;
     controls.minAzimuthAngle = 0;
@@ -335,12 +339,15 @@ export class OrbitComponent implements OnInit {
         this.minDVTransferPath.geometry = this.drawPath(selectedTransfer.r1, selectedTransfer.v1, selectedTransfer.mu, selectedTransfer.flight_time);
         this.scene.add(this.minDVTransferPath);
 
+        this.minDVTransferData = [selectedTransfer.dv, selectedTransfer.flight_time];
+
         this.minDVTransferObj.userData.transfer = {
           "r": selectedTransfer.r1,
           "v": selectedTransfer.v1,
           "mu": selectedTransfer.mu,
           "start_time": this.elapsedTime,
-          "flight_time": selectedTransfer.flight_time
+          "flight_time": selectedTransfer.flight_time,
+          "dv": selectedTransfer.dv
         };
         this.minDVTransferObj.userData.path = this.minDVTransferPath;
         this.updateTransferPosition(this.minDVTransferObj, this.elapsedTime);
@@ -351,12 +358,15 @@ export class OrbitComponent implements OnInit {
         this.minFTTransferPath.geometry = this.drawPath(selectedTransfer.r1, selectedTransfer.v1, selectedTransfer.mu, selectedTransfer.flight_time);
         this.scene.add(this.minFTTransferPath);
 
+        this.minFTTransferData = [selectedTransfer.dv, selectedTransfer.flight_time];
+
         this.minFTTransferObj.userData.transfer = {
           "r": selectedTransfer.r1,
           "v": selectedTransfer.v1,
           "mu": selectedTransfer.mu,
           "start_time": this.elapsedTime,
-          "flight_time": selectedTransfer.flight_time
+          "flight_time": selectedTransfer.flight_time,
+          "dv": selectedTransfer.dv
         };
         this.minFTTransferObj.userData.path = this.minFTTransferPath;
         this.updateTransferPosition(this.minFTTransferObj, this.elapsedTime);

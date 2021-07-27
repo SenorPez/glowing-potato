@@ -17,4 +17,8 @@
   (planetLocatorsEvent)="handlePlanetLocatorsEvent($event)"
   (transfersEvent)="handleTransfersEvent($event)"></app-display>
 
+<app-stats
+  [minDV]="minDVTransferData"
+  [minFT]="minFTTransferData"></app-stats>
+
 <canvas id="orbitplot"></canvas>

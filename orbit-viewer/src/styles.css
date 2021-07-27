@@ -37,6 +37,14 @@ app-root {
   color: white;
 }
 
+#stats {
+  display: inline-block;
+  position: absolute;
+  bottom: 25px;
+  left: 25px;
+  color: white;
+}
+
 #progress {
   display: inline-block;
   position: absolute;

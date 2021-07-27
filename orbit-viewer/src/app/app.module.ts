@@ -17,6 +17,7 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatSelectModule} from "@angular/material/select";
 import {MatOptionModule} from "@angular/material/core";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import { StatsComponent } from './stats/stats.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
     OrbitComponent,
     TimeComponent,
     DisplayComponent,
-    ProgressComponent
+    ProgressComponent,
+    StatsComponent
   ],
   imports: [
     BrowserModule,
