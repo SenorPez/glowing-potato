@@ -389,5 +389,7 @@ export class OrbitComponent implements OnInit {
     // Clear existing transfers on change.
     this.scene.remove(this.minFTTransferPath, this.minDVTransferPath);
     this.transfersGroup.remove(this.minFTTransferObj, this.minDVTransferObj);
+    this.minFTTransferData = null;
+    this.minDVTransferData = null;
   }
 }

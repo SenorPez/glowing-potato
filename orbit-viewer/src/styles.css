@@ -53,15 +53,14 @@ app-root {
   width: 100%;
 }
 
-/*#progress {*/
-/*  padding: 40px;*/
-/*  display: inline-block;*/
-/*  position: absolute;*/
-/*  top: 50%;*/
-/*  left: 50%;*/
-/*  background-color: crimson;*/
-/*  color: white;*/
-/*}*/
+#tooltip {
+  background-color: black;
+  border: 0 solid black;
+  border-radius: 5px;
+  position: absolute;
+  left: -200px;
+  top: 100px;
+}
 
 .mat-slider-min-value .mat-slider-thumb {
   background-color: #AAAAAA !important;
