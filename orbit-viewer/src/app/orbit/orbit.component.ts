@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import * as THREE from 'three';
-import {Group, Mesh, Object3D, Scene, Vector3} from 'three';
+import {BufferGeometry, Group, Mesh, Object3D, Scene, Vector3} from 'three';
 import {OrbitdataService} from "../orbitdata.service";
 import {ApiService, Planet} from "../api.service";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
@@ -107,6 +107,78 @@ export class OrbitComponent implements OnInit {
     controls.minPolarAngle = Math.PI / 2;
     controls.maxPolarAngle = Math.PI;
     controls.enablePan = false;
+
+    // Asteroid belt geometry
+    // TODO: Add asteroid belts to API
+    function fillWithPoints(geometry: BufferGeometry, groups: number, count: number) {
+      const dummyTarget = new THREE.Vector3();
+      const ray = new THREE.Ray();
+      const boundGeometry = geometry.toNonIndexed();
+      boundGeometry.computeBoundingBox();
+      const boundingBox = boundGeometry.boundingBox;
+
+      if (boundingBox === null) return;
+
+      const points = new Array(groups);
+      for (let i = 0; i < groups; i++) {
+        points[i] = [];
+      }
+
+      const dir = new THREE.Vector3(1, 1, 1).normalize();
+      let counter = 0;
+      while (counter < count) {
+        const point = new THREE.Vector3(
+          THREE.MathUtils.randFloat(boundingBox.min.x, boundingBox.max.x),
+          THREE.MathUtils.randFloat(boundingBox.min.y, boundingBox.max.y),
+          THREE.MathUtils.randFloat(boundingBox.min.z, boundingBox.max.z)
+        );
+        if (isInside(point)) {
+          point.z /= 2;
+          const targetGroup: number = THREE.MathUtils.randInt(0, groups - 1);
+          points[targetGroup].push(point);
+          counter++;
+        }
+      }
+
+      function isInside(point: Vector3) {
+        ray.set(point, dir);
+        let counter = 0;
+
+        const pos = boundGeometry.getAttribute("position");
+        const faces = pos.count / 3;
+        const vA = new THREE.Vector3();
+        const vB = new THREE.Vector3();
+        const vC = new THREE.Vector3();
+        for (let i = 0; i < faces; i++) {
+          vA.fromBufferAttribute(pos, i * 3);
+          vB.fromBufferAttribute(pos, i * 3 + 1);
+          vC.fromBufferAttribute(pos, i * 3 + 2);
+          if (ray.intersectTriangle(vA, vB, vC, false, dummyTarget)) counter++;
+        }
+
+        return counter % 2 == 1;
+      }
+
+      return points.map(arr => new THREE.BufferGeometry().setFromPoints(arr));
+    }
+
+    {
+      const beltWidth = 0.05 * 1.496e11 / this.solarRadius;
+      const beltPosition = 0.125 * 1.496e11 / this.solarRadius;
+      const geometry = new THREE.TorusGeometry(beltPosition, beltWidth, 8, 100).toNonIndexed();
+      const material = new THREE.MeshBasicMaterial({transparent: true, opacity: 0});
+      const torus = new THREE.Mesh(geometry, material);
+      this.scene.add(torus);
+
+      const pointsGeometryArray = fillWithPoints(geometry, 3, 1500);
+      const pointsColors = [0x594537, 0x817A75, 0x908D8C]
+      pointsGeometryArray?.forEach((pointsGeometry, index) => {
+          const pointsColor = pointsColors[index % pointsColors.length];
+          const pointsMat = new THREE.PointsMaterial({color: pointsColor, size: 0.25});
+          const points = new THREE.Points(pointsGeometry, pointsMat);
+          torus.add(points);
+      });
+    }
 
     {
       const light = new THREE.AmbientLight(0xffffff);
