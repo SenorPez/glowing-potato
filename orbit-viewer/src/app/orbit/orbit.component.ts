@@ -165,7 +165,7 @@ export class OrbitComponent implements OnInit {
     {
       const beltWidth = 0.05 * 1.496e11 / this.solarRadius;
       const beltPosition = 0.125 * 1.496e11 / this.solarRadius;
-      const geometry = new THREE.TorusGeometry(beltPosition, beltWidth, 8, 100).toNonIndexed();
+      const geometry = new THREE.TorusGeometry(beltPosition, beltWidth, 8, 100);
       const material = new THREE.MeshBasicMaterial({transparent: true, opacity: 0});
       const torus = new THREE.Mesh(geometry, material);
       this.scene.add(torus);
@@ -174,7 +174,7 @@ export class OrbitComponent implements OnInit {
       const pointsColors = [0x594537, 0x817A75, 0x908D8C]
       pointsGeometryArray?.forEach((pointsGeometry, index) => {
           const pointsColor = pointsColors[index % pointsColors.length];
-          const pointsMat = new THREE.PointsMaterial({color: pointsColor, size: 0.25});
+          const pointsMat = new THREE.PointsMaterial({color: pointsColor, size: 0.25, sizeAttenuation: false});
           const points = new THREE.Points(pointsGeometry, pointsMat);
           torus.add(points);
       });
