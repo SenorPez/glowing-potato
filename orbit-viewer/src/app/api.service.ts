@@ -203,6 +203,14 @@ export interface Planet {
   GM: number;
   starGM: number;
 
+  lagrangePoints: {
+    L1: boolean,
+    L2: boolean,
+    L3: boolean,
+    L4: boolean,
+    L5: boolean
+  };
+
   _links: {
     self: Link;
     "trident-api:calendars": Link;

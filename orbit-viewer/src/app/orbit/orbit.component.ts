@@ -136,6 +136,16 @@ export class OrbitComponent implements OnInit {
         map(([star, planet, G, Msol, Mpln, Rpln]) => {
           planet.starGM = G.value * star.mass * Msol.value;
           planet.GM = G.value * planet.mass * Mpln.value;
+
+          const lagrangeStability = this.orbitDataService.lagrangeStability(star.mass * Msol.value, planet.mass * Mpln.value);
+          planet.lagrangePoints = {
+            L1: false,
+            L2: false,
+            L3: false,
+            L4: lagrangeStability,
+            L5: lagrangeStability
+          };
+
           return {planet, Rpln};
         }))
       .subscribe(value => {
@@ -185,8 +195,21 @@ export class OrbitComponent implements OnInit {
             const line = new THREE.Line(geometry, material);
             this.orbitsGroup.add(line);
           }
+
+          if (planet.name === "1 Omega Hydri 3") {
+            const [position] = this.orbitDataService.lagrangePoint(planet, 0);
+
+            position.z *= this.zScale;
+            position.divideScalar(this.solarRadius);
+
+            const geometry = new THREE.SphereGeometry(2);
+            const material = new THREE.MeshBasicMaterial({color: 0xFFFFFF});
+            const sphere = new THREE.Mesh(geometry, material);
+            sphere.position.set(position.x, position.y, position.z);
+            this.scene.add(sphere);
+          }
         },
-        () => console.log("error"),
+        (err) => console.log("error", err),
         () => {
           this.planets.sort((a, b) => parseInt(a.name[a.name.length - 1]) - parseInt(b.name[b.name.length - 1]));
           this.working = false;

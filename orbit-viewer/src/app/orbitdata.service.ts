@@ -9,7 +9,27 @@ export class OrbitdataService {
   // TODO: Add AU to API
   private AU: number = 149597870700;
 
-  ephemerides(planet: Planet, time: number) {
+  // TODO: Add lagrange stability to API.
+  lagrangeStability(solarMass: number, planetMass: number): boolean {
+    return solarMass > (25 + Math.sqrt(621)) / 2 * planetMass;
+  }
+
+  lagrangePoint(planet: Planet, time: number): [Vector3, Vector3] {
+    // Current distance from planet to star.
+    const [position, velocity]: [Vector3, Vector3] = this.ephemerides(planet, time);
+    const distance = position.length();
+
+    // Orbital period.
+    const orbitalPeriod = this.orbitalPeriod(planet);
+
+    // Initial guess 60 degrees ahead.
+    const lagrangeTime = time + 60 / 360 * orbitalPeriod;
+    const [lagrangePosition, lagrangeVelocity]: [Vector3, Vector3] = this.ephemerides(planet, lagrangeTime);
+
+    return [lagrangePosition, lagrangeVelocity];
+  }
+
+  ephemerides(planet: Planet, time: number): [Vector3, Vector3] {
     const semimajorAxis = planet.semimajorAxis * this.AU;
     const eccentricity = planet.eccentricity;
     const inclination = planet.inclination;
