@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {Vector3} from 'three';
+import {Quaternion, Vector3} from 'three';
 import {Planet} from "./api.service";
 
 @Injectable({
@@ -14,19 +14,15 @@ export class OrbitdataService {
     return solarMass > (25 + Math.sqrt(621)) / 2 * planetMass;
   }
 
-  lagrangePoint(planet: Planet, time: number): [Vector3, Vector3] {
-    // Current distance from planet to star.
-    const [position, velocity]: [Vector3, Vector3] = this.ephemerides(planet, time);
-    const distance = position.length();
+  lagrangePoint(planet: Planet, time: number): Vector3 {
+    // Current planet position.
+    const [position]: [Vector3, Vector3] = this.ephemerides(planet, time);
 
-    // Orbital period.
-    const orbitalPeriod = this.orbitalPeriod(planet);
+    const quaternion = new Quaternion();
+    quaternion.setFromAxisAngle(new Vector3(0, 0, 1), 60 * Math.PI / 180);
+    position.applyQuaternion(quaternion);
 
-    // Initial guess 60 degrees ahead.
-    const lagrangeTime = time + 60 / 360 * orbitalPeriod;
-    const [lagrangePosition, lagrangeVelocity]: [Vector3, Vector3] = this.ephemerides(planet, lagrangeTime);
-
-    return [lagrangePosition, lagrangeVelocity];
+    return position;
   }
 
   ephemerides(planet: Planet, time: number): [Vector3, Vector3] {

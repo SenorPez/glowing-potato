@@ -137,6 +137,8 @@ export class OrbitComponent implements OnInit {
           planet.starGM = G.value * star.mass * Msol.value;
           planet.GM = G.value * planet.mass * Mpln.value;
 
+          // if (planet.name === "1 Omega Hydri 3") planet.eccentricity = 0;
+
           const lagrangeStability = this.orbitDataService.lagrangeStability(star.mass * Msol.value, planet.mass * Mpln.value);
           planet.lagrangePoints = {
             L1: false,
@@ -158,6 +160,7 @@ export class OrbitComponent implements OnInit {
 
             const planet_geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius);
             const locator_geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius * this.planetScale);
+            const lagrange_geometry = new THREE.SphereGeometry(2);
 
             const planet_material = new THREE.MeshStandardMaterial({color: this.planetColors[color_index]});
             const locator_material = new THREE.MeshStandardMaterial({
@@ -165,13 +168,19 @@ export class OrbitComponent implements OnInit {
               transparent: true,
               opacity: 0.50
             });
+            const lagrange_material = new THREE.MeshBasicMaterial({color: 0xFFFFFF});
 
             const planet_sphere = new THREE.Mesh(planet_geometry, planet_material);
             const locator_sphere = new THREE.Mesh(locator_geometry, locator_material);
+            const lagrange_sphere = new THREE.Mesh(lagrange_geometry, lagrange_material);
+            lagrange_sphere.name = "L4";
 
             planet_sphere.name = planet.name;
             planet_sphere.userData.planet = planet;
             planet_sphere.add(locator_sphere);
+            planet_sphere.add(lagrange_sphere);
+
+            lagrange_sphere.visible = planet.name === "1 Omega Hydri 3";
             this.updatePlanetPosition(planet_sphere, 0);
 
             this.planetLocators.push(locator_sphere);
@@ -194,19 +203,6 @@ export class OrbitComponent implements OnInit {
             const material = new THREE.LineBasicMaterial({color: this.pathColors[color_index]});
             const line = new THREE.Line(geometry, material);
             this.orbitsGroup.add(line);
-          }
-
-          if (planet.name === "1 Omega Hydri 3") {
-            const [position] = this.orbitDataService.lagrangePoint(planet, 0);
-
-            position.z *= this.zScale;
-            position.divideScalar(this.solarRadius);
-
-            const geometry = new THREE.SphereGeometry(2);
-            const material = new THREE.MeshBasicMaterial({color: 0xFFFFFF});
-            const sphere = new THREE.Mesh(geometry, material);
-            sphere.position.set(position.x, position.y, position.z);
-            this.scene.add(sphere);
           }
         },
         (err) => console.log("error", err),
@@ -266,6 +262,18 @@ export class OrbitComponent implements OnInit {
     position.z *= this.zScale;
     position.divideScalar(this.solarRadius);
     object.position.set(position.x, position.y, position.z);
+    object.updateMatrixWorld();
+
+    const L4 = object.children.find(obj => obj.name === "L4");
+
+    if (L4?.visible) {
+      const position: Vector3 = this.orbitDataService.lagrangePoint(planet, elapsedTime);
+      position.z *= this.zScale;
+      position.divideScalar(this.solarRadius);
+      const localPosition = object.worldToLocal(position);
+      L4.position.set(localPosition.x, localPosition.y, localPosition.z);
+      L4.updateMatrixWorld();
+    }
   }
 
   updateTransferPosition(object: Object3D, elapsedTime: number) {
