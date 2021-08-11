@@ -172,15 +172,19 @@ export class OrbitComponent implements OnInit {
 
             const planet_sphere = new THREE.Mesh(planet_geometry, planet_material);
             const locator_sphere = new THREE.Mesh(locator_geometry, locator_material);
-            const lagrange_sphere = new THREE.Mesh(lagrange_geometry, lagrange_material);
-            lagrange_sphere.name = "L4";
+            const L4Sphere = new THREE.Mesh(lagrange_geometry, lagrange_material);
+            L4Sphere.name = "L4";
+            const L5Sphere = new THREE.Mesh(lagrange_geometry, lagrange_material);
+            L5Sphere.name = "L5";
 
             planet_sphere.name = planet.name;
             planet_sphere.userData.planet = planet;
             planet_sphere.add(locator_sphere);
-            planet_sphere.add(lagrange_sphere);
+            planet_sphere.add(L4Sphere);
+            planet_sphere.add(L5Sphere);
 
-            lagrange_sphere.visible = planet.name === "1 Omega Hydri 3";
+            L4Sphere.visible = planet.name === "1 Omega Hydri 3";
+            L5Sphere.visible = planet.name === "1 Omega Hydri 3";
             this.updatePlanetPosition(planet_sphere, 0);
 
             this.planetLocators.push(locator_sphere);
@@ -264,16 +268,19 @@ export class OrbitComponent implements OnInit {
     object.position.set(position.x, position.y, position.z);
     object.updateMatrixWorld();
 
-    const L4 = object.children.find(obj => obj.name === "L4");
+    const lagrangePoints = object.children.filter(obj =>
+      (obj.name === "L4" || obj.name === "L5") && obj.visible);
 
-    if (L4?.visible) {
-      const position: Vector3 = this.orbitDataService.lagrangePoint(planet, elapsedTime);
+    console.log(lagrangePoints);
+
+    lagrangePoints.forEach(point => {
+      const position: Vector3 = this.orbitDataService.lagrangePoint(planet, elapsedTime, point.name === "L4");
       position.z *= this.zScale;
       position.divideScalar(this.solarRadius);
       const localPosition = object.worldToLocal(position);
-      L4.position.set(localPosition.x, localPosition.y, localPosition.z);
-      L4.updateMatrixWorld();
-    }
+      point.position.set(localPosition.x, localPosition.y, localPosition.z);
+      point.updateMatrixWorld();
+    })
   }
 
   updateTransferPosition(object: Object3D, elapsedTime: number) {

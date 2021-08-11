@@ -14,12 +14,13 @@ export class OrbitdataService {
     return solarMass > (25 + Math.sqrt(621)) / 2 * planetMass;
   }
 
-  lagrangePoint(planet: Planet, time: number): Vector3 {
+  lagrangePoint(planet: Planet, time: number, L4: boolean): Vector3 {
     // Current planet position.
     const [position]: [Vector3, Vector3] = this.ephemerides(planet, time);
+    const degrees = L4 ? 60 : -60;
 
     const quaternion = new Quaternion();
-    quaternion.setFromAxisAngle(new Vector3(0, 0, 1), 60 * Math.PI / 180);
+    quaternion.setFromAxisAngle(new Vector3(0, 0, 1), degrees * Math.PI / 180);
     position.applyQuaternion(quaternion);
 
     return position;
