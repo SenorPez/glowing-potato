@@ -95,7 +95,8 @@ export class OrbitComponent implements OnInit {
     const canvas = <HTMLCanvasElement>document.getElementById('orbitplot');
     const renderer = new THREE.WebGLRenderer({canvas})
 
-    const camera = new THREE.PerspectiveCamera();
+    const camera = new THREE.OrthographicCamera(canvas.clientWidth / -2, canvas.clientWidth / 2, canvas.clientHeight / 2, canvas.clientHeight / -2, 0.01, 1000000);
+    // const camera = new THREE.PerspectiveCamera();
     camera.position.z = 500;
 
     const controls = new OrbitControls(camera, renderer.domElement);
@@ -235,7 +236,7 @@ export class OrbitComponent implements OnInit {
 
       if (canvas.width !== width || canvas.height !== height) {
         renderer.setSize(width, height, false);
-        camera.aspect = canvas.clientWidth / canvas.clientHeight;
+        // camera.aspect = canvas.clientWidth / canvas.clientHeight;
         camera.updateProjectionMatrix();
       }
 
@@ -270,8 +271,6 @@ export class OrbitComponent implements OnInit {
 
     const lagrangePoints = object.children.filter(obj =>
       (obj.name === "L4" || obj.name === "L5") && obj.visible);
-
-    console.log(lagrangePoints);
 
     lagrangePoints.forEach(point => {
       const position: Vector3 = this.orbitDataService.lagrangePoint(planet, elapsedTime, point.name === "L4");

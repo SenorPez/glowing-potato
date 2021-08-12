@@ -16,11 +16,13 @@ export class OrbitdataService {
 
   lagrangePoint(planet: Planet, time: number, L4: boolean): Vector3 {
     // Current planet position.
-    const [position]: [Vector3, Vector3] = this.ephemerides(planet, time);
+    const [position, velocity]: [Vector3, Vector3] = this.ephemerides(planet, time);
+    const h: Vector3 = new Vector3();
+    h.crossVectors(position, velocity);
     const degrees = L4 ? 60 : -60;
 
     const quaternion = new Quaternion();
-    quaternion.setFromAxisAngle(new Vector3(0, 0, 1), degrees * Math.PI / 180);
+    quaternion.setFromAxisAngle(h.normalize(), degrees * Math.PI / 180);
     position.applyQuaternion(quaternion);
 
     return position;
