@@ -81,6 +81,7 @@ export class OrbitComponent implements OnInit {
   minFTTransferData: [number, number] | null = null;
 
   planets: Planet[] = [];
+  points: {point: string, planet: Planet}[] = [];
   private origin: number | null = null;
   private target: number | null = null;
 
@@ -184,8 +185,15 @@ export class OrbitComponent implements OnInit {
             planet_sphere.add(L4Sphere);
             planet_sphere.add(L5Sphere);
 
-            L4Sphere.visible = planet.name === "1 Omega Hydri 3";
-            L5Sphere.visible = planet.name === "1 Omega Hydri 3";
+            if (planet.name === "1 Omega Hydri 3") {
+              L4Sphere.visible = true;
+              L5Sphere.visible = true;
+              this.points.push({point: "L4", planet: planet})
+              this.points.push({point: "L5", planet: planet})
+            } else {
+              L4Sphere.visible = false;
+              L5Sphere.visible = false;
+            }
             this.updatePlanetPosition(planet_sphere, 0);
 
             this.planetLocators.push(locator_sphere);
@@ -273,7 +281,7 @@ export class OrbitComponent implements OnInit {
       (obj.name === "L4" || obj.name === "L5") && obj.visible);
 
     lagrangePoints.forEach(point => {
-      const position: Vector3 = this.orbitDataService.lagrangePoint(planet, elapsedTime, point.name === "L4");
+      const [position]: [Vector3, Vector3] = this.orbitDataService.lagrangePoint(planet, elapsedTime, point.name === "L4");
       position.z *= this.zScale;
       position.divideScalar(this.solarRadius);
       const localPosition = object.worldToLocal(position);
@@ -332,8 +340,25 @@ export class OrbitComponent implements OnInit {
   }
 
   handleTransferEvent(min_delta_v: boolean) {
-    const origin: Planet = this.planetsGroup.children.find(obj => obj.userData.planet.id === this.origin)?.userData.planet;
-    const target: Planet = this.planetsGroup.children.find(obj => obj.userData.planet.id === this.target)?.userData.planet;
+    const whichLagrange = (value: number | null) => value?.toString().substr(0, 1) === "L" ? value.toString().substr(0, 2) : null;
+    const originLagrange = whichLagrange(this.origin);
+    const targetLagrange = whichLagrange(this.target);
+
+    const getPlanet = (value: number | null, lagrange: string | null) => {
+      if (value !== null) {
+        if (lagrange === null) {
+          return this.planetsGroup.children.find(obj => obj.userData.planet.id === value)?.userData.planet;
+        } else {
+          const planetId = parseInt(value.toString().substr(2, value.toString().length));
+          console.log(planetId)
+          return this.planetsGroup.children.find(obj => obj.userData.planet.id === planetId)?.userData.planet;
+        }
+      }
+    }
+    const origin: Planet = getPlanet(this.origin, originLagrange);
+    const target: Planet = getPlanet(this.target, targetLagrange);
+
+    console.log(origin, target);
 
     const originOrbitRadius: number = 5954417.346258679;
     const targetOrbitRadius: number = 2366596.4289483577;
@@ -346,8 +371,12 @@ export class OrbitComponent implements OnInit {
           tof *= 86400;
           const t2: number = t1 + tof;
 
-          const [r1, v1]: Vector3[] = this.orbitDataService.ephemerides(origin, t1);
-          const [r2, v2]: Vector3[] = this.orbitDataService.ephemerides(target, t2);
+          const [r1, v1]: Vector3[] = originLagrange === null
+            ? this.orbitDataService.ephemerides(origin, t1)
+            : this.orbitDataService.lagrangePoint(origin, t1, originLagrange === "L4");
+          const [r2, v2]: Vector3[] = targetLagrange === null
+            ? this.orbitDataService.ephemerides(target, t2)
+            : this.orbitDataService.lagrangePoint(target, t2, targetLagrange === "L4");
           const [tv1, tv2]: Vector3[] = this.orbitDataService.transfer(r1, r2, tof, origin.starGM);
 
           const dv: number = this.orbitDataService.transferDeltaV(v1, tv1, origin.GM, originOrbitRadius)

@@ -20,6 +20,9 @@
       <mat-option *ngFor="let planet of planets" [value]="planet.id">
         {{planet.name}}
       </mat-option>
+      <mat-option *ngFor="let point of points" [value]="point.point + point.planet.id">
+        {{point.point}} {{point.planet.name}}
+      </mat-option>
     </mat-select>
   </mat-form-field>
   <br/>
@@ -28,6 +31,9 @@
     <mat-select [(value)]="targetPlanet" (selectionChange)="changeTarget($event)">
       <mat-option *ngFor="let planet of planets" [value]="planet.id">
         {{planet.name}}
+      </mat-option>
+      <mat-option *ngFor="let point of points" [value]="point.point + point.planet.id">
+        {{point.point}} {{point.planet.name}}
       </mat-option>
     </mat-select>
   </mat-form-field>

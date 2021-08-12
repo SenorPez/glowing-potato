@@ -14,6 +14,7 @@ export class TimeComponent implements OnInit {
   @Input() elapsedTime: number = 0;
   @Input() working: boolean = false;
   @Input() planets: Planet[] = [];
+  @Input() points: {point: string, planet: Planet}[] = [];
 
   @Output() playEvent = new EventEmitter<boolean>();
   @Output() seekEvent = new EventEmitter<boolean>();

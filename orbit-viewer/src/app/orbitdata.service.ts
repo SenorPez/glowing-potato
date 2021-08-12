@@ -14,7 +14,7 @@ export class OrbitdataService {
     return solarMass > (25 + Math.sqrt(621)) / 2 * planetMass;
   }
 
-  lagrangePoint(planet: Planet, time: number, L4: boolean): Vector3 {
+  lagrangePoint(planet: Planet, time: number, L4: boolean): [Vector3, Vector3] {
     // Current planet position.
     const [position, velocity]: [Vector3, Vector3] = this.ephemerides(planet, time);
     const h: Vector3 = new Vector3();
@@ -25,7 +25,7 @@ export class OrbitdataService {
     quaternion.setFromAxisAngle(h.normalize(), degrees * Math.PI / 180);
     position.applyQuaternion(quaternion);
 
-    return position;
+    return [position, velocity];
   }
 
   ephemerides(planet: Planet, time: number): [Vector3, Vector3] {
