@@ -17,6 +17,9 @@ export class OrbitComponent implements OnInit {
   // TODO: Add solar radius to API?
   private solarRadius: number = 800240666; // Solar radius in m. 1 Solar Radius = 1 axis unit.
 
+  // TODO: Customizable orbit parameters, including elliptical.
+  private orbitRadius: number = 200000; // 200km circular parking orbit
+
   // TODO: Customizable ship performance.
   private maxDV = 71250; // 75% of 95 km / sec
   private maxFT = 147; // 75% of 28 week endurance
@@ -420,18 +423,28 @@ export class OrbitComponent implements OnInit {
     const getPlanet = (value: number | null, lagrange: string | null) => {
       if (value !== null) {
         if (lagrange === null) {
-          const data = this.planetsGroup.children.find(obj => obj.userData.planet.id === value)?.userData;
-          return [data?.planet, data?.planetRadius];
+          return this.planetsGroup.children.find(obj => obj.userData.planet.id === value)?.userData.planet;
         } else {
           const planetId = parseInt(value.toString().substr(2, value.toString().length));
-          console.log(planetId)
-          const data = this.planetsGroup.children.find(obj => obj.userData.planet.id === planetId)?.userData;
-          return [data?.planet, data?.planetRadius];
+          return this.planetsGroup.children.find(obj => obj.userData.planet.id === planetId)?.userData.planet;
         }
       }
     }
-    const [origin, originOrbitRadius] = getPlanet(this.origin, originLagrange);
-    const [target, targetOrbitRadius]: Planet = getPlanet(this.target, targetLagrange);
+    const origin= getPlanet(this.origin, originLagrange);
+    const target= getPlanet(this.target, targetLagrange);
+
+    const getOrbitRadius = (value: number | null, lagrange: string | null) => {
+      if (value !== null) {
+        if (lagrange === null) {
+          return this.planetsGroup.children.find(obj => obj.userData.planet.id === value)?.userData.planetRadius + this.orbitRadius;
+        } else {
+          return this.orbitRadius;
+        }
+      }
+    }
+
+    const originOrbitRadius = getOrbitRadius(this.origin, originLagrange);
+    const targetOrbitRadius = getOrbitRadius(this.target, targetLagrange);
 
     const t1: number = this.elapsedTime;
 
