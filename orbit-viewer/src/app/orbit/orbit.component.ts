@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import * as THREE from 'three';
-import {Group, Mesh, Object3D, Scene, Vector3} from 'three';
+import {BufferGeometry, Group, Mesh, Object3D, Scene, Vector3} from 'three';
 import {OrbitdataService} from "../orbitdata.service";
 import {ApiService, Planet} from "../api.service";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
@@ -110,6 +110,78 @@ export class OrbitComponent implements OnInit {
     controls.maxPolarAngle = Math.PI;
     controls.enablePan = false;
 
+    // Asteroid belt geometry
+    // TODO: Add asteroid belts to API
+    function fillWithPoints(geometry: BufferGeometry, groups: number, count: number) {
+      const dummyTarget = new THREE.Vector3();
+      const ray = new THREE.Ray();
+      const boundGeometry = geometry.toNonIndexed();
+      boundGeometry.computeBoundingBox();
+      const boundingBox = boundGeometry.boundingBox;
+
+      if (boundingBox === null) return;
+
+      const points = new Array(groups);
+      for (let i = 0; i < groups; i++) {
+        points[i] = [];
+      }
+
+      const dir = new THREE.Vector3(1, 1, 1).normalize();
+      let counter = 0;
+      while (counter < count) {
+        const point = new THREE.Vector3(
+          THREE.MathUtils.randFloat(boundingBox.min.x, boundingBox.max.x),
+          THREE.MathUtils.randFloat(boundingBox.min.y, boundingBox.max.y),
+          THREE.MathUtils.randFloat(boundingBox.min.z, boundingBox.max.z)
+        );
+        if (isInside(point)) {
+          point.z /= 2;
+          const targetGroup: number = THREE.MathUtils.randInt(0, groups - 1);
+          points[targetGroup].push(point);
+          counter++;
+        }
+      }
+
+      function isInside(point: Vector3) {
+        ray.set(point, dir);
+        let counter = 0;
+
+        const pos = boundGeometry.getAttribute("position");
+        const faces = pos.count / 3;
+        const vA = new THREE.Vector3();
+        const vB = new THREE.Vector3();
+        const vC = new THREE.Vector3();
+        for (let i = 0; i < faces; i++) {
+          vA.fromBufferAttribute(pos, i * 3);
+          vB.fromBufferAttribute(pos, i * 3 + 1);
+          vC.fromBufferAttribute(pos, i * 3 + 2);
+          if (ray.intersectTriangle(vA, vB, vC, false, dummyTarget)) counter++;
+        }
+
+        return counter % 2 == 1;
+      }
+
+      return points.map(arr => new THREE.BufferGeometry().setFromPoints(arr));
+    }
+
+    {
+      const beltWidth = 0.05 * 1.496e11 / this.solarRadius;
+      const beltPosition = 0.125 * 1.496e11 / this.solarRadius;
+      const geometry = new THREE.TorusGeometry(beltPosition, beltWidth, 8, 100);
+      const material = new THREE.MeshBasicMaterial({transparent: true, opacity: 0});
+      const torus = new THREE.Mesh(geometry, material);
+      this.scene.add(torus);
+
+      const pointsGeometryArray = fillWithPoints(geometry, 3, 1500);
+      const pointsColors = [0x594537, 0x817A75, 0x908D8C]
+      pointsGeometryArray?.forEach((pointsGeometry, index) => {
+          const pointsColor = pointsColors[index % pointsColors.length];
+          const pointsMat = new THREE.PointsMaterial({color: pointsColor, size: 0.25, sizeAttenuation: false});
+          const points = new THREE.Points(pointsGeometry, pointsMat);
+          torus.add(points);
+      });
+    }
+
     {
       const light = new THREE.AmbientLight(0xffffff);
       this.scene.add(light);
@@ -155,35 +227,36 @@ export class OrbitComponent implements OnInit {
       .subscribe(value => {
           this.planets.push(value.planet);
           const planet = value.planet;
-          const color_index = (parseInt(planet.name[planet.name.length - 1]) - 1) % this.planetColors.length;
+          const colorIndex = (parseInt(planet.name[planet.name.length - 1]) - 1) % this.planetColors.length;
 
           {
-            const planet_radius = planet.radius * value.Rpln.value;
+            const planetRadius = planet.radius * value.Rpln.value;
 
-            const planet_geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius);
-            const locator_geometry = new THREE.SphereGeometry(planet_radius / this.solarRadius * this.planetScale);
+            const planetGeometry = new THREE.SphereGeometry(planetRadius / this.solarRadius);
+            const locatorGeometry = new THREE.SphereGeometry(planetRadius / this.solarRadius * this.planetScale);
             const lagrange_geometry = new THREE.SphereGeometry(2);
 
-            const planet_material = new THREE.MeshStandardMaterial({color: this.planetColors[color_index]});
-            const locator_material = new THREE.MeshStandardMaterial({
-              color: this.planetColors[color_index],
+            const planetMaterial = new THREE.MeshStandardMaterial({color: this.planetColors[colorIndex]});
+            const locatorMaterial = new THREE.MeshStandardMaterial({
+              color: this.planetColors[colorIndex],
               transparent: true,
               opacity: 0.50
             });
             const lagrange_material = new THREE.MeshBasicMaterial({color: 0xFFFFFF});
 
-            const planet_sphere = new THREE.Mesh(planet_geometry, planet_material);
-            const locator_sphere = new THREE.Mesh(locator_geometry, locator_material);
+            const planetSphere = new THREE.Mesh(planetGeometry, planetMaterial);
+            const locatorSphere = new THREE.Mesh(locatorGeometry, locatorMaterial);
             const L4Sphere = new THREE.Mesh(lagrange_geometry, lagrange_material);
             L4Sphere.name = "L4";
             const L5Sphere = new THREE.Mesh(lagrange_geometry, lagrange_material);
             L5Sphere.name = "L5";
 
-            planet_sphere.name = planet.name;
-            planet_sphere.userData.planet = planet;
-            planet_sphere.add(locator_sphere);
-            planet_sphere.add(L4Sphere);
-            planet_sphere.add(L5Sphere);
+            planetSphere.name = planet.name;
+            planetSphere.userData.planet = planet;
+            planetSphere.userData.planetRadius = planetRadius;
+            planetSphere.add(locatorSphere);
+            planetSphere.add(L4Sphere);
+            planetSphere.add(L5Sphere);
 
             if (planet.name === "1 Omega Hydri 3") {
               L4Sphere.visible = true;
@@ -194,10 +267,10 @@ export class OrbitComponent implements OnInit {
               L4Sphere.visible = false;
               L5Sphere.visible = false;
             }
-            this.updatePlanetPosition(planet_sphere, 0);
+            this.updatePlanetPosition(planetSphere, 0);
 
-            this.planetLocators.push(locator_sphere);
-            this.planetsGroup.add(planet_sphere);
+            this.planetLocators.push(locatorSphere);
+            this.planetsGroup.add(planetSphere);
           }
 
           {
@@ -213,7 +286,7 @@ export class OrbitComponent implements OnInit {
             });
 
             const geometry = new THREE.BufferGeometry().setFromPoints(positions);
-            const material = new THREE.LineBasicMaterial({color: this.pathColors[color_index]});
+            const material = new THREE.LineBasicMaterial({color: this.pathColors[colorIndex]});
             const line = new THREE.Line(geometry, material);
             this.orbitsGroup.add(line);
           }
@@ -347,21 +420,18 @@ export class OrbitComponent implements OnInit {
     const getPlanet = (value: number | null, lagrange: string | null) => {
       if (value !== null) {
         if (lagrange === null) {
-          return this.planetsGroup.children.find(obj => obj.userData.planet.id === value)?.userData.planet;
+          const data = this.planetsGroup.children.find(obj => obj.userData.planet.id === value)?.userData;
+          return [data?.planet, data?.planetRadius];
         } else {
           const planetId = parseInt(value.toString().substr(2, value.toString().length));
           console.log(planetId)
-          return this.planetsGroup.children.find(obj => obj.userData.planet.id === planetId)?.userData.planet;
+          const data = this.planetsGroup.children.find(obj => obj.userData.planet.id === planetId)?.userData;
+          return [data?.planet, data?.planetRadius];
         }
       }
     }
-    const origin: Planet = getPlanet(this.origin, originLagrange);
-    const target: Planet = getPlanet(this.target, targetLagrange);
-
-    console.log(origin, target);
-
-    const originOrbitRadius: number = 5954417.346258679;
-    const targetOrbitRadius: number = 2366596.4289483577;
+    const [origin, originOrbitRadius] = getPlanet(this.origin, originLagrange);
+    const [target, targetOrbitRadius]: Planet = getPlanet(this.target, targetLagrange);
 
     const t1: number = this.elapsedTime;
 
