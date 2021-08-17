@@ -11,7 +11,10 @@ jobs:
           node-version: '16'
           
       - name: Change Directory
-        run: cd orbit-viewer
+        run: |
+          pwd
+          ls
+          cd orbit-viewer
           
       - name: Setup
         run: npm ci
