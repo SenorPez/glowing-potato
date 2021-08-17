@@ -3,6 +3,9 @@ on: push
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./orbit-viewer
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js 16
@@ -10,13 +13,8 @@ jobs:
         with:
           node-version: '16'
           
-      - name: Change Directory
-        run: cd orbit-viewer
-          
       - name: Setup
-        run: |
-          pwd
-          npm ci
+        run: npm ci
         
       - name: Test
         run: npm test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
