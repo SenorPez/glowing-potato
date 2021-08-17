@@ -11,13 +11,12 @@ jobs:
           node-version: '16'
           
       - name: Change Directory
-        run: |
-          pwd
-          ls
-          cd orbit-viewer
+        run: cd orbit-viewer
           
       - name: Setup
-        run: npm ci
+        run: |
+          pwd
+          npm ci
         
       - name: Test
         run: npm test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
