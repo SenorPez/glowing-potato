@@ -1,0 +1,25 @@
+<app-progress
+  [hidden]="!working"></app-progress>
+
+<app-time
+  [scene]="scene"
+  [elapsedTime]="elapsedTime"
+  [working]="working"
+  [planets]="planets"
+  [points]="points"
+  (playEvent)="handlePlayEvent()"
+  (sliderChangeEvent)="handleSliderEvent($event)"
+  (seekEvent)="handleSeekEvent($event)"
+  (lambertEvent)="handleTransferEvent($event)"
+  (planetsChange)="handlePlanetsChangeEvent($event)"></app-time>
+
+<app-display
+  (orbitsEvent)="handleOrbitsEvent($event)"
+  (planetLocatorsEvent)="handlePlanetLocatorsEvent($event)"
+  (transfersEvent)="handleTransfersEvent($event)"></app-display>
+
+<app-stats
+  [minDV]="minDVTransferData"
+  [minFT]="minFTTransferData"></app-stats>
+
+<canvas id="orbitplot"></canvas>

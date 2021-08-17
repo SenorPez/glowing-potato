@@ -2,7 +2,7 @@ var porkchopPlot = document.getElementById('porkchop');
 
 $(document).ready(function() {
   var posting = $.post(
-    "http://senorpez.com:5001/transfer")
+    "https://www.senorpez.com/tw/transfer")
   .done(function(data) {
     var plotData = [{
       z: data.delta_v,
@@ -49,13 +49,13 @@ $(document).ready(function() {
     $("#delta_v").text(data.min_delta_v);
 
     $.post(
-      "http://senorpez.com:5001/plottransfer",
-      {flight_time: data.flight_time, launch_time: data.launch_time})
+      "https://www.senorpez.com/tw/plottransfer",
+      {flight_time: data.flight_time + data.launch_time, launch_time: data.launch_time})
     .done(function(data) {
-      $("#orbit").attr('src', 'http://senorpez.com/orbit.png?' + $.now());
-      $("#orbit-x").attr('src', 'http://senorpez.com/orbit-x.png?' + $.now());
-      $("#orbit-y").attr('src', 'http://senorpez.com/orbit-y.png?' + $.now());
-      $("#orbit-z").attr('src', 'http://senorpez.com/orbit-z.png?' + $.now());
+      $("#orbit").attr('src', 'https://www.senorpez.com/orbit.png?' + $.now());
+      $("#orbit-x").attr('src', 'https://www.senorpez.com/orbit-x.png?' + $.now());
+      $("#orbit-y").attr('src', 'https://www.senorpez.com/orbit-y.png?' + $.now());
+      $("#orbit-z").attr('src', 'https://www.senorpez.com/orbit-z.png?' + $.now());
     });
 
     porkchopPlot.on('plotly_click', function(data) {
@@ -68,13 +68,15 @@ $(document).ready(function() {
       $("#delta_v").text(delta_v);
 
       $.post(
-        "http://senorpez.com:5001/plottransfer",
+        "https://www.senorpez.com/tw/plottransfer",
         {flight_time: y, launch_time: x})
       .done(function(data) {
-        $("#orbit").attr('src', 'http://senorpez.com/orbit.png?' + $.now());
-        $("#orbit-x").attr('src', 'http://senorpez.com/orbit-x.png?' + $.now());
-        $("#orbit-y").attr('src', 'http://senorpez.com/orbit-y.png?' + $.now());
-        $("#orbit-z").attr('src', 'http://senorpez.com/orbit-z.png?' + $.now());
+        $("#orbit").attr('src', 'https://www.senorpez.com/orbit.png?' + $.now());
+        $("#orbit-x").attr('src', 'https://www.senorpez.com/orbit-x.png?' + $.now());
+        $("#orbit-y").attr('src', 'https://www.senorpez.com/orbit-y.png?' + $.now());
+        $("#orbit-z").attr('src', 'https://www.senorpez.com/orbit-z.png?' + $.now());
+        $("#min_insertion").text(data.min_insertion);
+        $("#min_injection").text(data.min_injection);
       });
     });
   });

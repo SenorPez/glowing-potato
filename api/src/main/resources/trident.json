@@ -93,7 +93,7 @@
               "id": -93488736,
               "name": "1 Eta Veneris 7",
               "mass": 9.5,
-              "radius": 2.79305211,
+              "radius": 2.793052112,
               "semimajorAxis": 9.37834446,
               "eccentricity": 0.02,
               "inclination": 0.015607816,
@@ -112,7 +112,179 @@
           "inclination": 0.006273935,
           "longitudeOfAscendingNode": 4.821009546,
           "argumentOfPeriapsis": 2.95583028,
-          "trueAnomalyAtEpoch": 6.01675207
+          "trueAnomalyAtEpoch": 6.01675207,
+          "planets": [
+            {
+              "id": 35082925,
+              "name": "2 Eta Veneris 1",
+              "mass": 0.26694605,
+              "radius": 0.682414225,
+              "semimajorAxis": 0.112620476,
+              "eccentricity": 0.01,
+              "inclination": 0.005268393,
+              "longitudeOfAscendingNode": 3.71598051,
+              "argumentOfPeriapsis": 4.517610236,
+              "trueAnomalyAtEpoch": 0.545383975
+            },
+            {
+              "id": -147324404,
+              "name": "2 Eta Veneris 2",
+              "mass": 0.302287365,
+              "radius": 0.72599055,
+              "semimajorAxis": 0.306327694,
+              "eccentricity": 0.075,
+              "inclination": 0.043865131,
+              "longitudeOfAscendingNode": 3.741957991,
+              "argumentOfPeriapsis": 3.948861538,
+              "trueAnomalyAtEpoch": 4.712184777
+            },
+            {
+              "id": -776582048,
+              "name": "2 Eta Veneris 3",
+              "mass": 0.098168351,
+              "radius": 0.532540587,
+              "semimajorAxis": 0.52075708,
+              "eccentricity": 0,
+              "inclination": 0.025815923,
+              "longitudeOfAscendingNode": 0.516050227,
+              "argumentOfPeriapsis": 2.847600668,
+              "trueAnomalyAtEpoch": 2.361439205
+            },
+            {
+              "id": -1400468889,
+              "name": "2 Eta Veneris 4",
+              "mass": 0.364831288,
+              "radius": 0.703019858,
+              "semimajorAxis": 1.50498796,
+              "eccentricity": 0,
+              "inclination": 0.008477597,
+              "longitudeOfAscendingNode": 3.660163136,
+              "argumentOfPeriapsis": 6.159926665,
+              "trueAnomalyAtEpoch": 0.487889339
+            },
+            {
+              "id": 15420235,
+              "name": "2 Eta Veneris 5",
+              "mass": 0.0393109,
+              "radius": 0.400923074,
+              "semimajorAxis": 2.558479532,
+              "eccentricity": 0.055,
+              "inclination": 0.00581012,
+              "longitudeOfAscendingNode": 5.052780544,
+              "argumentOfPeriapsis": 1.415181025,
+              "trueAnomalyAtEpoch": 1.990008705
+            },
+            {
+              "id": -375257921,
+              "name": "2 Eta Veneris 6",
+              "mass": 0.263269976,
+              "radius": 0.634631128,
+              "semimajorAxis": 5.116959064,
+              "eccentricity": 0,
+              "inclination": 0.021541592,
+              "longitudeOfAscendingNode": 2.531767632,
+              "argumentOfPeriapsis": 0.514571933,
+              "trueAnomalyAtEpoch": 3.610869802
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "Test System",
+      "stars": [
+        {
+          "id": 1,
+          "name": "1 Test System",
+          "mass": 1.358,
+          "planets": [
+            {
+              "id": 1,
+              "name": "1 Test System 1",
+              "mass": 5.672000607,
+              "radius": 1.783386287,
+              "semimajorAxis": 0.469876365,
+              "eccentricity": 0.125,
+              "inclination": 0.007214394,
+              "longitudeOfAscendingNode": 4.660556192,
+              "argumentOfPeriapsis": 2.110947805,
+              "trueAnomalyAtEpoch": 2.75940569
+            },
+            {
+              "id": 2,
+              "name": "1 Test System 2",
+              "mass": 1.438391261,
+              "radius": 1.136449966,
+              "semimajorAxis": 0.79878982,
+              "eccentricity": 0.04,
+              "inclination": 0.008972959,
+              "longitudeOfAscendingNode": 0.494315641,
+              "argumentOfPeriapsis": 4.4542862,
+              "trueAnomalyAtEpoch": 0.516565099
+            },
+            {
+              "id": 3,
+              "name": "1 Test System 3",
+              "mass": 2.978411117,
+              "radius": 1.398039307,
+              "semimajorAxis": 1.437821677,
+              "eccentricity": 0.57,
+              "inclination": 0.039338602,
+              "longitudeOfAscendingNode": 4.841260602,
+              "argumentOfPeriapsis": 4.304135524,
+              "trueAnomalyAtEpoch": 0.264855459
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 1621827699,
+      "name": "Omega Hydri",
+      "stars": [
+        {
+          "id": -1826843336,
+          "name": "1 Omega Hydri",
+          "mass": 1.045,
+          "planets": [
+            {
+              "id": 2035226060,
+              "name": "1 Omega Hydri 1",
+              "mass": 0.027045919,
+              "radius": 0.339691139,
+              "semimajorAxis": 0.304731681,
+              "eccentricity": 0.115,
+              "inclination": 0.001120502,
+              "longitudeOfAscendingNode": 3.826163146,
+              "argumentOfPeriapsis": 1.926038897,
+              "trueAnomalyAtEpoch": 4.129414104
+            },
+            {
+              "id": -154475081,
+              "name": "1 Omega Hydri 2",
+              "mass": 0.261809420,
+              "radius": 0.720491856,
+              "semimajorAxis": 0.548517026,
+              "eccentricity": 0.03,
+              "inclination": 0.014861423,
+              "longitudeOfAscendingNode": 4.874420112,
+              "argumentOfPeriapsis": 3.255447462,
+              "trueAnomalyAtEpoch": 1.219213712
+            },
+            {
+              "id": 159569841,
+              "name": "1 Omega Hydri 3",
+              "mass": 0.712351549,
+              "radius": 0.902209812,
+              "semimajorAxis": 0.932478944,
+              "eccentricity": 0.115,
+              "inclination": 0,
+              "longitudeOfAscendingNode": 0,
+              "argumentOfPeriapsis": 3.180972518,
+              "trueAnomalyAtEpoch": 4.653676104
+            }
+          ]
         }
       ]
     }

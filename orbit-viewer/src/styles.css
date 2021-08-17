@@ -1,0 +1,76 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+app-root {
+  width: 100%;
+  height: 100%;
+}
+
+#orbitplot {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+#timecontrols {
+  display: inline-block;
+  position: absolute;
+  top: 25px;
+  left: 25px;
+  color: white;
+}
+
+#displaycontrols {
+  display: inline-block;
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  color: white;
+}
+
+#stats {
+  display: inline-block;
+  position: absolute;
+  bottom: 25px;
+  left: 25px;
+  color: white;
+}
+
+#progress {
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+#tooltip {
+  background-color: black;
+  border: 0 solid black;
+  border-radius: 5px;
+  position: absolute;
+  left: -200px;
+  top: 100px;
+}
+
+.mat-slider-min-value .mat-slider-thumb {
+  background-color: #AAAAAA !important;
+  border-color: #AAAAAA !important;
+}
+
+.mat-form-field-label {
+  color: white !important;
+}
+
+.mat-select-value-text {
+  color: white !important;
+}

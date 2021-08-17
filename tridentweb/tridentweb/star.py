@@ -4,87 +4,55 @@
 from pykep import epoch, AU
 from pykep.planet import keplerian
 
-import requests
+from tridentweb.api import get_star
 from tridentweb.constant import Constant
+from tridentweb.pykep_addons import mean_from_true
+
 
 class Star:
-    """Represents a star.
+    """Represents a star
 
-    Arguments:
-    system_id - ID number denoting the solar system.
-    star_id - ID number denoting the star.
-    server_url - Trident API server URL. Defaults to http://trident.senorpez.com/
+    :param system_id: Solar system ID, for use with the Trident API
+    :param star_id: Star ID, for use with the Trident API
+    :param server_url: Trident API server URL; defaults to https://www.trident.senorpez.com/
     """
-    solar_mass = None
-    grav = None
-    pykep_planet = None
+    def __init__(self, system_id, star_id, server_url="https://www.trident.senorpez.com/"):
+        star_response, self._primary_GM = get_star(system_id, star_id, server_url=server_url)
+        self.id = star_response.json()['id']
+        self.name = star_response.json()['name']
+        self.mass = star_response.json()['mass']
 
-    def __init__(self, system_id, star_id, primary=None, server_url="http://trident.senorpez.com/"):
-        req = requests.get(server_url)
-        req.raise_for_status()
-        systems_url = req.json()['_links']['trident-api:systems']['href']
+        self.semimajor_axis = star_response.json()['semimajorAxis']
+        self.eccentricity = star_response.json()['eccentricity']
+        self.inclination = star_response.json()['inclination']
+        self.longitude_of_ascending_node = star_response.json()['longitudeOfAscendingNode']
+        self.argument_of_periapsis = star_response.json()['argumentOfPeriapsis']
+        self.true_anomaly_at_epoch = star_response.json()['trueAnomalyAtEpoch']
 
-        req = requests.get(systems_url)
-        req.raise_for_status()
-        system_url = None
-        for entry in req.json()['_embedded']['trident-api:system']:
-            if entry['id'] == system_id:
-                system_url = entry['_links']['self']['href']
-
-        req = requests.get(system_url)
-        req.raise_for_status()
-        stars_url = req.json()['_links']['trident-api:stars']['href']
-
-        req = requests.get(stars_url)
-        req.raise_for_status()
-        star_url = None
-        for entry in req.json()['_embedded']['trident-api:star']:
-            if entry['id'] == star_id:
-                star_url = entry['_links']['self']['href']
-
-        req = requests.get(star_url)
-        req.raise_for_status()
-
-        self._primary = primary
-        self.id = req.json()['id']
-        self.name = req.json()['name']
-        self.mass = req.json()['mass']
-
-        self.semimajor_axis = None
-        self.eccentricity = None
-        self.inclination = None
-        self.longitude_of_ascending_node = None
-        self.argument_of_periapsis = None
-        self.true_anomaly_at_epoch = None
-
-        if self._primary is not None:
-            self.semimajor_axis = req.json()['semimajorAxis']
-            self.eccentricity = req.json()['eccentricity']
-            self.inclination = req.json()['inclination']
-            self.longitude_of_ascending_node = req.json()['longitudeOfAscendingNode']
-            self.argument_of_periapsis = req.json()['argumentOfPeriapsis']
-            self.true_anomaly_at_epoch = req.json()['trueAnomalyAtEpoch']
+        self._solar_mass = None
+        self._grav = None
+        self._pykep_planet = None
 
     @property
     def gm(self):
-        """Standard gravitational parameter of the Planet."""
-        if self.solar_mass is None:
+        """Standard gravitational parameter of the object."""
+        if self._solar_mass is None:
             solar_mass_constant = Constant("Msol")
-            self.solar_mass = solar_mass_constant.value
-        if self.grav is None:
+            self._solar_mass = solar_mass_constant.value
+        if self._grav is None:
             grav_constant = Constant("G")
-            self.grav = grav_constant.value
+            self._grav = grav_constant.value
 
-        return self.mass * self.solar_mass * self.grav
+        return self.mass * self._solar_mass * self._grav
 
     @property
     def planet(self):
         """PyKep object (pykep.planet.keplerian) representation of Planet."""
-        if self._primary is None:
+        if self._primary_GM is None:
             raise ValueError
 
-        if self.pykep_planet is None:
-            self.pykep_planet = keplerian(
+        if self._pykep_planet is None:
+            self._pykep_planet = keplerian(
                 epoch(0),
                 (
                     self.semimajor_axis * AU,
@@ -92,10 +60,10 @@ class Star:
                     self.inclination,
                     self.longitude_of_ascending_node,
                     self.argument_of_periapsis,
-                    self.true_anomaly_at_epoch),
-                self._primary.gm,
+                    mean_from_true(self.eccentricity, self.true_anomaly_at_epoch)),
+                self._primary_GM,
                 self.gm,
                 1000,
                 1000,
                 self.name)
-        return self.pykep_planet
+        return self._pykep_planet

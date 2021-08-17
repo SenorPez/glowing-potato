@@ -13,8 +13,9 @@ from pykep import epoch, epoch_from_string, lambert_problem, DAY2SEC
 from tridentweb.star import Star
 from tridentweb.planet import Planet
 
+
 def transfer_delta_v(vp_input, vs_input, mu, orbit_radius):
-    """Calculates the delta-v requirement for an injection or insertion manuever.
+    """Calculates the delta-v requirement for an injection or insertion maneuver.
 
     Parameters:
         vp_input: [x, y, z] components of planetary velocity.
@@ -25,7 +26,7 @@ def transfer_delta_v(vp_input, vs_input, mu, orbit_radius):
         orbit_radius: Circular orbit radius around planet.
 
     Returns:
-        delta_v: Delta-v requirement for the manuever.
+        delta_v: Delta-v requirement for the maneuver.
     """
     vp_vec = np.array(vp_input)
     vs_vec = np.array(vs_input)
@@ -33,6 +34,7 @@ def transfer_delta_v(vp_input, vs_input, mu, orbit_radius):
     vsp = np.linalg.norm(vsp_vec)
     vo = sqrt(vsp * vsp + 2 * mu / orbit_radius)
     return vo - sqrt(mu / orbit_radius)
+
 
 def transfer_calc():
     """A crontab-compatible function for generating transfer delta_vs."""
@@ -84,7 +86,7 @@ def transfer_calc():
                 min_delta_v = (flight_time + launch_time, launch_time, min(lambert_delta_vs))
 
     launch_delta = timedelta(min_delta_v[1])
-    arrival_delta = timedelta(min_delta_v[0] )
+    arrival_delta = timedelta(min_delta_v[0])
     output = {
         "date": "{:%Y-%m-%d}".format(datetime.now()),
         "delta_v": delta_v.tolist(),

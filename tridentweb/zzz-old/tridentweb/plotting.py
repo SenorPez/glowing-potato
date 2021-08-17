@@ -14,6 +14,7 @@ from tridentweb.planet import Planet
 from tridentweb.pykep_addons import orbit_positions, lambert_positions
 from tridentweb.star import Star
 
+
 def plot_orbits(planets):
     """Plots a set of orbits.
 
@@ -30,7 +31,15 @@ def plot_orbits(planets):
         planet_colors: A list of colors for the orbiting objects
     """
     t0 = epoch_from_string(str(datetime.now()))
+
+    # Longitude zero (fall equinox)
+    #t0 = epoch_from_string("2020-09-22 00:00:00")
+
+    # Epoch
     #t0 = epoch_from_string("2000-01-01 00:00:00")
+
+    # Epoch Offset 1 Eta Veneris 3
+    #t0 = epoch(-73)
 
     system_x = list()
     system_y = list()
@@ -45,12 +54,17 @@ def plot_orbits(planets):
         system_y.append(planet_y.tolist())
         system_z.append(planet_z.tolist())
         planet_positions.append(list((planet_x[0], planet_y[0], planet_z[0])))
-        if planet.id == -455609026:
+        #if planet.id == -455609026:
+            #planet_colors.append("green")
+        #elif planet.id == -1385166447:
+            #planet_colors.append("orange")
+        #else:
+            #planet_colors.append("gray")
+        if planet.inclination == 0 and planet.longitude_of_ascending_node == 0:
             planet_colors.append("green")
-        elif planet.id == -1385166447:
-            planet_colors.append("orange")
         else:
             planet_colors.append("gray")
+        
         planet_names.append(planet.name)
 
     earth = jpl_lp('earth')
@@ -63,6 +77,7 @@ def plot_orbits(planets):
     planet_names.append("Earth")
 
     return system_x, system_y, system_z, planet_positions, planet_colors, planet_names
+
 
 def plot_transfer(flask_values):
     star = Star(1817514095, 1905216634)
@@ -101,14 +116,14 @@ def plot_transfer(flask_values):
         color='green',
         legend=True,
         units=AU,
-        ax=orbit_ax)
+        axes=orbit_ax)
     plot_planet(
         target.planet,
         t0=t2,
         color='gray',
         legend=True,
         units=AU,
-        ax=orbit_ax)
+        axes=orbit_ax)
 
     o_x, o_y, o_z = tuple(x / AU for x in orbit_positions(origin.planet, t1))
     t_x, t_y, t_z = tuple(x / AU for x in orbit_positions(target.planet, t2))
@@ -159,7 +174,7 @@ def plot_transfer(flask_values):
             min_n = x
             min_delta_v = inj_delta_v + ins_delta_v
 
-    plot_lambert(lambert, color='purple', sol=min_n, legend=False, units=AU, ax=orbit_ax)
+    plot_lambert(lambert, color='purple', sol=min_n, legend=False, units=AU, axes=orbit_ax)
 
     l_x, l_y, l_z = tuple(x / AU for x in lambert_positions(lambert, sol=min_n))
 

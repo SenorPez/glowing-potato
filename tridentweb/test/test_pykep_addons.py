@@ -7,8 +7,9 @@ from pykep import epoch
 from tridentweb.pykep_addons import lambert_positions, orbit_positions, eccentric_from_true, \
     mean_from_true, mean_from_eccentric
 
+
 def generate_test_data():
-    """Generates ridicuous 'orbit' test data."""
+    """Generates ridiculous 'orbit' test data."""
     ephemerides = []
     expected_x = []
     expected_y = []
@@ -26,9 +27,10 @@ def generate_test_data():
 
     return ephemerides, expected_x, expected_y, expected_z
 
+
 class TestEccentricFromTrue(unittest.TestCase):
     """Tests for the eccentric_from_true function.
-        Numbers taken from http://www.braeunig.us/space/"""
+        Numbers taken from https://www.braeunig.us/space/"""
     def test_eccentric_from_true(self):
         """Test function."""
         eccentricity = 0.1
@@ -37,9 +39,10 @@ class TestEccentricFromTrue(unittest.TestCase):
 
         self.assertAlmostEqual(eccentric_from_true(eccentricity, true_anomaly), expected_value)
 
+
 class TestMeanFromEccentric(unittest.TestCase):
     """Test for the mean_from_eccentric function.
-        Numbers taken from http://www.braeunig.us/space/"""
+        Numbers taken from https://www.braeunig.us/space/"""
     def test_mean_from_eccentric(self):
         """Test function."""
         eccentricity = 0.1
@@ -48,9 +51,10 @@ class TestMeanFromEccentric(unittest.TestCase):
 
         self.assertAlmostEqual(mean_from_eccentric(eccentricity, eccentric_anomaly), expected_value)
 
+
 class TestMeanFromTrue(unittest.TestCase):
     """Test for the mean_from_true function.
-        Numbers taken from http://www.braeunig.us/space/"""
+        Numbers taken from https://www.braeunig.us/space/"""
     def test_mean_from_true(self):
         """Test function."""
         eccentricity = 0.1
@@ -58,6 +62,7 @@ class TestMeanFromTrue(unittest.TestCase):
         expected_value = 0.4297837
 
         self.assertAlmostEqual(mean_from_true(eccentricity, true_anomaly), expected_value)
+
 
 class TestOrbitPositions(unittest.TestCase):
     """Tests for the orbit_positions function."""
@@ -69,7 +74,7 @@ class TestOrbitPositions(unittest.TestCase):
         mock_planet.compute_period.return_value = 42
         mock_planet.eph.side_effect = ephemerides
 
-        actual_x, actual_y, actual_z = orbit_positions(mock_planet, N=8)
+        actual_x, actual_y, actual_z = orbit_positions(mock_planet, divisions=8)
         self.assertListEqual(actual_x.tolist(), expected_x)
         self.assertListEqual(actual_y.tolist(), expected_y)
         self.assertListEqual(actual_z.tolist(), expected_z)
@@ -82,10 +87,11 @@ class TestOrbitPositions(unittest.TestCase):
         mock_planet.compute_period.return_value = 42
         mock_planet.eph.side_effect = ephemerides
 
-        actual_x, actual_y, actual_z = orbit_positions(mock_planet, epoch(0), N=8)
+        actual_x, actual_y, actual_z = orbit_positions(mock_planet, epoch(0), divisions=8)
         self.assertListEqual(actual_x.tolist(), expected_x)
         self.assertListEqual(actual_y.tolist(), expected_y)
         self.assertListEqual(actual_z.tolist(), expected_z)
+
 
 class TestLambertPositions(unittest.TestCase):
     """Tests for the lambert_positions function."""
@@ -103,7 +109,7 @@ class TestLambertPositions(unittest.TestCase):
         mock_lambert.get_tof.return_value = 50
         mock_lambert.get_mu.return_value = 1
 
-        actual_x, actual_y, actual_z = lambert_positions(mock_lambert, N=8)
+        actual_x, actual_y, actual_z = lambert_positions(mock_lambert, divisions=8)
         self.assertListEqual(actual_x.tolist(), expected_x)
         self.assertListEqual(actual_y.tolist(), expected_y)
         self.assertListEqual(actual_z.tolist(), expected_z)
