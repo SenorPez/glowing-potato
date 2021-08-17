@@ -19,12 +19,12 @@ export class ApiService {
     return this.http.get<Root>(this.api);
   }
 
-  private getConstants() {
+  private getConstants(): Observable<Constants> {
     return this.getRoot()
       .pipe(mergeMap(value => this.http.get<Constants>(value._links["trident-api:constants"].href)));
   }
 
-  getConstant(constant_symbol: string) {
+  getConstant(constant_symbol: string): Observable<Constant> {
     return this.getConstants()
       .pipe(
         mergeMap(constants => constants._embedded["trident-api:constant"]),
@@ -72,16 +72,6 @@ export class ApiService {
   getAllPlanets(system_id: number, star_id: number): Observable<Planet> {
     return this.getPlanets(system_id, star_id)
       .pipe(mergeMap(planets => planets._embedded["trident-api:planet"]),
-        mergeMap(planet => this.http.get<Planet>(planet._links.self.href))
-      );
-  }
-
-  getPlanet(system_id: number, star_id: number, planet_id: number): Observable<Planet> {
-    return this.getPlanets(system_id, star_id)
-      .pipe(
-        mergeMap(planets => planets._embedded["trident-api:planet"]),
-        filter(planet => planet.id === planet_id),
-        first(),
         mergeMap(planet => this.http.get<Planet>(planet._links.self.href))
       );
   }
