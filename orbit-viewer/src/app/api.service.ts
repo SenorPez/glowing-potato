@@ -1,14 +1,13 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 
-import {find, mergeMap, switchMap} from 'rxjs/operators'
+import {find, mergeMap} from 'rxjs/operators'
 import {NotFoundError, Observable, throwError} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
-
   private readonly api: string;
 
   constructor(private http: HttpClient) {
@@ -75,12 +74,13 @@ export class ApiService {
 
   private getPlanets(system_id: number, star_id: number): Observable<Planets> {
     return this.getStar(system_id, star_id)
-      .pipe(switchMap(value => this.http.get<Planets>(value._links["trident-api:planets"].href)));
+      .pipe(mergeMap(value => this.http.get<Planets>(value._links["trident-api:planets"].href)));
   }
 
   getAllPlanets(system_id: number, star_id: number): Observable<Planet> {
     return this.getPlanets(system_id, star_id)
-      .pipe(mergeMap(planets => planets._embedded["trident-api:planet"]),
+      .pipe(
+        mergeMap(planets => planets._embedded["trident-api:planet"]),
         mergeMap(planet => this.http.get<Planet>(planet._links.self.href))
       );
   }
