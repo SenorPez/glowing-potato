@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 
-import {filter, find, first, mergeMap, switchMap} from 'rxjs/operators'
+import {find, mergeMap, switchMap} from 'rxjs/operators'
 import {NotFoundError, Observable, throwError} from "rxjs";
 
 @Injectable({
@@ -46,9 +46,12 @@ export class ApiService {
     return this.getSystems()
       .pipe(
         mergeMap(systems => systems._embedded["trident-api:system"]),
-        filter(system => system.id === system_id),
-        first(),
-        mergeMap(system => this.http.get<SolarSystem>(system._links.self.href))
+        find(system => system.id === system_id),
+        mergeMap(system => {
+          return system === undefined
+            ? throwError(() => new NotFoundError("System " + system_id + " not found"))
+            : this.http.get<SolarSystem>(system._links.self.href);
+        })
       );
   }
 
@@ -61,9 +64,12 @@ export class ApiService {
     return this.getStars(system_id)
       .pipe(
         mergeMap(stars => stars._embedded["trident-api:star"]),
-        filter(star => star.id === star_id),
-        first(),
-        mergeMap(star => this.http.get<Star>(star._links.self.href))
+        find(star => star.id === star_id),
+        mergeMap(star => {
+          return star === undefined
+            ? throwError(() => new NotFoundError("Star " + star_id + " not found in System " + system_id))
+            : this.http.get<Star>(star._links.self.href);
+        })
       );
   }
 
