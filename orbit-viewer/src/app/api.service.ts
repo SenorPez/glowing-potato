@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 
-import {filter, first, mergeMap, switchMap} from 'rxjs/operators'
-import {Observable} from "rxjs";
+import {filter, find, first, mergeMap, switchMap} from 'rxjs/operators'
+import {NotFoundError, Observable, throwError} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -28,9 +28,12 @@ export class ApiService {
     return this.getConstants()
       .pipe(
         mergeMap(constants => constants._embedded["trident-api:constant"]),
-        filter(constant => constant.symbol === constant_symbol),
-        first(),
-        mergeMap(constant => this.http.get<Constant>(constant._links.self.href))
+        find(constant => constant.symbol === constant_symbol),
+        mergeMap(constant => {
+          return constant === undefined
+            ? throwError(() => new NotFoundError("Constant " + constant_symbol + " not found"))
+            : this.http.get<Constant>(constant._links.self.href);
+        }),
       );
   }
 
