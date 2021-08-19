@@ -85,11 +85,11 @@ export class OrbitdataService {
     return [position, velocity];
   }
 
-  orbitalPeriod(planet: Planet) {
+  orbitalPeriod(planet: Planet): number {
     return 2 * Math.PI * Math.sqrt(Math.pow(planet.semimajorAxis * this.AU, 3) / (planet.starGM + planet.GM));
   }
 
-  propagate(r0: Vector3, v0: Vector3, mu: number, time: number) {
+  propagate(r0: Vector3, v0: Vector3, mu: number, time: number): [Vector3, Vector3] {
     const m_r0 = r0.length();
     const m_v0 = v0.length();
     const energy = m_v0 * m_v0 / 2 - mu / m_r0;

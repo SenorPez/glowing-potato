@@ -10,6 +10,7 @@ import {Vector3} from "three";
 // * ephemerides: PyKep using data from Trident API
 // * orbitPeriod: Mathematical; PyKep doesn't use M1 + M2 so numbers are off by a few seconds
 // * lagrangePoint: Mathematical using rotation matrices
+// * propagate: PyKep using data from Trident API
 
 describe('OrbitdataService unit tests', () => {
   let service: OrbitdataService;
@@ -330,6 +331,56 @@ describe('OrbitdataService unit tests', () => {
     parameters.forEach(parameter => {
       it(parameter.description, () => {
         const [positionResult, velocityResult]: [Vector3, Vector3] = service.lagrangePoint(parameter.planet, parameter.time, parameter.L4);
+
+        // Tolerance based on percentage difference.
+        const tolerance = 1e-8;
+
+        if (parameter.position.x !== 0) {
+          expect(tolerance - Math.abs(positionResult.x / parameter.position.x - 1))
+            .toBeGreaterThanOrEqual(0, "position x: " + [positionResult.x, parameter.position.x]);
+        } else expect(positionResult.x).toEqual(0);
+
+        if (parameter.position.y !== 0) {
+          expect(tolerance - Math.abs(positionResult.y / parameter.position.y - 1))
+            .toBeGreaterThanOrEqual(0, "position y: " + [positionResult.y, parameter.position.y]);
+        } else expect(positionResult.y).toEqual(0);
+
+        if (parameter.position.z !== 0) {
+          expect(tolerance - Math.abs(positionResult.z / parameter.position.z - 1))
+            .toBeGreaterThanOrEqual(0, "position z: " + [positionResult.z, parameter.position.z]);
+        } else expect(positionResult.z).toEqual(0);
+
+        if (parameter.velocity.x !== 0) {
+          expect(tolerance - Math.abs(velocityResult.x / parameter.velocity.x - 1))
+            .toBeGreaterThanOrEqual(0, "velocity x: " + [velocityResult.x, parameter.velocity.x]);
+        } else expect(velocityResult.x).toEqual(0);
+
+        if (parameter.velocity.y !== 0) {
+          expect(tolerance - Math.abs(velocityResult.y / parameter.velocity.y - 1))
+            .toBeGreaterThanOrEqual(0, "velocity y: " + [velocityResult.y, parameter.velocity.y]);
+        } else expect(velocityResult.y).toEqual(0);
+
+        if (parameter.velocity.z !== 0) {
+          expect(tolerance - Math.abs(velocityResult.z / parameter.velocity.z - 1))
+            .toBeGreaterThanOrEqual(0, "velocity z: " + [velocityResult.z, parameter.velocity.z]);
+        } else expect(velocityResult.z).toEqual(0);
+      })
+    })
+  })
+
+  describe("propagate", () => {
+    const parameters = [
+      {description: "1 Omega Hydri 2, propagate 0+1 day", r0: new Vector3(-80903818304.70007, 6137945876.327766, -1171967768.6268415), v0: new Vector3(-4296.338710033931, -41346.68722826516, -162.15353444389586), mu: 1.3867924002240001e+20, time: 86400, position: new Vector3(-81196633524.24818, 2560805425.84375, -1184839521.4373617), velocity: new Vector3(-2481.8259650035943, -41444.08389891267, -135.77207092241997)},
+      {description: "1 Omega Hydri 2, propagate 0+10 day", r0: new Vector3(-80903818304.70007, 6137945876.327766, -1171967768.6268415), v0: new Vector3(-4296.338710033931, -41346.68722826516, -162.15353444389586), mu: 1.3867924002240001e+20, time: 864000, position: new Vector3(-76881863249.70337, -29042365359.091934, -1197324970.7541199), velocity: new Vector3(13345.251440907401, -38811.46698589046, 102.68915008860694)},
+      {description: "1 Omega Hydri 2, propagate 0+100 day", r0: new Vector3(-80903818304.70007, 6137945876.327766, -1171967768.6268415), v0: new Vector3(-4296.338710033931, -41346.68722826516, -162.15353444389586), mu: 1.3867924002240001e+20, time: 8640000, position: new Vector3(42628748895.083786, 68122822826.31849, 788607518.3740531), velocity: new Vector3(-36047.48697278536, 21483.60017222841, -477.2284004498464)},
+      {description: "1 Omega Hydri 2, propagate 100+1 day", r0: new Vector3(42628748895.08386, 68122822826.31827, 788607518.3740537), v0: new Vector3(-36047.4869727854, 21483.60017222858, -477.2284004498467), mu: 1.3867924002240001e+20, time: 86400, position: new Vector3(39472736671.73497, 69910397310.18053, 746601631.5786998), velocity: new Vector3(-36996.64817930602, 19887.782259780986, -494.9767850971748)},
+      {description: "1 Omega Hydri 2, propagate 100+10 day", r0: new Vector3(42628748895.08386, 68122822826.31827, 788607518.3740537), v0: new Vector3(-36047.4869727854, 21483.60017222858, -477.2284004498467), mu: 1.3867924002240001e+20, time: 864000, position: new Vector3(8304862886.419426, 79327039892.26137, 312014107.28799677), velocity: new Vector3(-42087.62222642359, 3948.178146694767, -607.8682272114236)},
+      {description: "1 Omega Hydri 2, propagate 100+100 day", r0: new Vector3(42628748895.08386, 68122822826.31827, 788607518.3740537), v0: new Vector3(-36047.4869727854, 21483.60017222858, -477.2284004498467), mu: 1.3867924002240001e+20, time: 8640000, position: new Vector3(50986443796.61917, -67179625592.2766, 586786904.8434366), velocity: new Vector3(31569.296656377777, 24529.30510092464, 521.8665490001245)},
+    ];
+
+    parameters.forEach(parameter => {
+      it(parameter.description, () => {
+        const [positionResult, velocityResult]: [Vector3, Vector3] = service.propagate(parameter.r0, parameter.v0, parameter.mu, parameter.time);
 
         // Tolerance based on percentage difference.
         const tolerance = 1e-8;
