@@ -24,6 +24,7 @@ export class OrbitdataService {
     const quaternion = new Quaternion();
     quaternion.setFromAxisAngle(h.normalize(), degrees * Math.PI / 180);
     position.applyQuaternion(quaternion);
+    velocity.applyQuaternion(quaternion);
 
     return [position, velocity];
   }

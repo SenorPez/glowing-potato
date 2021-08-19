@@ -4,6 +4,13 @@ import { OrbitdataService } from './orbitdata.service';
 import {Link, Planet} from "./api.service";
 import {Vector3} from "three";
 
+
+// Solutions source:
+// * lagrangeStability: Mathematical test against constant
+// * ephemerides: PyKep using data from Trident API
+// * orbitPeriod: Mathematical; PyKep doesn't use M1 + M2 so numbers are off by a few seconds
+// * lagrangePoint: Mathematical using rotation matrices
+
 describe('OrbitdataService unit tests', () => {
   let service: OrbitdataService;
 
@@ -257,4 +264,106 @@ describe('OrbitdataService unit tests', () => {
       });
     });
   });
+
+  describe("langrangePoint", () => {
+    const dummyLink: Link = {
+      href: "/"
+    };
+
+    const roundWorld: Planet = {
+      id: 0,
+      name: "ROUNDWORLD",
+      mass: 1,
+      radius: 1,
+      semimajorAxis: 1,
+      eccentricity: 0,
+      inclination: 0,
+      longitudeOfAscendingNode: 0,
+      argumentOfPeriapsis: 0,
+      trueAnomalyAtEpoch: 0,
+
+      GM: 10780216782443.096,
+      starGM: 1.3867924002240001e+20,
+      lagrangePoints: {L1: false, L2: false, L3: false, L4: false, L5: false},
+
+      _links: {
+        curies: [],
+        index: dummyLink,
+        self: dummyLink,
+        "trident-api:calendars": dummyLink,
+        "trident-api:planets": dummyLink
+      }
+    }
+
+    const omegaHydri4: Planet = {
+      id: 1008667220,
+      name: "1 Omega Hydri 4",
+      mass: 0.06909913,
+      radius: 0.4282164,
+      semimajorAxis: 1.5852143,
+      eccentricity: 0.05,
+      inclination: 0.032868735,
+      longitudeOfAscendingNode: 3.5879867,
+      argumentOfPeriapsis: 0.6304199,
+      trueAnomalyAtEpoch: 2.9054375,
+
+      GM: 27542181165232.988,
+      starGM: 1.3867924002240001e+20,
+      lagrangePoints: {L1: false, L2: false, L3: false, L4: false, L5: false},
+
+      _links: {
+        curies: [],
+        index: dummyLink,
+        self: dummyLink,
+        "trident-api:calendars": dummyLink,
+        "trident-api:planets": dummyLink
+      }
+    }
+
+    const parameters = [
+      {description: "L4 point for perfect circle orbit", planet: roundWorld, time: 0, L4: true, position: new Vector3(74798935350.00003, 129555556378.25974, 0), velocity: new Vector3(-26367.785202492498, 15223.44788459328, 0)},
+      {description: "L5 point for perfect circle orbit", planet: roundWorld, time: 0, L4: false, position: new Vector3(74798935350.00003, -129555556378.25974, 0), velocity: new Vector3(26367.785202492498, 15223.44788459328, 0)},
+      {description: "L4 point for 1 Omega Hydri 4", planet: omegaHydri4, time: 0, L4: true, position: new Vector3(-77461706716.23093, 236125466219.01385, -8102724410.256062), velocity: new Vector3(-21974.998417084316, -6914.377226360811, -106.86573344549893)},
+      {description: "L5 point for 1 Omega Hydri 4", planet: omegaHydri4, time: 0, L4: false, position: new Vector3(243319061288.6544, -50915605833.36989, 4964014870.602882), velocity: new Vector3(5005.450555828337, 22479.129381574417, -595.6468113369131)},
+    ];
+
+    parameters.forEach(parameter => {
+      it(parameter.description, () => {
+        const [positionResult, velocityResult]: [Vector3, Vector3] = service.lagrangePoint(parameter.planet, parameter.time, parameter.L4);
+
+        // Tolerance based on percentage difference.
+        const tolerance = 1e-8;
+
+        if (parameter.position.x !== 0) {
+          expect(tolerance - Math.abs(positionResult.x / parameter.position.x - 1))
+            .toBeGreaterThanOrEqual(0, "position x: " + [positionResult.x, parameter.position.x]);
+        } else expect(positionResult.x).toEqual(0);
+
+        if (parameter.position.y !== 0) {
+          expect(tolerance - Math.abs(positionResult.y / parameter.position.y - 1))
+            .toBeGreaterThanOrEqual(0, "position y: " + [positionResult.y, parameter.position.y]);
+        } else expect(positionResult.y).toEqual(0);
+
+        if (parameter.position.z !== 0) {
+          expect(tolerance - Math.abs(positionResult.z / parameter.position.z - 1))
+            .toBeGreaterThanOrEqual(0, "position z: " + [positionResult.z, parameter.position.z]);
+        } else expect(positionResult.z).toEqual(0);
+
+        if (parameter.velocity.x !== 0) {
+          expect(tolerance - Math.abs(velocityResult.x / parameter.velocity.x - 1))
+            .toBeGreaterThanOrEqual(0, "velocity x: " + [velocityResult.x, parameter.velocity.x]);
+        } else expect(velocityResult.x).toEqual(0);
+
+        if (parameter.velocity.y !== 0) {
+          expect(tolerance - Math.abs(velocityResult.y / parameter.velocity.y - 1))
+            .toBeGreaterThanOrEqual(0, "velocity y: " + [velocityResult.y, parameter.velocity.y]);
+        } else expect(velocityResult.y).toEqual(0);
+
+        if (parameter.velocity.z !== 0) {
+          expect(tolerance - Math.abs(velocityResult.z / parameter.velocity.z - 1))
+            .toBeGreaterThanOrEqual(0, "velocity z: " + [velocityResult.z, parameter.velocity.z]);
+        } else expect(velocityResult.z).toEqual(0);
+      })
+    })
+  })
 });
