@@ -4,13 +4,13 @@ import { OrbitdataService } from './orbitdata.service';
 import {Link, Planet} from "./api.service";
 import {Vector3} from "three";
 
-
 // Solutions source:
 // * lagrangeStability: Mathematical test against constant
 // * ephemerides: PyKep using data from Trident API
 // * orbitPeriod: Mathematical; PyKep doesn't use M1 + M2 so numbers are off by a few seconds
 // * lagrangePoint: Mathematical using rotation matrices
 // * propagate: PyKep using data from Trident API
+// * transfer: PyKep using data from Trident API
 
 describe('OrbitdataService unit tests', () => {
   let service: OrbitdataService;
@@ -414,7 +414,54 @@ describe('OrbitdataService unit tests', () => {
           expect(tolerance - Math.abs(velocityResult.z / parameter.velocity.z - 1))
             .toBeGreaterThanOrEqual(0, "velocity z: " + [velocityResult.z, parameter.velocity.z]);
         } else expect(velocityResult.z).toEqual(0);
-      })
-    })
-  })
+      });
+    });
+  });
+
+  describe("transfer", () => {
+    const parameters = [
+      {description: "1OH1 to 1OH2 in 69 days", r1: new Vector3(-43099846467.713509, -21184300229.783638, -12149029.904668095), r2: new Vector3(65105257227.044586, -53149988555.063141, 827517816.40368068), tof: 69 * 86400, mu: 1.386792400224e+20, v1: new Vector3(-6631.4941884090513, -60198.685951011015, 539.2121074882856), v2: new Vector3(4180.3992748278797, 34281.139183450432, -305.06246705425156)},
+      {description: "1OH1 to 1OH2 in 100 days", r1: new Vector3(-43099846467.713509, -21184300229.783638, -12149029.904668095), r2: new Vector3(36760504742.277031, -76060853818.371521, 356828852.02859867), tof: 100 * 86400, mu: 1.386792400224e+20, v1: new Vector3(-24851.801387277297, -57532.171536393536, 159.79587093243714), v2: new Vector3(7755.8827625773647, 37084.383983690015, -120.28072165933895)},
+      {description: "1OH1 to 1OH2 in 117 days", r1: new Vector3(-43099846467.713509, -21184300229.783638, -12149029.904668095), r2: new Vector3(-56936444459.269653, -60757228200.18483, -980810321.26770115), tof: 117 * 86400, mu: 1.386792400224e+20, v1: new Vector3(-51696.855908278805, -36631.535472830306, -344.92199497426554), v2: new Vector3(31038.883054668775, 24627.190473330134, 284.61978327276211)}
+    ];
+
+    parameters.forEach(parameter => {
+      it(parameter.description, () => {
+        const [v1, v2]: [Vector3, Vector3] = service.transfer(parameter.r1, parameter.r2, parameter.tof, parameter.mu);
+
+        // Tolerance based on percentage difference.
+        const tolerance = 1e-8;
+
+        if (parameter.v1.x !== 0) {
+          expect(tolerance - Math.abs(v1.x / parameter.v1.x - 1))
+            .toBeGreaterThanOrEqual(0, "v1 x: " + [parameter.r1.x, parameter.r2.x, v1.x, parameter.v1.x]);
+        } else expect(v1.x).toEqual(0);
+
+        if (parameter.v1.y !== 0) {
+          expect(tolerance - Math.abs(v1.y / parameter.v1.y - 1))
+            .toBeGreaterThanOrEqual(0, "v1 y: " + [parameter.r1.y, parameter.r2.y, v1.y, parameter.v1.y]);
+        } else expect(v1.y).toEqual(0);
+
+        if (parameter.v1.z !== 0) {
+          expect(tolerance - Math.abs(v1.z / parameter.v1.z - 1))
+            .toBeGreaterThanOrEqual(0, "v1 z: " + [parameter.r1.z, parameter.r2.z, v1.z, parameter.v1.z]);
+        } else expect(v1.z).toEqual(0);
+
+        if (parameter.v2.x !== 0) {
+          expect(tolerance - Math.abs(v2.x / parameter.v2.x - 1))
+            .toBeGreaterThanOrEqual(0, "v2 x: " + [parameter.r1.x, parameter.r2.x, v2.x, parameter.v2.x]);
+        } else expect(v2.x).toEqual(0);
+
+        if (parameter.v2.y !== 0) {
+          expect(tolerance - Math.abs(v2.y / parameter.v2.y - 1))
+            .toBeGreaterThanOrEqual(0, "v2 y: " + [parameter.r1.y, parameter.r2.y, v2.y, parameter.v2.y]);
+        } else expect(v2.y).toEqual(0);
+
+        if (parameter.v2.z !== 0) {
+          expect(tolerance - Math.abs(v2.z / parameter.v2.z - 1))
+            .toBeGreaterThanOrEqual(0, "v2 z: " + [parameter.r1.z, parameter.r2.z, v2.z, parameter.v2.z]);
+        } else expect(v2.z).toEqual(0);
+      });
+    });
+  });
 });

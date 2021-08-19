@@ -181,7 +181,7 @@ export class OrbitdataService {
     }
   }
 
-  transfer(r1: Vector3, r2: Vector3, tof: number, mu: number) {
+  transfer(r1: Vector3, r2: Vector3, tof: number, mu: number): [Vector3, Vector3] {
     const m_r1 = r1.length();
     const m_r2 = r2.length();
 
