@@ -5,12 +5,13 @@ import {Link, Planet} from "./api.service";
 import {Vector3} from "three";
 
 // Solutions source:
-// * lagrangeStability: Mathematical test against constant
+// * lagrangeStability: Mathematical
 // * ephemerides: PyKep using data from Trident API
-// * orbitPeriod: Mathematical; PyKep doesn't use M1 + M2 so numbers are off by a few seconds
-// * lagrangePoint: Mathematical using rotation matrices
+// * orbitPeriod: Mathematical; PyKep doesn't use M1 + M2 so its numbers are off by a few seconds
+// * lagrangePoint: Mathematical
 // * propagate: PyKep using data from Trident API
 // * transfer: PyKep using data from Trident API
+// * transferDeltaV: Mathematical
 
 describe('OrbitdataService unit tests', () => {
   let service: OrbitdataService;
@@ -461,6 +462,21 @@ describe('OrbitdataService unit tests', () => {
           expect(tolerance - Math.abs(v2.z / parameter.v2.z - 1))
             .toBeGreaterThanOrEqual(0, "v2 z: " + [parameter.r1.z, parameter.r2.z, v2.z, parameter.v2.z]);
         } else expect(v2.z).toEqual(0);
+      });
+    });
+  });
+
+  describe("transferDeltaV", () => {
+    const parameters = [
+      {description: "20km orbit", vp: new Vector3(-45296.785621611685, -21469.217161133187, -13.4583263538517850), vs: new Vector3(-24851.801387277297, -57532.171536393536, 159.79587093243714), mu: 10780216782443.096, radius: 20000, dv: 29666.15},
+      {description: "100km orbit", vp: new Vector3(-45296.785621611685, -21469.217161133187, -13.4583263538517850), vs: new Vector3(-24851.801387277297, -57532.171536393536, 159.79587093243714), mu: 10780216782443.096, radius: 100000, dv: 33596.40},
+      {description: "200km orbit", vp: new Vector3(-45296.785621611685, -21469.217161133187, -13.4583263538517850), vs: new Vector3(-24851.801387277297, -57532.171536393536, 159.79587093243714), mu: 10780216782443.096, radius: 200000, dv: 35394.27},
+    ];
+
+    parameters.forEach(parameter => {
+      it(parameter.description, () => {
+        const dv: number = service.transferDeltaV(parameter.vp, parameter.vs, parameter.mu, parameter.radius);
+        expect(dv).toBeCloseTo(parameter.dv, 2);
       });
     });
   });

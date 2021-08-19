@@ -297,7 +297,7 @@ export class OrbitdataService {
     return [v1, v2];
   }
 
-  transferDeltaV(vp: Vector3, vs: Vector3, mu: number, orbit_radius: number) {
+  transferDeltaV(vp: Vector3, vs: Vector3, mu: number, orbit_radius: number): number {
     const vsp: Vector3 = new Vector3();
     vsp.subVectors(vs, vp);
     const vsp_length: number = vsp.length();
