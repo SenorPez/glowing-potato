@@ -12,7 +12,7 @@
   <br/>
   <mat-slider min="1" max="35" value="7" color="primary" (change)="newSliderChange($event)" [disabled]="working"></mat-slider>
   <br/>
-  <span [hidden]="working"> {{getDate()}} </span>
+  <span id="date" [hidden]="working"> {{getDate()}} </span>
   <br/>
   <mat-form-field>
     <mat-label>Origin</mat-label>

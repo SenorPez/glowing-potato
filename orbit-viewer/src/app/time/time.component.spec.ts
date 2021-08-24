@@ -10,6 +10,8 @@ import {MatButtonHarness} from "@angular/material/button/testing";
 import {MatIconHarness} from "@angular/material/icon/testing";
 import {MatIconModule} from "@angular/material/icon";
 import {MatSliderHarness} from "@angular/material/slider/testing";
+import {DebugElement} from "@angular/core";
+import {By} from "@angular/platform-browser";
 
 describe('TimeComponent class', () => {
   it('should emit false seek event when clicking back button', () => {
@@ -325,5 +327,42 @@ describe('TimeComponent DOM testing', () => {
       component.sliderChangeEvent.subscribe((event: MatSliderChange) => expect(event.value).toEqual(value));
       await slider.setValue(value);
     });
-  })
+  });
+
+  describe('date span', async () => {
+    it('should be hidden when working', async () => {
+      component.working = true;
+      fixture.detectChanges();
+      const timeDebug: DebugElement = fixture.debugElement;
+      const spanDebug: DebugElement = timeDebug.query(By.css("#date"));
+      const span: HTMLElement = spanDebug.nativeElement;
+      expect(span.hidden).toBeTrue();
+    });
+
+    it('should not be hidden when working', () => {
+      component.working = false;
+      fixture.detectChanges();
+      const timeDebug: DebugElement = fixture.debugElement;
+      const spanDebug: DebugElement = timeDebug.query(By.css("#date"));
+      const span: HTMLElement = spanDebug.nativeElement;
+      expect(span.hidden).toBeFalse();
+    });
+
+    const parameters = [
+      {description: "Epoch Date", elapsedTime: 0, expectedValue: "01 Jan 2000 ST(1)"},
+      {description: "March 29", elapsedTime: 7603200, expectedValue: "29 Mar 2000 ST(7)"},
+      {description: "100 Days", elapsedTime: 8640000, expectedValue: "10 Apr 2000 ST(8)"},
+      {description: "Leap Day 2004", elapsedTime: 131328000, expectedValue: "29 Feb 2004 ST(109)"}
+    ];
+    parameters.forEach(parameter => {
+      it(parameter.description, () => {
+        component.elapsedTime = parameter.elapsedTime;
+        fixture.detectChanges();
+        const timeDebug: DebugElement = fixture.debugElement;
+        const spanDebug: DebugElement = timeDebug.query(By.css("#date"));
+        const span: HTMLElement = spanDebug.nativeElement;
+        expect(span.textContent).toContain(parameter.expectedValue);
+      });
+    });
+  });
 });
