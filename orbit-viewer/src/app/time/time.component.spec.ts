@@ -379,14 +379,9 @@ describe('TimeComponent DOM testing', () => {
       {id: 2, name: "Planet 2"},
       {id: 3, name: "Planet 3"}
     ];
-    const point: ({ point: string, planet: { id: number, name: string }; })[] = [
-      {point: "P1", planet: {id: 1, name: "Planet 1"}},
-      {point: "P2", planet: {id: 1, name: "Planet 1"}},
-      {point: "P3", planet: {id: 1, name: "Planet 1"}}
-    ];
 
     it('should have a label of "Origin"', async () => {
-      const formField: MatFormFieldHarness = await loader.getHarness(MatFormFieldHarness);
+      const formField: MatFormFieldHarness = await loader.getHarness(MatFormFieldHarness.with({selector: "#origin"}));
       expect(await formField.hasLabel()).toBeTrue();
       expect(await formField.getLabel()).toContain("Origin");
     });
@@ -410,4 +405,37 @@ describe('TimeComponent DOM testing', () => {
       }
     })
   })
+
+  describe('Target drop-down', () => {
+    const planets: ({ id: number, name: string; })[] = [
+      {id: 1, name: "Planet 1"},
+      {id: 2, name: "Planet 2"},
+      {id: 3, name: "Planet 3"}
+    ];
+
+    it('should have a label of "Target"', async () => {
+      const formField: MatFormFieldHarness = await loader.getHarness(MatFormFieldHarness.with({selector: "#target"}));
+      expect(await formField.hasLabel()).toBeTrue();
+      expect(await formField.getLabel()).toContain("Target");
+    });
+
+    it('should have planets options', async () => {
+      component.planets = planets.map(planet => <Planet>planet);
+      fixture.detectChanges();
+
+      const formFieldLoader = await loader.getChildLoader("#target");
+      const select = await formFieldLoader.getHarness(MatSelectHarness);
+      await select.open();
+      const options = await select.getOptions();
+
+      for (const option of options) {
+        const optionText = await option.getText();
+        const expectedPlanet = planets.find(planet => planet.name === optionText);
+        if (expectedPlanet !== undefined) {
+          await option.click();
+          expect(await select.getValueText()).toEqual(expectedPlanet.name);
+        }
+      }
+    });
+  });
 });

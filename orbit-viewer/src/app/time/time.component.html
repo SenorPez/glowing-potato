@@ -26,7 +26,7 @@
     </mat-select>
   </mat-form-field>
   <br/>
-  <mat-form-field>
+  <mat-form-field id="target">
     <mat-label>Target</mat-label>
     <mat-select [(value)]="targetPlanet" (selectionChange)="changeTarget($event)">
       <mat-option *ngFor="let planet of planets" [value]="planet.id">
