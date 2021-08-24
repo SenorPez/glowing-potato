@@ -4,7 +4,7 @@ import { DisplayComponent } from './display.component';
 import {MatCheckboxChange} from "@angular/material/checkbox";
 
 describe('DisplayComponent class', () => {
-  it('should emit state of orbit check box', () => {
+  it('should emit true state for orbit check box', () => {
     const component: DisplayComponent = new DisplayComponent();
     const event: MatCheckboxChange = new MatCheckboxChange();
     event.checked = true;
@@ -12,7 +12,15 @@ describe('DisplayComponent class', () => {
     component.changeOrbits(event);
   });
 
-  it('should emit state of planet locators check box', () => {
+  it('should emit false state for orbit check box', () => {
+    const component: DisplayComponent = new DisplayComponent();
+    const event: MatCheckboxChange = new MatCheckboxChange();
+    event.checked = false;
+    component.orbitsEvent.subscribe((state: boolean) => expect(state).toBeFalsy('should be false'));
+    component.changeOrbits(event);
+  });
+
+  it('should emit false state for planet locators check box', () => {
     const component: DisplayComponent = new DisplayComponent();
     const event: MatCheckboxChange = new MatCheckboxChange();
     event.checked = true;
@@ -20,13 +28,29 @@ describe('DisplayComponent class', () => {
     component.changePlanetLocators(event);
   });
 
-  it('should emit state of transfers check box', () => {
+  it('should emit true state for planet locators check box', () => {
+    const component: DisplayComponent = new DisplayComponent();
+    const event: MatCheckboxChange = new MatCheckboxChange();
+    event.checked = false;
+    component.planetLocatorsEvent.subscribe((state: boolean) => expect(state).toBeFalsy('should be false'));
+    component.changePlanetLocators(event);
+  });
+
+  it('should emit true state for transfers check box', () => {
     const component: DisplayComponent = new DisplayComponent();
     const event: MatCheckboxChange = new MatCheckboxChange();
     event.checked = true;
     component.transfersEvent.subscribe((state: boolean) => expect(state).toBeTruthy('should be true'));
     component.changeTransfers(event);
-  })
+  });
+
+  it('should emit false state for transfers check box', () => {
+    const component: DisplayComponent = new DisplayComponent();
+    const event: MatCheckboxChange = new MatCheckboxChange();
+    event.checked = false;
+    component.transfersEvent.subscribe((state: boolean) => expect(state).toBeFalsy('should be false'));
+    component.changeTransfers(event);
+  });
 })
 
 // describe('DisplayComponent', () => {
