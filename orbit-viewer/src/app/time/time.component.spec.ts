@@ -226,4 +226,46 @@ describe('TimeComponent DOM testing', () => {
       await button.click();
     });
   });
+
+  describe('next button', () => {
+    it('should be disabled when animating', async () => {
+      const button: MatButtonHarness = await loader.getHarness(MatButtonHarness.with({selector: "#next"}));
+      component.animating = true;
+      component.working = false;
+      expect(await button.isDisabled()).toBeTrue();
+    });
+
+    it('should be disabled when working', async () => {
+      const button: MatButtonHarness = await loader.getHarness(MatButtonHarness.with({selector: "#next"}));
+      component.animating = false;
+      component.working = true;
+      expect(await button.isDisabled()).toBeTrue();
+    });
+
+    it('should be disabled when animating and working', async () => {
+      const button: MatButtonHarness = await loader.getHarness(MatButtonHarness.with({selector: "#next"}));
+      component.animating = true;
+      component.working = true;
+      expect(await button.isDisabled()).toBeTrue();
+    });
+
+    it('should be enabled when neither animating or working', async () => {
+      const button: MatButtonHarness = await loader.getHarness(MatButtonHarness.with({selector: "#next"}));
+      component.animating = false;
+      component.working = false;
+      expect(await button.isDisabled()).toBeFalse();
+    });
+
+    it('should have the skip_previous icon', async () => {
+      const buttonLoader = await loader.getChildLoader("#next");
+      const icon = await buttonLoader.getHarness(MatIconHarness);
+      expect(await icon.getName()).toEqual("skip_next");
+    });
+
+    it('should emit false seek event when clicking', async () => {
+      const button: MatButtonHarness = await loader.getHarness(MatButtonHarness.with({selector: "#next"}));
+      component.seekEvent.subscribe((state: boolean) => expect(state).toBeTrue());
+      await button.click();
+    });
+  });
 });

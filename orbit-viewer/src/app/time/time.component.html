@@ -6,7 +6,7 @@
     <mat-icon *ngIf="animating">pause</mat-icon>
     <mat-icon *ngIf="!animating">play_arrow</mat-icon>
   </button>
-  <button mat-mini-fab color="primary" [disabled]="animating || working" (click)="clickForward()">
+  <button id="next" mat-mini-fab color="primary" [disabled]="animating || working" (click)="clickForward()">
     <mat-icon>skip_next</mat-icon>
   </button>
   <br/>
