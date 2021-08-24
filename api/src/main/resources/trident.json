@@ -283,6 +283,18 @@
               "longitudeOfAscendingNode": 0,
               "argumentOfPeriapsis": 3.180972518,
               "trueAnomalyAtEpoch": 4.653676104
+            },
+            {
+              "id": 1008667220,
+              "name": "1 Omega Hydri 4",
+              "mass": 0.069099129,
+              "radius": 0.428216405,
+              "semimajorAxis": 1.585214204,
+              "eccentricity": 0.05,
+              "inclination": 0.032868734,
+              "longitudeOfAscendingNode": 3.587986790,
+              "argumentOfPeriapsis": 0.630419907,
+              "trueAnomalyAtEpoch": 2.905437388
             }
           ]
         }
