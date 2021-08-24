@@ -2,7 +2,7 @@
   <button id="previous" mat-mini-fab color="primary" [disabled]="animating || working" (click)="clickBack()">
     <mat-icon>skip_previous</mat-icon>
   </button>
-  <button mat-mini-fab color="primary" (click)="clickPlay()" [disabled]="working">
+  <button id="play" mat-mini-fab color="primary" (click)="clickPlay()" [disabled]="working">
     <mat-icon *ngIf="animating">pause</mat-icon>
     <mat-icon *ngIf="!animating">play_arrow</mat-icon>
   </button>

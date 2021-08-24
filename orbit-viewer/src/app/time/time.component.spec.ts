@@ -268,4 +268,40 @@ describe('TimeComponent DOM testing', () => {
       await button.click();
     });
   });
+
+  describe('play button', () => {
+    it('should be disabled when working', async () => {
+      component.working = true;
+      const button: MatButtonHarness = await loader.getHarness(MatButtonHarness.with({selector: "#play"}));
+      expect(await button.isDisabled()).toBeTrue();
+    });
+
+    it('should be enabled when not working', async () => {
+      component.working = false;
+      const button: MatButtonHarness = await loader.getHarness(MatButtonHarness.with({selector: "#play"}));
+      expect(await button.isDisabled()).toBeFalse();
+    });
+
+    it('should have the pause icon when animating', async () => {
+      component.animating = true;
+      const buttonLoader = await loader.getChildLoader("#play");
+      const icon = await buttonLoader.getHarness(MatIconHarness);
+      expect(await icon.getName()).toEqual("pause");
+    });
+
+    it('should have the play icon when not animating', async () => {
+      component.animating = false;
+      const buttonLoader = await loader.getChildLoader("#play");
+      const icon = await buttonLoader.getHarness(MatIconHarness);
+      expect(await icon.getName()).toEqual("play_arrow");
+    });
+
+    it('should emit opposite animating state when clicking play button', async () => {
+      const originalState = Math.random() < 0.5;
+      component.animating = originalState;
+      const button: MatButtonHarness = await loader.getHarness(MatButtonHarness.with({selector: "#play"}));
+      component.playEvent.subscribe((state: boolean) => expect(state).toEqual(!originalState));
+      await button.click();
+    });
+  });
 });
