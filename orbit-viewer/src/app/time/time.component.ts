@@ -11,7 +11,10 @@ import {MatSelectChange} from "@angular/material/select";
 })
 export class TimeComponent {
   @Input() scene !: THREE.Scene;
+
+  // TODO: Maintain elapsed time in the time component?
   @Input() elapsedTime: number = 0;
+
   @Input() working: boolean = false;
   @Input() planets: Planet[] = [];
   @Input() points: {point: string, planet: Planet}[] = [];
@@ -31,22 +34,22 @@ export class TimeComponent {
   constructor() {
   }
 
-  clickBack() {
+  clickBack(): void {
     this.seekEvent.emit(false);
   }
 
-  clickForward() {
+  clickForward(): void {
     this.seekEvent.emit(true);
   }
 
-  // TODO: Maintain animating only in one place.
-  clickPlay() {
+  // TODO: Maintain animation state in only one component.
+  clickPlay(): void {
     this.animating = !this.animating;
     this.playEvent.emit(this.animating);
   }
 
-  // TODO: Maintain animation speed only in one component.
-  newSliderChange($event: MatSliderChange) {
+  // TODO: Maintain animation speed in only one component.
+  newSliderChange($event: MatSliderChange): void {
     this.sliderChangeEvent.emit($event);
   }
 
@@ -64,15 +67,15 @@ export class TimeComponent {
     return returnDate.join(" ");
   }
 
-  clickDvLambert() {
+  clickDvLambert(): void {
     this.lambertEvent.emit(true);
   }
 
-  clickFtLambert() {
+  clickFtLambert(): void {
     this.lambertEvent.emit(false);
   }
 
-  changeOrigin($event: MatSelectChange) {
+  changeOrigin($event: MatSelectChange): void {
     this.originPlanet = $event.value;
     this.invalidTransfer = !(
       this.originPlanet !== null
@@ -81,7 +84,7 @@ export class TimeComponent {
     this.planetsChange.emit([this.originPlanet, this.targetPlanet])
   }
 
-  changeTarget($event: MatSelectChange) {
+  changeTarget($event: MatSelectChange): void {
     this.targetPlanet = $event.value;
     this.invalidTransfer = !(
       this.originPlanet !== null

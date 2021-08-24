@@ -3,6 +3,12 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 import {TimeComponent} from './time.component';
 import {MatSliderChange} from "@angular/material/slider";
 import {MatSelectChange} from "@angular/material/select";
+import {HarnessLoader} from "@angular/cdk/testing";
+import {TestbedHarnessEnvironment} from "@angular/cdk/testing/testbed";
+import {MatButtonModule} from "@angular/material/button";
+import {MatButtonHarness} from "@angular/material/button/testing";
+import {MatIconHarness} from "@angular/material/icon/testing";
+import {MatIconModule} from "@angular/material/icon";
 
 describe('TimeComponent class', () => {
   it('should emit false seek event when clicking back button', () => {
@@ -41,6 +47,7 @@ describe('TimeComponent class', () => {
       {description: "100 Days", elapsedTime: 8640000, expectedValue: "10 Apr 2000 ST(8)"},
       {description: "Leap Day 2004", elapsedTime: 131328000, expectedValue: "29 Feb 2004 ST(109)"}
     ];
+
     parameters.forEach(parameter => {
       it(parameter.description, () => {
         const component: TimeComponent = new TimeComponent();
@@ -153,24 +160,70 @@ describe('TimeComponent class', () => {
   });
 });
 
-describe('TimeComponent', () => {
+describe('TimeComponent DOM testing', () => {
   let component: TimeComponent;
   let fixture: ComponentFixture<TimeComponent>;
+  let loader: HarnessLoader;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      declarations: [ TimeComponent ]
-    })
-    .compileComponents();
+    await TestBed
+      .configureTestingModule({
+        imports: [MatButtonModule, MatIconModule],
+        declarations: [TimeComponent]
+      })
+      .compileComponents();
   });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(TimeComponent);
+    loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
   it('should create', () => {
-    expect(component).toBeTruthy();
+    expect(component).toBeDefined('should be created');
+  });
+
+  describe('previous button', () => {
+    it('should be disabled when animating', async () => {
+      const button: MatButtonHarness = await loader.getHarness(MatButtonHarness.with({selector: "#previous"}));
+      component.animating = true;
+      component.working = false;
+      expect(await button.isDisabled()).toBeTrue();
+    });
+
+    it('should be disabled when working', async () => {
+      const button: MatButtonHarness = await loader.getHarness(MatButtonHarness.with({selector: "#previous"}));
+      component.animating = false;
+      component.working = true;
+      expect(await button.isDisabled()).toBeTrue();
+    });
+
+    it('should be disabled when animating and working', async () => {
+      const button: MatButtonHarness = await loader.getHarness(MatButtonHarness.with({selector: "#previous"}));
+      component.animating = true;
+      component.working = true;
+      expect(await button.isDisabled()).toBeTrue();
+    });
+
+    it('should be enabled when neither animating or working', async () => {
+      const button: MatButtonHarness = await loader.getHarness(MatButtonHarness.with({selector: "#previous"}));
+      component.animating = false;
+      component.working = false;
+      expect(await button.isDisabled()).toBeFalse();
+    });
+
+    it('should have the skip_previous icon', async () => {
+      const buttonLoader = await loader.getChildLoader("#previous");
+      const icon = await buttonLoader.getHarness(MatIconHarness);
+      expect(await icon.getName()).toEqual("skip_previous");
+    });
+
+    it('should emit false seek event when clicking', async () => {
+      const button: MatButtonHarness = await loader.getHarness(MatButtonHarness.with({selector: "#previous"}));
+      component.seekEvent.subscribe((state: boolean) => expect(state).toBeFalse());
+      await button.click();
+    });
   });
 });
