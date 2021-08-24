@@ -14,10 +14,10 @@
   <br/>
   <span id="date" [hidden]="working"> {{getDate()}} </span>
   <br/>
-  <mat-form-field>
+  <mat-form-field id="origin">
     <mat-label>Origin</mat-label>
     <mat-select [(value)]="originPlanet" (selectionChange)="changeOrigin($event)">
-      <mat-option *ngFor="let planet of planets" [value]="planet.id">
+      <mat-option id="#originplanets" *ngFor="let planet of planets" [value]="planet.id">
         {{planet.name}}
       </mat-option>
       <mat-option *ngFor="let point of points" [value]="point.point + point.planet.id">

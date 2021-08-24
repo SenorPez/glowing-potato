@@ -2,7 +2,7 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {TimeComponent} from './time.component';
 import {MatSliderChange, MatSliderModule} from "@angular/material/slider";
-import {MatSelectChange} from "@angular/material/select";
+import {MatSelectChange, MatSelectModule} from "@angular/material/select";
 import {HarnessLoader} from "@angular/cdk/testing";
 import {TestbedHarnessEnvironment} from "@angular/cdk/testing/testbed";
 import {MatButtonModule} from "@angular/material/button";
@@ -12,6 +12,12 @@ import {MatIconModule} from "@angular/material/icon";
 import {MatSliderHarness} from "@angular/material/slider/testing";
 import {DebugElement} from "@angular/core";
 import {By} from "@angular/platform-browser";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {MatFormFieldHarness} from "@angular/material/form-field/testing";
+import {MatSelectHarness} from "@angular/material/select/testing";
+import {Planet} from "../api.service";
 
 describe('TimeComponent class', () => {
   it('should emit false seek event when clicking back button', () => {
@@ -171,10 +177,11 @@ describe('TimeComponent DOM testing', () => {
   beforeEach(async () => {
     await TestBed
       .configureTestingModule({
-        imports: [MatButtonModule, MatIconModule, MatSliderModule],
+        imports: [BrowserAnimationsModule, MatButtonModule, MatFormFieldModule, MatIconModule, MatInputModule, MatSelectModule, MatSliderModule],
         declarations: [TimeComponent]
       })
       .compileComponents();
+
   });
 
   beforeEach(() => {
@@ -323,7 +330,7 @@ describe('TimeComponent DOM testing', () => {
 
     it('should emit value when updated', async () => {
       const slider: MatSliderHarness = await loader.getHarness(MatSliderHarness);
-      const value: number = Math.round(Math.random() * 35);
+      const value: number = Math.round(Math.random() * 34 + 1);
       component.sliderChangeEvent.subscribe((event: MatSliderChange) => expect(event.value).toEqual(value));
       await slider.setValue(value);
     });
@@ -365,4 +372,42 @@ describe('TimeComponent DOM testing', () => {
       });
     });
   });
+
+  describe('Origin drop-down', () => {
+    const planets: ({ id: number, name: string; })[] = [
+      {id: 1, name: "Planet 1"},
+      {id: 2, name: "Planet 2"},
+      {id: 3, name: "Planet 3"}
+    ];
+    const point: ({ point: string, planet: { id: number, name: string }; })[] = [
+      {point: "P1", planet: {id: 1, name: "Planet 1"}},
+      {point: "P2", planet: {id: 1, name: "Planet 1"}},
+      {point: "P3", planet: {id: 1, name: "Planet 1"}}
+    ];
+
+    it('should have a label of "Origin"', async () => {
+      const formField: MatFormFieldHarness = await loader.getHarness(MatFormFieldHarness);
+      expect(await formField.hasLabel()).toBeTrue();
+      expect(await formField.getLabel()).toContain("Origin");
+    });
+
+    it('should have planets options', async () => {
+      component.planets = planets.map(planet => <Planet>planet);
+      fixture.detectChanges();
+
+      const formFieldLoader = await loader.getChildLoader("#origin");
+      const select = await formFieldLoader.getHarness(MatSelectHarness);
+      await select.open();
+      const options = await select.getOptions();
+
+      for (const option of options) {
+        const optionText = await option.getText();
+        const expectedPlanet = planets.find(planet => planet.name === optionText);
+        if (expectedPlanet !== undefined) {
+          await option.click();
+          expect(await select.getValueText()).toEqual(expectedPlanet.name);
+        }
+      }
+    })
+  })
 });
