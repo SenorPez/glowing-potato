@@ -1,7 +1,7 @@
 import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {TimeComponent} from './time.component';
-import {MatSliderChange} from "@angular/material/slider";
+import {MatSliderChange, MatSliderModule} from "@angular/material/slider";
 import {MatSelectChange} from "@angular/material/select";
 import {HarnessLoader} from "@angular/cdk/testing";
 import {TestbedHarnessEnvironment} from "@angular/cdk/testing/testbed";
@@ -9,6 +9,7 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatButtonHarness} from "@angular/material/button/testing";
 import {MatIconHarness} from "@angular/material/icon/testing";
 import {MatIconModule} from "@angular/material/icon";
+import {MatSliderHarness} from "@angular/material/slider/testing";
 
 describe('TimeComponent class', () => {
   it('should emit false seek event when clicking back button', () => {
@@ -168,7 +169,7 @@ describe('TimeComponent DOM testing', () => {
   beforeEach(async () => {
     await TestBed
       .configureTestingModule({
-        imports: [MatButtonModule, MatIconModule],
+        imports: [MatButtonModule, MatIconModule, MatSliderModule],
         declarations: [TimeComponent]
       })
       .compileComponents();
@@ -304,4 +305,25 @@ describe('TimeComponent DOM testing', () => {
       await button.click();
     });
   });
+
+  describe('speed slider', () => {
+    it('should be disabled when working', async () => {
+      component.working = true;
+      const slider: MatSliderHarness = await loader.getHarness(MatSliderHarness);
+      expect(await slider.isDisabled()).toBeTrue();
+    });
+
+    it('should be enabled when not working', async () => {
+      component.working = false;
+      const slider: MatSliderHarness = await loader.getHarness(MatSliderHarness);
+      expect(await slider.isDisabled()).toBeFalse();
+    });
+
+    it('should emit value when updated', async () => {
+      const slider: MatSliderHarness = await loader.getHarness(MatSliderHarness);
+      const value: number = Math.round(Math.random() * 35);
+      component.sliderChangeEvent.subscribe((event: MatSliderChange) => expect(event.value).toEqual(value));
+      await slider.setValue(value);
+    });
+  })
 });
