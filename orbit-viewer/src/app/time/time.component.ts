@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import * as THREE from "three";
 import {MatSliderChange} from "@angular/material/slider";
 import {Planet} from "../api.service";
@@ -9,7 +9,7 @@ import {MatSelectChange} from "@angular/material/select";
   templateUrl: './time.component.html',
   styleUrls: ['./time.component.css']
 })
-export class TimeComponent implements OnInit {
+export class TimeComponent {
   @Input() scene !: THREE.Scene;
   @Input() elapsedTime: number = 0;
   @Input() working: boolean = false;
@@ -31,9 +31,6 @@ export class TimeComponent implements OnInit {
   constructor() {
   }
 
-  ngOnInit(): void {
-  }
-
   clickBack() {
     this.seekEvent.emit(false);
   }
@@ -42,11 +39,13 @@ export class TimeComponent implements OnInit {
     this.seekEvent.emit(true);
   }
 
+  // TODO: Maintain animating only in one place.
   clickPlay() {
     this.animating = !this.animating;
-    this.playEvent.emit();
+    this.playEvent.emit(this.animating);
   }
 
+  // TODO: Maintain animation speed only in one component.
   newSliderChange($event: MatSliderChange) {
     this.sliderChangeEvent.emit($event);
   }
