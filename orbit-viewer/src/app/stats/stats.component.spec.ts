@@ -77,6 +77,17 @@ describe('StatsComponent class test', () => {
       );
     });
   });
+
+  it('should call clearRect in clearPie', () => {
+    const component = new StatsComponent();
+    const context = {
+      clearRect(x: number, y: number, w: number, h: number) {
+      }
+    };
+    const mockClearRect = spyOn(context, "clearRect");
+    component.clearPie(<CanvasRenderingContext2D>context);
+    expect(mockClearRect).toHaveBeenCalledOnceWith(0, 0, 200, 200);
+  });
 });
 
 describe('StatsComponent', () => {
