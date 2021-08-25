@@ -438,4 +438,171 @@ describe('TimeComponent DOM testing', () => {
       }
     });
   });
+
+  describe('dv button', () => {
+    const parameters = [
+      {
+        description: 'animating true, working true, invalid true, result disabled',
+        animating: true,
+        working: true,
+        invalidTransfer: true,
+        expectedResult: true
+      },
+      {
+        description: 'animating true, working true, invalid false, result disabled',
+        animating: true,
+        working: true,
+        invalidTransfer: false,
+        expectedResult: true
+      },
+      {
+        description: 'animating true, working false, invalid true, result disabled',
+        animating: true,
+        working: false,
+        invalidTransfer: true,
+        expectedResult: true
+      },
+      {
+        description: 'animating true, working false, invalid false, result disabled',
+        animating: true,
+        working: false,
+        invalidTransfer: false,
+        expectedResult: true
+      },
+      {
+        description: 'animating false, working true, invalid true, result disabled',
+        animating: false,
+        working: true,
+        invalidTransfer: true,
+        expectedResult: true
+      },
+      {
+        description: 'animating false, working true, invalid false, result disabled',
+        animating: false,
+        working: true,
+        invalidTransfer: false,
+        expectedResult: true
+      },
+      {
+        description: 'animating false, working false, invalid true, result disabled',
+        animating: false,
+        working: false,
+        invalidTransfer: true,
+        expectedResult: true
+      },
+      {
+        description: 'animating false, working false, invalid false, result enabled',
+        animating: false,
+        working: false,
+        invalidTransfer: false,
+        expectedResult: false
+      },
+    ];
+
+    parameters.forEach(parameter => {
+      it(parameter.description, async () => {
+        component.animating = parameter.animating;
+        component.working = parameter.working;
+        component.invalidTransfer = parameter.invalidTransfer;
+        fixture.detectChanges();
+        const button: MatButtonHarness = await loader.getHarness(MatButtonHarness.with({selector: "#dv"}));
+        expect(await button.isDisabled()).toEqual(parameter.expectedResult);
+      });
+    });
+
+    it('should say dV', async () => {
+      const button = await loader.getHarness(MatButtonHarness.with({selector: "#dv"}));
+      expect(await button.getText()).toContain("dV");
+    });
+
+    it('should emit true lambert event with clicking', async () => {
+      const button = await loader.getHarness(MatButtonHarness.with({selector: "#dv"}));
+      component.lambertEvent.subscribe((state: boolean) => expect(state).toBeTrue());
+      await button.click();
+    })
+  });
+
+  describe('ft button', () => {
+    const parameters = [
+      {
+        description: 'animating true, working true, invalid true, result disabled',
+        animating: true,
+        working: true,
+        invalidTransfer: true,
+        expectedResult: true
+      },
+      {
+        description: 'animating true, working true, invalid false, result disabled',
+        animating: true,
+        working: true,
+        invalidTransfer: false,
+        expectedResult: true
+      },
+      {
+        description: 'animating true, working false, invalid true, result disabled',
+        animating: true,
+        working: false,
+        invalidTransfer: true,
+        expectedResult: true
+      },
+      {
+        description: 'animating true, working false, invalid false, result disabled',
+        animating: true,
+        working: false,
+        invalidTransfer: false,
+        expectedResult: true
+      },
+      {
+        description: 'animating false, working true, invalid true, result disabled',
+        animating: false,
+        working: true,
+        invalidTransfer: true,
+        expectedResult: true
+      },
+      {
+        description: 'animating false, working true, invalid false, result disabled',
+        animating: false,
+        working: true,
+        invalidTransfer: false,
+        expectedResult: true
+      },
+      {
+        description: 'animating false, working false, invalid true, result disabled',
+        animating: false,
+        working: false,
+        invalidTransfer: true,
+        expectedResult: true
+      },
+      {
+        description: 'animating false, working false, invalid false, result enabled',
+        animating: false,
+        working: false,
+        invalidTransfer: false,
+        expectedResult: false
+      },
+    ];
+
+    parameters.forEach(parameter => {
+      it(parameter.description, async () => {
+        component.animating = parameter.animating;
+        component.working = parameter.working;
+        component.invalidTransfer = parameter.invalidTransfer;
+        fixture.detectChanges();
+        const button: MatButtonHarness = await loader.getHarness(MatButtonHarness.with({selector: "#ft"}));
+        expect(await button.isDisabled()).toEqual(parameter.expectedResult);
+      });
+    });
+
+    it('should say FT', async () => {
+      const button = await loader.getHarness(MatButtonHarness.with({selector: "#ft"}));
+      console.log(await button.getText());
+      expect(await button.getText()).toContain("FT");
+    });
+
+    it('should emit true lambert event with clicking', async () => {
+      const button = await loader.getHarness(MatButtonHarness.with({selector: "#ft"}));
+      component.lambertEvent.subscribe((state: boolean) => expect(state).toBeFalse());
+      await button.click();
+    })
+  });
 });
