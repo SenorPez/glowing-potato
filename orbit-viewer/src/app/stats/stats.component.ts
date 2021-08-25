@@ -14,14 +14,15 @@ export class StatsComponent implements OnInit, OnChanges {
   private maxFT = 147; // 75% of 28 week endurance
   private safetyFactor = 0.25;
 
-  private minDVCtx !: CanvasRenderingContext2D;
-  private minFTCtx !: CanvasRenderingContext2D;
+  minDVCtx !: CanvasRenderingContext2D;
+  minFTCtx !: CanvasRenderingContext2D;
   private tooltip !: HTMLCanvasElement;
 
   private dvAngles: [number, number, string][] = [];
   private ftAngles: [number, number, string][] = [];
 
-  private colors: [string, string, string, string, string, string] = ["#0000FF", "#B3B3FF", "#E0E0FF",
+  colors: [string, string, string, string, string, string] =
+    ["#0000FF", "#B3B3FF", "#E0E0FF",
     "#FFE0FF", "#FFB3FF", "#FF00FF"];
 
   constructor() { }
@@ -34,8 +35,8 @@ export class StatsComponent implements OnInit, OnChanges {
         this.clearPie(this.minDVCtx);
       } else {
         this.dvAngles = this.drawPie(
-          this.minDVCtx, changes.minDV.currentValue,
-          this.colors
+          this.minDVCtx,
+          changes.minDV.currentValue
         );
       }
     }
@@ -47,8 +48,8 @@ export class StatsComponent implements OnInit, OnChanges {
         this.clearPie(this.minFTCtx);
       } else {
         this.ftAngles = this.drawPie(
-          this.minFTCtx, changes.minFT.currentValue,
-          this.colors
+          this.minFTCtx,
+          changes.minFT.currentValue
         );
       }
     }
@@ -80,8 +81,7 @@ export class StatsComponent implements OnInit, OnChanges {
   }
 
   drawPie(ctx: CanvasRenderingContext2D,
-          transferData: any,
-          colors: [string, string, string, string, string, string]) {
+          transferData: any) {
     const data:[number, number, string][] = [];
     const [usedDV, usedFTsec] = transferData;
     const totalDV = this.maxDV / (1 - this.safetyFactor);
@@ -114,7 +114,7 @@ export class StatsComponent implements OnInit, OnChanges {
       ctx.moveTo(100, 100);
       ctx.arc(100, 100, 75, startAngle, angle, true);
       ctx.closePath();
-      ctx.fillStyle = colors[index];
+      ctx.fillStyle = this.colors[index];
       ctx.fill();
       ctx.strokeStyle = "#B0B0B0";
       ctx.stroke();

@@ -595,7 +595,6 @@ describe('TimeComponent DOM testing', () => {
 
     it('should say FT', async () => {
       const button = await loader.getHarness(MatButtonHarness.with({selector: "#ft"}));
-      console.log(await button.getText());
       expect(await button.getText()).toContain("FT");
     });
 
@@ -603,6 +602,6 @@ describe('TimeComponent DOM testing', () => {
       const button = await loader.getHarness(MatButtonHarness.with({selector: "#ft"}));
       component.lambertEvent.subscribe((state: boolean) => expect(state).toBeFalse());
       await button.click();
-    })
+    });
   });
 });
