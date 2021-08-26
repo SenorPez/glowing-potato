@@ -91,6 +91,44 @@ describe('StatsComponent class test', () => {
     component.clearPie(<CanvasRenderingContext2D>context);
     expect(mockClearRect).toHaveBeenCalledOnceWith(0, 0, 200, 200);
   });
+
+  it('should call methods in drawPie', () => {
+    const component = new StatsComponent();
+    const data: [number, number, string][] = [
+      [Math.PI, 42, "plonk"],
+      [Math.PI * 0.5, 42, "plonk"],
+      [0, 42, "plonk"],
+      [Math.PI * -0.5, 42, "plonk"]];
+
+    const context = {
+      arc(x: number, y: number, radius: number, startAngle: number, endAngle: number, anticlockwise?: boolean) {
+      },
+      beginPath() {
+      },
+      closePath() {
+      },
+      fill() {
+      },
+      moveTo(x: number, y: number) {
+      },
+      stroke() {
+      }
+    };
+    const mockArc = spyOn(context, "arc");
+    const mockBeginPath = spyOn(context, "beginPath");
+    const mockClosePath = spyOn(context, "closePath");
+    const mockFill = spyOn(context, "fill");
+    const mockMoveTo = spyOn(context, "moveTo");
+    const mockStroke = spyOn(context, "stroke");
+
+    component.drawPie(<CanvasRenderingContext2D>context, data);
+    expect(mockArc).toHaveBeenCalledTimes(4);
+    expect(mockBeginPath).toHaveBeenCalledTimes(4);
+    expect(mockClosePath).toHaveBeenCalledTimes(4);
+    expect(mockFill).toHaveBeenCalledTimes(4);
+    expect(mockMoveTo).toHaveBeenCalledTimes(4);
+    expect(mockStroke).toHaveBeenCalledTimes(4);
+  });
 });
 
 describe('StatsComponent', () => {
