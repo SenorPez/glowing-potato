@@ -129,6 +129,59 @@ describe('StatsComponent class test', () => {
     expect(mockMoveTo).toHaveBeenCalledTimes(4);
     expect(mockStroke).toHaveBeenCalledTimes(4);
   });
+
+  describe('getPieData angle testing', () => {
+    const parameters: ({ description: string, dv: number, ft: number, expected: [number, number, string][]; }[]) = [
+      {
+        description: "25% dv, 50% FT", dv: 23750, ft: 8467200, expected: [
+          [Math.PI * 1.25, 23750, "m/s"],
+          [Math.PI * 0.75, 47500, "m/s"],
+          [Math.PI * 0.5, 23750, "m/s"],
+          [Math.PI * 0.25, 49, "days"],
+          [0, 49, "days"],
+          [Math.PI * -0.5, 98, "days"]
+        ]
+      },
+      {
+        description: "50% dv, 25% FT", dv: 47500, ft: 4233600, expected: [
+          [Math.PI, 47500, "m/s"],
+          [Math.PI * 0.75, 23750, "m/s"],
+          [Math.PI * 0.5, 23750, "m/s"],
+          [Math.PI * 0.25, 49, "days"],
+          [Math.PI * -0.25, 98, "days"],
+          [Math.PI * -0.5, 49, "days"]
+        ],
+      },
+      {
+        description: "75% dv, 50% FT", dv: 71250, ft: 8467200, expected: [
+          [Math.PI * 0.75, 71250, "m/s"],
+          [Math.PI * 0.75, 0, "m/s"],
+          [Math.PI * 0.5, 23750, "m/s"],
+          [Math.PI * 0.25, 49, "days"],
+          [0, 49, "days"],
+          [Math.PI * -0.5, 98, "days"]
+        ]
+      },
+      {
+        description: "50% dv, 75% FT", dv: 47500, ft: 12700800, expected: [
+          [Math.PI, 47500, "m/s"],
+          [Math.PI * 0.75, 23750, "m/s"],
+          [Math.PI * 0.5, 23750, "m/s"],
+          [Math.PI * 0.25, 49, "days"],
+          [Math.PI * 0.25, 0, "days"],
+          [Math.PI * -0.5, 147, "days"]
+        ]
+      }
+    ];
+
+    parameters.forEach(parameter => {
+      it(parameter.description, () => {
+        const component = new StatsComponent();
+        const value = component.getPieData([parameter.dv, parameter.ft]);
+        expect(value).toEqual(parameter.expected);
+      });
+    });
+  });
 });
 
 describe('StatsComponent', () => {

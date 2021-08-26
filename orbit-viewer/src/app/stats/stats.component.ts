@@ -93,6 +93,7 @@ export class StatsComponent implements OnInit, OnChanges {
     });
   }
 
+  // TODO: Convert to object for easier understanding.
   getPieData(transferData: any): [number, number, string][] {
     const data: [number, number, string][] = [];
     const [usedDV, usedFTsec] = transferData;
