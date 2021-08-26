@@ -34,10 +34,8 @@ export class StatsComponent implements OnInit, OnChanges {
       } else if (changes.minDV.currentValue === null) {
         this.clearPie(this.minDVCtx);
       } else {
-        this.dvAngles = this.drawPie(
-          this.minDVCtx,
-          changes.minDV.currentValue
-        );
+        this.dvAngles = this.getPieData(changes.minDV.currentValue);
+        this.drawPie(this.minDVCtx, this.dvAngles);
       }
     }
 
@@ -47,10 +45,8 @@ export class StatsComponent implements OnInit, OnChanges {
       } else if (changes.minFT.currentValue === null) {
         this.clearPie(this.minFTCtx);
       } else {
-        this.ftAngles = this.drawPie(
-          this.minFTCtx,
-          changes.minFT.currentValue
-        );
+        this.ftAngles = this.getPieData(changes.minFT.currentValue);
+        this.drawPie(this.minFTCtx, this.ftAngles);
       }
     }
   }
@@ -80,9 +76,25 @@ export class StatsComponent implements OnInit, OnChanges {
     ctx.clearRect(0, 0, 200, 200);
   }
 
-  drawPie(ctx: CanvasRenderingContext2D,
-          transferData: any) {
-    const data:[number, number, string][] = [];
+  drawPie(ctx: CanvasRenderingContext2D, data: [number, number, string][]): void {
+    let startAngle = Math.PI * 1.5;
+
+    data.forEach((value, index) => {
+      const [angle,] = value;
+      ctx.beginPath();
+      ctx.moveTo(100, 100);
+      ctx.arc(100, 100, 75, startAngle, angle, true);
+      ctx.closePath();
+      ctx.fillStyle = this.colors[index];
+      ctx.fill();
+      ctx.strokeStyle = "#B0B0B0";
+      ctx.stroke();
+      startAngle = angle;
+    });
+  }
+
+  getPieData(transferData: any): [number, number, string][] {
+    const data: [number, number, string][] = [];
     const [usedDV, usedFTsec] = transferData;
     const totalDV = this.maxDV / (1 - this.safetyFactor);
 
@@ -105,21 +117,6 @@ export class StatsComponent implements OnInit, OnChanges {
     data.push([Math.PI * -0.5 + usedFTAngle + remainingFTAngle, totalFT - usedFT - remainingFT, "days"]);
     data.push([Math.PI * -0.5 + usedFTAngle, remainingFT, "days"]);
     data.push([Math.PI * -0.5, usedFT, "days"]);
-
-    let startAngle = Math.PI * 1.5;
-
-    data.forEach((value, index) => {
-      const [angle,] = value;
-      ctx.beginPath();
-      ctx.moveTo(100, 100);
-      ctx.arc(100, 100, 75, startAngle, angle, true);
-      ctx.closePath();
-      ctx.fillStyle = this.colors[index];
-      ctx.fill();
-      ctx.strokeStyle = "#B0B0B0";
-      ctx.stroke();
-      startAngle = angle;
-    })
 
     return data;
   }

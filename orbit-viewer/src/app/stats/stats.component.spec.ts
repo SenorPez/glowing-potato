@@ -2,16 +2,19 @@ import {ComponentFixture, TestBed} from '@angular/core/testing';
 
 import {StatsComponent} from './stats.component';
 import {SimpleChange, SimpleChanges} from "@angular/core";
+import Spy = jasmine.Spy;
 
 describe('StatsComponent class test', () => {
   describe('ngOnChanges', () => {
     let component: StatsComponent;
-    let mockClearPie;
-    let mockDrawPie;
+    let mockClearPie: Spy<(ctx: CanvasRenderingContext2D) => void>;
+    let mockGetPieData: Spy<(transferData: any) => [number, number, string][]>
+    let mockDrawPie: Spy<(ctx: CanvasRenderingContext2D, data: [number, number, string][]) => void>
 
     beforeEach(() => {
       component = new StatsComponent();
       mockClearPie = spyOn(component, "clearPie");
+      mockGetPieData = spyOn(component, "getPieData");
       mockDrawPie = spyOn(component, "drawPie");
     });
 
@@ -20,8 +23,9 @@ describe('StatsComponent class test', () => {
         minDV: new SimpleChange(42, 11, true)
       };
       component.ngOnChanges(changes);
-      expect(component.clearPie).not.toHaveBeenCalled();
-      expect(component.drawPie).not.toHaveBeenCalled();
+      expect(mockClearPie).not.toHaveBeenCalled();
+      expect(mockGetPieData).not.toHaveBeenCalled();
+      expect(mockDrawPie).not.toHaveBeenCalled();
     });
 
     it('should call clearPie with changes.minDV.currentvalue null', () => {
@@ -29,8 +33,9 @@ describe('StatsComponent class test', () => {
         minDV: new SimpleChange(42, null, false)
       };
       component.ngOnChanges(changes);
-      expect(component.clearPie).toHaveBeenCalledTimes(1);
-      expect(component.drawPie).not.toHaveBeenCalled();
+      expect(mockClearPie).toHaveBeenCalledTimes(1);
+      expect(mockGetPieData).not.toHaveBeenCalled();
+      expect(mockDrawPie).not.toHaveBeenCalled();
     });
 
     it('should call drawPie with changes.minDV.currentvalue set', () => {
@@ -39,11 +44,9 @@ describe('StatsComponent class test', () => {
         minDV: new SimpleChange(42, currentValue, false)
       };
       component.ngOnChanges(changes);
-      expect(component.clearPie).not.toHaveBeenCalled();
-      expect(component.drawPie).toHaveBeenCalledOnceWith(
-        component.minDVCtx,
-        currentValue
-      );
+      expect(mockClearPie).not.toHaveBeenCalled();
+      expect(mockGetPieData).toHaveBeenCalledTimes(1);
+      expect(mockDrawPie).toHaveBeenCalledTimes(1);
     });
 
     it('should do nothing with changes.minFT.firstChange', () => {
@@ -51,8 +54,9 @@ describe('StatsComponent class test', () => {
         minFT: new SimpleChange(42, 11, true)
       };
       component.ngOnChanges(changes);
-      expect(component.clearPie).not.toHaveBeenCalled();
-      expect(component.drawPie).not.toHaveBeenCalled();
+      expect(mockClearPie).not.toHaveBeenCalled();
+      expect(mockGetPieData).not.toHaveBeenCalled();
+      expect(mockDrawPie).not.toHaveBeenCalled();
     });
 
     it('should call clearPie with changes.minFT.currentvalue null', () => {
@@ -61,7 +65,8 @@ describe('StatsComponent class test', () => {
       };
       component.ngOnChanges(changes);
       expect(component.clearPie).toHaveBeenCalledTimes(1);
-      expect(component.drawPie).not.toHaveBeenCalled();
+      expect(mockGetPieData).not.toHaveBeenCalled();
+      expect(mockDrawPie).not.toHaveBeenCalled();
     });
 
     it('should call drawPie with changes.minFT.currentvalue set', () => {
@@ -70,11 +75,9 @@ describe('StatsComponent class test', () => {
         minFT: new SimpleChange(42, currentValue, false)
       };
       component.ngOnChanges(changes);
-      expect(component.clearPie).not.toHaveBeenCalled();
-      expect(component.drawPie).toHaveBeenCalledOnceWith(
-        component.minFTCtx,
-        currentValue
-      );
+      expect(mockClearPie).not.toHaveBeenCalled();
+      expect(mockGetPieData).toHaveBeenCalledTimes(1);
+      expect(mockDrawPie).toHaveBeenCalledTimes(1);
     });
   });
 
