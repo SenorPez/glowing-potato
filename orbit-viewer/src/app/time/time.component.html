@@ -1,23 +1,23 @@
 <div id="timecontrols" xmlns="http://www.w3.org/1999/html">
-  <button mat-mini-fab color="primary" [disabled]="animating || working" (click)="clickBack()">
+  <button id="previous" mat-mini-fab color="primary" [disabled]="animating || working" (click)="clickBack()">
     <mat-icon>skip_previous</mat-icon>
   </button>
-  <button mat-mini-fab color="primary" (click)="clickPlay()" [disabled]="working">
+  <button id="play" mat-mini-fab color="primary" (click)="clickPlay()" [disabled]="working">
     <mat-icon *ngIf="animating">pause</mat-icon>
     <mat-icon *ngIf="!animating">play_arrow</mat-icon>
   </button>
-  <button mat-mini-fab color="primary" [disabled]="animating || working" (click)="clickForward()">
+  <button id="next" mat-mini-fab color="primary" [disabled]="animating || working" (click)="clickForward()">
     <mat-icon>skip_next</mat-icon>
   </button>
   <br/>
   <mat-slider min="1" max="35" value="7" color="primary" (change)="newSliderChange($event)" [disabled]="working"></mat-slider>
   <br/>
-  <span [hidden]="working"> {{getDate()}} </span>
+  <span id="date" [hidden]="working"> {{getDate()}} </span>
   <br/>
-  <mat-form-field>
+  <mat-form-field id="origin">
     <mat-label>Origin</mat-label>
     <mat-select [(value)]="originPlanet" (selectionChange)="changeOrigin($event)">
-      <mat-option *ngFor="let planet of planets" [value]="planet.id">
+      <mat-option id="#originplanets" *ngFor="let planet of planets" [value]="planet.id">
         {{planet.name}}
       </mat-option>
       <mat-option *ngFor="let point of points" [value]="point.point + point.planet.id">
@@ -26,7 +26,7 @@
     </mat-select>
   </mat-form-field>
   <br/>
-  <mat-form-field>
+  <mat-form-field id="target">
     <mat-label>Target</mat-label>
     <mat-select [(value)]="targetPlanet" (selectionChange)="changeTarget($event)">
       <mat-option *ngFor="let planet of planets" [value]="planet.id">
@@ -38,10 +38,10 @@
     </mat-select>
   </mat-form-field>
   <br/>
-  <button mat-raised-button color="primary" [disabled]="animating || working || invalidTransfer" (click)="clickDvLambert()">
+  <button id="dv" mat-raised-button color="primary" [disabled]="animating || working || invalidTransfer" (click)="clickDvLambert()">
     dV
   </button>
-  <button mat-raised-button color="primary" [disabled]="animating || working || invalidTransfer" (click)="clickFtLambert()">
+  <button id="ft" mat-raised-button color="primary" [disabled]="animating || working || invalidTransfer" (click)="clickFtLambert()">
     FT
   </button>
 </div>

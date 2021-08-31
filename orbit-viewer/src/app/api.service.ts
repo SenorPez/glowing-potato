@@ -1,14 +1,13 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
 
-import {filter, first, mergeMap, switchMap} from 'rxjs/operators'
-import {Observable} from "rxjs";
+import {find, mergeMap} from 'rxjs/operators'
+import {NotFoundError, Observable, throwError} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
-
   private readonly api: string;
 
   constructor(private http: HttpClient) {
@@ -19,18 +18,21 @@ export class ApiService {
     return this.http.get<Root>(this.api);
   }
 
-  private getConstants() {
+  private getConstants(): Observable<Constants> {
     return this.getRoot()
       .pipe(mergeMap(value => this.http.get<Constants>(value._links["trident-api:constants"].href)));
   }
 
-  getConstant(constant_symbol: string) {
+  getConstant(constant_symbol: string): Observable<Constant> {
     return this.getConstants()
       .pipe(
         mergeMap(constants => constants._embedded["trident-api:constant"]),
-        filter(constant => constant.symbol === constant_symbol),
-        first(),
-        mergeMap(constant => this.http.get<Constant>(constant._links.self.href))
+        find(constant => constant.symbol === constant_symbol),
+        mergeMap(constant => {
+          return constant === undefined
+            ? throwError(() => new NotFoundError("Constant " + constant_symbol + " not found"))
+            : this.http.get<Constant>(constant._links.self.href);
+        }),
       );
   }
 
@@ -43,9 +45,12 @@ export class ApiService {
     return this.getSystems()
       .pipe(
         mergeMap(systems => systems._embedded["trident-api:system"]),
-        filter(system => system.id === system_id),
-        first(),
-        mergeMap(system => this.http.get<SolarSystem>(system._links.self.href))
+        find(system => system.id === system_id),
+        mergeMap(system => {
+          return system === undefined
+            ? throwError(() => new NotFoundError("System " + system_id + " not found"))
+            : this.http.get<SolarSystem>(system._links.self.href);
+        })
       );
   }
 
@@ -58,30 +63,24 @@ export class ApiService {
     return this.getStars(system_id)
       .pipe(
         mergeMap(stars => stars._embedded["trident-api:star"]),
-        filter(star => star.id === star_id),
-        first(),
-        mergeMap(star => this.http.get<Star>(star._links.self.href))
+        find(star => star.id === star_id),
+        mergeMap(star => {
+          return star === undefined
+            ? throwError(() => new NotFoundError("Star " + star_id + " not found in System " + system_id))
+            : this.http.get<Star>(star._links.self.href);
+        })
       );
   }
 
   private getPlanets(system_id: number, star_id: number): Observable<Planets> {
     return this.getStar(system_id, star_id)
-      .pipe(switchMap(value => this.http.get<Planets>(value._links["trident-api:planets"].href)));
+      .pipe(mergeMap(value => this.http.get<Planets>(value._links["trident-api:planets"].href)));
   }
 
   getAllPlanets(system_id: number, star_id: number): Observable<Planet> {
     return this.getPlanets(system_id, star_id)
-      .pipe(mergeMap(planets => planets._embedded["trident-api:planet"]),
-        mergeMap(planet => this.http.get<Planet>(planet._links.self.href))
-      );
-  }
-
-  getPlanet(system_id: number, star_id: number, planet_id: number): Observable<Planet> {
-    return this.getPlanets(system_id, star_id)
       .pipe(
         mergeMap(planets => planets._embedded["trident-api:planet"]),
-        filter(planet => planet.id === planet_id),
-        first(),
         mergeMap(planet => this.http.get<Planet>(planet._links.self.href))
       );
   }

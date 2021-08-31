@@ -24,6 +24,7 @@ export class OrbitdataService {
     const quaternion = new Quaternion();
     quaternion.setFromAxisAngle(h.normalize(), degrees * Math.PI / 180);
     position.applyQuaternion(quaternion);
+    velocity.applyQuaternion(quaternion);
 
     return [position, velocity];
   }
@@ -84,11 +85,11 @@ export class OrbitdataService {
     return [position, velocity];
   }
 
-  orbitalPeriod(planet: Planet) {
+  orbitalPeriod(planet: Planet): number {
     return 2 * Math.PI * Math.sqrt(Math.pow(planet.semimajorAxis * this.AU, 3) / (planet.starGM + planet.GM));
   }
 
-  propagate(r0: Vector3, v0: Vector3, mu: number, time: number) {
+  propagate(r0: Vector3, v0: Vector3, mu: number, time: number): [Vector3, Vector3] {
     const m_r0 = r0.length();
     const m_v0 = v0.length();
     const energy = m_v0 * m_v0 / 2 - mu / m_r0;
@@ -180,7 +181,7 @@ export class OrbitdataService {
     }
   }
 
-  transfer(r1: Vector3, r2: Vector3, tof: number, mu: number) {
+  transfer(r1: Vector3, r2: Vector3, tof: number, mu: number): [Vector3, Vector3] {
     const m_r1 = r1.length();
     const m_r2 = r2.length();
 
@@ -296,7 +297,7 @@ export class OrbitdataService {
     return [v1, v2];
   }
 
-  transferDeltaV(vp: Vector3, vs: Vector3, mu: number, orbit_radius: number) {
+  transferDeltaV(vp: Vector3, vs: Vector3, mu: number, orbit_radius: number): number {
     const vsp: Vector3 = new Vector3();
     vsp.subVectors(vs, vp);
     const vsp_length: number = vsp.length();
