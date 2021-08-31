@@ -100,12 +100,9 @@ export class OrbitComponent implements OnInit {
     const renderer = new THREE.WebGLRenderer({canvas})
 
     const camera = new THREE.OrthographicCamera(canvas.clientWidth / -2, canvas.clientWidth / 2, canvas.clientHeight / 2, canvas.clientHeight / -2, 0.01, 1000000);
-    // const camera = new THREE.PerspectiveCamera();
-    camera.position.z = 500;
+    camera.position.z = 1000;
 
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.maxDistance = 1000;
-    controls.minDistance = 1;
     controls.rotateSpeed = 2;
     controls.minAzimuthAngle = 0;
     controls.maxAzimuthAngle = 0;
