@@ -251,38 +251,74 @@
             {
               "id": 2035226060,
               "name": "1 Omega Hydri 1",
-              "mass": 0.027045919,
-              "radius": 0.339691139,
-              "semimajorAxis": 0.304731681,
-              "eccentricity": 0.115,
-              "inclination": 0.001120502,
-              "longitudeOfAscendingNode": 3.826163146,
-              "argumentOfPeriapsis": 1.926038897,
-              "trueAnomalyAtEpoch": 4.129414104
+              "mass": 0.0344397,
+              "radius": 0.369076,
+              "semimajorAxis": 0.304675,
+              "eccentricity": 0.116153,
+              "inclination": 0.00112050,
+              "longitudeOfAscendingNode": 3.82616,
+              "argumentOfPeriapsis": 1.92604,
+              "trueAnomalyAtEpoch": 4.12941
             },
             {
               "id": -154475081,
               "name": "1 Omega Hydri 2",
-              "mass": 0.261809420,
-              "radius": 0.720491856,
-              "semimajorAxis": 0.548517026,
-              "eccentricity": 0.03,
-              "inclination": 0.014861423,
-              "longitudeOfAscendingNode": 4.874420112,
-              "argumentOfPeriapsis": 3.255447462,
-              "trueAnomalyAtEpoch": 1.219213712
+              "mass": 0.254393,
+              "radius": 0.713282,
+              "semimajorAxis": 0.548415,
+              "eccentricity": 0.0299218,
+              "inclination": 0.0148614,
+              "longitudeOfAscendingNode": 4.87442,
+              "argumentOfPeriapsis": 3.25545,
+              "trueAnomalyAtEpoch": 1.21921
             },
             {
               "id": 159569841,
               "name": "1 Omega Hydri 3",
-              "mass": 0.712351549,
-              "radius": 0.902209812,
-              "semimajorAxis": 0.932478944,
-              "eccentricity": 0.115,
-              "inclination": 0,
-              "longitudeOfAscendingNode": 0,
-              "argumentOfPeriapsis": 3.180972518,
-              "trueAnomalyAtEpoch": 4.653676104
+              "mass": 0.711347,
+              "radius": 0.901488,
+              "semimajorAxis": 0.932306,
+              "eccentricity": 0.114880,
+              "inclination": 0.000000,
+              "longitudeOfAscendingNode": 0.00000,
+              "argumentOfPeriapsis": 3.18097,
+              "trueAnomalyAtEpoch": 4.65368
+            },
+            {
+              "id": 1008667220,
+              "name": "1 Omega Hydri 4",
+              "mass": 0.0672947,
+              "radius": 0.424379,
+              "semimajorAxis": 1.58492,
+              "eccentricity": 0.0491782,
+              "inclination": 0.0328687,
+              "longitudeOfAscendingNode": 3.58799,
+              "argumentOfPeriapsis": 0.630420,
+              "trueAnomalyAtEpoch": 2.90544
+            },
+            {
+              "id": -1510434024,
+              "name": "1 Omega Hydri 5",
+              "mass": 0.0659242,
+              "radius": 0.458826,
+              "semimajorAxis": 2.21889,
+              "eccentricity": 0.0291140,
+              "inclination": 0.00882325,
+              "longitudeOfAscendingNode": 0.270820,
+              "argumentOfPeriapsis": 1.07128,
+              "trueAnomalyAtEpoch": 4.50804
+            },
+            {
+              "id": -1510634024,
+              "name": "1 Omega Hydri 6",
+              "mass": 319.971,
+              "radius": 11.0293,
+              "semimajorAxis": 5.59160,
+              "eccentricity": 0.0955902,
+              "inclination": 0.0173811,
+              "longitudeOfAscendingNode": 0.812380,
+              "argumentOfPeriapsis": 3.03142,
+              "trueAnomalyAtEpoch": 3.95982
             }
           ]
         }
