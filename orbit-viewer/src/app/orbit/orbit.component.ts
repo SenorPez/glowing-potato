@@ -99,8 +99,8 @@ export class OrbitComponent implements OnInit {
     const canvas = <HTMLCanvasElement>document.getElementById('orbitplot');
     const renderer = new THREE.WebGLRenderer({canvas})
 
-    const camera = new THREE.OrthographicCamera(canvas.clientWidth / -2, canvas.clientWidth / 2, canvas.clientHeight / 2, canvas.clientHeight / -2, 0.01, 5000000);
-    camera.position.z = 1000;
+    const camera = new THREE.OrthographicCamera(canvas.clientWidth / -2, canvas.clientWidth / 2, canvas.clientHeight / 2, canvas.clientHeight / -2, 0.01, 24000);
+    camera.position.z = 12000;
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.rotateSpeed = 2;
