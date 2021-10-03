@@ -319,6 +319,18 @@
               "longitudeOfAscendingNode": 0.812380,
               "argumentOfPeriapsis": 3.03142,
               "trueAnomalyAtEpoch": 3.95982
+            },
+            {
+              "id": 687443572,
+              "name": "1 Omega Hydri 7",
+              "mass": 77.2602,
+              "radius": 7.69642,
+              "semimajorAxis": 9.50571,
+              "eccentricity": 0.0180523,
+              "inclination": 0.0176135,
+              "longitudeOfAscendingNode": 5.22675,
+              "argumentOfPeriapsis": 4.03942,
+              "trueAnomalyAtEpoch": 3.20737
             }
           ]
         }
