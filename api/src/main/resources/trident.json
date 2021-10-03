@@ -344,7 +344,7 @@
               "argumentOfPeriapsis": 5.98115,
               "trueAnomalyAtEpoch": 4.53051
             },
-                        {
+            {
               "id": 1286881202,
               "name": "1 Omega Hydri 9",
               "mass": 10.5627,
@@ -355,6 +355,18 @@
               "longitudeOfAscendingNode": 5.99774,
               "argumentOfPeriapsis": 0.83954,
               "trueAnomalyAtEpoch": 4.67671
+            },
+            {
+              "id": 408709981,
+              "name": "1 Omega Hydri 10",
+              "mass": 309.935,
+              "radius": 10.7028,
+              "semimajorAxis": 41.0647,
+              "eccentricity": 0.0342351,
+              "inclination": 0.0294637,
+              "longitudeOfAscendingNode": 4.32645,
+              "argumentOfPeriapsis": 6.07039,
+              "trueAnomalyAtEpoch": 5.86729
             }
           ]
         }
