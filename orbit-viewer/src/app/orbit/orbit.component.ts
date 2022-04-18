@@ -70,6 +70,7 @@ export class OrbitComponent implements OnInit {
 
   private minDVTransferPath = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial(this.colorDV));
   private minFTTransferPath = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial(this.colorFT));
+  private interceptTransferPath = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({color: 0xFF3333}));
 
   private minDVTransferObj = new THREE.Mesh(
     new THREE.SphereGeometry(3),
@@ -79,9 +80,14 @@ export class OrbitComponent implements OnInit {
     new THREE.SphereGeometry(3),
     new THREE.MeshBasicMaterial(this.colorFT)
   );
+  private interceptObj = new THREE.Mesh(
+    new THREE.SphereGeometry(3),
+    new THREE.MeshBasicMaterial({color: 0xFF3333})
+  );
 
   minDVTransferData: [number, number] | null = null;
   minFTTransferData: [number, number] | null = null;
+  interceptTransferData: [number, number] | null = null;
 
   planets: Planet[] = [];
   points: {point: string, planet: Planet}[] = [];
@@ -482,7 +488,7 @@ export class OrbitComponent implements OnInit {
       if (min_delta_v) {
         transfers.sort((a, b) => a.dv - b.dv);
         const selectedTransfer = transfers[0];
-        this.minDVTransferPath.geometry = this.drawPath(selectedTransfer.r1, selectedTransfer.v1, selectedTransfer.mu, selectedTransfer.flight_time);
+        this.minDVTransferPath.geometry = this.drawPath(selectedTransfer.r1, selectedTransfer.v1, selectedTransfer.mu, selectedTransfer.flight_time - 14 * 86400);
         this.scene.add(this.minDVTransferPath);
 
         this.minDVTransferData = [selectedTransfer.dv, selectedTransfer.flight_time];
@@ -498,6 +504,44 @@ export class OrbitComponent implements OnInit {
         this.minDVTransferObj.userData.path = this.minDVTransferPath;
         this.updateTransferPosition(this.minDVTransferObj, this.elapsedTime);
         this.transfersGroup.add(this.minDVTransferObj);
+
+        const p1: Planet = this.planets
+          .filter(p => p.name == "1 Omega Hydri 1")[0];
+        const [ir1, iv1]: Vector3[] = this.orbitDataService.ephemerides(p1, this.elapsedTime);
+        const [ir2, iv2]: Vector3[] = this.orbitDataService.propagate(selectedTransfer.r1, selectedTransfer.v1, selectedTransfer.mu, this.elapsedTime + selectedTransfer.flight_time - 14 * 86400);
+        const [itv1, itv2]: Vector3[] = this.orbitDataService.transfer(ir1, ir2, this.elapsedTime + selectedTransfer.flight_time - 14 * 86400, selectedTransfer.mu);
+
+        this.interceptTransferPath.geometry = this.drawPath(ir1, itv1, selectedTransfer.mu, this.elapsedTime + selectedTransfer.flight_time - 14 * 86400);
+        this.scene.add(this.interceptTransferPath);
+
+        //
+        // console.log(selectedTransfer);
+        //
+        // const [ir1, iv1]: Vector3[] = this.orbitDataService.ephemerides(this.planets[1], this.elapsedTime);
+        // const [ir2, iv2]: [Vector3, Vector3] = this.orbitDataService.propagate(ir1, iv1, selectedTransfer.mu, selectedTransfer.flight_time);
+        // // const [ir2, iv2]: Vector3[] = this.orbitDataService.ephemerides(this.planets[1], this.elapsedTime + selectedTransfer.flight_time - 14 * 86400);
+        // const [itv1, itv2]: Vector3[] = this.orbitDataService.transfer(ir1, ir2, this.elapsedTime + selectedTransfer.flight_time - 14 * 86400, selectedTransfer.mu);
+        //
+        // this.interceptTransferPath.geometry = this.drawPath(ir1, itv1, selectedTransfer.mu, this.elapsedTime + selectedTransfer.flight_time);
+        // // console.log(selectedTransfer.r1, selectedTransfer.v1, selectedTransfer.mu, selectedTransfer.flight_time);
+        // // console.log(ir1, itv1, selectedTransfer.mu, this.elapsedTime + selectedTransfer.flight_time - 14 * 86400);
+        // // console.log(this.orbitDataService.ephemerides(this.planets[1], 0));
+        //
+        // const thing = new THREE.Mesh(
+        //   new THREE.SphereGeometry(10),
+        //   new THREE.MeshBasicMaterial({color: 0xFF3333})
+        // );
+        // thing.position.set(ir1.x, ir1.y, ir1.z);
+        //
+        // this.scene.add(thing);
+        // console.log(thing);
+        //
+        //
+        //
+        // this.scene.add(this.interceptTransferPath);
+
+
+
       } else {
         transfers.sort((a, b) => a.flight_time - b.flight_time);
         const selectedTransfer = transfers[0];
