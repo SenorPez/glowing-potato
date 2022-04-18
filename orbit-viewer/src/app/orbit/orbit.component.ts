@@ -5,7 +5,7 @@ import {OrbitdataService} from "../orbitdata.service";
 import {ApiService, Planet} from "../api.service";
 import {OrbitControls} from "three/examples/jsm/controls/OrbitControls";
 import {MatSliderChange} from "@angular/material/slider";
-import {filter, map, switchMap, toArray} from "rxjs/operators";
+import {filter, map, mergeMap, switchMap, toArray} from "rxjs/operators";
 import {combineLatest, range} from "rxjs";
 import {VersionCommand} from "@angular/cli/commands/version-impl";
 
@@ -508,40 +508,49 @@ export class OrbitComponent implements OnInit {
 
         const p1: Planet = this.planets
           .filter(p => p.name == "1 Omega Hydri 1")[0];
-        const interceptTime = this.elapsedTime + selectedTransfer.flight_time - 14 * 86400
+        const pRad = getOrbitRadius(2035226060, null);
 
-        const intercepts = range(0, (interceptTime) / 86400 - 1)
+        const intercepts = range(7, (selectedTransfer.flight_time - 7 * 86400) / 86400)
           .pipe(
-            map(launch => {
-              launch *= 86400;
-              const t1 = launch + this.elapsedTime;
-              const t2 = interceptTime
+            mergeMap(iTime => {
+              const interceptTime = this.elapsedTime + selectedTransfer.flight_time - iTime * 86400;
+              return range(0, interceptTime / 86400 - 1)
+                .pipe(
+                  map(launch => {
+                    launch *= 86400;
+                    const t1 = launch + this.elapsedTime;
+                    const t2 = interceptTime
 
-              const [r1, v1] = this.orbitDataService.ephemerides(p1, t1);
-              const [r2, v2] = this.orbitDataService.propagate(selectedTransfer.r1, selectedTransfer.v1, selectedTransfer.mu, interceptTime);
-              const [tv1, tv2] = this.orbitDataService.transfer(r1, r2, interceptTime - launch, selectedTransfer.mu);
+                    const [r1, v1] = this.orbitDataService.ephemerides(p1, t1);
+                    const [r2, v2] = this.orbitDataService.propagate(selectedTransfer.r1, selectedTransfer.v1, selectedTransfer.mu, interceptTime);
+                    const [tv1, tv2] = this.orbitDataService.transfer(r1, r2, interceptTime - launch, selectedTransfer.mu);
 
-              const dvDifference = new Vector3().subVectors(v2, tv2).length();
-              const dv = this.orbitDataService.transferDeltaV(v1, tv1, p1.GM, 200)
-                + dvDifference;
+                    const dvDifference = new Vector3().subVectors(v2, tv2).length();
+                    const dv = this.orbitDataService.transferDeltaV(v1, tv1, p1.GM, pRad)
+                      + dvDifference;
 
-              return {
-                'launch_time': t1,
-                'diffo': dvDifference,
-                'flight_time': interceptTime - launch,
-                'dv': dv,
-                'r1': r1,
-                'pv1': v1,
-                'r2': r2,
-                'pv2': v2,
-                'v1': tv1,
-                'v2': tv2,
-                'mu': selectedTransfer.mu
-              };
+                    return {
+                      'launch_time': t1,
+                      'launch_time_days': t1 / 86400,
+                      'intercept_lead_time': iTime,
+                      'dV_difference': dvDifference,
+                      'flight_time': interceptTime - launch,
+                      'dv': dv,
+                      'r1': r1,
+                      'pv1': v1,
+                      'r2': r2,
+                      'pv2': v2,
+                      'v1': tv1,
+                      'v2': tv2,
+                      'mu': selectedTransfer.mu
+                    };
+                  })
+                );
             }),
-            // filter(result => result.dv <= this.maxDV && (result.flight_time / 86400) <= this.maxFT),
+            filter(result => result.dv <= this.maxDV && (result.flight_time / 86400) <= this.maxFT),
             toArray()
           );
+
         intercepts.subscribe(intercepts => {
           console.log(intercepts);
           intercepts.sort((a, b) => a.dv - b.dv);
@@ -564,100 +573,6 @@ export class OrbitComponent implements OnInit {
           this.updateTransferPosition(this.interceptTransferObj, this.elapsedTime);
           this.transfersGroup.add(this.interceptTransferObj);
         })
-
-        // const intercepts = range(1, (this.elapsedTime + selectedTransfer.flight_time - 14 * 86400) / 86400)
-        //   .pipe(
-        //     map(launch => {
-        //       range(1, (this.elapsedTime + selectedTransfer.flight_time - 14 * 86400) / 86400 - launch)
-        //         .pipe(
-        //           map(tof => {
-        //             console.log(launch, tof);
-        //             return {
-        //               'launch': launch,
-        //               'tof': tof,
-        //             }
-        //           }),
-        //           toArray()
-        //         );
-        //     }),
-        //     toArray()
-        //   );
-        // intercepts.pipe(switchMap(val => val));
-        // intercepts.subscribe(intercepts => console.log(intercepts));
-        // const intercepts = range(1, (this.elapsedTime + selectedTransfer.flight_time - 14 * 86400) / 86400)
-        //   .pipe(
-        //     map(launch => {
-        //       const timeOfFlight = range(1, (this.elapsedTime + selectedTransfer.flight_time - 14 * 86400) / 86400 - launch);
-        //       timeOfFlight.subscribe()
-        //     })
-        //   );
-        // intercepts.subscribe(intercept => {
-        //   console.log(intercept);
-        // })
-
-        // const intercepts = range(this.elapsedTime, this.elapsedTime + selectedTransfer.flight_time - 14 * 86400)
-        //   .pipe(
-        //     map(launch => {
-        //       range(1, launch - this.elapsedTime + selectedTransfer.flight_time - 14 * 86400)
-        //         .pipe(
-        //           map(tof => {
-        //             return {
-        //               'launch': launch,
-        //               'tof': tof,
-        //             }
-        //           }));
-        //     })
-        //   );
-        // intercepts.subscribe(intercept => console.log(intercept));
-      //     .pipe(
-      //     .map(launch => {
-      //       range(1, flightTime - this.elapsedTime + selectedTransfer.flight_time - 14 * 86400)
-      //         .map(tof => {
-      //           return {
-      //             'launch': launch,
-      //             'tof': tof
-      //           };
-      //         });
-      //     })
-      // )
-
-
-        // console.log(intercepts);
-
-        // const [ir1, iv1]: Vector3[] = this.orbitDataService.ephemerides(p1, this.elapsedTime);
-        // const [ir2, iv2]: Vector3[] = this.orbitDataService.propagate(selectedTransfer.r1, selectedTransfer.v1, selectedTransfer.mu, this.elapsedTime + selectedTransfer.flight_time - 14 * 86400);
-        // const [itv1, itv2]: Vector3[] = this.orbitDataService.transfer(ir1, ir2, this.elapsedTime + selectedTransfer.flight_time - 14 * 86400, selectedTransfer.mu);
-        //
-        // this.interceptTransferPath.geometry = this.drawPath(ir1, itv1, selectedTransfer.mu, this.elapsedTime + selectedTransfer.flight_time - 14 * 86400);
-        // this.scene.add(this.interceptTransferPath);
-
-        //
-        // console.log(selectedTransfer);
-        //
-        // const [ir1, iv1]: Vector3[] = this.orbitDataService.ephemerides(this.planets[1], this.elapsedTime);
-        // const [ir2, iv2]: [Vector3, Vector3] = this.orbitDataService.propagate(ir1, iv1, selectedTransfer.mu, selectedTransfer.flight_time);
-        // // const [ir2, iv2]: Vector3[] = this.orbitDataService.ephemerides(this.planets[1], this.elapsedTime + selectedTransfer.flight_time - 14 * 86400);
-        // const [itv1, itv2]: Vector3[] = this.orbitDataService.transfer(ir1, ir2, this.elapsedTime + selectedTransfer.flight_time - 14 * 86400, selectedTransfer.mu);
-        //
-        // this.interceptTransferPath.geometry = this.drawPath(ir1, itv1, selectedTransfer.mu, this.elapsedTime + selectedTransfer.flight_time);
-        // // console.log(selectedTransfer.r1, selectedTransfer.v1, selectedTransfer.mu, selectedTransfer.flight_time);
-        // // console.log(ir1, itv1, selectedTransfer.mu, this.elapsedTime + selectedTransfer.flight_time - 14 * 86400);
-        // // console.log(this.orbitDataService.ephemerides(this.planets[1], 0));
-        //
-        // const thing = new THREE.Mesh(
-        //   new THREE.SphereGeometry(10),
-        //   new THREE.MeshBasicMaterial({color: 0xFF3333})
-        // );
-        // thing.position.set(ir1.x, ir1.y, ir1.z);
-        //
-        // this.scene.add(thing);
-        // console.log(thing);
-        //
-        //
-        //
-        // this.scene.add(this.interceptTransferPath);
-
-
       } else {
         transfers.sort((a, b) => a.flight_time - b.flight_time);
         const selectedTransfer = transfers[0];
