@@ -510,20 +510,24 @@ export class OrbitComponent implements OnInit {
           .filter(p => p.name == "1 Omega Hydri 1")[0];
         const pRad = getOrbitRadius(2035226060, null);
 
-        const intercepts = range(7, (selectedTransfer.flight_time - 7 * 86400) / 86400)
+        // const intercepts = range(7, (selectedTransfer.flight_time - 7 * 86400) / 86400)
+        const intercepts = range(7, 1)
           .pipe(
-            mergeMap(iTime => {
-              const interceptTime = this.elapsedTime + selectedTransfer.flight_time - iTime * 86400;
-              return range(0, interceptTime / 86400 - 1)
+            mergeMap(interceptTime => {
+              interceptTime = this.elapsedTime + selectedTransfer.flight_time - interceptTime * 86400;
+              console.log(interceptTime / 86400);
+              // interceptPointTime *= 86400;
+              // const interceptTime = this.elapsedTime + selectedTransfer.flight_time - interceptPointTime;
+              return range(0, interceptTime / 86400)
                 .pipe(
-                  map(launch => {
-                    launch *= 86400;
-                    const t1 = launch + this.elapsedTime;
-                    const t2 = interceptTime
+                  map(launchTime => {
+                    launchTime *= 86400;
+                    const t1 = launchTime;
+                    const t2 = interceptTime;
 
                     const [r1, v1] = this.orbitDataService.ephemerides(p1, t1);
-                    const [r2, v2] = this.orbitDataService.propagate(selectedTransfer.r1, selectedTransfer.v1, selectedTransfer.mu, interceptTime);
-                    const [tv1, tv2] = this.orbitDataService.transfer(r1, r2, interceptTime - launch, selectedTransfer.mu);
+                    const [r2, v2] = this.orbitDataService.propagate(selectedTransfer.r1, selectedTransfer.v1, selectedTransfer.mu, t2 - this.elapsedTime);
+                    const [tv1, tv2] = this.orbitDataService.transfer(r1, r2, t2 - t1, selectedTransfer.mu);
 
                     const dvDifference = new Vector3().subVectors(v2, tv2).length();
                     const dv = this.orbitDataService.transferDeltaV(v1, tv1, p1.GM, pRad)
@@ -532,9 +536,10 @@ export class OrbitComponent implements OnInit {
                     return {
                       'launch_time': t1,
                       'launch_time_days': t1 / 86400,
-                      'intercept_lead_time': iTime,
+                      'intercept_time': t2,
+                      'intercept_time_days': t2 / 86400,
                       'dV_difference': dvDifference,
-                      'flight_time': interceptTime - launch,
+                      'flight_time': interceptTime - launchTime,
                       'dv': dv,
                       'r1': r1,
                       'pv1': v1,
@@ -547,7 +552,7 @@ export class OrbitComponent implements OnInit {
                   })
                 );
             }),
-            filter(result => result.dv <= this.maxDV && (result.flight_time / 86400) <= this.maxFT),
+            filter(result => result.launch_time >= this.elapsedTime && result.dv <= this.maxDV && (result.flight_time / 86400) <= this.maxFT),
             toArray()
           );
 
