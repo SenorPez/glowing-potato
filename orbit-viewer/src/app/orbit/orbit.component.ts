@@ -510,14 +510,10 @@ export class OrbitComponent implements OnInit {
           .filter(p => p.name == "1 Omega Hydri 1")[0];
         const pRad = getOrbitRadius(2035226060, null);
 
-        // const intercepts = range(7, (selectedTransfer.flight_time - 7 * 86400) / 86400)
         const intercepts = range(7, 1)
           .pipe(
             mergeMap(interceptTime => {
               interceptTime = this.elapsedTime + selectedTransfer.flight_time - interceptTime * 86400;
-              console.log(interceptTime / 86400);
-              // interceptPointTime *= 86400;
-              // const interceptTime = this.elapsedTime + selectedTransfer.flight_time - interceptPointTime;
               return range(0, interceptTime / 86400)
                 .pipe(
                   map(launchTime => {
